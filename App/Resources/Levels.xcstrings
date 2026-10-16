@@ -1,0 +1,996 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "back.hint": {
+      "comment": "Level \"back\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上过去，展开走一段，再合上回到左页。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close to cross, open to walk a while, then close again to come back to the left page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じて渡り、開いて少し歩き、また閉じて左ページへ戻る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫아서 건너고, 펼쳐서 조금 걷고, 다시 닫아 왼쪽 페이지로 돌아와요."
+          }
+        }
+      }
+    },
+    "back.line": {
+      "comment": "Level \"back\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "过去，再回来。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Over, and home again."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "行って、また帰る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "건너갔다가, 다시 돌아오기."
+          }
+        }
+      }
+    },
+    "back.name": {
+      "comment": "Level \"back\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "往返"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There and Back"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "行き帰り"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오가는 길"
+          }
+        }
+      }
+    },
+    "bridge.hint": {
+      "comment": "Level \"bridge\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上手机，右边的纸板会正好盖住缺口。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close the phone: the card on the right lands exactly over the gap."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "スマホを閉じると、右の厚紙がすき間にぴたりと重なる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "폰을 닫으면 오른쪽 종이판이 틈을 꼭 덮어요."
+          }
+        }
+      }
+    },
+    "bridge.line": {
+      "comment": "Level \"bridge\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "缺口的对面，有一块纸板。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Across the gap, a scrap of card."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すき間の向こうに、厚紙が一枚。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "틈 건너편에 종이판 한 장."
+          }
+        }
+      }
+    },
+    "bridge.name": {
+      "comment": "Level \"bridge\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "桥"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bridge"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "橋"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다리"
+          }
+        }
+      }
+    },
+    "crease.hint": {
+      "comment": "Level \"crease\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先合上一次，钥匙和墨都印过去；再半开过桥，走到门边，最后合上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close once so the key and the ink carry across; half-open and cross the bridge, walk to the door, then close."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まず一度閉じて鍵と墨を写す。半分開いて橋を渡り、扉まで歩いて、最後に閉じる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 한 번 닫아 열쇠와 먹을 찍어요. 반쯤 열어 다리를 건너 문까지 걷고, 마지막에 닫아요."
+          }
+        }
+      }
+    },
+    "crease.line": {
+      "comment": "Level \"crease\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用上你学会的一切。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Everything you have learned."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "覚えたすべてを。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "배운 모든 것을."
+          }
+        }
+      }
+    },
+    "crease.name": {
+      "comment": "Level \"crease\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折痕"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crease"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折り目"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "접힌 자국"
+          }
+        }
+      }
+    },
+    "doorBridge.hint": {
+      "comment": "Level \"doorBridge\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先合上让钥匙开门，再打开到一半，从立起的纸片走过去。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close so the key opens the door, then open halfway and cross on the standing tabs."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じて鍵で扉を開け、半分開いて、立った紙片を渡る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫아서 열쇠로 문을 열고, 반쯤 열어 일어선 종이 조각을 건너요."
+          }
+        }
+      }
+    },
+    "doorBridge.line": {
+      "comment": "Level \"doorBridge\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先开门，再过桥。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "First the door, then the bridge."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まず扉、それから橋。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 문, 그다음 다리."
+          }
+        }
+      }
+    },
+    "doorBridge.name": {
+      "comment": "Level \"doorBridge\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "门与桥"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Door, then Bridge"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扉と橋"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "문과 다리"
+          }
+        }
+      }
+    },
+    "facing.hint": {
+      "comment": "Level \"facing\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上，走到右页的路上；石头挡住了，就展开继续走。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close, and step onto the right page’s path; when a stone blocks you, open and walk on."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じて右ページの道へ。石にふさがれたら、開いて先へ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫고 오른쪽 페이지의 길로 건너가요. 돌이 막으면 펼쳐서 계속 걸어요."
+          }
+        }
+      }
+    },
+    "facing.line": {
+      "comment": "Level \"facing\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "终点在另一页。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The goal lies on the other page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ゴールは、もう一枚のページに。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "도착점은 다른 페이지에."
+          }
+        }
+      }
+    },
+    "facing.name": {
+      "comment": "Level \"facing\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Facing Page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "見開き"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "맞은편"
+          }
+        }
+      }
+    },
+    "ink.hint": {
+      "comment": "Level \"ink\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上一次，墨会印到右页的缺口上；展开后它还在。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close once: the ink prints onto the gap on the right page, and stays when you open."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一度閉じると、墨が右ページのすき間に写る。開いても残る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "한 번 닫으면 먹이 오른쪽 틈에 찍혀요. 펼쳐도 남아 있어요."
+          }
+        }
+      }
+    },
+    "ink.line": {
+      "comment": "Level \"ink\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨还没干。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The ink is still wet."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨はまだ乾いていない。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먹이 아직 마르지 않았다."
+          }
+        }
+      }
+    },
+    "ink.name": {
+      "comment": "Level \"ink\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ink"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먹"
+          }
+        }
+      }
+    },
+    "inkBridge.hint": {
+      "comment": "Level \"inkBridge\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上时石头会压住终点，所以只合一下：让墨印过去，再半开过桥。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Closing drops the stone on the goal, so close only once: let the ink print across, then half-open and cross."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じると石がゴールをふさぐ。だから一度だけ閉じて墨を写し、半分開いて橋を渡る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫으면 돌이 도착점을 눌러요. 그러니 한 번만 닫아 먹을 찍고, 반쯤 열어 다리를 건너요."
+          }
+        }
+      }
+    },
+    "inkBridge.line": {
+      "comment": "Level \"inkBridge\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "桥的那头，路断了；终点被压住了。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Past the bridge the path breaks off; the goal is pinned down."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "橋の先で道は途切れ、ゴールは押さえられている。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다리 너머 길은 끊기고, 도착점은 눌려 있다."
+          }
+        }
+      }
+    },
+    "inkBridge.name": {
+      "comment": "Level \"inkBridge\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨与桥"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ink, then Bridge"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨と橋"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먹과 다리"
+          }
+        }
+      }
+    },
+    "key.hint": {
+      "comment": "Level \"key\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "钥匙和门左右对称。合上，它们就碰到了。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Key and door mirror each other. Close, and they meet."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鍵と扉は左右対称。閉じれば、ふれあう。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "열쇠와 문은 좌우 대칭이에요. 닫으면 서로 닿아요."
+          }
+        }
+      }
+    },
+    "key.line": {
+      "comment": "Level \"key\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "门锁着，钥匙在对页。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The door is locked. The key is on the facing page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扉は閉ざされ、鍵は向かいのページに。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "문은 잠겼고, 열쇠는 맞은편에."
+          }
+        }
+      }
+    },
+    "key.name": {
+      "comment": "Level \"key\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "钥匙"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Key"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鍵"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "열쇠"
+          }
+        }
+      }
+    },
+    "ride.hint": {
+      "comment": "Level \"ride\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "站到影子上，再慢慢合书：影子会带着你一起滑过去。合到底石头就压下来了。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stand on the shadow, then close the book slowly: it carries you across. Close all the way and the stone comes down."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影の上に立って、ゆっくり本を閉じる。影があなたを乗せて滑っていく。閉じきると石が落ちてくる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자 위에 서서 책을 천천히 닫아요. 그림자가 나를 태우고 미끄러져요. 끝까지 닫으면 돌이 내려와요."
+          }
+        }
+      }
+    },
+    "ride.line": {
+      "comment": "Level \"ride\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "缺口太宽，影子太短。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The gap too wide, the shadow too short."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すき間は広く、影は短い。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "틈은 너무 넓고, 그림자는 너무 짧다."
+          }
+        }
+      }
+    },
+    "ride.name": {
+      "comment": "Level \"ride\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "乘影"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shadow Ride"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影に乗る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자를 타고"
+          }
+        }
+      }
+    },
+    "shadow.hint": {
+      "comment": "Level \"shadow\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "把书慢慢合到一半多一点，右页石头的影子会落在缺口上。影子能走。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close the book slowly, a little past halfway: the stone’s shadow falls across the gap. Shadows can be walked on."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本をゆっくり、半分より少しだけ閉じると、右ページの石の影がすき間に落ちる。影は歩ける。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책을 천천히 반보다 조금 더 닫으면 오른쪽 돌의 그림자가 틈에 드리워요. 그림자 위로는 걸을 수 있어요."
+          }
+        }
+      }
+    },
+    "shadow.line": {
+      "comment": "Level \"shadow\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上也过不去。可是石头有影子。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Even closed, there is no way across. But stones cast shadows."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じても、渡れない。でも、石には影がある。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫아도 건널 수 없다. 하지만 돌에는 그림자가 있다."
+          }
+        }
+      }
+    },
+    "shadow.name": {
+      "comment": "Level \"shadow\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shade"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자"
+          }
+        }
+      }
+    },
+    "stand.hint": {
+      "comment": "Level \"stand\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "把手机打开到一半，折痕上的纸片会立起来，连成一座桥。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open the phone halfway: the tabs on the crease stand up and join into a bridge."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "スマホを半分だけ開くと、折り目の紙片が立ち上がり、橋になる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "폰을 반쯤 열면 접는 선의 종이 조각이 일어서서 다리가 돼요."
+          }
+        }
+      }
+    },
+    "stand.line": {
+      "comment": "Level \"stand\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上也过不去。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Even closed, there is no way across."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じても、渡れない。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫아도 건널 수 없다."
+          }
+        }
+      }
+    },
+    "stand.name": {
+      "comment": "Level \"stand\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stand"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立つ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "일어서다"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

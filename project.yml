@@ -1,0 +1,68 @@
+name: Letterfold
+options:
+  bundleIdPrefix: com.haoqianglyu
+  deploymentTarget:
+    iOS: "27.0"
+  developmentLanguage: en
+  createIntermediateGroups: true
+packages:
+  FoldCore:
+    path: Packages/FoldCore
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGN_STYLE: Manual
+    DEVELOPMENT_TEAM: ""
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+    SWIFT_EMIT_LOC_STRINGS: NO
+targets:
+  Letterfold:
+    type: application
+    platform: iOS
+    sources:
+      - App/Sources
+      - App/Resources
+    dependencies:
+      - package: FoldCore
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: Letterfold
+        CFBundleDevelopmentRegion: en
+        CFBundleLocalizations: [en, zh-Hans, ja, ko]
+        CFBundleShortVersionString: "0.0.1"
+        CFBundleVersion: "1"
+        UILaunchScreen:
+          UIColorName: ""
+        UIApplicationSupportsIndirectInputEvents: true
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.haoqianglyu.letterfold
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+        SWIFT_APPROACHABLE_CONCURRENCY: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+  LetterfoldUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [App/UITests]
+    dependencies:
+      - target: Letterfold
+    settings:
+      base:
+        SWIFT_VERSION: "5.0"
+        PRODUCT_BUNDLE_IDENTIFIER: com.haoqianglyu.letterfold.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: Letterfold
+schemes:
+  Letterfold:
+    build:
+      targets:
+        Letterfold: all
+    test:
+      targets:
+        - LetterfoldUITests
+        - package: FoldCore/FoldCoreTests

@@ -1,0 +1,511 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		23541C263217811CE7EE57A7 /* BookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9649A387FE6D80E352CD3FC9 /* BookView.swift */; };
+		2440B5FB027790D0976AF907 /* Hinge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2991315D14E1D1169059EEE2 /* Hinge.swift */; };
+		2E4BA36FB0A1B6EC2FB7FFF1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA8A69D80801EB33F63AC9F /* ContentView.swift */; };
+		30DF961F440B6EF2FFC056E0 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = EABD85E9AF4932093EFF07E7 /* InfoPlist.xcstrings */; };
+		325A01DF0182BD81C710BC54 /* LetterfoldUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */; };
+		34A798E0D5924075ECEA5944 /* FoldCore in Frameworks */ = {isa = PBXBuildFile; productRef = 88BED3A0FF644679AC1747FE /* FoldCore */; };
+		4E042B49889CAFAFFA62FB4A /* Levels.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 93CA716983C6FD7D2F2CB18E /* Levels.xcstrings */; };
+		632B7BC5D43A1FE091458D59 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */; };
+		E814CEA6AE8D68A972F67039 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578B23505A90DB23ECB3C2A4 /* Haptics.swift */; };
+		EC45A98D94C4BC1BBB07EF81 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E9E382EAE32A5BCA3D71BC9 /* L10n.swift */; };
+		F6517ABF6F79233473DE2C2F /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EBF8A2E746E16AE1153A20 /* GameModel.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		20CB6AE03D3DD6AD8073D31F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B209F07EE057A787BE140CDE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 578C74D60AA6453D54936DBA;
+			remoteInfo = Letterfold;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		2991315D14E1D1169059EEE2 /* Hinge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hinge.swift; sourceTree = "<group>"; };
+		45EBF8A2E746E16AE1153A20 /* GameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
+		578B23505A90DB23ECB3C2A4 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
+		5DCB74D3A0DCC9D491D54DCD /* FoldCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FoldCore; path = Packages/FoldCore; sourceTree = SOURCE_ROOT; };
+		868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		93CA716983C6FD7D2F2CB18E /* Levels.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Levels.xcstrings; sourceTree = "<group>"; };
+		9649A387FE6D80E352CD3FC9 /* BookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookView.swift; sourceTree = "<group>"; };
+		9E9E382EAE32A5BCA3D71BC9 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
+		A8EC280F556F518FD3E0CF1A /* Letterfold.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Letterfold.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterfoldUITests.swift; sourceTree = "<group>"; };
+		CAA8A69D80801EB33F63AC9F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D7F376A74B6D07769C3C7A89 /* LetterfoldUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LetterfoldUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EABD85E9AF4932093EFF07E7 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		86497EDB99549FEAED55586F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				34A798E0D5924075ECEA5944 /* FoldCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1C210CCE02486A8D4BB29BFE /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */,
+			);
+			path = UITests;
+			sourceTree = "<group>";
+		};
+		3B79720340A9BA719B195EC4 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				9649A387FE6D80E352CD3FC9 /* BookView.swift */,
+				CAA8A69D80801EB33F63AC9F /* ContentView.swift */,
+				45EBF8A2E746E16AE1153A20 /* GameModel.swift */,
+				578B23505A90DB23ECB3C2A4 /* Haptics.swift */,
+				2991315D14E1D1169059EEE2 /* Hinge.swift */,
+				9E9E382EAE32A5BCA3D71BC9 /* L10n.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		4E30420C98D42CC71F6FFA8E = {
+			isa = PBXGroup;
+			children = (
+				EA3D27359FE5F7A3B4915EFE /* App */,
+				E234950254753C98999C4740 /* Packages */,
+				F06BED8BFB8A145F7907DF5A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D7BDE9D431948C4A05E59D4F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				EABD85E9AF4932093EFF07E7 /* InfoPlist.xcstrings */,
+				93CA716983C6FD7D2F2CB18E /* Levels.xcstrings */,
+				868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		E234950254753C98999C4740 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				5DCB74D3A0DCC9D491D54DCD /* FoldCore */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+		EA3D27359FE5F7A3B4915EFE /* App */ = {
+			isa = PBXGroup;
+			children = (
+				D7BDE9D431948C4A05E59D4F /* Resources */,
+				3B79720340A9BA719B195EC4 /* Sources */,
+				1C210CCE02486A8D4BB29BFE /* UITests */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		F06BED8BFB8A145F7907DF5A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A8EC280F556F518FD3E0CF1A /* Letterfold.app */,
+				D7F376A74B6D07769C3C7A89 /* LetterfoldUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		578C74D60AA6453D54936DBA /* Letterfold */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8EACFCE9492FE0E1E497EAFE /* Build configuration list for PBXNativeTarget "Letterfold" */;
+			buildPhases = (
+				4C71B6AF0C58E4BEDBF8C683 /* Sources */,
+				C5EE804772B563A851CC7223 /* Resources */,
+				86497EDB99549FEAED55586F /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Letterfold;
+			packageProductDependencies = (
+				88BED3A0FF644679AC1747FE /* FoldCore */,
+			);
+			productName = Letterfold;
+			productReference = A8EC280F556F518FD3E0CF1A /* Letterfold.app */;
+			productType = "com.apple.product-type.application";
+		};
+		6D355CBD397177CEDB6888E6 /* LetterfoldUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 32AD500DB9CB5A7F6854E8CA /* Build configuration list for PBXNativeTarget "LetterfoldUITests" */;
+			buildPhases = (
+				FB5667C890CEBC3ED7792C02 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				90FB7BEF4602C369C2C2763A /* PBXTargetDependency */,
+			);
+			name = LetterfoldUITests;
+			packageProductDependencies = (
+			);
+			productName = LetterfoldUITests;
+			productReference = D7F376A74B6D07769C3C7A89 /* LetterfoldUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B209F07EE057A787BE140CDE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					578C74D60AA6453D54936DBA = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
+					6D355CBD397177CEDB6888E6 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+						TestTargetID = 578C74D60AA6453D54936DBA;
+					};
+				};
+			};
+			buildConfigurationList = CB42FFD857F520E4EE4C137F /* Build configuration list for PBXProject "Letterfold" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+				ja,
+				ko,
+				"zh-Hans",
+			);
+			mainGroup = 4E30420C98D42CC71F6FFA8E;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D77CE654881DD91069210F97 /* XCLocalSwiftPackageReference "Packages/FoldCore" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = F06BED8BFB8A145F7907DF5A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				578C74D60AA6453D54936DBA /* Letterfold */,
+				6D355CBD397177CEDB6888E6 /* LetterfoldUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C5EE804772B563A851CC7223 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				30DF961F440B6EF2FFC056E0 /* InfoPlist.xcstrings in Resources */,
+				4E042B49889CAFAFFA62FB4A /* Levels.xcstrings in Resources */,
+				632B7BC5D43A1FE091458D59 /* Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4C71B6AF0C58E4BEDBF8C683 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				23541C263217811CE7EE57A7 /* BookView.swift in Sources */,
+				2E4BA36FB0A1B6EC2FB7FFF1 /* ContentView.swift in Sources */,
+				F6517ABF6F79233473DE2C2F /* GameModel.swift in Sources */,
+				E814CEA6AE8D68A972F67039 /* Haptics.swift in Sources */,
+				2440B5FB027790D0976AF907 /* Hinge.swift in Sources */,
+				EC45A98D94C4BC1BBB07EF81 /* L10n.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FB5667C890CEBC3ED7792C02 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				325A01DF0182BD81C710BC54 /* LetterfoldUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		90FB7BEF4602C369C2C2763A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 578C74D60AA6453D54936DBA /* Letterfold */;
+			targetProxy = 20CB6AE03D3DD6AD8073D31F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		13B1AB04D882EECEEE38D7F2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		2EACD8AF1488BF2DA33FE107 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.haoqianglyu.letterfold.uitests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Letterfold;
+			};
+			name = Debug;
+		};
+		6533FD1B42516D0A9415C4C3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = App/Info.plist;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.haoqianglyu.letterfold;
+				SDKROOT = iphoneos;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AB9621FCC300ACED172BD12B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		C47C49AC933066173EC20D8E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.haoqianglyu.letterfold.uitests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Letterfold;
+			};
+			name = Release;
+		};
+		E67B9C5112988A63B80F1034 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = App/Info.plist;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.haoqianglyu.letterfold;
+				SDKROOT = iphoneos;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		32AD500DB9CB5A7F6854E8CA /* Build configuration list for PBXNativeTarget "LetterfoldUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2EACD8AF1488BF2DA33FE107 /* Debug */,
+				C47C49AC933066173EC20D8E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8EACFCE9492FE0E1E497EAFE /* Build configuration list for PBXNativeTarget "Letterfold" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6533FD1B42516D0A9415C4C3 /* Debug */,
+				E67B9C5112988A63B80F1034 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CB42FFD857F520E4EE4C137F /* Build configuration list for PBXProject "Letterfold" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				13B1AB04D882EECEEE38D7F2 /* Debug */,
+				AB9621FCC300ACED172BD12B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		D77CE654881DD91069210F97 /* XCLocalSwiftPackageReference "Packages/FoldCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/FoldCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		88BED3A0FF644679AC1747FE /* FoldCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FoldCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = B209F07EE057A787BE140CDE /* Project object */;
+}

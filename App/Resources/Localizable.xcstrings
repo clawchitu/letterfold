@@ -1,0 +1,4986 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "a11y": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无障碍"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accessibility"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アクセシビリティ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "접근성"
+          }
+        }
+      }
+    },
+    "allDone": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全部完成。等 Duo 到了，用真的折痕再玩一次。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All done. When the Duo arrives, play it again on a real crease."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すべてクリア。Duoが届いたら、本物の折り目でもう一度。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "모두 완료. Duo가 오면 진짜 접는 선으로 다시 해 봐요."
+          }
+        }
+      }
+    },
+    "already": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {pos}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你已经在{pos}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "you are already at {pos}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "もう{pos}にいる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이미 {pos}에 있어요"
+          }
+        }
+      }
+    },
+    "angle": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {a}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{a}°"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{a}°"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{a}°"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{a}°"
+          }
+        }
+      }
+    },
+    "arrived": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {pos}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "到了，{pos}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "arrived, {pos}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "着いた、{pos}"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "도착, {pos}"
+          }
+        }
+      }
+    },
+    "audioBadge": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "声音模式"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sound mode"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "サウンドモード"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "소리 모드"
+          }
+        }
+      }
+    },
+    "audioIntro": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "。左页是木头声，右页是纸声，越靠上的行音越高；左页在左耳，右页在右耳。方向键听每一格，回车走过去，F 折一点，Shift 加 F 展开一点。按问号听全部按键。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ". The left page sounds like wood, the right like paper; higher rows ring higher. Left page in your left ear, right page in your right. Arrow keys hear each square, Enter walks there, F folds a step, Shift+F unfolds a step. Press question mark for every key."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "。左ページは木の音、右ページは紙の音。上の行ほど高く鳴ります。左ページは左耳、右ページは右耳に。矢印キーで各マスを聴き、Enterで歩き、Fで少し折り、Shift+Fで少し開きます。?ですべてのキー。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ". 왼쪽 페이지는 나무 소리, 오른쪽은 종이 소리, 위쪽 줄일수록 높은 음이에요. 왼쪽 페이지는 왼쪽 귀, 오른쪽 페이지는 오른쪽 귀로 들려요. 방향키로 각 칸을 듣고, Enter로 걷고, F로 조금 접고, Shift+F로 조금 펴요. 물음표를 누르면 모든 키를 들을 수 있어요."
+          }
+        }
+      }
+    },
+    "bb.row": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "听一行"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Row"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "行を聴く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "줄 듣기"
+          }
+        }
+      }
+    },
+    "bb.rowLabel": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "听一行"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hear this row"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "行を聴く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "줄 듣기"
+          }
+        }
+      }
+    },
+    "bb.where": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我在哪"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Where"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "現在地"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "내 위치"
+          }
+        }
+      }
+    },
+    "bb.whereLabel": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我在哪"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Where am I"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "現在地"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "내 위치"
+          }
+        }
+      }
+    },
+    "bbFold": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折书"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fold the book"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本を折る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책 접기"
+          }
+        }
+      }
+    },
+    "bbWalk": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "走一步"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Take a step"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一歩"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "한 걸음"
+          }
+        }
+      }
+    },
+    "book.closed": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "书已合上"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "book closed"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本を閉じた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책을 닫았어요"
+          }
+        }
+      }
+    },
+    "book.lean": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {a}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "书斜起，{a}°"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "book leaning, {a}°"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本が傾いた、{a}°"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책이 기울었어요, {a}°"
+          }
+        }
+      }
+    },
+    "book.open": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {a}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "书打开，{a}°"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "book open, {a}°"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本は開いている、{a}°"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책이 열려 있어요, {a}°"
+          }
+        }
+      }
+    },
+    "book.opened": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "书已打开"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "book open"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本を開いた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책을 폈어요"
+          }
+        }
+      }
+    },
+    "book.pop": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {a}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "书立起来了，{a}°"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "book standing, {a}°"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本が立った、{a}°"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책이 섰어요, {a}°"
+          }
+        }
+      }
+    },
+    "book.popBridge": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {a}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "书立起来了，{a}°，纸片立成了桥"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "book standing, {a}°, the tabs make a bridge"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本が立った、{a}°、紙片が橋になった"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책이 섰어요, {a}°, 종이 조각이 다리가 됐어요"
+          }
+        }
+      }
+    },
+    "brandSub": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折信"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Letterfold"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折り文"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "접은 편지"
+          }
+        }
+      }
+    },
+    "cantReach": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "现在走不到那里"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "you cannot get there right now"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今はそこへ行けない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금은 거기 갈 수 없어요"
+          }
+        }
+      }
+    },
+    "closeAll": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫기"
+          }
+        }
+      }
+    },
+    "coachSlider": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拖到合上"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drag to close"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ドラッグして閉じる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "끝까지 밀어 닫기"
+          }
+        }
+      }
+    },
+    "col": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {c}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第{c}列"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "column {c}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{c}列"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{c}열"
+          }
+        }
+      }
+    },
+    "connected": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "路接通了"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a path connects"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "道がつながった"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "길이 이어졌어요"
+          }
+        }
+      }
+    },
+    "covers": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {col}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上后盖住{col}的缺口"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "closing covers the gap in {col}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じると{col}のすき間をふさぐ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫으면 {col}의 틈을 덮어요"
+          }
+        }
+      }
+    },
+    "crushed": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石头压下来了，重新开始"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The stone came down. Starting over."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石が落ちてきた。最初から"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌이 내려왔어요. 처음부터 다시"
+          }
+        }
+      }
+    },
+    "crushedHere": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上会被对面的石头压住"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "closing, the stone opposite covers this"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じると向かいの石にふさがれる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫으면 맞은편 돌에 눌려요"
+          }
+        }
+      }
+    },
+    "desc.audio": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每格有音高和音色，闭眼也能玩（M）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every square has its own pitch and timbre: play with your eyes closed (M)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "マスごとに音の高さと音色。目を閉じても遊べる（M）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "칸마다 음높이와 음색이 달라 눈을 감고도 할 수 있어요 (M)"
+          }
+        }
+      }
+    },
+    "desc.big": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "放大方块"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bigger tiles"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "マスを大きく"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "칸을 크게"
+          }
+        }
+      }
+    },
+    "desc.hc": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "粗边框、花纹，不只靠颜色"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bold outlines and patterns, never colour alone"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "太い枠と模様。色だけに頼らない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "굵은 테두리와 무늬, 색에만 기대지 않아요"
+          }
+        }
+      }
+    },
+    "desc.motor": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折一点、展开一点、走一步、撤销"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fold, unfold, step and undo, one press at a time"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "少し折る・少し開く・一歩・戻す"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "더 접기, 덜 접기, 한 걸음, 되돌리기"
+          }
+        }
+      }
+    },
+    "desc.speak": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有读屏软件时，用系统语音读出提示"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speak hints in the system voice when no screen reader is running"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "スクリーンリーダーがなくても、システムの声でヒントを読み上げる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "화면 낭독기가 없을 때 시스템 음성으로 안내를 읽어요"
+          }
+        }
+      }
+    },
+    "dir.down": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "down"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아래"
+          }
+        }
+      }
+    },
+    "dir.left": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "left"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "왼쪽"
+          }
+        }
+      }
+    },
+    "dir.right": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "right"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오른쪽"
+          }
+        }
+      }
+    },
+    "dir.up": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "up"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "위"
+          }
+        }
+      }
+    },
+    "done": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫기"
+          }
+        }
+      }
+    },
+    "doorKey": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对面是钥匙，合上就能开门"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the key is opposite: close to open the door"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向かいは鍵。閉じれば扉が開く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "맞은편에 열쇠가 있어 닫으면 문이 열려요"
+          }
+        }
+      }
+    },
+    "doorOpened": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "钥匙打开了门"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the key opened the door"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鍵で扉が開いた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "열쇠가 문을 열었어요"
+          }
+        }
+      }
+    },
+    "down": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Down"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아래"
+          }
+        }
+      }
+    },
+    "dragCrease": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拖动折痕"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drag the crease"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折り目をドラッグ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "접는 선 끌기"
+          }
+        }
+      }
+    },
+    "elsewhere": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "别处"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "somewhere else"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "別の場所"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다른 곳"
+          }
+        }
+      }
+    },
+    "fallsHere": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {noun}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上后对面的{noun}会落在这里"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "closing lays the {noun} opposite here"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じると向かいの{noun}がここに重なる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫으면 맞은편 {noun:이} 여기에 겹쳐요"
+          }
+        }
+      }
+    },
+    "fell": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影子走了，纸人掉了下去"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The shadow slipped away, and the paper figure fell."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影が去り、紙の人は落ちた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자가 떠나고, 종이 인형이 떨어졌어요"
+          }
+        }
+      }
+    },
+    "first": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回到第一关"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back to level 1"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最初のステージへ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1단계로"
+          }
+        }
+      }
+    },
+    "foldAngle": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折叠角度"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fold angle"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折る角度"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "접는 각도"
+          }
+        }
+      }
+    },
+    "foldLess": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "展开一点"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unfold"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "少し開く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "덜 접기"
+          }
+        }
+      }
+    },
+    "foldLessLabel": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "展开一点"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unfold a step"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "少し開く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "덜 접기"
+          }
+        }
+      }
+    },
+    "foldMore": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折一点"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fold"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "少し折る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "더 접기"
+          }
+        }
+      }
+    },
+    "foldMoreLabel": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折一点"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fold a step"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "少し折る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "더 접기"
+          }
+        }
+      }
+    },
+    "goal": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {opp} {bits}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "终点在{opp}{bits}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The goal is {opp}{bits}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ゴールは{opp}{bits}"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "도착점은 {opp}{bits}"
+          }
+        }
+      }
+    },
+    "goalOpp": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对页，"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "on the facing page, "
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向かいのページ、"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "맞은편 페이지, "
+          }
+        }
+      }
+    },
+    "goalSteps": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {n} {dir}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{dir}{n}格"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} {dir}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{dir}に{n}マス"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{dir:으로} {n}칸"
+          }
+        }
+      }
+    },
+    "goalTag": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "终点"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Goal"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ゴール"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "도착"
+          }
+        }
+      }
+    },
+    "gridHelp": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第4列和第5列之间是折痕，合上时右页翻到左页上：第5列叠在第4列，第8列叠在第1列。方向键听每一格，回车走过去，F 折一点，Shift 加 F 展开一点，H 提示，R 重来，U 撤销，问号听全部按键。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The crease runs between columns 4 and 5. Closing lays the right page over the left: column 5 on column 4, column 8 on column 1. Arrow keys hear each square, Enter walks there, F folds a step, Shift+F unfolds a step, H hint, R restart, U undo, question mark for every key."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "4列と5列のあいだが折り目。閉じると右ページが左ページに重なり、5列は4列に、8列は1列に重なります。矢印キーで各マスを聴き、Enterで歩き、Fで少し折り、Shift+Fで少し開きます。Hはヒント、Rはやり直し、Uは戻す、?ですべてのキー。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "4열과 5열 사이가 접는 선이에요. 닫으면 오른쪽 페이지가 왼쪽 위에 겹쳐요: 5열은 4열 위에, 8열은 1열 위에. 방향키로 각 칸을 듣고, Enter로 걷고, F로 조금 접고, Shift+F로 조금 펴요. H 힌트, R 다시, U 되돌리기, 물음표로 모든 키."
+          }
+        }
+      }
+    },
+    "gridLabel": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "书页：第1到4列是左页，第5到8列是右页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Book: columns 1 to 4 are the left page, 5 to 8 the right page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本：1〜4列が左ページ、5〜8列が右ページ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책: 1~4열은 왼쪽 페이지, 5~8열은 오른쪽 페이지"
+          }
+        }
+      }
+    },
+    "help": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "方向键：在格子间移动并听每一格。回车：走到这一格。Shift 加方向键：走一步。F：折一点；Shift 加 F：展开一点；C：合上；O：打开。L：听这一行；Shift 加 L：听整本书。W：我在哪。H：提示。U：撤销。R：重来。M：声音模式。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrow keys: move between squares and hear each one. Enter: walk to that square. Shift+arrow: take one step. F: fold a step; Shift+F: unfold a step; C: close; O: open. L: hear this row; Shift+L: hear the whole book. W: where am I. H: hint. U: undo. R: restart. M: sound mode."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "矢印キー：マスを移動して聴く。Enter：そのマスへ歩く。Shift+矢印：一歩進む。F：少し折る。Shift+F：少し開く。C：閉じる。O：開く。L：この行を聴く。Shift+L：本全体を聴く。W：現在地。H：ヒント。U：戻す。R：やり直し。M：サウンドモード。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "방향키: 칸 사이를 옮기며 각 칸 듣기. Enter: 그 칸으로 걷기. Shift+방향키: 한 걸음. F: 조금 접기, Shift+F: 조금 펴기, C: 닫기, O: 열기. L: 이 줄 듣기, Shift+L: 책 전체 듣기. W: 내 위치. H: 힌트. U: 되돌리기. R: 다시. M: 소리 모드."
+          }
+        }
+      }
+    },
+    "here": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这里"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "here"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ここ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "여기"
+          }
+        }
+      }
+    },
+    "hereStack": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你在这一叠"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "you are on this stack"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "あなたはこの重なりに"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "내가 이 겹침에 있음"
+          }
+        }
+      }
+    },
+    "hereYou": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你在这里"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "you are here"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "あなたはここ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "내가 있는 곳"
+          }
+        }
+      }
+    },
+    "hinge.device": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设备铰链"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Device hinge"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本体のヒンジ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기 힌지"
+          }
+        }
+      }
+    },
+    "hinge.simulated": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "滑块与拖动"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slider and drag"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "スライダーとドラッグ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "슬라이더와 드래그"
+          }
+        }
+      }
+    },
+    "hinge.tilt": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "体感（未完成）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tilt (coming soon)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "傾き（準備中）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기울기(준비 중)"
+          }
+        }
+      }
+    },
+    "hinge.tiltSoon": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "体感还没做好，继续用滑块"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tilt is not ready yet; using the slider"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "傾きはまだ準備中です。スライダーを使います"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기울기는 아직 준비 중이에요. 슬라이더를 사용해요"
+          }
+        }
+      }
+    },
+    "hinge.unavailable": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这台设备没有铰链，继续用滑块"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hinge on this device; using the slider"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この端末にはヒンジがありません。スライダーを使います"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 기기에는 힌지가 없어요. 슬라이더를 사용해요"
+          }
+        }
+      }
+    },
+    "hingeSource": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折叠输入"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fold input"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折りの入力"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "접기 입력"
+          }
+        }
+      }
+    },
+    "hint": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提示"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hint"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ヒント"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "힌트"
+          }
+        }
+      }
+    },
+    "inkPrinted": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨印到了对页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the ink printed onto the facing page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨が向かいのページに写った"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먹이 맞은편 페이지에 찍혔어요"
+          }
+        }
+      }
+    },
+    "inkPrints": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上会印到对面"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "closing prints it onto the facing page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じると向かいに写る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫으면 맞은편에 찍혀요"
+          }
+        }
+      }
+    },
+    "inkTo": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {col}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上会印到{col}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "closing prints it onto {col}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じると{col}に写る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫으면 {col}에 찍혀요"
+          }
+        }
+      }
+    },
+    "intro": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {n} {name} {line} {you} {goal}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第{n}关，{name}。{line}你在{you}，终点在{goal}。书是打开的。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level {n}, {name}. {line} You are at {you}; the goal is at {goal}. The book is open."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ステージ{n}、{name}。{line}あなたは{you}、ゴールは{goal}。本は開いています。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n}단계, {name}. {line} 지금 {you}에 있고, 도착점은 {goal}에 있어요. 책은 펼쳐져 있어요."
+          }
+        }
+      }
+    },
+    "keyOpens": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {col}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上能打开{col}的门"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "closing opens the door in {col}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じると{col}の扉が開く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫으면 {col}의 문이 열려요"
+          }
+        }
+      }
+    },
+    "kind.-": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "缺口"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gap"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すき間"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "틈"
+          }
+        }
+      }
+    },
+    "kind..": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "路"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "path"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "道"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "길"
+          }
+        }
+      }
+    },
+    "kind.D": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "锁着的门"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "locked door"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鍵のかかった扉"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "잠긴 문"
+          }
+        }
+      }
+    },
+    "kind.G": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "终点"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "goal"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ゴール"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "도착점"
+          }
+        }
+      }
+    },
+    "kind.i": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "湿墨"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wet ink"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "濡れた墨"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "젖은 먹"
+          }
+        }
+      }
+    },
+    "kind.k": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "钥匙"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "key"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鍵"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "열쇠"
+          }
+        }
+      }
+    },
+    "kind.o": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开着的门"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "open door"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開いた扉"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "열린 문"
+          }
+        }
+      }
+    },
+    "kind.p": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "纸片"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tab"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紙片"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종이 조각"
+          }
+        }
+      }
+    },
+    "kind.x": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石头"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stone"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌"
+          }
+        }
+      }
+    },
+    "kindShadow": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影子，可以走"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "shadow, walkable"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影、歩ける"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자, 걸을 수 있음"
+          }
+        }
+      }
+    },
+    "kindTabUp": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "纸片，立着成桥"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tab, standing as a bridge"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紙片、立って橋に"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종이 조각, 서서 다리가 됨"
+          }
+        }
+      }
+    },
+    "langGroup": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语言"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "言語"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "언어"
+          }
+        }
+      }
+    },
+    "langName": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "中文"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "English"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日本語"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "한국어"
+          }
+        }
+      }
+    },
+    "langSet": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已切换为中文"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language: English"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日本語に切り替えました"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "한국어로 바꿨어요"
+          }
+        }
+      }
+    },
+    "left": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Left"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "왼쪽"
+          }
+        }
+      }
+    },
+    "leftPage": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "left page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左ページ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "왼쪽 페이지"
+          }
+        }
+      }
+    },
+    "levelDone": {
+      "comment": "UI. From fold-proto i18n.js. Placeholders: {name}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「{name}」完成"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“{name}” solved"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「{name}」クリア"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "‘{name}’ 완료"
+          }
+        }
+      }
+    },
+    "levelDoneMark": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已完成"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solved"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クリア"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "완료"
+          }
+        }
+      }
+    },
+    "levelHead": {
+      "comment": "UI. From fold-proto i18n.js. Placeholders: {n} {total} {name}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} / {total} · {name}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} / {total} · {name}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} / {total} · {name}"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} / {total} · {name}"
+          }
+        }
+      }
+    },
+    "levels": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关卡"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Levels"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ステージ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "단계"
+          }
+        }
+      }
+    },
+    "list": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "、"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", "
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "・"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", "
+          }
+        }
+      }
+    },
+    "lost": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "有的路断了"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "some paths broke"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "道が一部途切れた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "길이 일부 끊겼어요"
+          }
+        }
+      }
+    },
+    "lvAria": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {n} {name}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第{n}关，{name}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "level {n}, {name}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ステージ{n}、{name}"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n}단계, {name}"
+          }
+        }
+      }
+    },
+    "lvCurrent": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "current"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "現在"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "현재"
+          }
+        }
+      }
+    },
+    "lvDone": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已完成"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "solved"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クリア済み"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "완료"
+          }
+        }
+      }
+    },
+    "mode.fold": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Closed"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫힘"
+          }
+        }
+      }
+    },
+    "mode.lean": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "斜起"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leaning"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "傾いた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기울어짐"
+          }
+        }
+      }
+    },
+    "mode.open": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開いた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "열림"
+          }
+        }
+      }
+    },
+    "mode.pop": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立起"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standing"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立った"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "섬"
+          }
+        }
+      }
+    },
+    "navGame": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "游戏"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Game"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ゲーム"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "게임"
+          }
+        }
+      }
+    },
+    "needAudio": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先按 M 开启声音模式"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Press M to turn on sound mode first"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先にMでサウンドモードをオンにしてください"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 M을 눌러 소리 모드를 켜세요"
+          }
+        }
+      }
+    },
+    "next": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下一关"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next level"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次のステージ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음 단계"
+          }
+        }
+      }
+    },
+    "no.crease": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "前面是折痕"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the crease is in the way"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "前は折り目"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앞은 접는 선이에요"
+          }
+        }
+      }
+    },
+    "no.door": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "门锁着"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the door is locked"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扉に鍵がかかっている"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "문이 잠겼어요"
+          }
+        }
+      }
+    },
+    "no.edge": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "到书边了"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "edge of the book"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本の端"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책 끝이에요"
+          }
+        }
+      }
+    },
+    "no.gap": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "那边是缺口"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "that is a gap"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "そこはすき間"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "거기는 틈이에요"
+          }
+        }
+      }
+    },
+    "no.step": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "走不过去"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cannot go that way"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "進めない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "갈 수 없어요"
+          }
+        }
+      }
+    },
+    "no.stone": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石头挡住了"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a stone is in the way"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石がふさいでいる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌이 막고 있어요"
+          }
+        }
+      }
+    },
+    "nothingToUndo": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有可以撤销的"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nothing to undo"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "戻せる操作はありません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "되돌릴 것이 없어요"
+          }
+        }
+      }
+    },
+    "noun..": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "纸板"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "card"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "厚紙"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종이판"
+          }
+        }
+      }
+    },
+    "noun.D": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "门"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "door"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扉"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "문"
+          }
+        }
+      }
+    },
+    "noun.G": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "终点"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "goal"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ゴール"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "도착점"
+          }
+        }
+      }
+    },
+    "noun.i": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "湿墨"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wet ink"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "濡れた墨"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "젖은 먹"
+          }
+        }
+      }
+    },
+    "noun.k": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "钥匙"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "key"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鍵"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "열쇠"
+          }
+        }
+      }
+    },
+    "noun.o": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "门"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "door"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扉"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "문"
+          }
+        }
+      }
+    },
+    "noun.p": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "纸片"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tab"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紙片"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종이 조각"
+          }
+        }
+      }
+    },
+    "noun.x": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石头"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stone"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌"
+          }
+        }
+      }
+    },
+    "nowhere": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "哪里都不行"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nowhere"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "なし"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "없음"
+          }
+        }
+      }
+    },
+    "off": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オフ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "끔"
+          }
+        }
+      }
+    },
+    "on": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オン"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "켬"
+          }
+        }
+      }
+    },
+    "openAll": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "펴기"
+          }
+        }
+      }
+    },
+    "opt.audio": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "声音模式"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sound mode"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "サウンドモード"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "소리 모드"
+          }
+        }
+      }
+    },
+    "opt.big": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大格子"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large squares"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大きなマス"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "큰 칸"
+          }
+        }
+      }
+    },
+    "opt.hc": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "高对比"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "High contrast"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ハイコントラスト"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "고대비"
+          }
+        }
+      }
+    },
+    "opt.motor": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大按钮"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Big buttons"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大きなボタン"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "큰 버튼"
+          }
+        }
+      }
+    },
+    "opt.speak": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语音朗读"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read aloud"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み上げ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "음성 읽기"
+          }
+        }
+      }
+    },
+    "optOff": {
+      "comment": "UI. From fold-proto i18n.js. Placeholders: {name}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name}已关闭"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name} off"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name}：オフ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name} 끔"
+          }
+        }
+      }
+    },
+    "optOn": {
+      "comment": "UI. From fold-proto i18n.js. Placeholders: {name}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name}已开启"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name} on"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name}：オン"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name} 켬"
+          }
+        }
+      }
+    },
+    "pos": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {r} {c}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第{r}行第{c}列"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "row {r}, column {c}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{r}行{c}列"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{r}행 {c}열"
+          }
+        }
+      }
+    },
+    "pre.close": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫기"
+          }
+        }
+      }
+    },
+    "pre.half": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "半开"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Half"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "半開き"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "반쯤"
+          }
+        }
+      }
+    },
+    "pre.open": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "展开"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "펴기"
+          }
+        }
+      }
+    },
+    "pre.stand": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立起"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stand"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立てる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "세우기"
+          }
+        }
+      }
+    },
+    "reset": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重来"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restart"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "やり直し"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다시"
+          }
+        }
+      }
+    },
+    "right": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Right"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오른쪽"
+          }
+        }
+      }
+    },
+    "rightPage": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "right page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右ページ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오른쪽 페이지"
+          }
+        }
+      }
+    },
+    "semi": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "；"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "; "
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "; "
+          }
+        }
+      }
+    },
+    "sep": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "，"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", "
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "、"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", "
+          }
+        }
+      }
+    },
+    "shadowGone": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影子没了"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the shadow is gone"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影が消えた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자가 사라졌어요"
+          }
+        }
+      }
+    },
+    "shadowOn": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {cells}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影子落在{cells}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "shadow on {cells}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影が{cells}に落ちた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자가 {cells}에 드리웠어요"
+          }
+        }
+      }
+    },
+    "slid": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {pos}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影子带着你滑到了{pos}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the shadow carried you to {pos}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影に乗って{pos}へ滑った"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자가 {pos:으로} 데려갔어요"
+          }
+        }
+      }
+    },
+    "stack": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {c}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "（右页，叠在第{c}列上）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " (right page, stacked on column {c})"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "（右ページ、{c}列の上）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " (오른쪽 페이지, {c}열 위)"
+          }
+        }
+      }
+    },
+    "stepDown": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向下走一步"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Step down"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下へ一歩"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아래로 한 걸음"
+          }
+        }
+      }
+    },
+    "stepLeft": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向左走一步"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Step left"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左へ一歩"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "왼쪽으로 한 걸음"
+          }
+        }
+      }
+    },
+    "stepRight": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向右走一步"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Step right"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右へ一歩"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오른쪽으로 한 걸음"
+          }
+        }
+      }
+    },
+    "stepUp": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向上走一步"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Step up"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上へ一歩"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "위로 한 걸음"
+          }
+        }
+      }
+    },
+    "stoneShadow": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {col}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "斜起时投下影子；合上会压住{col}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "casts a shadow while leaning; closing covers {col}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "傾けると影を落とす。閉じると{col}をふさぐ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기울이면 그림자를 드리우고, 닫으면 {col:을} 눌러요"
+          }
+        }
+      }
+    },
+    "suggest": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "读屏或闭眼玩？按这里开启声音模式"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Screen reader, or eyes closed? Turn on sound mode here"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "スクリーンリーダーで、または目を閉じて遊ぶ？ ここでサウンドモードをオン"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "화면 낭독기를 쓰거나 눈을 감고 하나요? 여기서 소리 모드를 켜세요"
+          }
+        }
+      }
+    },
+    "suggestToast": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "闭着眼也能玩：按 M 开启声音模式，按问号听按键说明"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can play with your eyes closed: M for sound mode, question mark for the keys"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目を閉じても遊べます。Mでサウンドモード、?でキーの説明"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "눈을 감고도 할 수 있어요: M은 소리 모드, 물음표는 키 안내"
+          }
+        }
+      }
+    },
+    "tabBridge": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "书半开时，和对面的纸片立成桥"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "half open, it stands with the tab opposite as a bridge"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "半分開くと、向かいの紙片と立って橋になる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "반쯤 열면 맞은편 종이 조각과 서서 다리가 돼요"
+          }
+        }
+      }
+    },
+    "tapTip": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点格子走过去"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap to walk"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "タップで歩く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "눌러서 걷기"
+          }
+        }
+      }
+    },
+    "tilt": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "体感"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tilt"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "傾き"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기울기"
+          }
+        }
+      }
+    },
+    "tiltDenied": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有获得体感权限"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Motion access was not granted"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "モーションの許可が得られませんでした"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "동작 권한을 받지 못했어요"
+          }
+        }
+      }
+    },
+    "tiltHow": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左右倾斜手机来折叠"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tilt the phone left and right to fold"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "スマホを左右に傾けて折る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "폰을 좌우로 기울여 접어요"
+          }
+        }
+      }
+    },
+    "tiltOn": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "体感：开"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tilt: on"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "傾き：オン"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기울기: 켬"
+          }
+        }
+      }
+    },
+    "title": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折 · 折信"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折 · Letterfold"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折 · 折り文"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折 · 접은 편지"
+          }
+        }
+      }
+    },
+    "undo": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "撤销"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Undo"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "戻す"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "되돌리기"
+          }
+        }
+      }
+    },
+    "undone": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {pos} {a}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已撤销。你在{pos}，书{a}°"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Undone. You are at {pos}, book at {a}°"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "戻しました。あなたは{pos}、本は{a}°"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "되돌렸어요. 지금 {pos}, 책은 {a}°"
+          }
+        }
+      }
+    },
+    "up": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Up"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "위"
+          }
+        }
+      }
+    },
+    "walkHere": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "走到这里"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Walk here"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ここへ歩く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "여기로 걷기"
+          }
+        }
+      }
+    },
+    "where": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {pos} {page} {ways} {a} {goal}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你在{pos}，{page}。能走：{ways}。书{a}°。{goal}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You are at {pos}, {page}. You can go: {ways}. Book at {a}°. {goal}."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "あなたは{pos}、{page}。進める方向：{ways}。本は{a}°。{goal}。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금 {pos}, {page}. 갈 수 있는 쪽: {ways}. 책 {a}°. {goal}."
+          }
+        }
+      }
+    },
+    "win": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {text} {next}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "过关！{text}。按回车：{next}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{text}. Press Enter: {next}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{text}！Enterで{next}"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{text}! Enter: {next}"
+          }
+        }
+      }
+    },
+    "you": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "あなた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "나"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

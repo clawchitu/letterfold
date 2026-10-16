@@ -1,0 +1,203 @@
+{
+  "version": 1,
+  "columnsPerPage": 4,
+  "thresholds": {
+    "foldMin": 155,
+    "popMin": 60,
+    "popMax": 120,
+    "shadeMin": 91
+  },
+  "levels": [
+    {
+      "id": "bridge",
+      "map": [
+        "-S------",
+        "-.------",
+        "------.-",
+        "-.------",
+        "-G------"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 1,
+        "needsFold": true,
+        "needsPop": false,
+        "stepped15": true
+      }
+    },
+    {
+      "id": "facing",
+      "map": [
+        "-----..G",
+        "-----.--",
+        "--x--.--",
+        "S.---.--"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 2,
+        "needsFold": true,
+        "needsPop": false,
+        "stepped15": true
+      }
+    },
+    {
+      "id": "back",
+      "map": [
+        "S.---.--",
+        "--x--.--",
+        "-----..-",
+        "-.----.-",
+        "-G------"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 3,
+        "needsFold": true,
+        "needsPop": false,
+        "stepped15": true
+      }
+    },
+    {
+      "id": "key",
+      "map": [
+        "-S------",
+        "-.------",
+        "-D----k-",
+        "-.------",
+        "-G------"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 1,
+        "needsFold": true,
+        "needsPop": false,
+        "needsKey": true,
+        "stepped15": true
+      }
+    },
+    {
+      "id": "ink",
+      "map": [
+        "--------",
+        "----G---",
+        "-xix.-..",
+        "-------S"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 2,
+        "needsFold": true,
+        "needsPop": false,
+        "needsInk": true,
+        "stepped15": true
+      }
+    },
+    {
+      "id": "stand",
+      "map": [
+        "-----..G",
+        "--x--.--",
+        "S..pp.--",
+        "--------"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 1,
+        "needsFold": false,
+        "needsPop": true,
+        "stepped15": true
+      }
+    },
+    {
+      "id": "doorBridge",
+      "map": [
+        "S.kppD.-",
+        "-x----.-",
+        "------.G",
+        "--------"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 2,
+        "needsFold": true,
+        "needsPop": true,
+        "needsKey": true,
+        "stepped15": true
+      }
+    },
+    {
+      "id": "inkBridge",
+      "map": [
+        "--------",
+        "-Sipp---",
+        "--x--G--",
+        "--------"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 2,
+        "needsFold": true,
+        "needsPop": true,
+        "needsInk": true,
+        "stepped15": true
+      }
+    },
+    {
+      "id": "crease",
+      "map": [
+        "G.------",
+        "-k----D-",
+        "--xi-..-",
+        "---..---",
+        "--Spp---"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 3,
+        "needsFold": true,
+        "needsPop": true,
+        "needsKey": true,
+        "needsInk": true,
+        "stepped15": true
+      }
+    },
+    {
+      "id": "shadow",
+      "map": [
+        "-S------",
+        "-.------",
+        "-------x",
+        "-.------",
+        "-G------"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 1,
+        "needsFold": false,
+        "needsPop": false,
+        "needsShade": true,
+        "needsRide": false,
+        "stepped15": true
+      }
+    },
+    {
+      "id": "ride",
+      "map": [
+        "G.------",
+        "-.------",
+        "---S---x",
+        "--------"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 2,
+        "needsFold": false,
+        "needsPop": false,
+        "needsShade": true,
+        "needsRide": true,
+        "stepped15": true
+      }
+    }
+  ]
+}
