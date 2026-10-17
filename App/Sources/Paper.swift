@@ -113,7 +113,12 @@ struct TileFace: View {
         case .key: KeyGlyph().frame(width: size * 0.62, height: size * 0.3).shadowed(hc)
         case .door: ZStack { PathTile(size: size, paper: paper); DoorGlyph(open: false, size: size) }
         case .openDoor: ZStack { PathTile(size: size, paper: paper); DoorGlyph(open: true, size: size) }
-        case .ink: WetInk(size: size, paper: paper, mirrored: inkPrint, spent: inkSpent, verticalMirror: mirrorAxisVertical, printedAt: inkPrint ? printedAt : nil)
+        case .ink:
+            // wet ink is walkable: it sits on a path square like every other floor (frame v2-1)
+            ZStack {
+                PathTile(size: size, paper: paper)
+                WetInk(size: size, paper: paper, mirrored: inkPrint, spent: inkSpent, verticalMirror: mirrorAxisVertical, printedAt: inkPrint ? printedAt : nil)
+            }
         case .tab:
             ZStack {
                 PathTile(size: size, paper: paper)
@@ -394,9 +399,15 @@ struct ShadeMark: View {
 struct Puppet: View {
     var frame = 0
     var facingLeft = false
+    /// A paper-coloured rim, for standing on wet ink.
+    var rim = false
     @Environment(\.highContrast) private var hc
     var body: some View {
         ZStack {
+            if rim && !hc {
+                PuppetShape(frame: frame).stroke(Tok.paperNew, style: StrokeStyle(lineWidth: 3, lineJoin: .round))
+                PuppetCane(frame: frame).stroke(Tok.paperNew, style: StrokeStyle(lineWidth: 4.5, lineCap: .round))
+            }
             PuppetShape(frame: frame).fill(Tok.figure, style: FillStyle(eoFill: true))
             if hc { PuppetShape(frame: frame).stroke(.white, lineWidth: 1.2) }
             PuppetCane(frame: frame).stroke(Tok.figure, style: StrokeStyle(lineWidth: 2.2, lineCap: .round))

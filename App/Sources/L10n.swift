@@ -1,4 +1,4 @@
-import Foundation
+import SwiftUI
 
 /// Strings live in Localizable.xcstrings / Levels.xcstrings, generated from fold-proto's i18n.js by tools/make-strings.js.
 /// Templates keep the web's named placeholders ({name}); Korean particles are written {word:이} and chosen by the
@@ -65,4 +65,24 @@ enum L10n {
 
     /// English sentences start with a capital; a no-op for the CJK scripts.
     static func cap(_ s: String) -> String { s.prefix(1).uppercased() + s.dropFirst() }
+}
+
+extension L10n {
+    /// Chinese display type: Songti and PingFang set 「，、；：。」 a full em wide (they have no `halt` feature), which
+    /// leaves a visible hole mid-line (「河很宽，　纸很薄。」). Tighten the empty half after a mark that does not end a
+    /// line. A no-op in other languages (Hiragino has proper Japanese spacing).
+    static func tight(_ s: String, size: CGFloat) -> AttributedString {
+        var a = AttributedString(s)
+        guard lang.hasPrefix("zh") else { return a }
+        let marks: Set<Character> = ["，", "、", "；", "：", "。"]
+        var i = a.characters.startIndex
+        while i < a.characters.endIndex {
+            let next = a.characters.index(after: i)
+            if marks.contains(a.characters[i]), next < a.characters.endIndex, a.characters[next] != "\n" {
+                a[i..<next].kern = -size * 0.42
+            }
+            i = next
+        }
+        return a
+    }
 }

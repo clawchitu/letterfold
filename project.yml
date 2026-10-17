@@ -32,10 +32,11 @@ targets:
         CFBundleDevelopmentRegion: en
         CFBundleLocalizations: [en, zh-Hans, ja, ko]
         CFBundleShortVersionString: "0.1"
-        CFBundleVersion: "2"
+        CFBundleVersion: "3"
         ITSAppUsesNonExemptEncryption: false
         UILaunchScreen:
-          UIColorName: ""
+          UIColorName: LaunchBackground
+        CADisableMinimumFrameDurationOnPhone: true
         UIApplicationSupportsIndirectInputEvents: true
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
@@ -44,7 +45,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.haoqianglyu.letterfold
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         MARKETING_VERSION: "0.1"
-        CURRENT_PROJECT_VERSION: "2"
+        CURRENT_PROJECT_VERSION: "3"
         TARGETED_DEVICE_FAMILY: "1,2"
         SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
         SWIFT_APPROACHABLE_CONCURRENCY: YES

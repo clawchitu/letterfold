@@ -10,6 +10,11 @@ struct CoverView: View {
     let fonts = FontBook.shared
     @Environment(\.highContrast) private var hc
 
+    /// The 「折」 logo is the same Chinese Song glyph in every language (Hiragino's taller Mincho ran into the title in ja).
+    private var logoFont: Font {
+        fonts.songtiReady ? .custom("STSongti-SC-Black", size: 212, relativeTo: .largeTitle) : fonts.songti(.black, 212, relativeTo: .largeTitle)
+    }
+
     var body: some View {
         GeometryReader { g in
             let w = g.size.width, h = g.size.height
@@ -34,9 +39,9 @@ struct CoverView: View {
                     Spacer().frame(height: h * 0.20)
                     // 「折」: the same logo in every language; the half past the seam sits in the fold's shade
                     ZStack {
-                        Text("折").font(fonts.songti(.black, 212, relativeTo: .largeTitle)).foregroundStyle(Tok.ink900)
+                        Text("折").font(logoFont).foregroundStyle(Tok.ink900)
                             .mask(HStack(spacing: 0) { Color.black; Color.clear })
-                        Text("折").font(fonts.songti(.black, 212, relativeTo: .largeTitle)).foregroundStyle(hc ? Tok.ink900 : Color(hex: 0x4A433B))
+                        Text("折").font(logoFont).foregroundStyle(hc ? Tok.ink900 : Color(hex: 0x4A433B))
                             .mask(HStack(spacing: 0) { Color.clear; Color.black })
                     }
                     .environment(\.locale, Locale(identifier: "zh-Hans"))
@@ -53,18 +58,12 @@ struct CoverView: View {
                         .accessibilityHidden(true)
                     Spacer().frame(height: h * 0.06)
                     Text(L10n.t("cover.tagline")).font(.body).foregroundStyle(Tok.ink900)
-                    let en = L10n.t("cover.taglineEn")
-                    if !en.isEmpty && en != "cover.taglineEn" {
-                        Text(en).font(.subheadline).foregroundStyle(Tok.ink600).padding(.top, 2).accessibilityHidden(true)
-                    }
+                        .multilineTextAlignment(.center).padding(.horizontal, 24)
                     ThreadDrop(from: 0, to: h * 0.05, color: hc ? Tok.hcLine : Tok.thread).frame(width: w, height: h * 0.05).padding(.top, 10)
                     Button { router.go(.map) } label: {
                         VStack(spacing: 8) {
                             Knot(color: hc ? Tok.hcLine : Tok.thread)
-                            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                                Text(L10n.t("cover.begin")).font(fonts.songti(.bold, 19, relativeTo: .headline)).foregroundStyle(Tok.ink900)
-                                if !L10n.lang.hasPrefix("en") { Text("Begin").font(.subheadline).foregroundStyle(Tok.ink600) }
-                            }
+                            Text(L10n.t("cover.begin")).font(fonts.songti(.bold, 19, relativeTo: .headline)).foregroundStyle(Tok.ink900)
                         }
                         .frame(minWidth: 120, minHeight: 64)
                         .contentShape(Rectangle())
@@ -147,8 +146,6 @@ struct ChapterMapView: View {
                 Text(L10n.t("map.title")).font(fonts.songti(.bold, 34, relativeTo: .largeTitle)).foregroundStyle(Tok.ink900)
                     .accessibilityAddTraits(.isHeader)
                 Spacer()
-                Text(otherTitles).font(.system(.footnote, design: .serif).italic()).foregroundStyle(Tok.ink600).lineLimit(1).minimumScaleFactor(0.6)
-                    .accessibilityHidden(true)
             }
             .padding(.horizontal, 24).padding(.top, 2)
             GeometryReader { g in
@@ -169,29 +166,43 @@ struct ChapterMapView: View {
                                 }
                             }
                         }
-                        .padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 100)
+                        .padding(.horizontal, 20).padding(.top, 12).padding(.bottom, doneCount == ch1.count ? 170 : 100)
                     }
                 }
+                .clipped()
             }
         }
         .overlay(alignment: .bottom) {
             let next = ch1.first { !model.done.contains($0) } ?? ch1.first ?? 0
-            Button { model.go(next); router.go(.level) } label: {
-                Text(L10n.t("map.continue", ["n": "1-\((ch1.firstIndex(of: next) ?? 0) + 1)"]))
-                    .font(fonts.songti(.bold, 19, relativeTo: .headline)).foregroundStyle(Tok.paperNew)
-                    .padding(.horizontal, 44).frame(minHeight: 56)
-                    .background(Capsule().fill(Tok.ink900))
+            VStack(spacing: 12) {
+                if doneCount == ch1.count {
+                    // the end of this preview: say so, gracefully, instead of leaving a silent map
+                    PreviewEndNote()
+                }
+                Button { model.go(next); router.go(.level) } label: {
+                    Text(L10n.t("map.continue", ["n": "1-\((ch1.firstIndex(of: next) ?? 0) + 1)"]))
+                        .font(fonts.songti(.bold, 19, relativeTo: .headline)).foregroundStyle(Tok.paperNew)
+                        .padding(.horizontal, 44).frame(minHeight: 56)
+                        .background(Capsule().fill(Tok.ink900))
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("map.continue")
             }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("map.continue")
             .padding(.bottom, 10)
         }
+        .overlay(alignment: .top) {
+            // a tap on a chapter that is not here yet says why (the level screen's toast, shown on the map too)
+            if let toast = model.toast {
+                Text(toast).font(.callout).foregroundStyle(Tok.paperNew).multilineTextAlignment(.center)
+                    .padding(.horizontal, 16).padding(.vertical, 10)
+                    .background(RoundedRectangle(cornerRadius: 14).fill(Tok.ink900.opacity(0.94)))
+                    .padding(.horizontal, 24).padding(.top, 52)
+                    .transition(.opacity)
+                    .accessibilityHidden(true)
+                    .allowsHitTesting(false)
+            }
+        }
         .background(TableBackground())
-    }
-
-    private var otherTitles: String {
-        let all = ["en": "Both Banks", "zh-Hans": "两岸", "ja": "両岸", "ko": "양안"]
-        return ["en", "zh-Hans", "ko", "ja"].filter { !L10n.lang.hasPrefix($0.prefix(2)) }.prefix(3).compactMap { all[$0] }.joined(separator: "  ")
     }
 
     private func open(_ ch: Chapter) {
@@ -222,17 +233,14 @@ private struct ChapterCard: View {
         let delivered = chapter.unlocked && n == idx.count && !idx.isEmpty
         let paper: Color = [PaperState.chapter1.color, PaperState.chapter2.color, PaperState.chapter3.color, PaperState.chapter4.color, Tok.paperNew][chapter.id - 1]
         let status = chapter.soon ? L10n.t("ch.soon") : !chapter.unlocked ? L10n.t("ch.sealed") : delivered ? L10n.t("ch.delivered") : L10n.t("ch.inProgress")
+        let sealed = !chapter.soon && !chapter.unlocked
         Button(action: action) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top, spacing: 8) {
                     Text(chapter.numeral).font(fonts.songti(.bold, 28, relativeTo: .title)).foregroundStyle(Tok.ink900)
-                        .environment(\.locale, Locale(identifier: "zh-Hans"))
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text(chapter.name).font(fonts.songti(.semibold, 17, relativeTo: .headline)).foregroundStyle(Tok.ink900)
-                        if !chapter.englishName.isEmpty {
-                            Text(chapter.englishName).font(.system(.subheadline, design: .serif).italic()).foregroundStyle(Tok.ink700)
-                        }
-                    }
+                        .environment(\.locale, L10n.locale)
+                    Text(chapter.name).font(fonts.songti(.semibold, 17, relativeTo: .headline)).foregroundStyle(Tok.ink900)
+                        .padding(.top, 6)
                 }
                 .padding(.horizontal, 14).padding(.top, 14).padding(.bottom, 16)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -242,8 +250,10 @@ private struct ChapterCard: View {
                     if !chapter.soon && !idx.isEmpty {
                         Text(L10n.t("ch.count", ["n": n, "total": idx.count])).font(.subheadline.monospacedDigit().weight(.medium)).foregroundStyle(Tok.ink900)
                     }
+                    // a sealed card is tied with string near its right edge: keep its words clear of the string
+                    if sealed { Text(status).font(.footnote).foregroundStyle(Tok.ink700).lineLimit(1).minimumScaleFactor(0.7) }
                     Spacer(minLength: 2)
-                    Text(status).font(.footnote).foregroundStyle(Tok.ink700).lineLimit(1).minimumScaleFactor(0.7)
+                    if !sealed { Text(status).font(.footnote).foregroundStyle(Tok.ink700).lineLimit(1).minimumScaleFactor(0.7) }
                     if delivered { Seal(glyph: "达", size: 22) }
                     else if chapter.unlocked { Image(systemName: "diamond").font(.caption2).foregroundStyle(Tok.ink700) }
                 }
@@ -256,12 +266,13 @@ private struct ChapterCard: View {
                 if chapter.soon {
                     RoundedRectangle(cornerRadius: 6).strokeBorder(Tok.ink600.opacity(0.6), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
                 } else if !chapter.unlocked {
-                    // tied with string
-                    ZStack {
-                        Rectangle().fill(Tok.ink700.opacity(0.75)).frame(width: 1.2)
-                        Rectangle().fill(Tok.ink700.opacity(0.75)).frame(height: 1.2).offset(y: 6)
-                        Image(systemName: "bowtie").font(.system(size: 18, weight: .light)).foregroundStyle(Tok.ink700).offset(y: 4)
+                    // tied with string (frame final-7): one strand down the right edge, a bow at the fold, never over words
+                    ZStack(alignment: .trailing) {
+                        Rectangle().fill(Tok.ink700.opacity(0.6)).frame(width: 1.2).frame(maxHeight: .infinity).padding(.trailing, 16)
+                        Image(systemName: "bowtie").font(.system(size: 14, weight: .light)).foregroundStyle(Tok.ink700).padding(.trailing, 8)
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
+                    .accessibilityHidden(true)
                 }
                 if hc && !chapter.soon { RoundedRectangle(cornerRadius: 6).strokeBorder(.black, lineWidth: 2) }
             }
@@ -293,14 +304,8 @@ private struct ChapterCard: View {
 
 // MARK: - the letter (frame final-8)
 
-enum Letters {
-    static let one = (zh: "河很宽，纸很薄。\n我把想说的话折了四次，\n等你合上它的那天。", zhSign: "——左岸",
-                      en: "The river is wide; the paper, thin.\nI folded what I meant to say\nfour times,\nfor the day you close it.", enSign: "— the Left Bank",
-                      ja: "川は広く、紙は薄い。言いたいことを四度折って、きみが閉じる日を待つ。——左岸より",
-                      ko: "강은 넓고 종이는 얇다. 하고 싶은 말을 네 번 접어, 네가 덮는 날을 기다린다. — 왼쪽 강가에서")
-}
-
-/// The chapter's letter unfolds in three panels: Chinese, English (2.5× longer, its own panel), Japanese + Korean.
+/// The chapter's letter, in the app's language only, folded in three: it unfolds panel by panel, the first line on
+/// the first fold, the last line and the signature on the last.
 struct LetterView: View {
     let router: Router
     let fonts = FontBook.shared
@@ -308,56 +313,31 @@ struct LetterView: View {
     @Environment(\.highContrast) private var hc
 
     var body: some View {
-        let L = Letters.one
         let rm = AppSettings.shared.motionReduced
+        let text = L10n.t("letter.1.body"), sign = L10n.t("letter.1.sign")
+        let lines = text.components(separatedBy: "\n")
+        let parts = [lines.first ?? text, lines.dropFirst().dropLast().joined(separator: "\n"), lines.count > 1 ? lines.last! : ""]
         VStack(spacing: 0) {
-            HStack(alignment: .firstTextBaseline) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(L10n.t("letter.title")).font(fonts.songti(.bold, 26, relativeTo: .title)).foregroundStyle(Tok.ink900)
                     .accessibilityAddTraits(.isHeader)
-                Spacer()
-                Text("一 · \(Chapter.all[0].name) · \(L10n.t("ch.delivered"))").font(.footnote).foregroundStyle(Tok.ink700)
+                Text("\(Chapter.all[0].numeral) · \(Chapter.all[0].name) · \(L10n.t("ch.delivered"))").font(.footnote).foregroundStyle(Tok.ink700)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 24).padding(.top, 12).padding(.bottom, 16)
             ScrollView {
                 VStack(spacing: 0) {
-                    panel(0, shade: 0) {
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text(L.zh).font(fonts.songti(.medium, 19, relativeTo: .title3)).lineSpacing(33 - 19 - 4).foregroundStyle(Tok.ink900)
-                                .environment(\.locale, Locale(identifier: "zh-Hans")).typesettingLanguage(.init(identifier: "zh-Hans"))
-                            HStack(spacing: 8) {
-                                Spacer()
-                                Text(L.zhSign).font(fonts.songti(.medium, 19, relativeTo: .title3)).foregroundStyle(Tok.ink900)
-                                    .environment(\.locale, Locale(identifier: "zh-Hans"))
-                                Seal(glyph: "岸", size: 26)
-                            }
-                        }
-                        .accessibilityElement(children: .combine)
-                        .accessibilityLabel(L.zh + " " + L.zhSign)
-                    }
+                    panel(0, shade: 0) { line(parts[0]) }
                     Fold(valley: false)
-                    panel(1, shade: 0.035) {
-                        HStack(alignment: .top, spacing: 14) {
-                            Text("EN").font(.caption.weight(.semibold)).foregroundStyle(Tok.ink600)
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text(L.en).font(.system(size: 16, design: .serif).italic()).lineSpacing(8).foregroundStyle(Tok.ink900)
-                                Text(L.enSign).font(.system(size: 15, design: .serif)).foregroundStyle(Tok.ink900).frame(maxWidth: .infinity, alignment: .trailing)
-                            }
-                            .accessibilityElement(children: .combine)
-                            .environment(\.locale, Locale(identifier: "en"))
-                        }
-                    }
+                    panel(1, shade: 0.035) { line(parts[1]) }
                     Fold(valley: true)
                     panel(2, shade: 0.015) {
                         VStack(alignment: .leading, spacing: 14) {
-                            HStack(alignment: .top, spacing: 14) {
-                                Text("日").font(.caption.weight(.semibold)).foregroundStyle(Tok.ink600)
-                                Text(L.ja).font(.custom("HiraMinProN-W3", size: 15, relativeTo: .subheadline)).lineSpacing(10).foregroundStyle(Tok.ink900)
-                                    .environment(\.locale, Locale(identifier: "ja")).typesettingLanguage(.init(identifier: "ja"))
-                            }
-                            HStack(alignment: .top, spacing: 14) {
-                                Text("한").font(.caption.weight(.semibold)).foregroundStyle(Tok.ink600)
-                                Text(L.ko).font(.custom("AppleSDGothicNeo-Regular", size: 15, relativeTo: .subheadline)).lineSpacing(9).foregroundStyle(Tok.ink900)
-                                    .environment(\.locale, Locale(identifier: "ko")).typesettingLanguage(.init(identifier: "ko"))
+                            if !parts[2].isEmpty { line(parts[2]) }
+                            HStack(spacing: 8) {
+                                Spacer()
+                                Text(sign).font(letterFont).foregroundStyle(Tok.ink900)
+                                Seal(glyph: "岸", size: 26).accessibilityHidden(true)
                             }
                         }
                     }
@@ -366,24 +346,28 @@ struct LetterView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 4))
                 .shadow(color: .black.opacity(0.14), radius: 10, y: 4)
                 .overlay(alignment: .topTrailing) {
-                    // the untied thread, lying by the letter like a cut string
+                    // the untied thread lying across the letter's corner, like a cut string (frame final-8), all on screen
                     LooseThread().stroke(hc ? Tok.hcLine : Tok.thread, style: StrokeStyle(lineWidth: 2.4, lineCap: .round))
-                        .frame(width: 40, height: 130).offset(x: 34, y: -10).accessibilityHidden(true)
+                        .frame(width: 34, height: 110).offset(x: 14, y: -14).accessibilityHidden(true)
                 }
-                .padding(.horizontal, 30).padding(.bottom, 24)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(text.replacingOccurrences(of: "\n", with: " ") + " " + sign)
+                .padding(.horizontal, 30).padding(.top, 14).padding(.bottom, 20)
+                PreviewEndNote().padding(.bottom, 24).opacity(unfolded >= 3 ? 1 : 0)
             }
-            Button { router.go(.map); } label: {
-                Text(L10n.t("letter.next")).font(fonts.songti(.bold, 19, relativeTo: .headline)).foregroundStyle(Tok.paperNew)
+            .clipped()
+            Button { router.go(.map) } label: {
+                Text(L10n.t("nav.bookLabel")).font(fonts.songti(.bold, 19, relativeTo: .headline)).foregroundStyle(Tok.paperNew)
                     .padding(.horizontal, 48).frame(minHeight: 56)
                     .background(Capsule().fill(Tok.ink900))
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(L10n.t("letter.nextLabel"))
-            .accessibilityHint(L10n.t("letter.onTheWay"))
             .accessibilityIdentifier("letter.next")
             .padding(.bottom, 10)
         }
         .background(TableBackground())
+        .environment(\.locale, L10n.locale)
+        .typesettingLanguage(.init(identifier: L10n.lang))
         .onAppear {
             if rm { unfolded = 3; return }
             for i in 1...3 {
@@ -394,13 +378,46 @@ struct LetterView: View {
         }
     }
 
+    /// design-spec §2: letter.body Songti SC Medium 19/33 · en.letter New York Italic 16/24 ·
+    /// ja.letter Hiragino Mincho ProN W3 15/25 · ko.body Apple SD Gothic Neo 17/26.
+    private var letterFont: Font {
+        let l = L10n.lang
+        if l.hasPrefix("en") { return .system(.callout, design: .serif).italic() }
+        if l.hasPrefix("ja") { return .custom("HiraMinProN-W3", size: 16, relativeTo: .callout) }
+        if l.hasPrefix("ko") { return .custom("AppleSDGothicNeo-Regular", size: 17, relativeTo: .body) }
+        return fonts.songti(.medium, 19, relativeTo: .title3)
+    }
+    private var lineGap: CGFloat {
+        let l = L10n.lang
+        return l.hasPrefix("en") ? 8 : l.hasPrefix("ja") ? 9 : l.hasPrefix("ko") ? 9 : 10
+    }
+
+    private func line(_ s: String) -> some View {
+        Text(L10n.tight(s, size: 19)).font(letterFont).lineSpacing(lineGap).foregroundStyle(Tok.ink900)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
     @ViewBuilder private func panel<C: View>(_ i: Int, shade: Double, @ViewBuilder _ content: () -> C) -> some View {
         content()
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 26).padding(.vertical, 26)
+            .frame(maxWidth: .infinity, minHeight: 72, alignment: .leading)
+            .padding(.horizontal, 26).padding(.vertical, 22)
             .background(Color.black.opacity(shade))
             .rotation3DEffect(.degrees(unfolded > i ? 0 : (i % 2 == 0 ? 80 : -80)), axis: (x: 1, y: 0, z: 0), anchor: .top, perspective: 0.4)
             .opacity(unfolded > i ? 1 : 0)
+    }
+}
+
+/// 「第一章完。下一封信，还在路上。」: the end of this preview, on the letter and on the finished map.
+struct PreviewEndNote: View {
+    var body: some View {
+        HStack(spacing: 8) {
+            Knot(color: Tok.thread, small: true).accessibilityHidden(true)
+            Text(L10n.tight(L10n.t("preview.end"), size: 16)).font(FontBook.shared.songti(.regular, 16, relativeTo: .callout)).foregroundStyle(Tok.ink700)
+                .multilineTextAlignment(.center)
+        }
+        .padding(.horizontal, 24)
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("preview.end")
     }
 }
 
@@ -431,14 +448,19 @@ struct SettingsView: View {
     let router: Router
     let fonts = FontBook.shared
 
+    @Environment(\.dynamicTypeSize) private var typeSize
+
     var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // pinned above the scroll view, so nothing scrolls up under the status bar
+            Button { router.goBack() } label: {
+                HStack(spacing: 2) { Image(systemName: "chevron.left"); Text(L10n.t("nav.book")) }
+                    .font(.body).foregroundStyle(Tok.ink900).frame(minWidth: 44, minHeight: 44)
+            }
+            .accessibilityIdentifier("settings.back")
+            .padding(.horizontal, 16)
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
-                Button { router.goBack() } label: {
-                    HStack(spacing: 2) { Image(systemName: "chevron.left"); Text(L10n.t("nav.book")) }
-                        .font(.body).foregroundStyle(Tok.ink900).frame(minWidth: 44, minHeight: 44)
-                }
-                .accessibilityIdentifier("settings.back")
                 Text(L10n.t("settings.title")).font(fonts.songti(.bold, 34, relativeTo: .largeTitle)).foregroundStyle(Tok.ink900)
                     .accessibilityAddTraits(.isHeader)
                     .padding(.bottom, 8)
@@ -450,14 +472,18 @@ struct SettingsView: View {
                     Divider().padding(.leading, 16)
                     row(L10n.t("opt.audio"), L10n.t("set.sound.d"), $settings.soundMode, id: "set.sound")
                     Divider().padding(.leading, 16)
-                    HStack(alignment: .center) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(L10n.t("set.haptics")).font(.body).foregroundStyle(Tok.ink900)
-                            Text(L10n.t("set.haptics.d")).font(.subheadline).foregroundStyle(Tok.ink600)
+                    let hapticsText = VStack(alignment: .leading, spacing: 2) {
+                        Text(L10n.t("set.haptics")).font(.body).foregroundStyle(Tok.ink900)
+                        Text(L10n.t("set.haptics.d")).font(.subheadline).foregroundStyle(Tok.ink600)
+                    }
+                    let segments = Segments(labels: (0...2).map { L10n.t("haptic.\($0)") }, selection: $settings.hapticLevel, id: "set.haptics")
+                    Group {
+                        // large text: the three choices go under their label instead of squeezing beside it
+                        if typeSize >= .xLarge {
+                            VStack(alignment: .leading, spacing: 10) { hapticsText; segments }
+                        } else {
+                            HStack(alignment: .center) { hapticsText; Spacer(minLength: 8); segments.frame(width: 168) }
                         }
-                        Spacer(minLength: 8)
-                        Segments(labels: (0...2).map { L10n.t("haptic.\($0)") }, selection: $settings.hapticLevel, id: "set.haptics")
-                            .frame(maxWidth: 140)
                     }
                     .padding(16)
                     Divider().padding(.leading, 16)
@@ -504,6 +530,8 @@ struct SettingsView: View {
             }
             .padding(.horizontal, 16).padding(.bottom, 24)
         }
+        .clipped()
+        }
         .background(TableBackground())
     }
 
@@ -520,27 +548,62 @@ struct SettingsView: View {
     }
 }
 
-/// A switch that shows its state by position *and* by a glyph: 「｜」 on, 「○」 off (never colour alone).
+/// A paper switch. Off: a pressed groove in the paper, a plain paper knob. On: the groove inked, a vermilion stitch of
+/// thread running to the knob, and a knot on the knob. State is position + thread, never colour alone; with the
+/// system's On/Off Labels setting the word for the state is printed inside the groove (no floating ○ beside it).
+/// For VoiceOver / Switch Control / Voice Control it is a real Toggle (switch trait, on / off value).
 struct PaperSwitch: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         Button { configuration.isOn.toggle() } label: {
             HStack {
                 configuration.label
                 Spacer(minLength: 12)
-                ZStack(alignment: configuration.isOn ? .trailing : .leading) {
-                    Capsule().fill(configuration.isOn ? Tok.ink900 : Color(hex: 0xE6E1D8)).frame(width: 52, height: 32)
-                    Text(configuration.isOn ? "｜" : "○").font(.system(size: 12, weight: .bold))
-                        .foregroundStyle(configuration.isOn ? Tok.paperNew : Tok.ink600)
-                        .frame(width: 52, alignment: configuration.isOn ? .leading : .trailing).padding(.horizontal, 10)
-                    Circle().fill(.white).frame(width: 28, height: 28).shadow(color: .black.opacity(0.2), radius: 1.5, y: 1).padding(2)
-                }
-                .frame(width: 52, height: 32)
-                .animation(AppSettings.shared.motionReduced ? nil : .easeOut(duration: 0.15), value: configuration.isOn)
+                PaperSwitchTrack(on: configuration.isOn)
             }
+            .frame(minHeight: 44)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityRepresentation { Toggle(isOn: configuration.$isOn) { configuration.label } }
+    }
+}
+
+private struct PaperSwitchTrack: View {
+    let on: Bool
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        let w: CGFloat = 52, h: CGFloat = 32, knob: CGFloat = 26
+        let labels = AppSettings.shared.onOffLabels
+        ZStack(alignment: on ? .trailing : .leading) {
+            Capsule().fill(on ? Tok.ink900 : Color(hex: 0xE6E1D8))
+                .overlay(Capsule().strokeBorder(hc ? Color.black : Tok.ink900.opacity(on ? 0 : 0.14), lineWidth: hc ? 2 : 1))
+                // the groove is pressed into the paper: a soft shade along its top edge
+                .overlay(Capsule().strokeBorder(LinearGradient(colors: [.black.opacity(0.12), .clear], startPoint: .top, endPoint: .center), lineWidth: 2))
+            if labels {
+                Text(L10n.t(on ? "switch.on" : "switch.off"))
+                    .font(.system(size: 10, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.6)
+                    .foregroundStyle(on ? Tok.paperNew : Tok.ink700)
+                    .frame(width: w - knob - 8)
+                    .frame(maxWidth: .infinity, alignment: on ? .leading : .trailing)
+                    .padding(.horizontal, 4)
+            } else if on {
+                // the thread, stitched along the inked groove up to the knob
+                Capsule().fill(.clear).frame(width: w - knob - 6, height: 3)
+                    .overlay(Path { p in p.move(to: CGPoint(x: 0, y: 1.5)); p.addLine(to: CGPoint(x: w - knob - 6, y: 1.5)) }
+                        .stroke(hc ? Color.white : Tok.thread, style: StrokeStyle(lineWidth: 2.4, lineCap: .round, dash: [5, 3.5])))
+                    .frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 7)
+            }
+            ZStack {
+                Circle().fill(Color(hex: 0xFCFBF8))
+                    .shadow(color: .black.opacity(0.22), radius: 1.5, y: 1)
+                    .overlay(Circle().strokeBorder(.white, lineWidth: 0.8))
+                if on { Knot(color: hc ? Tok.hcLine : Tok.thread, small: true).scaleEffect(0.9) }
+            }
+            .frame(width: knob, height: knob)
+            .padding(3)
+        }
+        .frame(width: w, height: h)
+        .animation(AppSettings.shared.motionReduced ? nil : .easeOut(duration: 0.15), value: on)
     }
 }
 
@@ -553,6 +616,7 @@ private struct Segments: View {
             ForEach(labels.indices, id: \.self) { i in
                 Button { selection = i } label: {
                     Text(labels[i]).font(.subheadline.weight(selection == i ? .semibold : .regular)).foregroundStyle(Tok.ink900)
+                        .lineLimit(1).minimumScaleFactor(0.6).padding(.horizontal, 4)
                         .frame(maxWidth: .infinity, minHeight: 44)
                         .background(RoundedRectangle(cornerRadius: 8).fill(selection == i ? Color.white : .clear)
                             .shadow(color: .black.opacity(selection == i ? 0.12 : 0), radius: 2, y: 1))

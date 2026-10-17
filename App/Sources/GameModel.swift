@@ -10,15 +10,16 @@ struct Chapter: Identifiable {
     let levelIDs: [String]
     let unlocked: Bool
     let soon: Bool
-    var numeral: String { ["一", "二", "三", "四", "五"][id - 1] }
+    /// 一 … 五 in Chinese and Japanese; the reader's own digits elsewhere (one language on screen at a time).
+    var numeral: String { L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("ja") ? ["一", "二", "三", "四", "五"][id - 1] : "\(id)" }
     var name: String { L10n.t("ch.\(id)") }
-    var englishName: String { L10n.lang.hasPrefix("en") ? "" : Bundle.main.path(forResource: "en", ofType: "lproj").flatMap(Bundle.init(path:))?.localizedString(forKey: "ch.\(id)", value: nil, table: "Localizable") ?? "" }
 
     static let all: [Chapter] = [
         Chapter(id: 1, levelIDs: ["bridge", "facing", "back", "key", "ink"], unlocked: true, soon: false),
-        Chapter(id: 2, levelIDs: ["stand", "doorBridge", "inkBridge", "crease"], unlocked: false, soon: false),
-        Chapter(id: 3, levelIDs: ["shadow", "ride"], unlocked: false, soon: false),
-        Chapter(id: 4, levelIDs: [], unlocked: false, soon: false),
+        // not in this preview build yet: shown as coming soon, never as a sealed chapter that looks openable
+        Chapter(id: 2, levelIDs: ["stand", "doorBridge", "inkBridge", "crease"], unlocked: false, soon: true),
+        Chapter(id: 3, levelIDs: ["shadow", "ride"], unlocked: false, soon: true),
+        Chapter(id: 4, levelIDs: [], unlocked: false, soon: true),
         Chapter(id: 5, levelIDs: [], unlocked: false, soon: true),
     ]
 }
@@ -110,6 +111,17 @@ final class GameModel {
     @ObservationIgnored private var ahaTask: Task<Void, Never>?
     @ObservationIgnored private var stuckTask: Task<Void, Never>?
     @ObservationIgnored private var hintFadeTask: Task<Void, Never>?
+    @ObservationIgnored private var ghostTask: Task<Void, Never>?
+    /// Resumes whoever waits for the current hinge motion (the aha), on arrival *and* on cancellation.
+    @ObservationIgnored private var motionDone: (() -> Void)?
+    /// The player has folded the page at least once this session (the ghost hand stops offering).
+    @ObservationIgnored private var hasFolded = false
+
+    // the ghost hand on 1-1 (design-spec §5: not autoplayed with reduce motion)
+    /// 0 hidden · 1 a fingertip resting on the top page · 2 the fingertip drawn down towards the crease.
+    private(set) var ghost: Double = 0
+    /// Degrees the top page lifts under the ghost finger. Drawn only; the rules never see it.
+    private(set) var tease: Double = 0
     @ObservationIgnored private(set) var motionTarget: Double?
     @ObservationIgnored private var pending = Pending()
     @ObservationIgnored private var saidAngle = 0
@@ -219,6 +231,7 @@ final class GameModel {
         game = try! FoldGame(level: pack.levels[index], config: config)
         original = game.board
         won = false; aha = false; caption = false; sealShown = false; sealSettled = false; showNext = false
+        quiet = false; dragging = false; angleHint = false; walking = false
         threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]
         pending = Pending(); saidAngle = 0; nopes = 0; hintAvailable = false; toast = nil
         angle = 0
@@ -229,6 +242,32 @@ final class GameModel {
             try? await Task.sleep(for: .seconds(45))
             if !Task.isCancelled, let self, !self.won { self.hintAvailable = true }
         }
+        // a first-timer on 1-1 who has not touched the page yet is shown how: a fingertip draws the top page down
+        if index == 0 && !done.contains(0) { startGhost(after: 3.5) }
+    }
+
+    /// The ghost hand (README "下一步", design-spec §5): loops until the player folds, never with reduce motion.
+    func startGhost(after delay: Double) {
+        guard index == 0, !won, canDrag, !hasFolded, !settings.motionReduced, ghostTask == nil else { return }
+        ghostTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(delay))
+            while !Task.isCancelled, let self, self.angle == 0, !self.dragging, !self.won {
+                withAnimation(.easeOut(duration: 0.35)) { self.ghost = 1 }
+                try? await Task.sleep(for: .milliseconds(450))
+                if Task.isCancelled { break }
+                withAnimation(.timingCurve(0.4, 0, 0.3, 1, duration: 1.1)) { self.ghost = 2; self.tease = 38 }
+                try? await Task.sleep(for: .milliseconds(1250))
+                if Task.isCancelled { break }
+                withAnimation(.easeIn(duration: 0.3)) { self.ghost = 0 }
+                withAnimation(.spring(response: 0.45, dampingFraction: 0.55)) { self.tease = 0 }
+                try? await Task.sleep(for: .seconds(2.4))
+            }
+        }
+    }
+
+    func stopGhost() {
+        ghostTask?.cancel(); ghostTask = nil
+        if ghost != 0 || tease != 0 { withAnimation(.easeOut(duration: 0.15)) { ghost = 0; tease = 0 } }
     }
     func reset() { go(index) }
 
@@ -238,7 +277,11 @@ final class GameModel {
                                 "goal": g.map(pos) ?? L10n.t("elsewhere")]) + " " + L10n.t("paper.ch1")
     }
 
-    func hint() { show(levelText.hint) }
+    /// The web's hints talk about the right and left pages; on a portrait phone those are the top and bottom pages.
+    func hint() {
+        let key = "hint.portrait.\(level.id)", portrait = L10n.t(key)
+        show(orientation == .horizontalCrease && portrait != key ? portrait : levelText.hint)
+    }
 
     // MARK: the hinge
 
@@ -251,7 +294,18 @@ final class GameModel {
         if !quiet { handle(events, from: wasPosture) }
     }
 
-    func stopMotion() { motionTask?.cancel(); motionTask = nil; motionTarget = nil }
+    func stopMotion() {
+        motionTask?.cancel(); motionTask = nil; motionTarget = nil
+        let d = motionDone; motionDone = nil; d?()
+    }
+
+    /// Input that needs the hinge at rest (a walk): land the current motion at its target now.
+    private func finishMotionNow() {
+        guard let t = motionTarget else { return }
+        stopMotion(); rubber = 0
+        if t != angle { setAngle(t) }
+        arrived(at: t)
+    }
 
     /// Animate the hinge to `target` along a design-spec curve. Springs that overshoot 0 or 180 rubber-band visually.
     func move(to target: Double, _ curve: Curve, then done: (() -> Void)? = nil) {
@@ -264,6 +318,7 @@ final class GameModel {
             return
         }
         motionTarget = target
+        motionDone = done
         let from = angle + rubber, t0 = CACurrentMediaTime()
         motionTask = Task { [weak self] in
             var x = from, v = 0.0, last = t0
@@ -297,8 +352,9 @@ final class GameModel {
             guard !Task.isCancelled, let self else { return }
             self.rubber = 0
             self.motionTarget = nil
+            self.motionTask = nil
             self.arrived(at: target)
-            done?()
+            let d = self.motionDone; self.motionDone = nil; d?()
         }
     }
 
@@ -327,7 +383,7 @@ final class GameModel {
     func foldTo(_ a: Double) {
         if aha { finishAhaNow(); return }
         if Int(a.rounded()) == Int(angle.rounded()) { settle(); return }
-        stopWalk()
+        stopWalk(); stopGhost(); hasFolded = true
         pushUndo()
         move(to: a, a >= 180 ? .closeSnap : .step)
     }
@@ -345,7 +401,7 @@ final class GameModel {
 
     func dragBegan() {
         if aha { finishAhaNow() }
-        stopMotion(); stopWalk()
+        stopMotion(); stopWalk(); stopGhost(); hasFolded = true
         pushUndo()
         dragging = true; dragFrom = angle
         hintFadeTask?.cancel()
@@ -382,13 +438,19 @@ final class GameModel {
         move(to: target, target >= 180 ? .closeSnap : .release)
     }
 
-    /// The drag turned into a two-finger gesture: put the page back where it was.
+    /// The drag turned into a two-finger gesture (or the system cancelled it): put everything back as it was when the
+    /// finger came down, including ink printed or a key used on the way (the undo snapshot from dragBegan).
     func dragCancelled() {
         guard dragging else { return }
         dragging = false
         angleHint = false
-        game.dropUndo(); canUndo = game.canUndo
-        move(to: dragFrom, .release)
+        stopMotion()
+        if game.undo() {
+            withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .easeOut(duration: 0.16)) {
+                angle = game.angle; rubber = 0; sync()
+            }
+        }
+        pending = Pending(); saidAngle = Int(angle.rounded())
     }
 
     func selectHinge(_ kind: HingeKind) {
@@ -407,6 +469,7 @@ final class GameModel {
         if aha { finishAhaNow(); return }
         if won { return }
         stopWalk()
+        finishMotionNow()
         playTile(cell)
         guard let path = game.path(to: cell) else {
             haptics.nope()
@@ -415,6 +478,7 @@ final class GameModel {
             announce(L10n.t("cantReach"))
             nopes += 1
             if nopes >= 2 { hintAvailable = true }
+            startGhost(after: 0.4)   // 1-1: tapping the far flag first is the classic first move; show the page instead
             return
         }
         if path.isEmpty { announce(L10n.t("already", ["pos": pos(game.char)])); return }
@@ -425,6 +489,8 @@ final class GameModel {
     /// One step in a screen direction (the 「走」 bookmark, VoiceOver).
     func step(_ d: Spread.Direction) {
         if won { return }
+        stopWalk()
+        finishMotionNow()
         let page = posture == .closed ? Spread.Page.fixed : spread.page(of: char.c)
         let (dc, dr) = spread.delta(d, on: page)
         let here = posture == .closed ? Cell(rules.proj(char.c), char.r) : char
@@ -458,7 +524,7 @@ final class GameModel {
         }
     }
     func stopWalk() { walkTask?.cancel(); walkTask = nil; walking = false }
-    private func stopAll() { stopWalk(); stopMotion(); settleTask?.cancel(); ahaTask?.cancel(); stuckTask?.cancel() }
+    private func stopAll() { stopWalk(); stopMotion(); stopGhost(); settleTask?.cancel(); ahaTask?.cancel(); stuckTask?.cancel() }
 
     // MARK: undo
 
@@ -550,7 +616,8 @@ final class GameModel {
             withAnimation(.easeInOut(duration: rm ? 0.2 : 1.0)) { self.caption = true }
             try? await Task.sleep(for: .milliseconds(480))
             if Task.isCancelled { return }
-            // ③
+            // ③ the book opens onto the page: the caption steps aside so it never sits over the squares (frame final-10 ③)
+            withAnimation(.easeOut(duration: rm ? 0.2 : 0.3)) { self.caption = false }
             await withCheckedContinuation { (k: CheckedContinuation<Void, Never>) in
                 self.move(to: 0, .unfoldAuto) { k.resume() }
             }
@@ -562,6 +629,7 @@ final class GameModel {
             if Task.isCancelled { return }
             withAnimation(rm ? .linear(duration: 0.2) : .easeOut(duration: 0.18)) { self.sealShown = true }
             try? await Task.sleep(for: .milliseconds(180))
+            if Task.isCancelled { return }
             self.haptics.seal(); self.sound.seal()
             withAnimation(rm ? nil : .timingCurve(0.3, 1.5, 0.6, 1, duration: 0.09)) { self.sealSettled = true }
             try? await Task.sleep(for: .milliseconds(90))
@@ -586,7 +654,7 @@ final class GameModel {
         ahaTask?.cancel(); stopMotion()
         quiet = true
         setAngle(0); rubber = 0; press = 0; glow = 0
-        caption = true; threadProgress = 1; sealShown = true; sealSettled = true
+        caption = false; threadProgress = 1; sealShown = true; sealSettled = true
         finishAha()
     }
 
@@ -676,6 +744,8 @@ final class GameModel {
         var k = shade[Cell(c, r)] != nil && !tl.isFloor ? L10n.t("kindShadow") : kind(tl)
         if tl == .tab && posture == .standing { k = L10n.t("kindTabUp") }
         var parts = [pos(c, r), k]
+        // closed: the square on top of this stack can be the goal (the folding page lies on the fixed one)
+        if posture == .closed && !rules.isRight(c) && M == .goal && tl != .goal { parts.append(kind(.goal)) }
         if char == Cell(c, r) { parts.append(L10n.t("hereYou")) }
         else if posture == .closed && char == Cell(m, r) { parts.append(L10n.t("hereStack")) }
         var extra = ""

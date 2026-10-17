@@ -18,7 +18,7 @@ struct LevelScreen: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(L10n.t("level.title", ["code": model.code, "name": model.levelText.name]))
                         .font(FontBook.shared.songti(.semibold, 28, relativeTo: .title))
-                    Text(model.levelText.line).font(FontBook.shared.songti(.regular, 24, relativeTo: .title2))
+                    Text(L10n.tight(model.levelText.line, size: 24)).font(FontBook.shared.songti(.regular, 24, relativeTo: .title2))
                 }
                 .foregroundStyle(Tok.ink900)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -31,18 +31,21 @@ struct LevelScreen: View {
                     BookView(model: model, available: g.size)
                 }
                 .padding(.horizontal, settings.largeGrid ? 0 : 20)
-                // 「信，送到了。」 over the closed book (frame v2-4)
+                // 「信，送到了。」 in the space the top page left when it closed (frame v2-4); it steps aside as the book
+                // opens again, so it never covers a square
                 if model.caption {
-                    Text(L10n.t("closed.caption"))
-                        .font(FontBook.shared.songti(.bold, 26, relativeTo: .title))
-                        .tracking(4)
-                        .foregroundStyle(Tok.ink900)
-                        .padding(.horizontal, 18).padding(.vertical, 8)
-                        .background(Capsule().fill(Tok.paperNew.opacity(model.angle < 150 ? 0.92 : 0)))
-                        .padding(.top, 8)
-                        .transition(.opacity)
-                        .accessibilityHidden(true)
-                        .allowsHitTesting(false)
+                    GeometryReader { g in
+                        Text(L10n.tight(L10n.t("closed.caption"), size: 26))
+                            .font(FontBook.shared.songti(.bold, 26, relativeTo: .title))
+                            .tracking(L10n.lang.hasPrefix("en") ? 0.5 : 4)
+                            .foregroundStyle(Tok.ink900)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 24)
+                            .position(x: g.size.width / 2, y: g.size.height * 0.27)
+                    }
+                    .transition(.opacity)
+                    .accessibilityHidden(true)
+                    .allowsHitTesting(false)
                 }
                 if settings.showButtons && !model.won {
                     HStack { Spacer(); WalkBookmark(open: $walkOpen) }
@@ -111,7 +114,7 @@ private struct TopBar: View {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
                     Text(L10n.t("level.title", ["code": model.code, "name": model.levelText.name]))
                         .font(FontBook.shared.songti(.semibold, 17, relativeTo: .headline))
-                    Text(model.levelText.line).font(FontBook.shared.songti(.regular, 15, relativeTo: .subheadline))
+                    Text(L10n.tight(model.levelText.line, size: 15)).font(FontBook.shared.songti(.regular, 15, relativeTo: .subheadline))
                 }
                 .foregroundStyle(Tok.ink900.opacity(nameFaded ? 0.4 : 1))
                 .lineLimit(1).minimumScaleFactor(0.7)
@@ -217,7 +220,19 @@ private struct WalkPanel: View {
     @Binding var open: Bool
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(L10n.t("walk.title")).font(.subheadline.weight(.semibold)).foregroundStyle(Tok.ink900)
+            HStack {
+                Text(L10n.t("walk.title")).font(.subheadline.weight(.semibold)).foregroundStyle(Tok.ink900)
+                Spacer(minLength: 8)
+                // a visible way out of the panel for Switch Control and touch (not only the escape gesture)
+                Button { open = false } label: {
+                    Image(systemName: "xmark").font(.system(size: 13, weight: .semibold)).foregroundStyle(Tok.ink700)
+                        .frame(width: 44, height: 44).contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(L10n.t("walk.close"))
+                .accessibilityIdentifier("walk.close")
+                .padding(.vertical, -10).padding(.trailing, -10)
+            }
             Grid(horizontalSpacing: 8, verticalSpacing: 8) {
                 GridRow { Color.clear.frame(width: 52, height: 1); arrow(.up, "arrow.up", "stepUp"); Color.clear.frame(width: 52, height: 1) }
                 GridRow {

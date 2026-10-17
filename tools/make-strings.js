@@ -21,7 +21,6 @@ const NATIVE = {
   levelDoneMark: ['已完成', 'Solved', 'クリア', '완료'],
   // M1 (design-spec v1): cover, chapter map, letter, settings, button control, VoiceOver, sound mode
   'cover.tagline': ['一本合上才能读懂的书', 'A puzzle book you solve by closing it', '閉じてはじめて読める本', '덮어야 읽히는 책'],
-  'cover.taglineEn': ['A puzzle book you solve by closing it', '', 'A puzzle book you solve by closing it', 'A puzzle book you solve by closing it'],
   'cover.begin': ['开始', 'Begin', 'はじめる', '시작'],
   'cover.beginLabel': ['开始：点这个线结', 'Begin: tap the knot', 'はじめる：結び目をタップ', '시작: 매듭을 누르세요'],
   'cover.settings': ['设置', 'Settings', '設定', '설정'],
@@ -39,7 +38,7 @@ const NATIVE = {
   'ch.delivered': ['已送达', 'Delivered', '届いた', '도착함'],
   'ch.inProgress': ['进行中', 'In progress', '進行中', '진행 중'],
   'ch.sealed': ['未启封', 'Sealed', '未開封', '미개봉'],
-  'ch.soon': ['即将推出 · Soon', 'Coming soon', '近日公開', '곧 공개'],
+  'ch.soon': ['即将推出', 'Coming soon', '近日公開', '곧 공개'],
   'ch.count': ['{n}/{total}', '{n}/{total}', '{n}/{total}', '{n}/{total}'],
   'ch.lockedToast': ['这一章还没启封：先把第一章的信送到。', 'This chapter is still sealed: deliver the first letter first.', 'この章はまだ開封されていません。まず第1章の手紙を届けて。', '이 장은 아직 봉인되어 있어요. 먼저 1장의 편지를 전하세요.'],
   'letter.title': ['左岸来信', 'A Letter from the Left Bank', '左岸からの手紙', '왼쪽 강가에서 온 편지'],
@@ -90,6 +89,16 @@ const NATIVE = {
   'level.code': ['{ch}-{n}', '{ch}-{n}', '{ch}-{n}', '{ch}-{n}'],
   'level.title': ['{code} · {name}', '{code} · {name}', '{code} · {name}', '{code} · {name}'],
   'undoGesture': ['两指左滑撤销', 'Swipe left with two fingers to undo', '2本指で左にスワイプして取り消し', '두 손가락으로 왼쪽으로 쓸어 실행 취소'],
+  // 0.1 (3): one language at a time, the end of the preview, phone-portrait hints, the paper switch
+  'preview.end': ['第一章完。下一封信，还在路上。', 'End of chapter one. The next letter is still on its way.', '第一章、おわり。次の手紙は、まだ旅の途中。', '1장 끝. 다음 편지는 아직 오는 중이에요.'],
+  'letter.1.body': ['河很宽，纸很薄。\n我把想说的话折了四次，\n等你合上它的那天。', 'The river is wide; the paper, thin.\nI folded what I meant to say\nfour times,\nfor the day you close it.', '川は広く、紙は薄い。\n言いたいことを四度折って、\nきみが閉じる日を待つ。', '강은 넓고 종이는 얇다.\n하고 싶은 말을 네 번 접어,\n네가 덮는 날을 기다린다.'],
+  'letter.1.sign': ['——左岸', '— the Left Bank', '——左岸より', '— 왼쪽 강가에서'],
+  'walk.close': ['收起', 'Close', '閉じる', '닫기'],
+  'hint.portrait.bridge': ['把上页合下来：上页的纸板会正好盖住缺口。', 'Close the book: the card on the top page lands exactly over the gap.', '本を閉じると、上のページの厚紙がすき間にぴたりと重なる。', '책을 덮으면 위 페이지의 종이판이 틈을 꼭 덮어요.'],
+  'hint.portrait.facing': ['合上，走到上页的路上；石头挡住了，就展开继续走。', 'Close, and step onto the top page’s path; when a stone blocks you, open and walk on.', '閉じて上のページの道へ。石にふさがれたら、開いて先へ。', '닫고 위 페이지의 길로 건너가요. 돌이 막으면 펼쳐서 계속 걸어요.'],
+  'hint.portrait.back': ['合上过去，展开走一段，再合上回到下页。', 'Close to cross, open to walk a while, then close again to come back to the bottom page.', '閉じて渡り、開いて少し歩き、また閉じて下のページへ戻る。', '닫아서 건너고, 펼쳐서 조금 걷고, 다시 닫아 아래 페이지로 돌아와요.'],
+  'hint.portrait.key': ['钥匙和门隔着折痕上下对称。合上，它们就碰到了。', 'Key and door mirror each other across the fold. Close, and they meet.', '鍵と扉は折り目をはさんで向かい合う。閉じれば、ふれあう。', '열쇠와 문은 접는 선을 사이에 두고 마주 보고 있어요. 닫으면 서로 닿아요.'],
+  'hint.portrait.ink': ['合上一次，墨会印到上页的缺口上；展开后它还在。', 'Close once: the ink prints onto the gap on the top page, and stays when you open.', '一度閉じると、墨が上のページのすき間に写る。開いても残る。', '한 번 닫으면 먹이 위 페이지 틈에 찍혀요. 펼쳐도 남아 있어요.'],
   'closeAllLabel': ['合上书', 'Close the book', '本を閉じる', '책 덮기'],
   'openAllLabel': ['打开书', 'Open the book', '本を開く', '책 펴기'],
 };

@@ -15,10 +15,12 @@
 		325A01DF0182BD81C710BC54 /* LetterfoldUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */; };
 		34A798E0D5924075ECEA5944 /* FoldCore in Frameworks */ = {isa = PBXBuildFile; productRef = 88BED3A0FF644679AC1747FE /* FoldCore */; };
 		3C0775AFD33349CA0C055368 /* Paper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23DC96729D3FCEAF07A7743F /* Paper.swift */; };
+		4808A9C05E1935D6FFE4F8B2 /* PlaythroughUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661C1BE741FF0CB5D1E9EE51 /* PlaythroughUITests.swift */; };
 		4E042B49889CAFAFFA62FB4A /* Levels.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 93CA716983C6FD7D2F2CB18E /* Levels.xcstrings */; };
 		632B7BC5D43A1FE091458D59 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */; };
 		83E16CC195AEC3EC5512860E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B5BC6A962BF940695C18366 /* Assets.xcassets */; };
 		99273F2D8C732350A8BCA85B /* Screens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CBDC31A0224AF98A0B8641 /* Screens.swift */; };
+		D8A70EB3F8BBE29228DA425A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 379A2157A36D86786F6D27BF /* PrivacyInfo.xcprivacy */; };
 		E06BF6C6CF71DF946E87BED5 /* LevelScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B298358295F0A825501A00E9 /* LevelScreen.swift */; };
 		E6F6C5E335E9922EBEEF96E7 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5597D142A9CB8FB0E573B6 /* Theme.swift */; };
 		E814CEA6AE8D68A972F67039 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578B23505A90DB23ECB3C2A4 /* Haptics.swift */; };
@@ -40,11 +42,13 @@
 /* Begin PBXFileReference section */
 		23DC96729D3FCEAF07A7743F /* Paper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paper.swift; sourceTree = "<group>"; };
 		2991315D14E1D1169059EEE2 /* Hinge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hinge.swift; sourceTree = "<group>"; };
+		379A2157A36D86786F6D27BF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		4097B0AC06804266642AEB30 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		45EBF8A2E746E16AE1153A20 /* GameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
 		4B5BC6A962BF940695C18366 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		578B23505A90DB23ECB3C2A4 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		5DCB74D3A0DCC9D491D54DCD /* FoldCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FoldCore; path = Packages/FoldCore; sourceTree = SOURCE_ROOT; };
+		661C1BE741FF0CB5D1E9EE51 /* PlaythroughUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaythroughUITests.swift; sourceTree = "<group>"; };
 		73CBDC31A0224AF98A0B8641 /* Screens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screens.swift; sourceTree = "<group>"; };
 		79DDBB77B419ABE4C00953E0 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
@@ -76,6 +80,7 @@
 			isa = PBXGroup;
 			children = (
 				B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */,
+				661C1BE741FF0CB5D1E9EE51 /* PlaythroughUITests.swift */,
 			);
 			path = UITests;
 			sourceTree = "<group>";
@@ -115,6 +120,7 @@
 				EABD85E9AF4932093EFF07E7 /* InfoPlist.xcstrings */,
 				93CA716983C6FD7D2F2CB18E /* Levels.xcstrings */,
 				868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */,
+				379A2157A36D86786F6D27BF /* PrivacyInfo.xcprivacy */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -242,6 +248,7 @@
 				30DF961F440B6EF2FFC056E0 /* InfoPlist.xcstrings in Resources */,
 				4E042B49889CAFAFFA62FB4A /* Levels.xcstrings in Resources */,
 				632B7BC5D43A1FE091458D59 /* Localizable.xcstrings in Resources */,
+				D8A70EB3F8BBE29228DA425A /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,6 +279,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				325A01DF0182BD81C710BC54 /* LetterfoldUITests.swift in Sources */,
+				4808A9C05E1935D6FFE4F8B2 /* PlaythroughUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -377,7 +385,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -477,7 +485,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (

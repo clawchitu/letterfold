@@ -22,6 +22,8 @@ final class AppSettings {
     private(set) var voiceOver = UIAccessibility.isVoiceOverRunning
     private(set) var switchControl = UIAccessibility.isSwitchControlRunning
     private(set) var assistiveTouch = UIAccessibility.isAssistiveTouchRunning
+    /// Settings › Accessibility › Display & Text Size › On/Off Labels: the switches then show their state in words.
+    private(set) var onOffLabels = UIAccessibility.isOnOffSwitchLabelsEnabled
     var systemReduceMotion = false
     var systemIncreaseContrast = false
 
@@ -41,12 +43,16 @@ final class AppSettings {
         largeGrid = d.bool(forKey: "largeGrid") || d.bool(forKey: "set.big")
         reduceMotion = d.bool(forKey: "reduceMotion") || d.bool(forKey: "set.rm")
         language = d.string(forKey: "set.lang") ?? ""
+        if d.bool(forKey: "onOffLabels") { onOffLabels = true }
         let nc = NotificationCenter.default
         nc.addObserver(forName: UIAccessibility.voiceOverStatusDidChangeNotification, object: nil, queue: .main) { _ in
             Task { @MainActor in AppSettings.shared.voiceOver = UIAccessibility.isVoiceOverRunning }
         }
         nc.addObserver(forName: UIAccessibility.switchControlStatusDidChangeNotification, object: nil, queue: .main) { _ in
             Task { @MainActor in AppSettings.shared.switchControl = UIAccessibility.isSwitchControlRunning }
+        }
+        nc.addObserver(forName: UIAccessibility.onOffSwitchLabelsDidChangeNotification, object: nil, queue: .main) { _ in
+            Task { @MainActor in AppSettings.shared.onOffLabels = UIAccessibility.isOnOffSwitchLabelsEnabled }
         }
         nc.addObserver(forName: UIAccessibility.assistiveTouchStatusDidChangeNotification, object: nil, queue: .main) { _ in
             Task { @MainActor in AppSettings.shared.assistiveTouch = UIAccessibility.isAssistiveTouchRunning }

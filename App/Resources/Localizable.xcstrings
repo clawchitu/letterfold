@@ -998,7 +998,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "即将推出 · Soon"
+            "value": "即将推出"
           }
         },
         "en": {
@@ -1317,36 +1317,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "덮어야 읽히는 책"
-          }
-        }
-      }
-    },
-    "cover.taglineEn": {
-      "comment": "UI. Native app only.",
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A puzzle book you solve by closing it"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": ""
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A puzzle book you solve by closing it"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A puzzle book you solve by closing it"
           }
         }
       }
@@ -2851,6 +2821,156 @@
         }
       }
     },
+    "hint.portrait.back": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上过去，展开走一段，再合上回到下页。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close to cross, open to walk a while, then close again to come back to the bottom page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じて渡り、開いて少し歩き、また閉じて下のページへ戻る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫아서 건너고, 펼쳐서 조금 걷고, 다시 닫아 아래 페이지로 돌아와요."
+          }
+        }
+      }
+    },
+    "hint.portrait.bridge": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "把上页合下来：上页的纸板会正好盖住缺口。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close the book: the card on the top page lands exactly over the gap."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本を閉じると、上のページの厚紙がすき間にぴたりと重なる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책을 덮으면 위 페이지의 종이판이 틈을 꼭 덮어요."
+          }
+        }
+      }
+    },
+    "hint.portrait.facing": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上，走到上页的路上；石头挡住了，就展开继续走。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close, and step onto the top page’s path; when a stone blocks you, open and walk on."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じて上のページの道へ。石にふさがれたら、開いて先へ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫고 위 페이지의 길로 건너가요. 돌이 막으면 펼쳐서 계속 걸어요."
+          }
+        }
+      }
+    },
+    "hint.portrait.ink": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上一次，墨会印到上页的缺口上；展开后它还在。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close once: the ink prints onto the gap on the top page, and stays when you open."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一度閉じると、墨が上のページのすき間に写る。開いても残る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "한 번 닫으면 먹이 위 페이지 틈에 찍혀요. 펼쳐도 남아 있어요."
+          }
+        }
+      }
+    },
+    "hint.portrait.key": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "钥匙和门隔着折痕上下对称。合上，它们就碰到了。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Key and door mirror each other across the fold. Close, and they meet."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鍵と扉は折り目をはさんで向かい合う。閉じれば、ふれあう。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "열쇠와 문은 접는 선을 사이에 두고 마주 보고 있어요. 닫으면 서로 닿아요."
+          }
+        }
+      }
+    },
     "inkPrinted": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -3507,6 +3627,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "왼쪽 페이지"
+          }
+        }
+      }
+    },
+    "letter.1.body": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "河很宽，纸很薄。\n我把想说的话折了四次，\n等你合上它的那天。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The river is wide; the paper, thin.\nI folded what I meant to say\nfour times,\nfor the day you close it."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "川は広く、紙は薄い。\n言いたいことを四度折って、\nきみが閉じる日を待つ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "강은 넓고 종이는 얇다.\n하고 싶은 말을 네 번 접어,\n네가 덮는 날을 기다린다."
+          }
+        }
+      }
+    },
+    "letter.1.sign": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——左岸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— the Left Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——左岸より"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— 왼쪽 강가에서"
           }
         }
       }
@@ -5401,6 +5581,36 @@
         }
       }
     },
+    "preview.end": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第一章完。下一封信，还在路上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of chapter one. The next letter is still on its way."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第一章、おわり。次の手紙は、まだ旅の途中。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1장 끝. 다음 편지는 아직 오는 중이에요."
+          }
+        }
+      }
+    },
     "prog.dist": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -6897,6 +7107,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "위"
+          }
+        }
+      }
+    },
+    "walk.close": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "收起"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫기"
           }
         }
       }

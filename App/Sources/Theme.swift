@@ -77,6 +77,12 @@ final class FontBook {
             // Japanese must use Japanese glyph forms (plan §10): Hiragino Mincho, not a Chinese Song face.
             return .custom(w == .regular || w == .medium ? "HiraMinProN-W3" : "HiraMinProN-W6", size: size, relativeTo: style)
         }
+        // English and Korean set their titles in their own system serif (New York, with AppleMyungjo for Hangul):
+        // Songti's Latin and its Hangul fallback read as a foreign face. The cover's 「折」 is always Chinese.
+        if !lang.hasPrefix("zh") && w != .black {
+            let weight: Font.Weight = switch w { case .black: .heavy; case .bold: .bold; case .semibold: .semibold; case .medium: .medium; case .regular: .regular }
+            return .system(style, design: .serif).weight(weight)   // follows Dynamic Type through the text style
+        }
         if songtiReady {
             let name = switch w { case .black: "STSongti-SC-Black"; case .bold, .semibold: "STSongti-SC-Bold"; default: "STSongti-SC-Regular" }
             return .custom(name, size: size, relativeTo: style)

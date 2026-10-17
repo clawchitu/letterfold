@@ -13,7 +13,7 @@ enum Look { case light, dark, tinted }
 func render(_ look: Look, size s: Int) -> CGImage {
     let S = CGFloat(s)
     let ctx = CGContext(data: nil, width: s, height: s, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpace(name: CGColorSpace.sRGB)!,
-                        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+                        bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)!  // opaque: App Store icons must have no alpha channel
     let (l0, l1, r0, r1, thread): (UInt32, UInt32, UInt32, UInt32, UInt32) = switch look {
     case .light: (0xFAF8F3, 0xF1EDE5, 0xEAE4DA, 0xE0D9CC, 0xC0473A)
     case .dark: (0x2E2924, 0x26221E, 0x1F1C19, 0x191714, 0xC8503F)

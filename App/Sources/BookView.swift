@@ -78,7 +78,8 @@ struct BookView: View {
         .contentShape(Rectangle())
         .gesture(BookPan(began: { loc in panBegan(loc, geo: geo, origin: CGPoint(x: x0, y: y0 + scrollY)) },
                          changed: { t, touches in panChanged(t, touches: touches, geo: geo, overflow: overflow) },
-                         ended: { t, v in panEnded(t, v, geo: geo) }))
+                         ended: { t, v in panEnded(t, v, geo: geo) },
+                         cancelled: { panCancelled() }))
         .overlay(alignment: .bottom) {
             if overflow > 0 && -scrollY < overflow - 4 {
                 let rows = Int(ceil((overflow + scrollY) / (geo.tile + geo.gap)))
@@ -177,6 +178,12 @@ struct BookView: View {
         model.dragEnded(velocity: towardsClosed / (2 * pan.d) * 180)
         pan = PanState()
     }
+
+    /// The system took the touch away (a call, Control Centre): nothing the finger did counts.
+    private func panCancelled() {
+        if pan.active { model.dragCancelled() }
+        pan = PanState()
+    }
 }
 
 /// UIKit pan (one or two fingers) so a second finger can turn a page drag into a scroll or the undo swipe.
@@ -184,6 +191,7 @@ struct BookPan: UIGestureRecognizerRepresentable {
     var began: (CGPoint) -> Void
     var changed: (CGPoint, Int) -> Void
     var ended: (CGPoint, CGPoint) -> Void
+    var cancelled: () -> Void
 
     func makeUIGestureRecognizer(context: Context) -> UIPanGestureRecognizer {
         let g = UIPanGestureRecognizer()
@@ -199,7 +207,8 @@ struct BookPan: UIGestureRecognizerRepresentable {
             began(CGPoint(x: c.localLocation.x - t.x, y: c.localLocation.y - t.y))
             changed(t, g.numberOfTouches)
         case .changed: changed(c.localTranslation ?? .zero, g.numberOfTouches)
-        case .ended, .cancelled, .failed: ended(c.localTranslation ?? .zero, c.localVelocity ?? .zero)
+        case .ended: ended(c.localTranslation ?? .zero, c.localVelocity ?? .zero)
+        case .cancelled, .failed: cancelled()
         default: break
         }
     }
@@ -214,7 +223,7 @@ private struct BookBody: View {
 
     var body: some View {
         let page = geo.pageSize
-        let va = model.angle + model.rubber
+        let va = model.angle + model.rubber + model.tease
         let a = max(0, min(180, va)) * .pi / 180
         let horizontal = geo.horizontal
         let fixedOrigin = horizontal ? CGPoint(x: 0, y: page.height) : .zero
@@ -264,7 +273,15 @@ private struct BookBody: View {
                 Seal(glyph: "通", size: 26)
                     .scaleEffect(model.sealSettled ? 1 : 1.02)
                     .position(x: horizontal ? x : page.width, y: horizontal ? page.height : geo.center(x: 0, y: model.crossingSlotX ?? 0).y)
-                    .transition(.asymmetric(insertion: .scale(scale: 1.6).combined(with: .opacity), removal: .opacity))
+                    .transition(AppSettings.shared.motionReduced ? .opacity : .asymmetric(insertion: .scale(scale: 1.6).combined(with: .opacity), removal: .opacity))
+                    .accessibilityHidden(true)
+            }
+            // the ghost hand on 1-1: a fingertip presses the top page and draws it down towards the crease
+            if horizontal && model.ghost > 0 {
+                GhostFinger()
+                    .position(x: page.width * 0.5, y: model.ghost >= 2 ? page.height * 0.80 : page.height * 0.32)
+                    .transition(.opacity)
+                    .allowsHitTesting(false)
                     .accessibilityHidden(true)
             }
             // VoiceOver / Switch Control: the page itself is an adjustable control (frame a11y-c2)
@@ -421,16 +438,36 @@ private struct Shake: ViewModifier, Animatable {
     }
 }
 
+/// The ghost hand's fingertip: a soft pad of shadow with a paper rim (no hand drawing, nothing to read).
+private struct GhostFinger: View {
+    var body: some View {
+        ZStack {
+            Circle().fill(Tok.ink900.opacity(0.16)).frame(width: 46, height: 46).blur(radius: 1.5)
+            Circle().strokeBorder(.white.opacity(0.9), lineWidth: 2).frame(width: 46, height: 46)
+            Circle().fill(.white.opacity(0.35)).frame(width: 18, height: 18).offset(x: -6, y: -7).blur(radius: 3)
+        }
+        .shadow(color: .black.opacity(0.18), radius: 6, y: 4)
+    }
+}
+
 private struct PuppetLayer: View {
     let model: GameModel
     let geo: BookGeometry
     let at: CGPoint
     var body: some View {
-        TimelineView(.periodic(from: .now, by: 0.24)) { ctx in
-            let frame = model.walking && !AppSettings.shared.motionReduced ? Int(ctx.date.timeIntervalSinceReferenceDate / 0.24) % 2 : 0
-            Puppet(frame: frame, facingLeft: facingLeft)
-                .frame(width: geo.tile * 0.62, height: geo.tile * 0.84)
+        // standing on wet ink, the black figure gets a paper rim so it does not vanish into the blot
+        let onInk = model.board[model.char] == .ink
+        Group {
+            if model.walking && !AppSettings.shared.motionReduced {
+                // the two walking frames only tick while walking (no idle redraws)
+                TimelineView(.periodic(from: .now, by: 0.24)) { ctx in
+                    Puppet(frame: Int(ctx.date.timeIntervalSinceReferenceDate / 0.24) % 2, facingLeft: facingLeft, rim: onInk)
+                }
+            } else {
+                Puppet(frame: 0, facingLeft: facingLeft, rim: onInk)
+            }
         }
+        .frame(width: geo.tile * 0.62, height: geo.tile * 0.84)
         .position(x: at.x, y: at.y - geo.tile * 0.12)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
@@ -496,11 +533,12 @@ private struct FixedPage: View {
         ZStack(alignment: .topLeading) {
             PageSheet(horizontal: geo.horizontal, isFixed: true)
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: !covered)
-            if !covered {
-                ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .fixed),
-                            end: model.trail.last.flatMap { s.page(of: $0.c) == .fixed ? geo.center($0) : nil })
-                if s.page(of: model.char.c) == .fixed { PuppetLayer(model: model, geo: geo, at: geo.center(model.char)) }
-            }
+            // kept in the tree while the book is closed (hidden, not removed): re-inserting it mid-aha lost the
+            // thread's redraw and left this page without its thread after the book reopened
+            ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .fixed),
+                        end: model.trail.last.flatMap { s.page(of: $0.c) == .fixed ? geo.center($0) : nil })
+                .opacity(covered ? 0 : 1)
+            if !covered && s.page(of: model.char.c) == .fixed { PuppetLayer(model: model, geo: geo, at: geo.center(model.char)) }
             // the folding page's shadow: a soft band from the crease that grows as it closes over this page
             if !hc && angle > 0 {
                 let extent = geo.depth * (1 - cos(a)) / 2 + 14 * sin(a)
