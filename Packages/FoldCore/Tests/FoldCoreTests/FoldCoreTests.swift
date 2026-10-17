@@ -108,6 +108,28 @@ final class GameTests: XCTestCase {
         XCTAssertTrue(g.won)
     }
 
+    func testTrailIsTheWalkedPath() throws {
+        let g = try FoldGame(level: level("bridge"))
+        XCTAssertEqual(g.trail, [Cell(1, 0)])
+        g.setAngle(180)
+        g.pushUndo()
+        g.walk(to: Cell(1, 4))
+        XCTAssertEqual(g.trail, [Cell(1, 0), Cell(1, 1), Cell(6, 2), Cell(1, 3), Cell(1, 4)], "crosses onto the bridge card")
+        XCTAssertTrue(g.undo())
+        XCTAssertEqual(g.trail, [Cell(1, 0)])
+        g.reset()
+        XCTAssertEqual(g.trail, [g.board.start])
+    }
+
+    func testFallingStartsTheThreadAgain() throws {
+        let g = try FoldGame(level: level("ride"))
+        g.setAngle(120)
+        g.walk(to: Cell(2, 2))
+        XCTAssertEqual(g.trail.count, 2)
+        g.setAngle(180)
+        XCTAssertEqual(g.trail, [g.board.start])
+    }
+
     func testKeyOpensDoorAndUndo() throws {
         let g = try FoldGame(level: level("key"))
         g.pushUndo()
@@ -146,5 +168,58 @@ final class GameTests: XCTestCase {
         g.setAngle(90)
         XCTAssertEqual(g.posture, .standing)
         XCTAssertEqual(g.walk(to: Cell(7, 0))?.last, .won)
+    }
+}
+
+/// The portrait layout: a horizontal crease, the top page folding down onto the bottom one (design-spec §4).
+final class SpreadTests: XCTestCase {
+    func testPortraitSlots() {
+        let s = Spread(.horizontalCrease, rows: 5)
+        XCTAssertEqual(s.slotsAcross, 5)
+        XCTAssertEqual(s.slotsDown, 4)
+        // top page: column 7 at the top, column 4 against the crease
+        XCTAssertEqual(s.page(of: 7), .folding)
+        XCTAssertTrue(s.slot(Cell(7, 2)) == (2, 0))
+        XCTAssertTrue(s.slot(Cell(4, 0)) == (0, 3))
+        // bottom page: column 3 against the crease, column 0 at the bottom
+        XCTAssertTrue(s.slot(Cell(3, 1)) == (1, 0))
+        XCTAssertTrue(s.slot(Cell(0, 4)) == (4, 3))
+        for c in 0..<8 { for r in 0..<5 {
+            let cell = Cell(c, r), sl = s.slot(cell)
+            XCTAssertEqual(s.cell(page: s.page(of: c), x: sl.x, y: sl.y), cell)
+        } }
+    }
+
+    /// Closing mirrors a top-page slot across the crease onto exactly the cell the rules stack it on.
+    func testClosingMirrorsAcrossTheCrease() {
+        let s = Spread(.horizontalCrease, rows: 4), rules = Rules(.standard)
+        for c in 4..<8 { for r in 0..<4 {
+            let top = s.slot(Cell(c, r)), under = s.slot(Cell(rules.mirror(c), r))
+            XCTAssertEqual(top.x, under.x)
+            XCTAssertEqual(top.y, s.slotsDown - 1 - under.y, "mirrored across the crease")
+            XCTAssertTrue(s.stackSlot(Cell(c, r)) == under)
+        } }
+    }
+
+    func testScreenDirections() {
+        let s = Spread(.horizontalCrease, rows: 4)
+        for c in 0..<8 { for r in 1..<3 {
+            let page = s.page(of: c), here = s.slot(Cell(c, r))
+            for d in Spread.Direction.allCases {
+                let (dc, dr) = s.delta(d, on: page)
+                let nc = c + dc
+                if s.page(of: nc) != page || nc < 0 || nc > 7 { continue }
+                let there = s.slot(Cell(nc, r + dr))
+                switch d {
+                case .up: XCTAssertTrue(there == (here.x, here.y - 1))
+                case .down: XCTAssertTrue(there == (here.x, here.y + 1))
+                case .left: XCTAssertTrue(there == (here.x - 1, here.y))
+                case .right: XCTAssertTrue(there == (here.x + 1, here.y))
+                }
+            }
+        } }
+        let v = Spread(.verticalCrease, rows: 4)
+        XCTAssertTrue(v.slot(Cell(5, 2)) == (1, 2))
+        XCTAssertTrue(v.stackSlot(Cell(5, 2)) == (2, 2))
     }
 }

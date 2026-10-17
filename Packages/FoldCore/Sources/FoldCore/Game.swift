@@ -26,9 +26,12 @@ public final class FoldGame {
     public private(set) var posture: Posture = .open
     public private(set) var shade: [Cell: Int] = [:]
     public private(set) var won = false
+    /// The cells walked so far, in order, starting at the start cell: the vermilion thread (design-spec §0.3).
+    /// A fall starts it again; undo restores it.
+    public private(set) var trail: [Cell]
     private var rideSrc: Int?
 
-    private struct Snapshot { var board: Board; var char: Cell; var angle: Double }
+    private struct Snapshot { var board: Board; var char: Cell; var angle: Double; var trail: [Cell] }
     private var undoStack: [Snapshot] = []
     public var canUndo: Bool { !undoStack.isEmpty }
 
@@ -40,6 +43,7 @@ public final class FoldGame {
         rules = Rules(config)
         board = try Board(level: level, columnsPerPage: config.columnsPerPage)
         char = board.start
+        trail = [board.start]
     }
 
     public var config: FoldConfig { rules.config }
@@ -76,10 +80,10 @@ public final class FoldGame {
         if !rules.isRight(char.c) && !board[char].isFloor {
             if rideSrc == nil { rideSrc = previous[char] ?? shade[char] }
             if let to = rules.ride(board, char, rideSrc, a) {
-                if to.c != char.c { char = to; events.append(.slid(to: to)) }
+                if to.c != char.c { char = to; trail.append(to); events.append(.slid(to: to)) }
             } else {
                 events.append(.fell(crushed: a >= config.foldMin))
-                char = board.start; rideSrc = nil
+                char = board.start; trail = [board.start]; rideSrc = nil
             }
         } else { rideSrc = nil }
         if Set(shade.keys) != Set(previous.keys) { events.append(.shadeChanged) }
@@ -100,6 +104,7 @@ public final class FoldGame {
     public func step(to n: Cell) -> [GameEvent] {
         guard !won, neighbours.contains(n) else { return [.blocked] }
         char = n
+        trail.append(n)
         rideSrc = board[n].isFloor ? nil : shade[n]
         var events: [GameEvent] = [.stepped(to: n)]
         checkWin(&events)
@@ -120,20 +125,23 @@ public final class FoldGame {
     // MARK: undo
 
     public func pushUndo() {
-        undoStack.append(Snapshot(board: board, char: char, angle: angle))
+        undoStack.append(Snapshot(board: board, char: char, angle: angle, trail: trail))
         if undoStack.count > 200 { undoStack.removeFirst() }
     }
+
+    /// Forget the last pushUndo (a drag that ended where it started).
+    public func dropUndo() { _ = undoStack.popLast() }
 
     @discardableResult
     public func undo() -> Bool {
         guard let s = undoStack.popLast() else { return false }
-        board = s.board; char = s.char; angle = s.angle
+        board = s.board; char = s.char; angle = s.angle; trail = s.trail
         posture = rules.posture(angle); shade = rules.shadows(board, angle); rideSrc = nil; won = false
         return true
     }
 
     public func reset() {
         board = try! Board(level: level, columnsPerPage: config.columnsPerPage)
-        char = board.start; angle = 0; posture = .open; shade = [:]; rideSrc = nil; won = false; undoStack = []
+        char = board.start; trail = [board.start]; angle = 0; posture = .open; shade = [:]; rideSrc = nil; won = false; undoStack = []
     }
 }
