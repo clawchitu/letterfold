@@ -1,7 +1,7 @@
 # 折信 · Letterfold（iOS 原生版）
 
 一本合上才能读懂的书：把世界对折，两页就会相遇。
-网页原型和设计文档在 [fold-proto](https://github.com/clawchitu/fold-proto)（`docs/plan.md`）。本仓库是原生 iOS 版，当前进度 **M0：模拟器里能玩的原生构建**。
+网页原型和设计文档在 [fold-proto](https://github.com/clawchitu/fold-proto)（`docs/plan.md`）。本仓库是原生 iOS 版，当前进度 **M1：第一章的原生视觉与交互**（按 fold-proto `docs/design-spec.md`、`design-review-1.md`、`plan.md` §9–§11 和定稿效果图实现）。
 
 ## 构建与运行
 
@@ -25,7 +25,9 @@ xcodebuild test -project Letterfold.xcodeproj -scheme Letterfold -destination "i
 cd Packages/FoldCore && swift test
 ```
 
-启动参数（截图和调试用）：`-startLevel 6`（从 1 开始）、`-startAngle 90`、`-autoplay YES`（自动玩第 1 关）、`-resetProgress YES`、`-hinge simulated|device|tilt`、`-AppleLanguages "(zh-Hans)"`。
+启动参数（截图和调试用）：`-screen cover|map|level|letter|settings`、`-startLevel 5`（从 1 开始）、`-startAngle 130`、`-walkTo 6,2`（先走到某格，必要时先合上）、`-aha YES`（直接播「啊哈」）、`-autoplay YES`、`-resetProgress YES`、`-hinge simulated|device`、`-buttonControl YES`、`-highContrast YES`、`-largeGrid YES`、`-reduceMotion YES`、`-soundMode YES`、`-AppleLanguages "(ja)"`。
+
+图标：`swift tools/make-icon.swift App/Resources/Assets.xcassets/AppIcon.appiconset`（按 final-11 方案 A 用 CoreGraphics 画，生成全部旧尺寸 + 深色 / 着色 1024）。
 
 **部署版本**：SDK 是 iOS 27.1，部署目标设为 **iOS 27.0**。原因：本机 iOS 27.1 模拟器运行时只支持「iPhone Duo」机型，iPhone 18 Pro 只有 27.0。`UIHinge` 相关代码都在 `@available(iOS 27.1, *)` 后面，27.0 上自动退回滑块。
 
@@ -35,46 +37,70 @@ cd Packages/FoldCore && swift test
 project.yml                 XcodeGen 工程描述（App + UI 测试 + 本地包）
 Packages/FoldCore/          纯 Swift 包，无 UI：游戏规则（logic.js 1:1 移植）
   Sources/FoldCore/
-    Model.swift             Cell / Tile / Posture / FoldConfig（姿态阈值：合上 ≥155°、立起 60–120°、影子 ≥91°，可配置）/ Level / Board
-    Rules.swift             镜像、叠合连通、寻路、影子与乘影、墨印与钥匙、胜利判定
-    Game.swift              一局：转铰链（按 5° 细分，乘影与帧率无关）、走路、撤销、事件（接通/断开/滑动/掉落/过关）
-    Solver.swift            tools/check.js 的移植：0-1 BFS 求解器 + 机制必要性报告
-    Resources/levels.json   从网页原型导出的关卡（含 JS 求解器的结论，测试要求 Swift 结果完全一致）
-  Tests/FoldCoreTests/      每关可解、每关确实需要它教的机制、只用 15° 步进也可解、与 JS 求解器一致
-App/
-  Sources/
-    ContentView.swift       App 入口、顶栏、折叠控件、过关卡片、关卡选择
-    BookView.swift          两页书与 3D 折叠、格子、影子、纸人
-    GameModel.swift         动画、走路、撤销、触觉、VoiceOver 标签与播报
-    Hinge.swift             HingeProvider：SimulatedHinge / UIHingeProvider（UIHinge + UIHingeInteraction）/ TiltHinge（占位）
-    Haptics.swift           轻触觉（接通两下轻敲、合上一下“啪”、步进 tick）
-    L10n.swift              读 String Catalog，填 {name} 占位符，韩文助词
-  Resources/                Localizable / Levels / InfoPlist.xcstrings（zh-Hans、en、ja、ko）
-  UITests/                  XCUITest
-tools/
-  sync-from-proto.sh        从 fold-proto 重新导出关卡和文案（单一来源）
-  make-strings.js           i18n.js → String Catalog
+    Model.swift / Rules.swift / Solver.swift   格子、规则、求解器（M0）
+    Game.swift              一局：转铰链、走路、撤销；M1 加了 trail（走过的路 = 朱线）
+    Spread.swift            M1：地图坐标 ↔ 屏幕页位。竖屏横折痕（上页 = 右页 7→4 列，下页 = 左页 3→0 列，地图的行 = 屏幕的列）、Duo/横屏竖折痕；屏幕方向 ↔ 地图步
+  Tests/FoldCoreTests/      M0 的 17 个 + trail 2 个 + Spread 3 个
+App/Sources/
+  App.swift                 入口、Router（书封 → 章节地图 → 关卡 → 信）、全局环境（高对比、语言、字形）
+  Screens.swift             书封、章节地图、信的揭示、设置
+  LevelScreen.swift         关卡：顶栏（书 / ?）、关卡名、书、「信，送到了。」、按钮页脚、「走」书签、声音模式字幕
+  BookView.swift            书：几何、3D 折叠（正面 / 背面）、明暗、手势（单指拖页 / 双指滚动与撤销）、VoiceOver（格子、折页控件、转子）
+  Paper.swift               纸纹（程序生成）、浮雕路格、纸石、湿墨与洇开、钥匙 / 门、小旗、皮影纸人、朱线与结、印章、花纹
+  GameModel.swift           拖页与吸附、弹簧、合上相触、「啊哈」时间轴、撤销、声音、读屏文案与播报
+  Theme.swift               颜色 token、每章 4 个纸参数、字体（宋体按需下载）
+  Settings.swift            设置项 + 系统辅助功能状态
+  Haptics.swift / Sound.swift   Core Haptics 图案；AVAudioEngine 合成音（无音频文件）
+  Hinge.swift / L10n.swift  铰链（M0）；文案（可在设置里切语言）
+App/Resources/              String Catalog（zh-Hans / en / ja / ko）、Assets.xcassets（App 图标）
+App/UITests/                XCUITest：书封 → 地图 → 关卡；真拖页合上 → 点格走 → 啊哈；拖到半开吸附；按钮步进与撤销；日文
+tools/                      sync-from-proto.sh、make-strings.js（原生专用文案在 NATIVE 表里）、make-icon.swift
 ```
 
-**单一来源**：关卡和文案只在网页原型里改。改完跑 `tools/sync-from-proto.sh`（调用 fold-proto 的 `tools/export.js`），会更新 `levels.json` 和三个 `.xcstrings`；再跑测试，Swift 求解器必须和 JS 求解器结论一致。
+**单一来源**：关卡和文案只在网页原型里改。改完跑 `tools/sync-from-proto.sh`（调用 fold-proto 的 `tools/export.js`），会更新 `levels.json` 和三个 `.xcstrings`；原生专用的文案（书封、地图、设置、读屏）写在 `tools/make-strings.js` 的 `NATIVE` 表里，同一个脚本生成。
 
-### 渲染选择
+## M1 做了什么
 
-M0 用 **SwiftUI `rotation3DEffect`**：几乎是网页 CSS 3D 的直接移植，最快出平滑效果。右页绕折痕转；转过 90° 后看到的是“描图纸”背面（镜像的格子正好落在它要叠上的格子上），纸逐渐变透明；镜头在半开时绕一点，让立起的页面朝向你。注意：嵌套的 `rotation3DEffect` 会被拍平，所以镜头环绕分别加在两页上（左页 = 环绕，右页 = 环绕 − 折角）。真实投影、宣纸透光留给 RealityKit 试验（计划 §5），FoldCore 与渲染完全分离，到时只换 `BookView`。
+- **竖屏横折痕**：上页向下合到下页，格子 80pt（5 行地图 63pt），间隙 4，页边 10；FoldCore 规则不变，坐标映射放在 `Spread`（有测试）。Duo（设备铰链在场）和横屏 / iPad 横向用竖折痕。
+- **输入只有拖页和点格**：整张书都是拖页热区，页的外缘 1:1 跟手（按抓点到折痕的距离算角度），越界橡皮筋；松手按速度投射后吸附到 0 / 90 / 130 / 180°（`hinge.release` 160ms 曲线，合上用 `close.snap` 弹簧）；经过吸附点 Impact .medium 0.6，其余每 15° 一下选择触感；合上「啪」= rigid 0.9 + 纸面下压 + 折痕发亮。拖动时折痕旁 11pt 角度，松手后 0.6s 淡出。点格走路，不可达的格子轻抖。两指左滑 = 撤销。默认界面没有滑块、读数和按钮。Duo 上铰链是唯一输入（拖页关闭），模拟器仍用 SimulatedHinge。
+- **按钮控制**：VoiceOver / 切换控制 / 辅助触控在运行，或设置里打开「按钮控制」时，页脚出现 5 个按钮（折一点 · 展开一点 · 合上 · 打开 · 撤销，每个 ≥52pt 高），右侧「走」书签（30×150，热区 44×150）展开四向一步、听一行、我在哪。同样的动作也是每格和折页控件的 accessibilityCustomActions。
+- **第一章材质**：新纸 #F7F4EE / 透光 0.05 / 墨饱和 82% / 无背光（`PaperState.chapter1`，其他章的 4 个参数也已写好）；程序生成的纸纤维；每页向折痕微微下陷（谷折），合上后书脊是山折高光；中缝亮线 1.1pt + 暗线 0.8pt；路格比纸深一档 + 顶边高光 + 底边 1pt 投影；纸石三个棱面；湿墨有沿纤维洇开的晕，印到对页的是镜像，洇开 600ms，原处变淡；朱线 3pt 虚线 8/5 + 投影，只画走过的路，跨页的一步在两页各止于格边、打结，书打开时从不跨中缝，合上时在书背上连成一条，到终点打结。
+- **「啊哈」**（final-10，1470ms）：过关时 ① 没合上就先弹簧合上（220ms）② 相触：压下、折痕发亮、rigid 0.9、「啪」，「信，送到了。」淡入 ③ 自动展开到摊平（300ms）、朱线重描（420ms）、「通」印落在朱线过河处（180 + 90ms 回弹）、soft 0.6 + success。任何触摸、按钮、读屏动作都会跳到最后一帧。减少动态效果：全部改成 200ms 线性淡入淡出，没有翻转和回弹。
+- **书封、章节地图（只开第一章）、第一章的信**（中 / EN / 日 / 한 三折展开），四种语言来自 String Catalog；设置里可切语言（中 / EN / 日 / 한 / 跟随系统）。
+- **无障碍**：高对比（白底 3pt 黑框路格、斜线石头、实心墨 / 虚线框、终点双框、#8E2419 4pt 朱线 + 8pt 白衬；也跟随系统「增强对比度」）；超大格子（92pt，单指仍拖页，两指滚动，底部「下页还有 n 行」）；VoiceOver：每格标签沿用网页短句、折页是可调控件（上下轻扫 15°）、转子（路 / 缺口 / 物件 / 影子）、棋盘 accessibilityValue 给进度（第 n 步、离终点 n 格、书的状态）、播报带语言属性；声音模式（基础版）：音高 = 地图行（宫商角徵羽宫′），音色 = 页（下页木、上页纸），声像 = 页（上页随合书从右耳转到左耳），接通时上行琶音，终点每 3 秒三音动机、越近越响，VoiceOver 焦点落到格子上就响；语音朗读（无读屏时用系统语音）；Dynamic Type（界面文字；AX 字号时关卡名放大并恢复 100% 墨色）。
+- **Core Haptics**：吸附、相触、接通（两下轻敲 + 0.3s 低频）、落印、撞墙、撤销，强度乘「触觉强度」关 / 弱 / 强（0 / 0.6 / 1.0）。
+- **App 图标**：final-11 方案 A，浅色 / 深色 / 着色。
 
-### 铰链
+### RealityKit 试验（风险 5）的决定
 
-`UIHingeProvider` 用 iOS 27.1 公开 API：`UIHingeInteraction(updateHandler:)` 加到视图上，从 `update.hinge` 读 `status` 和 `angle`（弧度）。`hinge == nil` 或 `status == .unknown` 时退回 `SimulatedHinge`；铰链一出现就自动切到设备铰链，滑块和按钮仍然有效。角度换算 `Calibration`：目前假设 π = 摊平、0 = 合上；iPhone Duo 模拟器（27.1）启动时是合上状态，报 `status=closed angle=0.0`，与假设一致，真机到了再标定。
+**M1 留在 SwiftUI + 分层明暗，没有切 RealityKit。** 这一轮我没有做出 RealityKit 版的折页原型（工作量全部花在交互、材质和无障碍上），所以风险 5 仍然开着。留在 SwiftUI 的理由：① 第一章的纸透光只有 0.05，需要的是折痕明暗、浮雕和投影，分层渐变已经够，不需要真实的半透明；② 每格都要是读屏元素、能点、能被转子跳到，SwiftUI 视图天然就是，RealityKit 里要把 3D 位置再投影回一层透明的无障碍视图；③ 模拟器测不出 120 fps，真机到之前没法判断"够不够顺"。真正需要 RealityKit（或 Metal 薄层）的是第三章的背光透光和软影，建议在 TestFlight 切片之后、第三章之前用真机做：一页 PBR 纸（透光 0.6）+ 方向光软影，和现在的 SwiftUI 帧并排比。
 
-### 无障碍与多语言
+### 和设计稿的出入（Chitu 决定）
 
-- VoiceOver：每格一个元素，标签沿用网页的短句（「第3行第2列，缺口；合上后对面的纸板会落在这里」）；自定义动作「走到这里 / 折一点 / 展开一点 / 撤销」；折叠滑块是可调元素，上下滑每次 15°，另有「合上 / 打开」动作；接通、开门、墨印、影子、滑动、过关都会播报，过关发 `.screenChanged`。
-- Dynamic Type（界面文字，棋盘不缩放）；尊重「减少动态效果」（折叠不做补间、不闪）；不只靠颜色（石头斜线、影子交叉线、纸片条纹、终点双框、选中按钮加描边）。
-- 文案：`Localizable.xcstrings`（界面与读屏）、`Levels.xcstrings`（关卡名、一句话、提示）、`InfoPlist.xcstrings`（主屏名：折信 / Letterfold / 折り文 / 접은 편지）。
+1. **角度用"折角"表示**：0° = 摊平，180° = 合上（和 FoldCore、读屏文案、吸附点 0/90/130/180、影子窗口 91–154° 一致）。设计稿里 Duo 帧写「180°」表示摊平、v2-4 写「合上 0°」，用的是铰链开角；两种写法混在一起，统一成折角，读屏念「合上 180°」。
+2. **合上时能看到叠合后的地图**：新纸的透光只有 0.05，按物理合上后应该几乎只看到纸背（v2-4 就是这样）。但玩家要在合上的书上走路，所以合上时纸背上用淡墨"透出"两页的格子（上页 50%、下页 30%），纸人和朱线画在最上面。
+3. **「啊哈」的触发点是过关**：设计说明里第 ③ 步要"自动展开到 180°"，如果在合上接通时就展开，第一章的路（只在合上时相通）会被打断。所以啊哈在过关时播放，展开后让玩家看见整条朱线在中缝两侧打结、「通」印落在过河处。合上时接通只给 .success 触感 + 播报「书已合上，路接通了」。
+4. **第一章 5 关**：levels.js 第一章（桥 / 对页 / 往返 / 钥匙 / 墨）只有 5 关，地图和计数按 5 关显示，设计稿写的 10/10。
+5. **宋体**：Songti SC 在 iOS 上是按需下载的系统字体，启动时向系统请求（不打包）；下载完成前标题退回 New York / 冬青明朝（日文始终用冬青明朝，保证日文字形）。
+6. **声音模式音高**：按设计稿 a11y-d 帧，第 1 行 = 宫（最低），而 plan §9 原文写"上高下低"；以设计稿为准。竖屏里地图的行是屏幕的列，所以音高从左到右升高。
+7. **音色是合成的**（AVAudioEngine 现算），不是录音；纸人只有寄信人（第一章只需要一个），收信人留到终章。
+8. **「?」提示**在第一次卡住时出现：点了两次走不到的格子、撤销过，或 45 秒还没过关。
+9. 章节地图上其他章的卡片显示 levels.js 里现有的关数（二 0/4、三 0/2），四章没有地图只显示「未启封」。
+
+### 测试与签名
+
+见下方「M1 验证」。
 
 ## 下一步
 
-- **M1 能玩（11/13）**：拖页手势（拇指拖右页外缘）+ 双指合拢；竖屏改成水平折痕；第一章 10 关；Core Haptics 图案（计划 §9）；VoiceOver 转子（路 / 缺口 / 物件 / 影子）和 AXCustomContent；声音模式（AVAudioEngine 空间音频）；幽灵手教学；存档；内部 TestFlight。
-- **RealityKit 渲染试验**：一页折叠 + 真实投影 + 宣纸透光，120 fps；过不了关就换 Metal 薄层。
+- **TestFlight 切片（12/19）**：在 App Store Connect 建 App 记录（名字：折信 / Letterfold / 折り文 / 접은 편지）、上传、内部测试；真机上调手感（吸附、弹簧、触觉强度）、测 120 fps；幽灵手教学（1-1）；双指捏合合书；AXCustomContent；录音音色。
+- **RealityKit / Metal 试验**：第三章背光与软影（见上）。
 - **M2 Duo 周（11/28–12/5）**：真机 `UIHinge` 角度标定与刷新率、合上角度、影子章节的角度窗口。
 - 体感 `TiltHinge`（CoreMotion，可选项）、高对比、切换控制与语音控制别名。
+
+## M1 验证（2026-10-16）
+
+- `xcodebuild test`：**全绿**。FoldCore 19 个（含 trail、Spread）+ XCUITest 5 个：书封 → 地图 → 关卡（默认界面没有滑块和按钮）；**真拖页**把上页拖下合上（读屏值变成 "Closed, 180°"）→ 点终点 → 纸人走过合上的书 → 啊哈后书自动摊平 → 下一关；拖到半开吸附；按钮控制的 15° 步进、撤销、合上、「走」书签；日文。
+- iPhone 18 Pro 模拟器截图对照过定稿：书封、地图、信、1-1…1-5 打开 / 90 / 130 / 合上、啊哈、高对比、超大格子、日文、设置。
+- **TestFlight 归档**：`xcodebuild archive … -allowProvisioningUpdates -authenticationKeyPath/ID/IssuerID`，团队 C29GS8XSA6（从 App Store Connect API 的 bundleId seedId 查到），自动签名成功（"Apple Development: Created via API (ZU4A2DNRY5)"），**ARCHIVE SUCCEEDED**，版本 0.1 (1)。没有建 App Store Connect 记录，没有上传。
+- 已知小问题：英文界面的章节卡片会把英文名再写一遍（副标题应该隐藏）；130° 时翻过来的上页背面占了下页上半，真机上再调透视。
