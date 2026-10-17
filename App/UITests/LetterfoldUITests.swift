@@ -21,17 +21,18 @@ final class LetterfoldUITests: XCTestCase {
         XCTAssertTrue(begin.waitForExistence(timeout: 8))
         keep(app, "cover")
         begin.tap()
-        let cont = app.buttons["map.continue"]
-        XCTAssertTrue(cont.waitForExistence(timeout: 5))
-        XCTAssertTrue(app.descendants(matching: .any)["chapter-1"].exists)
-        keep(app, "map")
-        cont.tap()
+        // a first launch goes straight into 1-1 (design-review-2 §4.4)
         let name = app.descendants(matching: .any)["level.name"]
         XCTAssertTrue(name.waitForExistence(timeout: 5))
         XCTAssertTrue(name.label.contains("1-1"), name.label)
         // the default screen has no slider, readout or buttons
         XCTAssertFalse(app.buttons["fold.more"].exists)
         XCTAssertFalse(app.sliders.firstMatch.exists)
+        app.buttons["nav.book"].tap()
+        let cont = app.buttons["map.continue"]
+        XCTAssertTrue(cont.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.descendants(matching: .any)["chapter-1"].exists)
+        keep(app, "map")
     }
 
     /// Drag the top page down onto the bottom one, then tap the goal: the figure walks across the closed book.
@@ -42,18 +43,18 @@ final class LetterfoldUITests: XCTestCase {
         goal.tap()                                   // open: out of reach
         XCTAssertFalse(app.buttons["win.next"].waitForExistence(timeout: 1.5))
         let fold = app.descendants(matching: .any)["fold.page"]
-        XCTAssertEqual(fold.value as? String, "Open, 0°")
+        XCTAssertEqual(fold.value as? String, "Open, 180°")
         let top = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.30))
         let below = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.88))
         top.press(forDuration: 0.1, thenDragTo: below, withVelocity: .slow, thenHoldForDuration: 0.2)
         sleep(1)
-        XCTAssertEqual(fold.value as? String, "Closed, 180°")
+        XCTAssertEqual(fold.value as? String, "Closed, 0°")
         keep(app, "closed")
         app.descendants(matching: .any)["tile-1-4"].tap()
         usleep(1_900_000)
         keep(app, "aha")
         XCTAssertTrue(app.buttons["win.next"].waitForExistence(timeout: 6))
-        XCTAssertEqual(fold.value as? String, "Open, 0°", "the aha unfolds the book again")
+        XCTAssertEqual(fold.value as? String, "Open, 180°", "the aha unfolds the book again")
         keep(app, "won")
         app.buttons["win.next"].tap()
         XCTAssertTrue(app.descendants(matching: .any)["level.name"].label.contains("1-2"))
@@ -69,7 +70,7 @@ final class LetterfoldUITests: XCTestCase {
         a.press(forDuration: 0.1, thenDragTo: b, withVelocity: .slow, thenHoldForDuration: 0.3)
         sleep(1)
         let v = fold.value as? String ?? ""
-        XCTAssertTrue(["Standing, 90°", "Leaning, 130°"].contains(v), v)
+        XCTAssertTrue(["Standing, 90°", "Leaning, 50°"].contains(v), v)
     }
 
     func testButtonControlStepsAndUndo() {
@@ -78,13 +79,13 @@ final class LetterfoldUITests: XCTestCase {
         XCTAssertTrue(more.waitForExistence(timeout: 8))
         for _ in 0..<4 { more.tap(); usleep(500_000) }
         let fold = app.descendants(matching: .any)["fold.page"]
-        XCTAssertEqual(fold.value as? String, "Standing, 60°")
+        XCTAssertEqual(fold.value as? String, "Standing, 120°")
         app.buttons["undo"].tap()
         sleep(1)
-        XCTAssertEqual(fold.value as? String, "Open, 45°")
+        XCTAssertEqual(fold.value as? String, "Open, 135°")
         app.buttons["fold.close"].tap()
         sleep(1)
-        XCTAssertEqual(fold.value as? String, "Closed, 180°")
+        XCTAssertEqual(fold.value as? String, "Closed, 0°")
         app.buttons["walk.tab"].tap()
         XCTAssertTrue(app.buttons["step.right"].waitForExistence(timeout: 2))
         keep(app, "buttons")

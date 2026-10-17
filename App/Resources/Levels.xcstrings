@@ -990,6 +990,186 @@
           }
         }
       }
+    },
+    "standClose.hint": {
+      "comment": "Level \"standClose\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先立起来过桥，在立起的页上一直走到头，再合上——终点就在脚下。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stand the page and cross, walk to the end of the standing page, then close: the goal is right under you."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ページを立てて橋を渡り、立ったページを端まで歩いてから閉じる。ゴールは足もとにある。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "페이지를 세워 다리를 건너고, 선 페이지를 끝까지 걸은 다음 닫아요. 도착점이 바로 발밑에 있어요."
+          }
+        }
+      }
+    },
+    "standClose.line": {
+      "comment": "Level \"standClose\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墙上也能走。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can walk on the wall."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "壁の上も歩ける。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "벽 위도 걸을 수 있다."
+          }
+        }
+      }
+    },
+    "standClose.name": {
+      "comment": "Level \"standClose\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先立后合"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stand, then Close"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立ててから閉じる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "세우고 닫기"
+          }
+        }
+      }
+    },
+    "twoBridges.hint": {
+      "comment": "Level \"twoBridges\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立起来：两座桥都在。走过上面那座，沿着立起的页走到底，从下面那座回来。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open halfway: both bridges stand. Cross the top one, walk down the standing page, come back over the bottom one."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "半分だけ開くと、橋が二つ立つ。上の橋を渡り、立ったページを端まで歩いて、下の橋で戻る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "반쯤 열면 다리 두 개가 서요. 위 다리를 건너 선 페이지를 끝까지 걷고, 아래 다리로 돌아와요."
+          }
+        }
+      }
+    },
+    "twoBridges.line": {
+      "comment": "Level \"twoBridges\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "过去，再回来。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Over, and back."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "渡って、戻る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "건너갔다가, 돌아온다."
+          }
+        }
+      }
+    },
+    "twoBridges.name": {
+      "comment": "Level \"twoBridges\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两桥"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two Bridges"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二つの橋"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 다리"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

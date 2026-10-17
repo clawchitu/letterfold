@@ -1,11 +1,11 @@
 {
-  "version": 1,
+  "version": 2,
   "columnsPerPage": 4,
   "thresholds": {
-    "foldMin": 155,
+    "closedMax": 25,
     "popMin": 60,
     "popMax": 120,
-    "shadeMin": 91
+    "shadeMax": 89
   },
   "levels": [
     {
@@ -105,6 +105,38 @@
         "solvable": true,
         "changes": 1,
         "needsFold": false,
+        "needsPop": true,
+        "stepped15": true
+      }
+    },
+    {
+      "id": "twoBridges",
+      "map": [
+        "S..pp..-",
+        "-x----.-",
+        "------.-",
+        "G..pp..-"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 1,
+        "needsFold": false,
+        "needsPop": true,
+        "stepped15": true
+      }
+    },
+    {
+      "id": "standClose",
+      "map": [
+        "S..pp.--",
+        "--x--.--",
+        "-----.--",
+        "--G--.--"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 2,
+        "needsFold": true,
         "needsPop": true,
         "stepped15": true
       }

@@ -17,8 +17,9 @@ struct Chapter: Identifiable {
     static let all: [Chapter] = [
         Chapter(id: 1, levelIDs: ["bridge", "facing", "back", "key", "ink"], unlocked: true, soon: false),
         // not in this preview build yet: shown as coming soon, never as a sealed chapter that looks openable
-        Chapter(id: 2, levelIDs: ["stand", "doorBridge", "inkBridge", "crease"], unlocked: false, soon: true),
-        Chapter(id: 3, levelIDs: ["shadow", "ride"], unlocked: false, soon: true),
+        // chapter 2 ships 6 levels (design-review-2 §4.5); it opens once chapter 1's letter is delivered (isUnlocked)
+        Chapter(id: 2, levelIDs: ["stand", "twoBridges", "standClose", "doorBridge", "inkBridge", "crease"], unlocked: true, soon: false),
+        Chapter(id: 3, levelIDs: [], unlocked: false, soon: true),
         Chapter(id: 4, levelIDs: [], unlocked: false, soon: true),
         Chapter(id: 5, levelIDs: [], unlocked: false, soon: true),
     ]
@@ -129,6 +130,13 @@ final class GameModel {
     @ObservationIgnored private var nopes = 0
     @ObservationIgnored private let speech = AVSpeechSynthesizer()
     @ObservationIgnored private var dragFrom = 0.0
+    // 2-1's teaching moment (design-review-2 §2.4) and the parallel device hinge (plan.md §12.1)
+    @ObservationIgnored private var teachTask: Task<Void, Never>?
+    @ObservationIgnored private var teachCount = 0
+    @ObservationIgnored private var hingeSamples: [(t: Double, p: Double)] = []
+    @ObservationIgnored private var hingeActive = false
+    @ObservationIgnored private var hingeTarget = 0.0
+    @ObservationIgnored private var hingeIdle: Task<Void, Never>?
 
     private struct Pending { var mode = false, connected = false, lost = false, shade = false, hadShade = false; var stamps: [Rules.Stamp] = [] }
 
@@ -146,15 +154,12 @@ final class GameModel {
         simulated.onAngle = { [weak self] a in self?.setAngle(a) }
         device?.onAngle = { [weak self] a in
             guard let self, self.hingeKind == .device else { return }
-            self.stopMotion()
-            let was = self.angle
-            self.setAngle(a)
-            if was < 179.5 && self.angle >= 179.5 { self.contact() }
-            self.settleSoon()
+            self.hingeMoved(a)
         }
         device?.onAvailabilityChange = { [weak self] ok in
             guard let self else { return }
-            // a foldable: the hinge is the input (design-review §4), dragging the page is switched off
+            AppSettings.shared.hingePresent = ok
+            // a foldable: vertical crease; the hinge is a parallel input next to the finger (plan.md §12.1)
             if ok && self.hingeKind == .simulated { self.hingeKind = .device; self.orientation = .verticalCrease }
             if !ok && self.hingeKind == .device { self.hingeKind = .simulated }
         }
@@ -171,7 +176,7 @@ final class GameModel {
     /// -walkTo c,r (walk there first, at 180° if needed), -autoplay YES, -hinge simulated|device, -aha YES.
     static func launch() -> GameModel {
         let d = UserDefaults.standard
-        if d.bool(forKey: "resetProgress") { d.removeObject(forKey: doneKey) }
+        if d.bool(forKey: "resetProgress") { d.removeObject(forKey: doneKey); d.removeObject(forKey: "opener.2") }
         let m = GameModel(pack: try! LevelPack.bundled())
         let start = d.integer(forKey: "startLevel")
         if start > 0 { m.go(start - 1) }
@@ -199,7 +204,7 @@ final class GameModel {
         let n = (chapter.levelIDs.firstIndex(of: level.id) ?? 0) + 1
         return L10n.t("level.code", ["ch": chapter.id, "n": n])
     }
-    var paper: PaperState { .chapter1 }
+    var paper: PaperState { chapter.id == 2 ? .chapter2 : .chapter1 }
     var isLastInChapter: Bool { chapterLevelIndices.last == index }
 
     // MARK: words
@@ -208,8 +213,8 @@ final class GameModel {
         let key = posture == .closed ? "fold" : posture == .standing ? "pop" : isLeaning ? "lean" : "open"
         return L10n.t("mode.\(key)")
     }
-    var angleText: String { L10n.t("angle", ["a": Int(angle.rounded())]) }
-    var foldValue: String { L10n.t("fold.value", ["mode": modeWord, "a": Int(angle.rounded())]) }
+    var angleText: String { L10n.t("angle", ["a": shownAngle]) }
+    var foldValue: String { L10n.t("fold.value", ["mode": modeWord, "a": shownAngle]) }
     func pos(_ c: Int, _ r: Int) -> String { L10n.t("pos", ["r": r + 1, "c": c + 1]) }
     func pos(_ p: Cell) -> String { pos(p.c, p.r) }
 
@@ -219,7 +224,7 @@ final class GameModel {
         if won { parts.append(L10n.t("levelDone", ["name": levelText.name])) }
         else if let g = game.goal, let p = game.path(to: g) { parts.append(L10n.t("prog.dist", ["d": p.count])) }
         else { parts.append(L10n.t("prog.far")) }
-        parts.append(posture == .closed ? L10n.t("book.closed") : angle == 0 ? L10n.t("book.opened") : L10n.t("book.open", ["a": Int(angle.rounded())]))
+        parts.append(posture == .closed ? L10n.t("book.closed") : angle == 0 ? L10n.t("book.opened") : L10n.t("book.open", ["a": shownAngle]))
         return L10n.cap(parts.joined(separator: L10n.t("sep")))
     }
 
@@ -236,7 +241,7 @@ final class GameModel {
         pending = Pending(); saidAngle = 0; nopes = 0; hintAvailable = false; toast = nil
         angle = 0
         sync()
-        if hingeKind == .device, let a = (device as? AnyHingeAngle)?.lastAngle { setAngle(a); pending = Pending() }
+        if hingeKind == .device, settings.hingeFold, let a = (device as? AnyHingeAngle)?.lastAngle { setAngle(Self.virtualFold(a)); pending = Pending() }
         announce(intro, delay: 0.6)
         stuckTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(45))
@@ -244,6 +249,9 @@ final class GameModel {
         }
         // a first-timer on 1-1 who has not touched the page yet is shown how: a fingertip draws the top page down
         if index == 0 && !done.contains(0) { startGhost(after: 3.5) }
+        // 2-1: no text; the ghost hand stands the page after 8 s without a fold (or after a failed close, in tap())
+        teachCount = 0
+        if level.id == "stand" { startTeach(after: 8) }
     }
 
     /// The ghost hand (README "下一步", design-spec §5): loops until the player folds, never with reduce motion.
@@ -267,6 +275,7 @@ final class GameModel {
 
     func stopGhost() {
         ghostTask?.cancel(); ghostTask = nil
+        teachTask?.cancel(); teachTask = nil
         if ghost != 0 || tease != 0 { withAnimation(.easeOut(duration: 0.15)) { ghost = 0; tease = 0 } }
     }
     func reset() { go(index) }
@@ -274,7 +283,7 @@ final class GameModel {
     var intro: String {
         let t = levelText, g = game.goal
         return L10n.t("intro", ["n": code, "name": t.name, "line": t.line, "you": pos(game.char),
-                                "goal": g.map(pos) ?? L10n.t("elsewhere")]) + " " + L10n.t("paper.ch1")
+                                "goal": g.map(pos) ?? L10n.t("elsewhere")]) + " " + L10n.t("paper.ch\(chapter.id)")
     }
 
     /// The web's hints talk about the right and left pages; on a portrait phone those are the top and bottom pages.
@@ -384,6 +393,7 @@ final class GameModel {
         if aha { finishAhaNow(); return }
         if Int(a.rounded()) == Int(angle.rounded()) { settle(); return }
         stopWalk(); stopGhost(); hasFolded = true
+        hingeIdle?.cancel(); hingeActive = false; hingeSamples = []   // buttons / VoiceOver take the page from the hinge
         pushUndo()
         move(to: a, a >= 180 ? .closeSnap : .step)
     }
@@ -397,11 +407,90 @@ final class GameModel {
 
     // MARK: dragging the page (the only default input)
 
-    var canDrag: Bool { hingeKind != .device }
+    /// Finger dragging works on every device; on a Duo the hinge is a parallel second input (plan.md §12.1).
+    var canDrag: Bool { true }
+
+    /// Angles on screen and in VoiceOver are physical (plan.md §12.1): 180° flat, 90° standing, 0° shut.
+    /// FoldCore and this model still count fold degrees internally (0 = flat); see README.
+    var shownAngle: Int { Int((180 - angle).rounded()) }
+    var hasTabBridge: Bool {
+        let n = config.columnsPerPage
+        return (0..<board.h).contains { board[n - 1, $0] == .tab && board[n, $0] == .tab }
+    }
+
+    /// 2-1's teaching moment, no text (design-review-2 §2.4, §4.2): a fingertip draws the top page down to 90° and lets
+    /// go; the book really stays there (snapped) with the bridge up. Reduce motion: only the 「?」. VoiceOver: a sentence.
+    func startTeach(after delay: Double) {
+        guard level.id == "stand", !won, teachTask == nil, teachCount < 2 else { return }
+        let quietMode = settings.motionReduced || settings.voiceOver
+        teachTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(delay))
+            guard let self, !Task.isCancelled, !self.won, !self.dragging, self.motionTarget == nil else { return }
+            self.teachCount += 1
+            self.hintAvailable = true
+            if quietMode {
+                if self.settings.voiceOver { self.announce(L10n.t("teach.half")) }
+                self.teachTask = nil
+                return
+            }
+            withAnimation(.easeOut(duration: 0.3)) { self.ghost = 1 }
+            try? await Task.sleep(for: .milliseconds(350))
+            guard !Task.isCancelled else { return }
+            self.pushUndo()
+            withAnimation(.timingCurve(0.4, 0, 0.3, 1, duration: 0.6)) { self.ghost = 2 }
+            self.move(to: 90, .bezier(0.4, 0, 0.3, 1, duration: 0.6))
+            try? await Task.sleep(for: .milliseconds(650))
+            guard !Task.isCancelled else { return }
+            withAnimation(.easeIn(duration: 0.3)) { self.ghost = 0 }
+            self.teachTask = nil
+        }
+    }
+
+    /// plan.md §12.1: the device hinge only counts while it moves. It takes over after ≥ 8° within 300 ms, catches up
+    /// in 160 ms, then follows 1:1; 300 ms after it stops the finger has the page again (and the page snaps).
+    /// Physical 90°–180° maps as is; 30°–90° is squeezed onto 0°–90°, so 「啪」 happens before the screen goes dark.
+    /// Device fold degrees → the book's: physical 90°–180° as is, 30°–90° squeezed onto 0°–90° (plan.md §12.1 rule 3).
+    static func virtualFold(_ fold: Double) -> Double {
+        let physical = 180 - fold
+        return 180 - (physical >= 90 ? physical : max(0, (physical - 30) * 1.5))
+    }
+
+    private func hingeMoved(_ fold: Double) {
+        guard settings.hingeFold, !dragging, !aha else { return }
+        let now = CACurrentMediaTime(), physical = 180 - fold
+        hingeSamples.append((now, physical))
+        hingeSamples.removeAll { now - $0.t > 0.3 }
+        hingeTarget = Self.virtualFold(fold)
+        if !hingeActive {
+            guard let first = hingeSamples.first, abs(physical - first.p) >= 8 else { return }
+            hingeActive = true
+            stopWalk(); stopGhost(); hasFolded = true
+            pushUndo()   // one undo step per hinge fold, on the same stack as the finger
+            move(to: hingeTarget, .bezier(0.2, 0.7, 0.2, 1, duration: 0.16)) { [weak self] in
+                // the hinge kept turning during the catch-up: land on where it is now
+                guard let self, self.hingeActive, abs(self.hingeTarget - self.angle) > 0.1 else { return }
+                self.setAngle(self.hingeTarget)
+            }
+        } else if motionTarget == nil {
+            let was = angle
+            setAngle(hingeTarget)
+            if was < 179.5 && angle >= 179.5 { contact() }
+        }
+        hingeIdle?.cancel()
+        hingeIdle = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(300))
+            guard let self, !Task.isCancelled else { return }
+            if self.motionTarget == nil && abs(self.hingeTarget - self.angle) > 0.5 { self.setAngle(self.hingeTarget) }
+            self.hingeActive = false; self.hingeSamples = []
+            let target = Self.snapPoints.min { abs($0 - self.angle) < abs($1 - self.angle) } ?? self.angle
+            if abs(target - self.angle) > 0.5 && !self.dragging { self.move(to: target, .release) } else { self.settle() }
+        }
+    }
 
     func dragBegan() {
         if aha { finishAhaNow() }
         stopMotion(); stopWalk(); stopGhost(); hasFolded = true
+        hingeIdle?.cancel(); hingeActive = false; hingeSamples = []   // the finger has the page now
         pushUndo()
         dragging = true; dragFrom = angle
         hintFadeTask?.cancel()
@@ -479,6 +568,7 @@ final class GameModel {
             nopes += 1
             if nopes >= 2 { hintAvailable = true }
             startGhost(after: 0.4)   // 1-1: tapping the far flag first is the classic first move; show the page instead
+            if posture == .closed { startTeach(after: 1.5) }   // 2-1: closing did not get you across
             return
         }
         if path.isEmpty { announce(L10n.t("already", ["pos": pos(game.char)])); return }
@@ -524,7 +614,10 @@ final class GameModel {
         }
     }
     func stopWalk() { walkTask?.cancel(); walkTask = nil; walking = false }
-    private func stopAll() { stopWalk(); stopMotion(); stopGhost(); settleTask?.cancel(); ahaTask?.cancel(); stuckTask?.cancel() }
+    private func stopAll() {
+        stopWalk(); stopMotion(); stopGhost(); settleTask?.cancel(); ahaTask?.cancel(); stuckTask?.cancel()
+        hingeIdle?.cancel(); hingeIdle = nil; hingeActive = false; hingeSamples = []
+    }
 
     // MARK: undo
 
@@ -543,7 +636,7 @@ final class GameModel {
         }
         hintAvailable = true
         saidAngle = Int(angle.rounded()); pending = Pending()
-        announce(L10n.t("undone", ["pos": pos(game.char), "a": Int(angle.rounded())]))
+        announce(L10n.t("undone", ["pos": pos(game.char), "a": shownAngle]))
     }
 
     // MARK: events -> haptics, sound, VoiceOver
@@ -555,8 +648,17 @@ final class GameModel {
     private func handle(_ events: [GameEvent], from: Posture) {
         for e in events {
             switch e {
-            case .postureChanged:
+            case .postureChanged(_, let to):
                 pending.mode = true
+                // 90°: the two tabs lock into a bridge: Impact .medium, a paper-tongue click, crease.glow 400 ms.
+                // No 「通」 seal here: that is the chapter's seal, for the map card (design-review-2 §2.2)
+                if to == .standing && hasTabBridge {
+                    haptics.snap(); sound.rub(volume: 0.5)
+                    if !settings.motionReduced {
+                        withAnimation(.easeOut(duration: 0.14)) { glow = 1 }
+                        withAnimation(.easeIn(duration: 0.26).delay(0.4)) { glow = 0 }
+                    }
+                }
             case .stamped(let s):
                 pending.stamps.append(s)
                 if s.kind == .ink, let to = s.cells.last { inkPrintedAt[to] = .now }
@@ -627,7 +729,7 @@ final class GameModel {
             else { withAnimation(.timingCurve(0.65, 0, 0.35, 1, duration: 0.42)) { self.threadProgress = 1 } }
             try? await Task.sleep(for: .milliseconds(rm ? 200 : 420))
             if Task.isCancelled { return }
-            withAnimation(rm ? .linear(duration: 0.2) : .easeOut(duration: 0.18)) { self.sealShown = true }
+            if self.chapter.id == 1 { withAnimation(rm ? .linear(duration: 0.2) : .easeOut(duration: 0.18)) { self.sealShown = true } }
             try? await Task.sleep(for: .milliseconds(180))
             if Task.isCancelled { return }
             self.haptics.seal(); self.sound.seal()
@@ -654,7 +756,7 @@ final class GameModel {
         ahaTask?.cancel(); stopMotion()
         quiet = true
         setAngle(0); rubber = 0; press = 0; glow = 0
-        caption = false; threadProgress = 1; sealShown = true; sealSettled = true
+        caption = false; threadProgress = 1; sealShown = chapter.id == 1; sealSettled = true
         finishAha()
     }
 
@@ -678,10 +780,10 @@ final class GameModel {
         case .closed: parts.append(L10n.t("book.closed"))
         case .standing:
             let bridge = (0..<board.h).contains { board[config.columnsPerPage - 1, $0] == .tab && board[config.columnsPerPage, $0] == .tab }
-            parts.append(L10n.t(bridge ? "book.popBridge" : "book.pop", ["a": a]))
+            parts.append(L10n.t(bridge ? "book.popBridge" : "book.pop", ["a": 180 - a]))
         case .open:
             if a == 0 { parts.append(L10n.t("book.opened")) }
-            else { parts.append(L10n.t(isLeaning ? "book.lean" : "book.open", ["a": a])) }
+            else { parts.append(L10n.t(isLeaning ? "book.lean" : "book.open", ["a": 180 - a])) }
         }
         if p.connected { parts.append(L10n.t("connected")) } else if p.lost { parts.append(L10n.t("lost")) }
         for s in p.stamps { parts.append(L10n.t(s.kind == .door ? "doorOpened" : "inkPrinted")) }
@@ -790,7 +892,7 @@ final class GameModel {
         }.map { L10n.t("dir.\($0.rawValue)") }
         let page = L10n.t(rules.isRight(char.c) ? "page.folding" : "page.fixed")
         announce(L10n.t("where", ["pos": pos(char), "page": page, "ways": ways.isEmpty ? L10n.t("nowhere") : ways.joined(separator: L10n.t("list")),
-                                  "a": Int(angle.rounded()), "goal": progressValue]))
+                                  "a": shownAngle, "goal": progressValue]))
     }
 
     // MARK: messages

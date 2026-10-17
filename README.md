@@ -105,3 +105,13 @@ tools/                      sync-from-proto.sh、make-strings.js（原生专用�
 - **TestFlight 归档**：`xcodebuild archive … -allowProvisioningUpdates -authenticationKeyPath/ID/IssuerID`，团队 C29GS8XSA6（从 App Store Connect API 的 bundleId seedId 查到），自动签名成功（"Apple Development: Created via API (ZU4A2DNRY5)"），**ARCHIVE SUCCEEDED**，版本 0.1 (1)。没有建 App Store Connect 记录，没有上传。
 - 修正（评审后）：竖屏下上页到 130° 前是向后仰（远离观者、透视变短、正面朝上，下页完整可见），130°→180° 才翻过来盖到下页；英文界面的章节卡片不再重复英文名；Info.plist 加 ITSAppUsesNonExemptEncryption = NO，版本 0.1 (2)。
 - **App Store Connect**：API 密钥不能建 App 记录（POST /v1/apps → 403 "does not allow CREATE"），altool 没有建 App 的命令，fastlane produce 需要 Apple ID 登录和双重认证。所以记录要在网页上建（Bundle ID com.haoqianglyu.letterfold 也还没注册；归档时 Xcode 自动签名用的是通配 / 开发描述文件）。
+## 0.1 (4)：第二章「立」（2026-10-17）
+
+- **数据（单一来源）**：fold-proto `levels.js` 加入 twoBridges、standClose（design-review-2 §5），第二章 6 关；`export.js` 导出 v2，阈值是物理角（closedMax 25 / popMin 60 / popMax 120 / shadeMax 89），FoldCore 在 `LevelPack.Thresholds` 换算一次，内部仍用折角（= 180 − 物理角）。CI：`ParTests`（每关 ≤ 3 次姿态变化、≤ 2 次合上）+ fold-proto `check.js`。
+- **角度一律物理角**（界面、读屏、测试）：180° 摊平、90° 立起、0° 合上；取代上面「和设计稿的出入」第 1 条。读屏折页控件「上扫 = 角度变大 = 展开」。
+- **相机书**（`BookCamera` / `CameraBook`，竖屏）：pitch = 16° + 24°·sin a、yaw = 18°·sin a（减少动态效果 28° / 0°），每一页是 3-D 平面，用精确的透视单应（`ProjectionTransform`）绘制；90° 时上页是墙，两片纸片从 120° 起翻、在 90° 合成 45° 坡道（横纹 + 两侧 V 撑），纸人站在坡道上，朱线在书打开时跨过中缝。点击和读屏目标在屏幕空间按投影四边形生成（`ProjectedTargets`），跟着倾斜。横屏 / Duo 仍是原来的侧翻。
+- **第二章**：第一章送达后解锁；章首「二 · 立 / 纸也会站起来。」（米纸从左上擦入 600 ms，只放一次）；纸片扣成桥 = Impact .medium + 纸声 + 折痕亮 400 ms，桥上不落「通」；2-1 无文字教学（8 s 没折，或合上失败后 1.5 s，幽灵手把页拉到 90° 并停住；减少动态效果只出「?」，读屏播一句）；合上过程上页像描图纸透出下页（透光 0.15）；右岸来信；地图去掉「5 / 9」，二章送达落「通」。
+- **书封 7-1 拉线**：48×72 朱红纸签、竖排「开始」19pt、下拉 ≥ 64pt 或轻点、拉的时候「折」那页跟手往下折、1.5 s 轻晃一次、右上 44pt 设置图标、中文屏不显示 Letterfold；第一次打开直接进 1-1。
+- **铰链（plan §12.1）**：拖页在所有设备上都可用；铰链为并行输入（300 ms 内 ≥ 8° 才接管，160 ms 追上，物理 30°–90° 压到 0°–90°，停 300 ms 交回并吸附，进撤销栈；手指、按钮、读屏随时收回）；设置「铰链折页」默认开，只在有铰链时出现。未在真机上验证。
+- **测试**：`PlaythroughUITests.testPlaythroughChapters1And2` 以中文从书封玩通第一、二章（真拖页、点格；第二章 2-1 用「合上失败 → 幽灵手」那条路），约 200 s。QA 记录见 `tmp/fold/qa-2.md`。
+- **留到以后**：坡道深度按 0.35 格（现在 1 格，真机看是否挡住墙页第 3 行）；铰链驱动时仍播吸附触觉；地图「通」落印动画（M4）；铰链版幽灵手（M2）；FoldCore 内部改物理角。

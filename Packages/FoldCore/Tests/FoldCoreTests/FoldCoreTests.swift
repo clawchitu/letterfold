@@ -8,7 +8,7 @@ final class SolverTests: XCTestCase {
     override func setUpWithError() throws { pack = try LevelPack.bundled() }
 
     func testPackDecodes() throws {
-        XCTAssertEqual(pack.levels.count, 11)
+        XCTAssertEqual(pack.levels.count, 13)
         XCTAssertEqual(pack.config, .standard)
         for lv in pack.levels { XCTAssertNoThrow(try Board(level: lv), lv.id) }
     }
@@ -37,7 +37,7 @@ final class SolverTests: XCTestCase {
         let solver = Solver(pack.config)
         let teaches: [String: [KeyPath<Expectation, Bool?>]] = [
             "bridge": [\.needsFoldOpt], "facing": [\.needsFoldOpt], "back": [\.needsFoldOpt],
-            "key": [\.needsKey], "ink": [\.needsInk], "stand": [\.needsPopOpt],
+            "key": [\.needsKey], "ink": [\.needsInk], "stand": [\.needsPopOpt], "twoBridges": [\.needsPopOpt], "standClose": [\.needsPopOpt, \.needsFoldOpt],
             "doorBridge": [\.needsKey, \.needsPopOpt], "inkBridge": [\.needsInk, \.needsPopOpt],
             "crease": [\.needsKey, \.needsInk, \.needsPopOpt], "shadow": [\.needsShade], "ride": [\.needsShade, \.needsRide],
         ]

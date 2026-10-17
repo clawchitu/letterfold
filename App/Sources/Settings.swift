@@ -17,6 +17,10 @@ final class AppSettings {
     var reduceMotion: Bool { didSet { d.set(reduceMotion, forKey: "set.rm") } }
     /// "" follows the system; otherwise zh-Hans, en, ja, ko.
     var language: String { didSet { d.set(language, forKey: "set.lang") } }
+    /// 「铰链折页」: the device hinge folds the book too (plan.md §12.1 rule 5). Default on; only shown with a hinge.
+    var hingeFold: Bool { didSet { d.set(hingeFold, forKey: "set.hinge") } }
+    /// A device hinge reported itself (set by GameModel).
+    var hingePresent = false
 
     // system state
     private(set) var voiceOver = UIAccessibility.isVoiceOverRunning
@@ -43,6 +47,7 @@ final class AppSettings {
         largeGrid = d.bool(forKey: "largeGrid") || d.bool(forKey: "set.big")
         reduceMotion = d.bool(forKey: "reduceMotion") || d.bool(forKey: "set.rm")
         language = d.string(forKey: "set.lang") ?? ""
+        hingeFold = d.object(forKey: "set.hinge") as? Bool ?? true
         if d.bool(forKey: "onOffLabels") { onOffLabels = true }
         let nc = NotificationCenter.default
         nc.addObserver(forName: UIAccessibility.voiceOverStatusDidChangeNotification, object: nil, queue: .main) { _ in

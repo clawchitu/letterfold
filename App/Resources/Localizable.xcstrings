@@ -721,6 +721,36 @@
         }
       }
     },
+    "ch.2.line": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "纸也会站起来。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paper can stand up too."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紙だって、立ち上がる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종이도 일어설 수 있다."
+          }
+        }
+      }
+    },
     "ch.3": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -1238,25 +1268,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "开始：点这个线结"
+            "value": "开始：轻点或往下拉纸签"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Begin: tap the knot"
+            "value": "Begin: tap the tag or pull it down"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "はじめる：結び目をタップ"
+            "value": "はじめる：札をタップするか下に引く"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "시작: 매듭을 누르세요"
+            "value": "시작: 꼬리표를 누르거나 아래로 당기세요"
           }
         }
       }
@@ -2881,6 +2911,66 @@
         }
       }
     },
+    "hint.portrait.crease": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先合上一次，钥匙和墨都印过去；再立起过桥、走到门边，最后合上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close once so the key and the ink carry across; stand the page, cross, walk to the door, then close."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まず一度閉じて鍵と墨を写す。立てて橋を渡り、扉まで歩いて、最後に閉じる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 한 번 닫아 열쇠와 먹을 찍어요. 세워서 다리를 건너 문까지 걷고, 마지막에 닫아요."
+          }
+        }
+      }
+    },
+    "hint.portrait.doorBridge": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先合上，让钥匙开门；再立起到一半，从纸片桥上走过去。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close so the key opens the door; then stand the page halfway and cross on the tabs."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じて鍵で扉を開け、半分立てて紙片の橋を渡る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫아서 열쇠로 문을 열고, 반쯤 세워 종이 다리를 건너요."
+          }
+        }
+      }
+    },
     "hint.portrait.facing": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -2941,6 +3031,36 @@
         }
       }
     },
+    "hint.portrait.inkBridge": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "只合上一次，让墨印到上页；再立起到一半过桥。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close only once so the ink prints onto the top page; then stand it halfway and cross."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一度だけ閉じて墨を上のページに写し、半分立てて渡る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "한 번만 닫아 먹을 위 페이지에 찍고, 반쯤 세워 건너요."
+          }
+        }
+      }
+    },
     "hint.portrait.key": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -2967,6 +3087,96 @@
           "stringUnit": {
             "state": "translated",
             "value": "열쇠와 문은 접는 선을 사이에 두고 마주 보고 있어요. 닫으면 서로 닿아요."
+          }
+        }
+      }
+    },
+    "hint.portrait.stand": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "把上页立起到一半：折痕上的两片纸片会连成一座桥。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stand the top page halfway: the two tabs on the crease join into a bridge."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上のページを半分だけ立てると、折り目の紙片がつながって橋になる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "위 페이지를 반쯤 세우면 접는 선의 종이 조각이 이어져 다리가 돼요."
+          }
+        }
+      }
+    },
+    "hint.portrait.standClose": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先立起来过桥，在上页走到头，再合上：终点就在脚下。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stand the page and cross, walk to the end of the top page, then close: the goal is right under you."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立てて橋を渡り、上のページを端まで歩いてから閉じる。ゴールは足もと。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "세워서 다리를 건너 위 페이지 끝까지 걷고 닫아요. 도착점이 발밑이에요."
+          }
+        }
+      }
+    },
+    "hint.portrait.twoBridges": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立起到一半，两座桥都在：走过一座，沿着立起的上页走，再从另一座回来。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stand the page halfway: both bridges are up. Cross one, walk along the standing page, come back over the other."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "半分立てると橋が二つ。一つを渡り、立ったページを歩いて、もう一つで戻る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "반쯤 세우면 다리가 둘이에요. 하나를 건너 선 페이지를 걷고, 다른 다리로 돌아와요."
           }
         }
       }
@@ -3687,6 +3897,96 @@
           "stringUnit": {
             "state": "translated",
             "value": "— 왼쪽 강가에서"
+          }
+        }
+      }
+    },
+    "letter.2.body": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "河没有变窄，\n纸却先站了起来，\n替我走到岸边。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The river is no narrower,\nbut the paper stood up first\nand walked to the bank for me."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "川は狭くならない。\nけれど紙が先に立ちあがり、\nわたしの代わりに岸まで歩いた。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "강은 좁아지지 않았다.\n그런데 종이가 먼저 일어서서\n나 대신 강가까지 걸어갔다."
+          }
+        }
+      }
+    },
+    "letter.2.sign": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——右岸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— the Right Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——右岸より"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— 오른쪽 강가에서"
+          }
+        }
+      }
+    },
+    "letter.2.title": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右岸来信"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A Letter from the Right Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右岸からの手紙"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오른쪽 강가에서 온 편지"
           }
         }
       }
@@ -5431,6 +5731,36 @@
         }
       }
     },
+    "paper.ch2": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "米纸，纸片会站起来。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rice paper; the tabs can stand."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "米色の紙。紙片は立ち上がる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "쌀종이, 종이 조각이 일어설 수 있어요."
+          }
+        }
+      }
+    },
     "pos": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {r} {c}",
       "extractionState": "manual",
@@ -5607,6 +5937,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "1장 끝. 다음 편지는 아직 오는 중이에요."
+          }
+        }
+      }
+    },
+    "preview.end2": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第二章完。下一封信，还在路上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of chapter two. The next letter is still on its way."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第二章、おわり。次の手紙は、まだ旅の途中。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2장 끝. 다음 편지는 아직 오는 중이에요."
           }
         }
       }
@@ -6241,6 +6601,66 @@
         }
       }
     },
+    "set.hinge": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "铰链折页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fold with the hinge"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ヒンジで折る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "힌지로 접기"
+          }
+        }
+      }
+    },
+    "set.hinge.d": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上手机时，书也跟着合上"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Closing the phone folds the book too"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "スマホを閉じると本も折れる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "휴대폰을 접으면 책도 접혀요"
+          }
+        }
+      }
+    },
     "set.rm": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -6837,6 +7257,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "눌러서 걷기"
+          }
+        }
+      }
+    },
+    "teach.half": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "书可以只打开一半"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The book can open just halfway"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本は半分だけ開くこともできる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책은 반만 펼칠 수도 있어요"
           }
         }
       }

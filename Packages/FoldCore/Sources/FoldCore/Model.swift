@@ -71,7 +71,30 @@ public struct Level: Sendable, Codable, Identifiable, Equatable {
 
 /// levels.json, exported from fold-proto by `node tools/export.js`.
 public struct LevelPack: Sendable, Codable {
-    public struct Thresholds: Sendable, Codable { public var foldMin, popMin, popMax, shadeMin: Double }
+    /// levels.json v2 ships physical page angles (plan.md §12.1: 180° flat, 0° shut): closedMax 25, popMin 60,
+    /// popMax 120, shadeMax 89. The rules still reason in fold degrees (= 180 − physical); this is the one conversion.
+    /// v1 files (foldMin / shadeMin in fold degrees) still decode.
+    public struct Thresholds: Sendable, Codable {
+        public var foldMin, popMin, popMax, shadeMin: Double
+        enum CodingKeys: String, CodingKey { case closedMax, popMin, popMax, shadeMax, foldMin, shadeMin }
+        public init(from d: Decoder) throws {
+            let c = try d.container(keyedBy: CodingKeys.self)
+            let lo = try c.decode(Double.self, forKey: .popMin), hi = try c.decode(Double.self, forKey: .popMax)
+            if let closed = try c.decodeIfPresent(Double.self, forKey: .closedMax) {
+                foldMin = 180 - closed
+                shadeMin = 180 - (try c.decode(Double.self, forKey: .shadeMax))
+                popMin = 180 - hi; popMax = 180 - lo
+            } else {
+                foldMin = try c.decode(Double.self, forKey: .foldMin); shadeMin = try c.decode(Double.self, forKey: .shadeMin)
+                popMin = lo; popMax = hi
+            }
+        }
+        public func encode(to e: Encoder) throws {
+            var c = e.container(keyedBy: CodingKeys.self)
+            try c.encode(180 - foldMin, forKey: .closedMax); try c.encode(180 - popMax, forKey: .popMin)
+            try c.encode(180 - popMin, forKey: .popMax); try c.encode(180 - shadeMin, forKey: .shadeMax)
+        }
+    }
     public var version: Int
     public var columnsPerPage: Int
     public var thresholds: Thresholds

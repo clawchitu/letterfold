@@ -8,6 +8,9 @@ import FoldCore
 struct CoverView: View {
     let router: Router
     let fonts = FontBook.shared
+    @State private var pull: CGFloat = 0
+    /// Set: a first launch (nothing delivered yet) goes straight into 1-1 (design-review-2 §4.4).
+    var model: GameModel? = nil
     @Environment(\.highContrast) private var hc
 
     /// The 「折」 logo is the same Chinese Song glyph in every language (Hiragino's taller Mincho ran into the title in ja).
@@ -48,40 +51,124 @@ struct CoverView: View {
                     .typesettingLanguage(.init(identifier: "zh-Hans"))
                     .dynamicTypeSize(...DynamicTypeSize.large)
                     .accessibilityHidden(true)
+                    // pulling the tag folds the cover down like the top page (hinge.drag: it follows the finger)
+                    .rotation3DEffect(.degrees(-Double(min(pull, 140)) * 0.3), axis: (x: 1, y: 0, z: 0), anchor: .bottom, perspective: 0.45)
                     Text("《折信》").font(fonts.songti(.bold, 34, relativeTo: .title)).foregroundStyle(Tok.ink900)
                         .environment(\.locale, Locale(identifier: "zh-Hans"))
                         .accessibilityLabel(L10n.t("brandSub"))
                         .accessibilityAddTraits(.isHeader)
-                    Text(L10n.lang.hasPrefix("zh") || L10n.lang == "en" ? "Letterfold" : L10n.t("brandSub"))
-                        .font(.system(.title2, design: .serif).italic()).foregroundStyle(Tok.ink700)
-                        .padding(.top, 2)
-                        .accessibilityHidden(true)
+                    // the subtitle follows the language; the Chinese cover is only 《折信》 (design-review-2 §2.8)
+                    if !L10n.lang.hasPrefix("zh") {
+                        Text(L10n.lang.hasPrefix("en") ? "Letterfold" : L10n.t("brandSub"))
+                            .font(.system(.title2, design: .serif).italic()).foregroundStyle(Tok.ink700)
+                            .padding(.top, 2)
+                            .accessibilityHidden(true)
+                    }
                     Spacer().frame(height: h * 0.06)
                     Text(L10n.t("cover.tagline")).font(.body).foregroundStyle(Tok.ink900)
                         .multilineTextAlignment(.center).padding(.horizontal, 24)
-                    ThreadDrop(from: 0, to: h * 0.05, color: hc ? Tok.hcLine : Tok.thread).frame(width: w, height: h * 0.05).padding(.top, 10)
-                    Button { router.go(.map) } label: {
-                        VStack(spacing: 8) {
-                            Knot(color: hc ? Tok.hcLine : Tok.thread)
-                            Text(L10n.t("cover.begin")).font(fonts.songti(.bold, 19, relativeTo: .headline)).foregroundStyle(Tok.ink900)
-                        }
-                        .frame(minWidth: 120, minHeight: 64)
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(L10n.t("cover.beginLabel"))
-                    .accessibilityIdentifier("cover.begin")
-                    Button { router.go(.settings) } label: {
-                        Text(L10n.t("cover.settings")).font(.subheadline).foregroundStyle(Tok.ink700)
-                            .frame(minWidth: 88, minHeight: 44)
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("cover.settings")
+                    // 7-1 「拉线」: the thread ends in a vermilion tag; pull it down (or tap it) to begin
+                    PullTag(pull: $pull) { begin() }
+                        .padding(.top, 4)
                     Spacer(minLength: 0)
                 }
                 .frame(width: w)
             }
         }
+        .overlay(alignment: .topTrailing) {
+            // settings: a 44pt folded-corner icon, top right, in every language (design-review-2 §4.4)
+            Button { router.go(.settings) } label: {
+                Image(systemName: "doc").font(.system(size: 19, weight: .regular)).foregroundStyle(Tok.ink900)
+                    .frame(width: 44, height: 44).contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(L10n.t("cover.settings"))
+            .accessibilityIdentifier("cover.settings")
+            .padding(.trailing, 12)
+        }
+    }
+
+    private func begin() {
+        if AppSettings.shared.hapticScale > 0 { UIImpactFeedbackGenerator(style: .medium).impactOccurred(intensity: AppSettings.shared.hapticScale) }
+        if let model, model.done.isEmpty { model.go(0); router.go(.level) } else { router.go(.map) }
+    }
+}
+
+/// 7-1 「拉线」 (design-review-2 §4.4): a 48 × 72 vermilion paper tag on the end of the thread, 「开始」 set vertically in
+/// Songti Semibold 19. Pull it ≥ 64pt or tap it; short of that it springs back without a haptic. 1.5 s after the cover
+/// appears it sways once (±4°, 600 ms); with reduce motion it stays still and a static arrow shows instead.
+struct PullTag: View {
+    @Binding var pull: CGFloat
+    let action: () -> Void
+    @State private var sway = 0.0
+    @Environment(\.highContrast) private var hc
+
+    var body: some View {
+        let rm = AppSettings.shared.motionReduced
+        let red = hc ? Tok.hcLine : Tok.thread
+        let word = L10n.t("cover.begin")
+        VStack(spacing: 0) {
+            Rectangle().fill(red).frame(width: 3, height: 40 + pull * 0.85)
+            ZStack(alignment: .top) {
+                TagShape().fill(red).shadow(color: .black.opacity(hc ? 0 : 0.2), radius: 2, y: 1.5)
+                TagShape().stroke(Tok.paperNew.opacity(0.55), lineWidth: 0.8).padding(3)
+                VStack(spacing: 0) {
+                    Circle().fill(Tok.paperNew).frame(width: 5, height: 5).padding(.top, 7).padding(.bottom, 5)
+                    Group {
+                        if L10n.lang.hasPrefix("en") { Text(word) }
+                        else { VStack(spacing: 0) { ForEach(Array(word.enumerated()), id: \.offset) { Text(String($0.element)) } } }
+                    }
+                    .font(FontBook.shared.songti(.semibold, 19, relativeTo: .headline))
+                    .foregroundStyle(Tok.paperNew)
+                    .lineLimit(1).minimumScaleFactor(0.6)
+                    .padding(.bottom, 12)
+                }
+                .frame(minWidth: 44)
+            }
+            .frame(minWidth: 48, minHeight: 72)
+            .fixedSize()
+            .dynamicTypeSize(...DynamicTypeSize.accessibility2)
+            if rm { Image(systemName: "chevron.compact.down").font(.title3).foregroundStyle(Tok.ink600).padding(.top, 6) }
+        }
+        .rotationEffect(.degrees(sway), anchor: .top)
+        .frame(width: 88)
+        .contentShape(Rectangle())
+        .gesture(DragGesture(minimumDistance: 0)
+            .onChanged { v in
+                let y = max(0, v.translation.height)
+                pull = y < 64 ? y : 64 + (y - 64) * 0.35
+            }
+            .onEnded { v in
+                let y = v.translation.height
+                if y >= 64 || (abs(y) < 8 && abs(v.translation.width) < 8) { action(); pull = 0 }
+                else { withAnimation(rm ? .linear(duration: 0.2) : .spring(response: 0.3, dampingFraction: 0.7)) { pull = 0 } }
+            })
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(L10n.t("cover.beginLabel"))
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction { action() }
+        .accessibilityIdentifier("cover.begin")
+        .onAppear {
+            guard !rm else { return }
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(1.5))
+                withAnimation(.easeInOut(duration: 0.15)) { sway = 4 }
+                try? await Task.sleep(for: .milliseconds(150))
+                withAnimation(.easeInOut(duration: 0.3)) { sway = -4 }
+                try? await Task.sleep(for: .milliseconds(300))
+                withAnimation(.easeInOut(duration: 0.15)) { sway = 0 }
+            }
+        }
+    }
+}
+
+nonisolated struct TagShape: Shape {
+    func path(in r: CGRect) -> Path {
+        var p = Path()
+        p.move(to: CGPoint(x: r.minX, y: r.minY)); p.addLine(to: CGPoint(x: r.maxX, y: r.minY))
+        p.addLine(to: CGPoint(x: r.maxX, y: r.maxY)); p.addLine(to: CGPoint(x: r.midX, y: r.maxY - 7))
+        p.addLine(to: CGPoint(x: r.minX, y: r.maxY)); p.closeSubpath()
+        return p
     }
 }
 
@@ -131,6 +218,9 @@ struct ChapterMapView: View {
     var body: some View {
         let ch1 = model.chapterIndices(Chapter.all[0])
         let doneCount = ch1.filter { model.done.contains($0) }.count
+        let ch2 = model.chapterIndices(Chapter.all[1])
+        let ch2Done = !ch2.isEmpty && ch2.allSatisfy { model.done.contains($0) }
+        let playable = Chapter.all.filter { model.isUnlocked($0) }.flatMap { model.chapterIndices($0) }
         VStack(spacing: 0) {
             HStack {
                 Button { router.go(.cover) } label: {
@@ -139,7 +229,6 @@ struct ChapterMapView: View {
                 }
                 .accessibilityIdentifier("map.back")
                 Spacer()
-                Text(L10n.t("map.progress", ["n": doneCount, "total": ch1.count])).font(.subheadline.monospacedDigit()).foregroundStyle(Tok.ink700)
             }
             .padding(.horizontal, 16)
             HStack(alignment: .firstTextBaseline) {
@@ -153,7 +242,7 @@ struct ChapterMapView: View {
                     ZStack(alignment: .top) {
                         // the crease is the river; the thread runs down it to the chapter being played
                         Rectangle().fill(Tok.ink900.opacity(0.12)).frame(width: 1).frame(maxHeight: .infinity)
-                        let reach = doneCount == ch1.count ? 150.0 : 120.0
+                        let reach = doneCount == ch1.count ? 200.0 : 120.0
                         ThreadDrop(from: 0, to: reach, color: hc ? Tok.hcLine : Tok.thread).frame(height: reach + 2)
                         Knot(color: hc ? Tok.hcLine : Tok.thread, small: true).offset(y: reach - 7)
                         VStack(spacing: 18) {
@@ -165,22 +254,20 @@ struct ChapterMapView: View {
                                     if ch.id % 2 == 1 { Spacer() }
                                 }
                             }
+                            // the end of this preview, under the last card (never over a card, at any text size)
+                            if ch2Done { PreviewEndNote(key: "preview.end2").padding(.top, 10) }
                         }
-                        .padding(.horizontal, 20).padding(.top, 12).padding(.bottom, doneCount == ch1.count ? 170 : 100)
+                        .padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 100)
                     }
                 }
                 .clipped()
             }
         }
         .overlay(alignment: .bottom) {
-            let next = ch1.first { !model.done.contains($0) } ?? ch1.first ?? 0
+            let next = playable.first { !model.done.contains($0) } ?? playable.first ?? 0
             VStack(spacing: 12) {
-                if doneCount == ch1.count {
-                    // the end of this preview: say so, gracefully, instead of leaving a silent map
-                    PreviewEndNote()
-                }
                 Button { model.go(next); router.go(.level) } label: {
-                    Text(L10n.t("map.continue", ["n": "1-\((ch1.firstIndex(of: next) ?? 0) + 1)"]))
+                    Text(L10n.t("map.continue", ["n": model.code(for: next)]))
                         .font(fonts.songti(.bold, 19, relativeTo: .headline)).foregroundStyle(Tok.paperNew)
                         .padding(.horizontal, 44).frame(minHeight: 56)
                         .background(Capsule().fill(Tok.ink900))
@@ -206,7 +293,7 @@ struct ChapterMapView: View {
     }
 
     private func open(_ ch: Chapter) {
-        guard ch.unlocked else { model.show(L10n.t(ch.soon ? "ch.soon" : "ch.lockedToast")); return }
+        guard model.isUnlocked(ch) else { model.show(L10n.t(ch.soon ? "ch.soon" : "ch.lockedToast")); return }
         let idx = model.chapterIndices(ch)
         model.go(idx.first { !model.done.contains($0) } ?? idx.first ?? 0)
         router.go(.level)
@@ -215,6 +302,19 @@ struct ChapterMapView: View {
 
 extension GameModel {
     func chapterIndices(_ ch: Chapter) -> [Int] { ch.levelIDs.compactMap { id in pack.levels.firstIndex { $0.id == id } } }
+    /// Built chapters open in order: chapter 2 once chapter 1's letter is delivered.
+    func isUnlocked(_ ch: Chapter) -> Bool {
+        guard ch.unlocked else { return false }
+        if ch.id == 1 { return true }
+        let prev = chapterIndices(Chapter.all[ch.id - 2])
+        return !prev.isEmpty && prev.allSatisfy { done.contains($0) }
+    }
+    /// 「2-3」 for a level index.
+    func code(for i: Int) -> String {
+        let id = pack.levels[i].id
+        guard let ch = Chapter.all.first(where: { $0.levelIDs.contains(id) }) else { return "\(i + 1)" }
+        return "\(ch.id)-\((ch.levelIDs.firstIndex(of: id) ?? 0) + 1)"
+    }
 }
 
 /// A chapter as a letter: delivered = the 「达」 seal; in progress = open, with the thread's knot; sealed = tied with
@@ -230,10 +330,10 @@ private struct ChapterCard: View {
     var body: some View {
         let idx = model.chapterIndices(chapter)
         let n = idx.filter { model.done.contains($0) }.count
-        let delivered = chapter.unlocked && n == idx.count && !idx.isEmpty
+        let delivered = model.isUnlocked(chapter) && n == idx.count && !idx.isEmpty
         let paper: Color = [PaperState.chapter1.color, PaperState.chapter2.color, PaperState.chapter3.color, PaperState.chapter4.color, Tok.paperNew][chapter.id - 1]
-        let status = chapter.soon ? L10n.t("ch.soon") : !chapter.unlocked ? L10n.t("ch.sealed") : delivered ? L10n.t("ch.delivered") : L10n.t("ch.inProgress")
-        let sealed = !chapter.soon && !chapter.unlocked
+        let status = chapter.soon ? L10n.t("ch.soon") : !model.isUnlocked(chapter) ? L10n.t("ch.sealed") : delivered ? L10n.t("ch.delivered") : L10n.t("ch.inProgress")
+        let sealed = !chapter.soon && !model.isUnlocked(chapter)
         Button(action: action) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top, spacing: 8) {
@@ -254,8 +354,8 @@ private struct ChapterCard: View {
                     if sealed { Text(status).font(.footnote).foregroundStyle(Tok.ink700).lineLimit(1).minimumScaleFactor(0.7) }
                     Spacer(minLength: 2)
                     if !sealed { Text(status).font(.footnote).foregroundStyle(Tok.ink700).lineLimit(1).minimumScaleFactor(0.7) }
-                    if delivered { Seal(glyph: "达", size: 22) }
-                    else if chapter.unlocked { Image(systemName: "diamond").font(.caption2).foregroundStyle(Tok.ink700) }
+                    if delivered { Seal(glyph: chapter.id == 2 ? "通" : "达", size: 22) }
+                    else if model.isUnlocked(chapter) { Image(systemName: "diamond").font(.caption2).foregroundStyle(Tok.ink700) }
                 }
                 .padding(.horizontal, 14).frame(minHeight: 40)
                 .background(Color.black.opacity(0.03))
@@ -265,7 +365,7 @@ private struct ChapterCard: View {
             .overlay {
                 if chapter.soon {
                     RoundedRectangle(cornerRadius: 6).strokeBorder(Tok.ink600.opacity(0.6), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
-                } else if !chapter.unlocked {
+                } else if !model.isUnlocked(chapter) {
                     // tied with string (frame final-7): one strand down the right edge, a bow at the fold, never over words
                     ZStack(alignment: .trailing) {
                         Rectangle().fill(Tok.ink700.opacity(0.6)).frame(width: 1.2).frame(maxHeight: .infinity).padding(.trailing, 16)
@@ -277,7 +377,7 @@ private struct ChapterCard: View {
                 if hc && !chapter.soon { RoundedRectangle(cornerRadius: 6).strokeBorder(.black, lineWidth: 2) }
             }
             .shadow(color: .black.opacity(chapter.soon ? 0 : 0.10), radius: 4, y: 2)
-            .opacity(chapter.unlocked || chapter.soon ? 1 : 0.92)
+            .opacity(model.isUnlocked(chapter) || chapter.soon ? 1 : 0.92)
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
@@ -286,14 +386,14 @@ private struct ChapterCard: View {
         .accessibilityAddTraits(.isButton)
         .accessibilityIdentifier("chapter-\(chapter.id)")
         .contextMenu {
-            if chapter.unlocked {
+            if model.isUnlocked(chapter) {
                 ForEach(Array(idx.enumerated()), id: \.offset) { k, i in
                     Button("\(chapter.id)-\(k + 1) · \(L10n.level(model.pack.levels[i].id).name)") { openLevel(i) }
                 }
             }
         }
         .accessibilityActions {
-            if chapter.unlocked {
+            if model.isUnlocked(chapter) {
                 ForEach(Array(idx.enumerated()), id: \.offset) { k, i in
                     Button(L10n.t("lvAria", ["n": "\(chapter.id)-\(k + 1)", "name": L10n.level(model.pack.levels[i].id).name])) { openLevel(i) }
                 }
@@ -308,20 +408,21 @@ private struct ChapterCard: View {
 /// the first fold, the last line and the signature on the last.
 struct LetterView: View {
     let router: Router
+    var chapter = 1
     let fonts = FontBook.shared
     @State private var unfolded = 0
     @Environment(\.highContrast) private var hc
 
     var body: some View {
         let rm = AppSettings.shared.motionReduced
-        let text = L10n.t("letter.1.body"), sign = L10n.t("letter.1.sign")
+        let text = L10n.t("letter.\(chapter).body"), sign = L10n.t("letter.\(chapter).sign")
         let lines = text.components(separatedBy: "\n")
         let parts = [lines.first ?? text, lines.dropFirst().dropLast().joined(separator: "\n"), lines.count > 1 ? lines.last! : ""]
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(L10n.t("letter.title")).font(fonts.songti(.bold, 26, relativeTo: .title)).foregroundStyle(Tok.ink900)
+                Text(L10n.t(chapter == 1 ? "letter.title" : "letter.\(chapter).title")).font(fonts.songti(.bold, 26, relativeTo: .title)).foregroundStyle(Tok.ink900)
                     .accessibilityAddTraits(.isHeader)
-                Text("\(Chapter.all[0].numeral) · \(Chapter.all[0].name) · \(L10n.t("ch.delivered"))").font(.footnote).foregroundStyle(Tok.ink700)
+                Text("\(Chapter.all[chapter - 1].numeral) · \(Chapter.all[chapter - 1].name) · \(L10n.t("ch.delivered"))").font(.footnote).foregroundStyle(Tok.ink700)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 24).padding(.top, 12).padding(.bottom, 16)
@@ -353,7 +454,8 @@ struct LetterView: View {
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(text.replacingOccurrences(of: "\n", with: " ") + " " + sign)
                 .padding(.horizontal, 30).padding(.top, 14).padding(.bottom, 20)
-                PreviewEndNote().padding(.bottom, 24).opacity(unfolded >= 3 ? 1 : 0)
+                // only the last letter of this preview says the next one is still on its way
+                if chapter == 2 { PreviewEndNote(key: "preview.end2").padding(.bottom, 24).opacity(unfolded >= 3 ? 1 : 0) }
             }
             .clipped()
             Button { router.go(.map) } label: {
@@ -409,10 +511,11 @@ struct LetterView: View {
 
 /// 「第一章完。下一封信，还在路上。」: the end of this preview, on the letter and on the finished map.
 struct PreviewEndNote: View {
+    var key = "preview.end"
     var body: some View {
         HStack(spacing: 8) {
             Knot(color: Tok.thread, small: true).accessibilityHidden(true)
-            Text(L10n.tight(L10n.t("preview.end"), size: 16)).font(FontBook.shared.songti(.regular, 16, relativeTo: .callout)).foregroundStyle(Tok.ink700)
+            Text(L10n.tight(L10n.t(key), size: 16)).font(FontBook.shared.songti(.regular, 16, relativeTo: .callout)).foregroundStyle(Tok.ink700)
                 .multilineTextAlignment(.center)
         }
         .padding(.horizontal, 24)
@@ -512,6 +615,10 @@ struct SettingsView: View {
                     row(L10n.t("set.big"), L10n.t("set.big.d"), $settings.largeGrid, id: "set.big")
                     Divider().padding(.leading, 16)
                     row(L10n.t("set.rm"), L10n.t("set.rm.d"), $settings.reduceMotion, id: "set.rm")
+                    if settings.hingePresent {
+                        Divider().padding(.leading, 16)
+                        row(L10n.t("set.hinge"), L10n.t("set.hinge.d"), $settings.hingeFold, id: "set.hinge")
+                    }
                 }
                 .background(RoundedRectangle(cornerRadius: 14).fill(Color(hex: 0xFCFBF8)))
                 Text(L10n.t("langGroup")).font(.footnote).foregroundStyle(Tok.ink600).padding(.leading, 18).padding(.top, 18)

@@ -1,3 +1,4 @@
+import UIKit
 import SwiftUI
 import FoldCore
 
@@ -9,6 +10,7 @@ struct LevelScreen: View {
     @Environment(\.dynamicTypeSize) private var typeSize
     @State private var nameFaded = false
     @State private var walkOpen = false
+    @State private var opener = false
 
     var body: some View {
         let big = typeSize.isAccessibilitySize || settings.largeGrid
@@ -81,9 +83,27 @@ struct LevelScreen: View {
             .padding(.bottom, 6)
         }
         .background(TableBackground())
-        .onAppear { fadeName() }
-        .onChange(of: model.index) { _, _ in fadeName() }
+        .accessibilityHidden(opener)              // the opener is modal for VoiceOver and Switch Control
+        .overlay {
+            if opener {
+                ChapterOpener(chapter: model.chapter) {
+                    withAnimation(.easeInOut(duration: AppSettings.shared.motionReduced ? 0.2 : 0.4)) { opener = false }
+                }
+                .transition(.opacity)
+            }
+        }
+        .onAppear { fadeName(); checkOpener() }
+        .onChange(of: model.index) { _, _ in fadeName(); checkOpener() }
+        .onDisappear { model.stopGhost() }        // no teaching moves behind the map's back
         .accessibilityAction(.escape) { router.go(.map) }
+    }
+
+    /// 二 · 立: the first time chapter 2 opens, its opener plays once (frame 6-A). -noOpener YES skips it.
+    private func checkOpener() {
+        let d = UserDefaults.standard
+        guard model.level.id == "stand", !d.bool(forKey: "opener.2"), !d.bool(forKey: "noOpener") else { return }
+        d.set(true, forKey: "opener.2")
+        opener = true
     }
 
     /// level.name: fades in for 1.5 s, then rests at 40% grey (100% at AX sizes and in high contrast).
@@ -311,5 +331,55 @@ struct NextKnot: View {
         .buttonStyle(.plain)
         .accessibilityLabel(title)
         .accessibilityIdentifier("win.next")
+    }
+}
+
+/// Frame 6-A: the chapter numeral, its one-glyph name and its line; the new paper wipes in from the top-left corner
+/// (600 ms ease-in-out). Tap to skip; it leaves by itself after 2.6 s.
+private struct ChapterOpener: View {
+    let chapter: Chapter
+    let done: () -> Void
+    @State private var wipe = 0.0
+    var body: some View {
+        let rm = AppSettings.shared.motionReduced
+        let cjk = L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("ja")
+        ZStack {
+            PaperSurface(color: Tok.paperNew).ignoresSafeArea()
+            PaperSurface(color: PaperState.chapter2.color).ignoresSafeArea()
+                .mask(WipeShape(progress: wipe).ignoresSafeArea())
+            VStack(spacing: 18) {
+                Text(chapter.numeral).font(FontBook.shared.songti(.bold, 30, relativeTo: .title)).foregroundStyle(Tok.ink900)
+                Text(chapter.name).font(cjk ? FontBook.shared.songti(.black, 150, relativeTo: .largeTitle) : FontBook.shared.songti(.bold, 52, relativeTo: .largeTitle))
+                    .foregroundStyle(Tok.ink900).lineLimit(1).minimumScaleFactor(0.4)
+                Text(L10n.tight(L10n.t("ch.2.line"), size: 19)).font(FontBook.shared.songti(.regular, 19, relativeTo: .title3))
+                    .foregroundStyle(Tok.ink700).multilineTextAlignment(.center)
+            }
+            .padding(.horizontal, 24)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture { done() }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(L10n.t("ch.label", ["n": chapter.id, "name": chapter.name]) + L10n.t("sep") + L10n.t("ch.2.line"))
+        .accessibilityAddTraits([.isHeader, .isButton])
+        .accessibilityAction { done() }
+        .accessibilityIdentifier("chapter.opener")
+        .onAppear {
+            withAnimation(rm ? .linear(duration: 0.2) : .easeInOut(duration: 0.6)) { wipe = 1 }
+            UIAccessibility.post(notification: .screenChanged, argument: nil)
+            // VoiceOver users dismiss it themselves (activate), so it is never missed
+            if !UIAccessibility.isVoiceOverRunning { DispatchQueue.main.asyncAfter(deadline: .now() + 2.6) { done() } }
+        }
+    }
+}
+
+nonisolated struct WipeShape: Shape {
+    var progress: Double
+    var animatableData: Double { get { progress } set { progress = newValue } }
+    func path(in r: CGRect) -> Path {
+        let s = (r.width + r.height) * progress
+        var p = Path()
+        p.move(to: CGPoint(x: r.minX, y: r.minY)); p.addLine(to: CGPoint(x: r.minX + s, y: r.minY))
+        p.addLine(to: CGPoint(x: r.minX, y: r.minY + s)); p.closeSubpath()
+        return p
     }
 }

@@ -1,6 +1,6 @@
 import XCTest
 
-/// A first-time player's run through all of chapter 1 in Chinese: cover → map → 1-1 … 1-5 → the letter.
+/// A first-time player's run through chapters 1 and 2 in Chinese: cover → 1-1 … 1-5 → letter → map → 2-1 … 2-6 → letter.
 /// Every fold is a real one-finger drag on the page; every walk is a tap on a square.
 /// Set TEST_RUNNER_LF_SHOTS=/some/dir to also write the key moments there as PNGs (QA passes).
 final class PlaythroughUITests: XCTestCase {
@@ -29,8 +29,8 @@ final class PlaythroughUITests: XCTestCase {
         usleep(700_000)
     }
     /// The book's crease is at about 54% of the screen in portrait on a 6.3" phone.
-    func close() { drag(0.30, 0.86); XCTAssertEqual(fold.value as? String, "合上 180°", "the drag closes the book") }
-    func open() { drag(0.78, 0.22); XCTAssertEqual(fold.value as? String, "打开 0°", "the drag opens the book") }
+    func close() { drag(0.30, 0.86); XCTAssertEqual(fold.value as? String, "合上 0°", "the drag closes the book") }
+    func open() { drag(0.78, 0.22); XCTAssertEqual(fold.value as? String, "打开 180°", "the drag opens the book") }
 
     func walk(_ c: Int, _ r: Int, wait: TimeInterval = 1.4) {
         let t = tile(c, r)
@@ -49,7 +49,7 @@ final class PlaythroughUITests: XCTestCase {
         Thread.sleep(forTimeInterval: 1.0)
     }
 
-    func testPlaythroughChapter1() {
+    func testPlaythroughChapters1And2() {
         app = XCUIApplication()
         app.launchArguments = ["-resetProgress", "YES", "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
         app.launch()
@@ -58,12 +58,7 @@ final class PlaythroughUITests: XCTestCase {
         XCTAssertTrue(begin.waitForExistence(timeout: 8))
         Thread.sleep(forTimeInterval: 1)
         shot("cover")
-        begin.tap()
-        let cont = app.buttons["map.continue"]
-        XCTAssertTrue(cont.waitForExistence(timeout: 5))
-        Thread.sleep(forTimeInterval: 0.6)
-        shot("map")
-        cont.tap()
+        begin.tap()                                  // first launch: straight into 1-1
 
         // 1-1 桥: a first-timer taps the flag first, then plays with the page before closing it.
         XCTAssertTrue(fold.waitForExistence(timeout: 5))
@@ -77,7 +72,7 @@ final class PlaythroughUITests: XCTestCase {
         drag(0.50, 0.69, hold: 0.4)                 // further: leans at 130°
         shot("1-1-leaning")
         drag(0.66, 0.15, speed: 900)                // back open
-        XCTAssertEqual(fold.value as? String, "打开 0°")
+        XCTAssertEqual(fold.value as? String, "打开 180°")
         close()
         shot("1-1-closed")
         walk(1, 4, wait: 1.0)
@@ -141,5 +136,93 @@ final class PlaythroughUITests: XCTestCase {
         Thread.sleep(forTimeInterval: 0.8)
         shot("map-done")
         XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS '5'")).firstMatch.exists)
+
+        // ---- chapter 2 「立」 ----
+        app.buttons["map.continue"].tap()
+        let opener = app.descendants(matching: .any)["chapter.opener"]
+        if opener.waitForExistence(timeout: 3) {
+            Thread.sleep(forTimeInterval: 0.7)
+            shot("2-0-opener")
+            XCTAssertTrue(opener.waitForNonExistence(timeout: 6))
+        }
+        // 2-1 立: the player from chapter 1 closes first; closing does not get across; the ghost stands the page
+        XCTAssertTrue(app.descendants(matching: .any)["level.name"].label.contains("2-1"))
+        shot("2-1-start")
+        close()
+        shot("2-1-closed")
+        walk(0, 0, wait: 0.3)                        // the goal's stack: out of reach
+        Thread.sleep(forTimeInterval: 3.4)            // failed close + 1.5 s: the ghost hand draws the page to 90°
+        shot("2-1-taught")
+        let taught = (fold.value as? String ?? "").contains(" 90°")
+        print("CH2 teach stood the page: \(taught) value=\(fold.value as? String ?? "")")
+        if !taught { stand(fromClosed: true) }
+        walk(4, 2, wait: 1.8)                        // over the bridge: the figure on the ramp, the thread across
+        shot("2-1-on-bridge")
+        print("VO standing: fold=\(fold.value as? String ?? "") tile-4-2=\(tile(4, 2).label) tile-3-2=\(tile(3, 2).label)")
+        walk(7, 0, wait: 1.2)
+        win("2-1")
+
+        // 2-2 两桥
+        walk(3, 0); stand(); shot("2-2-standing")
+        walk(0, 3, wait: 3.6)
+        win("2-2")
+
+        // 2-3 先立后合: across, along the wall to its end, then close onto the goal
+        walk(3, 0); stand()
+        walk(5, 3, wait: 1.8)
+        shot("2-3-wall-end")
+        drag(0.30, 0.86)                             // the closing wins: the aha starts at once
+        win("2-3")
+
+        // 2-4 门与桥: close for the key, then stand and cross
+        walk(3, 0); close()
+        shot("2-4-door-open")
+        stand(fromClosed: true)
+        walk(7, 2, wait: 2.2)
+        win("2-4")
+
+        // 2-5 墨与桥
+        walk(3, 1); close(); stand(fromClosed: true)
+        walk(5, 2, wait: 1.6)
+        win("2-5")
+
+        // 2-6 折痕: close (key + ink), stand, cross to the door, close, walk home
+        walk(3, 4); close()
+        stand(fromClosed: true)
+        walk(6, 1, wait: 2.6)
+        shot("2-6-standing-at-door")
+        close()
+        shot("2-6-closed")
+        walk(0, 0, wait: 1.6)
+        Thread.sleep(forTimeInterval: 0.45)
+        shot("2-6-aha-mid")
+        let read2 = app.buttons["win.next"]
+        XCTAssertTrue(read2.waitForExistence(timeout: 6))
+        shot("2-6-won")
+        read2.tap()
+        let back2 = app.buttons["letter.next"]
+        XCTAssertTrue(back2.waitForExistence(timeout: 5))
+        Thread.sleep(forTimeInterval: 1.8)
+        shot("letter-2")
+        XCTAssertTrue(app.descendants(matching: .any)["preview.end"].exists)
+        back2.tap()
+        Thread.sleep(forTimeInterval: 0.8)
+        shot("map-ch2-done")
+    }
+
+    /// Stand the page at 90° with one realistic drag; if the hand missed the window, finish with the fold control's
+    /// small corrective drags, and say so in the log.
+    func stand(fromClosed: Bool = false) {
+        if fromClosed { drag(0.78, 0.54, hold: 0.4) } else { drag(0.30, 0.55, hold: 0.4) }
+        var v = fold.value as? String ?? ""
+        if !v.contains(" 90°") { print("STAND-FALLBACK after drag: \(v)") }
+        var n = 0
+        while !v.contains(" 90°") && n < 5 {
+            let a = Int(v.split(separator: " ").last.map { String($0.dropLast()) } ?? "") ?? 180
+            if a > 90 { drag(0.40, 0.52, hold: 0.4) } else { drag(0.62, 0.50, hold: 0.4) }
+            v = fold.value as? String ?? ""; n += 1
+            print("STAND-FALLBACK step \(n): \(v)")
+        }
+        XCTAssertTrue(v.contains(" 90°"), v)
     }
 }

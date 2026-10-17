@@ -42,10 +42,10 @@ struct RootView: View {
     var body: some View {
         ZStack {
             switch router.screen {
-            case .cover: CoverView(router: router)
+            case .cover: CoverView(router: router, model: model)
             case .map: ChapterMapView(model: model, router: router)
             case .level: LevelScreen(model: model, router: router)
-            case .letter: LetterView(router: router)
+            case .letter: LetterView(router: router, chapter: model.chapter.id)
             case .settings: SettingsView(router: router)
             }
         }

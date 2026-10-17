@@ -63,7 +63,10 @@ struct BookView: View {
         let geo = BookGeometry.make(rows: model.board.h, orientation: orientation, available: available, large: settings.largeGrid,
                                     columnsPerPage: model.config.columnsPerPage)
         let book = geo.bookSize
-        let overflow = max(0, book.height - available.height)
+        // the camera book is shorter on screen than its layout: measure what it really covers
+        let overflow = orientation == .horizontalCrease
+            ? max(0, BookCamera.flatHeight(page: geo.pageSize, container: book, reduceMotion: settings.motionReduced, large: settings.largeGrid) + 8 - available.height)
+            : max(0, book.height - available.height)
         let y0 = overflow > 0 ? 0 : (available.height - book.height) / 2
         let x0 = (available.width - book.width) / 2
         ZStack(alignment: .topLeading) {
@@ -222,6 +225,11 @@ private struct BookBody: View {
     @Environment(\.highContrast) private var hc
 
     var body: some View {
+        // portrait phones: the camera book (design-review-2 §4.1); Duo / landscape keep the side-on turn
+        if geo.horizontal { CameraBook(model: model, geo: geo, rotorSpace: rotorSpace) } else { legacyBody }
+    }
+
+    @ViewBuilder private var legacyBody: some View {
         let page = geo.pageSize
         let va = model.angle + model.rubber + model.tease
         let a = max(0, min(180, va)) * .pi / 180
@@ -257,8 +265,21 @@ private struct BookBody: View {
             Crease(horizontal: horizontal, length: horizontal ? page.width : page.height, glow: model.glow)
                 .offset(x: horizontal ? 0 : page.width - 1, y: horizontal ? page.height - 1 : 0)
                 .allowsHitTesting(false)
+            // the pop-up tabs on the crease: they rise as the page sweeps 120°→90° (physical) and lie back below 60°
+            if horizontal {
+                let rise = max(0, 1 - abs(va - 90) / 30)
+                if rise > 0 {
+                    let n = model.config.columnsPerPage
+                    ForEach(0..<model.board.h, id: \.self) { r in
+                        if model.board[n - 1, r] == .tab && model.board[n, r] == .tab {
+                            TabBridge(tile: geo.tile, rise: rise, standing: model.posture == .standing, paper: model.paper)
+                                .position(x: geo.center(x: r, y: 0).x, y: page.height)
+                        }
+                    }
+                }
+            }
             if model.angleHint {
-                Text(L10n.t("angle", ["a": Int(model.angle.rounded())]))
+                Text(L10n.t("angle", ["a": model.shownAngle]))
                     .font(.system(size: 11, weight: .medium).monospacedDigit())
                     .foregroundStyle(Tok.ink600)
                     .padding(.horizontal, 5).padding(.vertical, 2)
@@ -313,8 +334,9 @@ private struct FoldControl: View {
             .accessibilityIdentifier("fold.page")
             .accessibilityAdjustableAction { dir in
                 switch dir {
-                case .increment: model.foldBy(1)
-                case .decrement: model.foldBy(-1)
+                // the value is the physical angle (180° flat): swiping up opens, down folds
+                case .increment: model.foldBy(-1)
+                case .decrement: model.foldBy(1)
                 @unknown default: break
                 }
             }
@@ -522,6 +544,8 @@ private struct FixedPage: View {
     let geo: BookGeometry
     let rotorSpace: Namespace.ID
     let angle: Double
+    /// false: taps and VoiceOver go to ProjectedTargets instead (camera book)
+    var targets = true
     @Environment(\.highContrast) private var hc
 
     var body: some View {
@@ -531,14 +555,14 @@ private struct FixedPage: View {
         let cells = (0..<s.slotsAcross).flatMap { x in (0..<s.slotsDown).map { y in
             (cell: s.cell(page: .fixed, x: x, y: y), slot: geo.center(x: x, y: y)) } }
         ZStack(alignment: .topLeading) {
-            PageSheet(horizontal: geo.horizontal, isFixed: true)
-            TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: !covered)
+            PageSheet(horizontal: geo.horizontal, isFixed: true, color: model.paper.color)
+            TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: !covered && targets)
             // kept in the tree while the book is closed (hidden, not removed): re-inserting it mid-aha lost the
             // thread's redraw and left this page without its thread after the book reopened
             ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .fixed),
                         end: model.trail.last.flatMap { s.page(of: $0.c) == .fixed ? geo.center($0) : nil })
                 .opacity(covered ? 0 : 1)
-            if !covered && s.page(of: model.char.c) == .fixed { PuppetLayer(model: model, geo: geo, at: geo.center(model.char)) }
+            if !covered && !model.puppetOnRamp && s.page(of: model.char.c) == .fixed { PuppetLayer(model: model, geo: geo, at: geo.center(model.char)) }
             // the folding page's shadow: a soft band from the crease that grows as it closes over this page
             if !hc && angle > 0 {
                 let extent = geo.depth * (1 - cos(a)) / 2 + 14 * sin(a)
@@ -558,6 +582,8 @@ private struct FrontFace: View {
     let geo: BookGeometry
     let rotorSpace: Namespace.ID
     let angle: Double
+    /// false: taps and VoiceOver go to ProjectedTargets instead (camera book)
+    var targets = true
     @Environment(\.highContrast) private var hc
 
     var body: some View {
@@ -566,11 +592,12 @@ private struct FrontFace: View {
         let cells = (0..<s.slotsAcross).flatMap { x in (0..<s.slotsDown).map { y in
             (cell: s.cell(page: .folding, x: x, y: y), slot: geo.center(x: x, y: y)) } }
         ZStack(alignment: .topLeading) {
-            PageSheet(horizontal: geo.horizontal, isFixed: false)
-            TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: angle < 20)
+            PageSheet(horizontal: geo.horizontal, isFixed: false, color: model.paper.color)
+            // the top page stays tappable (and in VoiceOver) while it lies flat or stands: 2-1's goal is up there
+            TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: targets && (angle < 20 || model.posture == .standing))
             ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .folding),
                         end: model.trail.last.flatMap { s.page(of: $0.c) == .folding ? geo.center($0) : nil })
-            if s.page(of: model.char.c) == .folding { PuppetLayer(model: model, geo: geo, at: geo.center(model.char)) }
+            if !model.puppetOnRamp && s.page(of: model.char.c) == .folding { PuppetLayer(model: model, geo: geo, at: geo.center(model.char)) }
             // turning away from the light
             if !hc {
                 Color.black.opacity(0.13 * sin(a)).allowsHitTesting(false)
@@ -591,6 +618,8 @@ private struct BackFace: View {
     let geo: BookGeometry
     let rotorSpace: Namespace.ID
     let angle: Double
+    /// false: taps and VoiceOver go to ProjectedTargets instead (camera book)
+    var targets = true
     @Environment(\.highContrast) private var hc
 
     var body: some View {
@@ -602,12 +631,16 @@ private struct BackFace: View {
         let over = under.map { (cell: Cell(rules.mirror($0.cell.c), $0.cell.r), slot: $0.slot) }
         ZStack(alignment: .topLeading) {
             if hc { Tok.hcGround.overlay(Rectangle().strokeBorder(.black, lineWidth: 1.5)) }
-            else { PaperSurface(color: Tok.paperBack, back: true) }
+            else {
+                // closing, the sheet turns into tracing paper: the page below shows through (translucency, review-2 §2.5)
+                let veil = max(0, min(1, (angle - 110) / 30, (160 - angle) / 10))
+                PaperSurface(color: Tok.paperBack, back: true).opacity(1 - model.paper.translucency * 2.5 * veil)
+            }
             if closed {
                 TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: under, interactive: false, dim: hc ? 0.5 : 0.3)
                 // the stack's own elements (tap targets + VoiceOver) are the cells underneath, labelled with what lies on them
                 TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: over, interactive: false, dim: hc ? 0.75 : 0.5, mirrorPrints: false)
-                StackTargets(model: model, geo: geo, rotorSpace: rotorSpace, cells: under)
+                if targets { StackTargets(model: model, geo: geo, rotorSpace: rotorSpace, cells: under) }
                 ThreadLayer(model: model, pieces: stackPieces(model, geo), end: model.trail.last.map(geo.stackCenter))
                 PuppetLayer(model: model, geo: geo, at: geo.stackCenter(model.char))
             }
@@ -656,6 +689,7 @@ private struct StackTargets: View {
 private struct PageSheet: View {
     let horizontal: Bool
     let isFixed: Bool
+    var color: Color = PaperState.chapter1.color
     @Environment(\.highContrast) private var hc
     var body: some View {
         if hc {
@@ -664,9 +698,338 @@ private struct PageSheet: View {
             // the valley: each page curls down a little into the crease
             let toCrease: UnitPoint = horizontal ? (isFixed ? .top : .bottom) : (isFixed ? .trailing : .leading)
             let away: UnitPoint = horizontal ? (isFixed ? UnitPoint(x: 0.5, y: 0.08) : UnitPoint(x: 0.5, y: 0.92)) : (isFixed ? UnitPoint(x: 0.92, y: 0.5) : UnitPoint(x: 0.08, y: 0.5))
-            PaperSurface(color: PaperState.chapter1.color)
+            PaperSurface(color: color)
                 .overlay(LinearGradient(colors: [.black.opacity(0.07), .clear], startPoint: toCrease, endPoint: away))
                 .overlay(LinearGradient(colors: [.clear, .white.opacity(0.35)], startPoint: UnitPoint(x: 0.5, y: 0.5), endPoint: horizontal ? (isFixed ? .bottom : .top) : (isFixed ? .leading : .trailing)))
         }
     }
+}
+
+/// The two pop-up tabs locked across the crease (design-review-2 §1.4, §6.4). Drawn in this top-down view as a striped
+/// paper bridge over the crease; the 40° camera and the 45° ramp are still to come (README, deferred).
+private struct TabBridge: View {
+    let tile: Double
+    let rise: Double
+    let standing: Bool
+    let paper: PaperState
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        let r = RoundedRectangle(cornerRadius: 3, style: .continuous)
+        ZStack {
+            r.fill(hc ? Color.white : paper.tileFace)
+            Stripes(spacing: hc ? 6 : tile * 0.09).stroke(hc ? Color.black : Tok.ink900.opacity(0.28), lineWidth: hc ? 2 : 1).clipShape(r)
+            r.strokeBorder(hc ? Color.black : Tok.ink900.opacity(standing ? 0.35 : 0.15), lineWidth: hc ? 3 : 1)
+        }
+        .frame(width: tile * 0.62, height: max(2, tile * 0.5 * rise))
+        .shadow(color: .black.opacity(hc ? 0 : 0.18 * rise), radius: 3, y: 2)
+        .opacity(0.35 + 0.65 * rise)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+}
+
+
+// MARK: - the camera book (design-review-2 §4.1, §6.4)
+
+/// One camera for every chapter: pitch 16° + 24°·sin a, yaw 18°·sin a, a = the physical page angle (flat and shut:
+/// 16° / 0°; standing: 40° / 18°). Reduce motion: 28° / 0°. Book space: x along the crease, y from the crease towards
+/// the viewer across the bottom page, z up from the table. Every page is a plane, drawn through its exact perspective
+/// homography, so the standing page is a wall and the tabs a 45° ramp.
+struct BookCamera {
+    var pitch: Double, yaw: Double, f: Double, k: Double, cx: Double, cy: Double
+    var pitchDegrees: Double { pitch * 180 / .pi }
+
+    func cam(_ p: SIMD3<Double>) -> SIMD3<Double> {
+        let y1 = p.y * cos(pitch) - p.z * sin(pitch), z1 = p.y * sin(pitch) + p.z * cos(pitch)
+        let x2 = p.x * cos(yaw) + z1 * sin(yaw), z2 = -p.x * sin(yaw) + z1 * cos(yaw)
+        return SIMD3(x2 * k, y1 * k, z2 * k)
+    }
+    func project(_ p: SIMD3<Double>) -> CGPoint {
+        let c = cam(p), w = 1 - c.z / f
+        return CGPoint(x: cx + c.x / w, y: cy + c.y / w)
+    }
+    /// For a view whose local point (u, v) lies at o + u·eu + v·ev in book space.
+    func transform(o: SIMD3<Double>, eu: SIMD3<Double>, ev: SIMD3<Double>) -> ProjectionTransform {
+        let O = cam(o), U = cam(eu), V = cam(ev)
+        let w0 = 1 - O.z / f, wu = -U.z / f, wv = -V.z / f
+        var t = ProjectionTransform()
+        t.m11 = CGFloat(U.x + cx * wu); t.m12 = CGFloat(U.y + cy * wu); t.m13 = CGFloat(wu)
+        t.m21 = CGFloat(V.x + cx * wv); t.m22 = CGFloat(V.y + cy * wv); t.m23 = CGFloat(wv)
+        t.m31 = CGFloat(O.x + cx * w0); t.m32 = CGFloat(O.y + cy * w0); t.m33 = CGFloat(w0)
+        return t
+    }
+
+    /// How tall the flat book is on screen (large grid: it may scroll).
+    static func flatHeight(page: CGSize, container: CGSize, reduceMotion: Bool, large: Bool) -> Double {
+        let c = make(fold: 0, page: page, container: container, reduceMotion: reduceMotion, large: large)
+        let W = Double(page.width), H = Double(page.height)
+        let ys = [SIMD3<Double>(-W / 2, H, 0), SIMD3(W / 2, H, 0), SIMD3(-W / 2, -H, 0), SIMD3(W / 2, -H, 0)].map { Double(c.project($0).y) }
+        return ys.max()! - min(0, ys.min()!)
+    }
+
+    /// Fitted once for the flat and the standing book, so nothing zooms while the page turns; the book only slides
+    /// sideways with the yaw (like the prototype's translateX).
+    static func make(fold: Double, page: CGSize, container: CGSize, reduceMotion rm: Bool, large: Bool) -> BookCamera {
+        let W = Double(page.width), H = Double(page.height), Wc = Double(container.width), Hc = Double(container.height)
+        let f = 2.6 * Hc
+        func pose(_ a: Double) -> (Double, Double) {
+            let s = max(0, sin(a * .pi / 180))
+            return rm ? (28 * .pi / 180, 0) : ((16 + 24 * s) * .pi / 180, 18 * s * .pi / 180)
+        }
+        func box(_ c: BookCamera, _ a: Double) -> CGRect {
+            let t = a * .pi / 180, e = SIMD3<Double>(0, -cos(t), sin(t))
+            let l = SIMD3<Double>(-W / 2, 0, 0), r = SIMD3<Double>(W / 2, 0, 0)
+            let pts = [l + SIMD3(0, H, 0), r + SIMD3(0, H, 0), l, r, l + H * e, r + H * e].map(c.project)
+            let xs = pts.map(\.x), ys = pts.map(\.y)
+            return CGRect(x: xs.min()!, y: ys.min()!, width: xs.max()! - xs.min()!, height: ys.max()! - ys.min()!)
+        }
+        let (p0, q0) = pose(0), (p1, q1) = pose(90)
+        let flat = box(BookCamera(pitch: p0, yaw: q0, f: f, k: 1, cx: 0, cy: 0), 0)
+        let stand = box(BookCamera(pitch: p1, yaw: q1, f: f, k: 1, cx: 0, cy: 0), 90)
+        var k = min(1, (Wc - 6) / Double(max(flat.width, stand.width)))
+        if !large { k = min(k, Hc / Double(flat.height)) }
+        let (p, q) = pose(fold)
+        var c = BookCamera(pitch: p, yaw: q, f: f, k: k, cx: 0, cy: 0)
+        let ref = box(BookCamera(pitch: p0, yaw: q0, f: f, k: k, cx: 0, cy: 0), 0)
+        c.cx = Wc / 2 - Double(box(c, fold).midX)
+        c.cy = large ? 4 - Double(ref.minY) : Hc / 2 - Double(ref.midY)
+        return c
+    }
+}
+
+extension GameModel {
+    /// Standing on a tab of a locked bridge: the figure is drawn on the ramp, not on its page.
+    var puppetOnRamp: Bool {
+        guard orientation == .horizontalCrease, posture == .standing, board[char] == .tab else { return false }
+        let n = config.columnsPerPage
+        return (char.c == n - 1 || char.c == n) && board[n - 1, char.r] == .tab && board[n, char.r] == .tab
+    }
+}
+
+private struct CameraBook: View {
+    let model: GameModel
+    let geo: BookGeometry
+    let rotorSpace: Namespace.ID
+    @Environment(\.highContrast) private var hc
+
+    struct Ramp { var F, Wp, E, c0: SIMD3<Double>; var w: Double }
+
+    var body: some View {
+        let page = geo.pageSize, W = Double(page.width), H = Double(page.height)
+        let th = model.angle + model.rubber + model.tease            // fold degrees (0 flat … 180 shut)
+        let cam = BookCamera.make(fold: th, page: page, container: geo.bookSize, reduceMotion: AppSettings.shared.motionReduced,
+                                  large: AppSettings.shared.largeGrid)
+        let t = th * .pi / 180
+        let fold = SIMD3<Double>(0, -cos(t), sin(t))                  // from the crease along the folding page
+        let ex = SIMD3<Double>(1, 0, 0), edge0 = SIMD3<Double>(-W / 2, 0, 0)
+        let showBack = th > 90 + cam.pitchDegrees
+        let rise = max(0, 1 - abs(th - 90) / 30)                      // the tabs: up between 120° and 60° (physical)
+        ZStack(alignment: .topLeading) {
+            FixedPage(model: model, geo: geo, rotorSpace: rotorSpace, angle: th, targets: false)
+                .frame(width: page.width, height: page.height)
+                .projectionEffect(cam.transform(o: edge0, eu: ex, ev: SIMD3(0, 1, 0)))
+            Group {
+                if showBack {
+                    BackFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: th, targets: false)
+                        .frame(width: page.width, height: page.height)
+                        .projectionEffect(cam.transform(o: edge0, eu: ex, ev: fold))
+                } else {
+                    FrontFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: th, targets: false)
+                        .frame(width: page.width, height: page.height)
+                        .projectionEffect(cam.transform(o: edge0 + H * fold, eu: ex, ev: -fold))
+                }
+            }
+            .offset(y: showBack ? model.press * 2 : 0)
+            .shadow(color: .black.opacity(hc ? 0 : 0.12 * max(0, sin(t))), radius: 6, x: 0, y: 3)
+            CreaseLine(a: cam.project(edge0), b: cam.project(SIMD3(W / 2, 0, 0)), glow: model.glow)
+            if rise > 0 { ramps(cam, fold: fold, rise: rise, W: W, H: H) }
+            if model.puppetOnRamp {
+                let p = cam.project(rampPoint(model.char, fold: fold, rise: rise, W: W))
+                Puppet(frame: 0, facingLeft: false, rim: false)
+                    .frame(width: geo.tile * 0.62 * cam.k, height: geo.tile * 0.84 * cam.k)
+                    .position(x: p.x, y: p.y - geo.tile * 0.40 * cam.k)
+                    .allowsHitTesting(false).accessibilityHidden(true)
+            }
+            if model.sealShown {
+                let x = model.crossingSlotX.map { Double(geo.center(x: $0, y: 0).x) } ?? W / 2
+                Seal(glyph: "通", size: 26)
+                    .scaleEffect(model.sealSettled ? 1 : 1.02)
+                    .position(cam.project(SIMD3(x - W / 2, 0, 0)))
+                    .transition(AppSettings.shared.motionReduced ? .opacity : .asymmetric(insertion: .scale(scale: 1.6).combined(with: .opacity), removal: .opacity))
+                    .accessibilityHidden(true)
+            }
+            if model.angleHint {
+                Text(L10n.t("angle", ["a": model.shownAngle]))
+                    .font(.system(size: 11, weight: .medium).monospacedDigit()).foregroundStyle(Tok.ink600)
+                    .padding(.horizontal, 5).padding(.vertical, 2)
+                    .background(Capsule().fill(Tok.paperNew.opacity(0.9)))
+                    .position(cam.project(SIMD3(W / 2 - 24, 16, 0)))
+                    .transition(.opacity).accessibilityHidden(true)
+            }
+            if model.ghost > 0 {
+                GhostFinger()
+                    .position(cam.project((model.ghost >= 2 ? 0.2 : 0.68) * H * fold))
+                    .transition(.opacity).allowsHitTesting(false).accessibilityHidden(true)
+            }
+            ProjectedTargets(model: model, geo: geo, rotorSpace: rotorSpace, cam: cam, fold: fold, th: th)
+            FoldControl(model: model)
+                .frame(width: page.width, height: 24)
+                .position(cam.project(SIMD3(0, 0, 0)))
+        }
+        .frame(width: geo.bookSize.width, height: geo.bookSize.height, alignment: .topLeading)
+    }
+
+    private func ramp(_ r: Int, fold: SIMD3<Double>, rise: Double, W: Double) -> Ramp {
+        let w = geo.tile * 0.8, xl = Double(geo.center(x: r, y: 0).x) - W / 2 - w / 2
+        let d = geo.pad + geo.tile                                    // the far edge of each tab square
+        let c0 = SIMD3<Double>(xl, 0, 0), F = SIMD3<Double>(xl, d, 0), Wp = c0 + d * fold
+        let M = (F + Wp) / 2
+        return Ramp(F: F, Wp: Wp, E: c0 + (M - c0) * rise, c0: c0, w: w)
+    }
+
+    private func rampPoint(_ c: Cell, fold: SIMD3<Double>, rise: Double, W: Double) -> SIMD3<Double> {
+        let g = ramp(c.r, fold: fold, rise: rise, W: W)
+        let base = geo.spread.page(of: c.c) == .fixed ? g.F : g.Wp
+        var p = base + (g.E - base) * 0.6
+        p.x = Double(geo.center(c).x) - W / 2
+        return p
+    }
+
+    private func center3D(_ c: Cell, fold: SIMD3<Double>, W: Double, H: Double) -> SIMD3<Double> {
+        let p = geo.center(c)
+        if geo.spread.page(of: c.c) == .fixed { return SIMD3(Double(p.x) - W / 2, Double(p.y), 0) }
+        return SIMD3(Double(p.x) - W / 2, 0, 0) + (H - Double(p.y)) * fold
+    }
+
+    /// Two flaps per bridge row: one hinged on the floor, one on the wall; their free ends meet over the crease and
+    /// make one straight 45° ramp at 90°. V supports at both sides, stripes across (frame 6-B3).
+    @ViewBuilder private func ramps(_ cam: BookCamera, fold: SIMD3<Double>, rise: Double, W: Double, H: Double) -> some View {
+        let n = model.config.columnsPerPage
+        let rows = (0..<model.board.h).filter { model.board[n - 1, $0] == .tab && model.board[n, $0] == .tab }
+        let ex = SIMD3<Double>(1, 0, 0)
+        ForEach(rows, id: \.self) { r in
+            let g = ramp(r, fold: fold, rise: rise, W: W)
+            let side = SIMD3<Double>(g.w, 0, 0)
+            ForEach([0.0, 1.0], id: \.self) { s in
+                Path { p in p.addLines([g.c0, g.F, g.E, g.Wp].map { cam.project($0 + s * side) }); p.closeSubpath() }
+                    .fill(hc ? Color.black.opacity(0.22) : Color(hex: 0x8A7A62).opacity(0.30 * rise))
+            }
+            RampFlap(paper: model.paper, lit: 0.10)
+                .frame(width: g.w, height: 100)
+                .projectionEffect(cam.transform(o: g.Wp, eu: ex, ev: (g.E - g.Wp) / 100))
+            RampFlap(paper: model.paper, lit: 0.28)
+                .frame(width: g.w, height: 100)
+                .projectionEffect(cam.transform(o: g.F, eu: ex, ev: (g.E - g.F) / 100))
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+        // the thread crosses the open crease over the bridge: the chapter's signature (review-2 §1.1)
+        if model.posture != .closed && model.threadProgress >= 1 {
+            let pairs = zip(model.trail, model.trail.dropFirst()).filter { a, b in
+                a.r == b.r && rows.contains(a.r) && geo.spread.page(of: a.c) != geo.spread.page(of: b.c)
+            }
+            ForEach(Array(pairs.enumerated()), id: \.offset) { _, ab in
+                let pts = [center3D(ab.0, fold: fold, W: W, H: H), rampPoint(ab.0, fold: fold, rise: rise, W: W),
+                           rampPoint(ab.1, fold: fold, rise: rise, W: W), center3D(ab.1, fold: fold, W: W, H: H)].map(cam.project)
+                let path = Path { p in p.addLines(pts) }
+                ZStack {
+                    if hc {
+                        path.stroke(.white, style: StrokeStyle(lineWidth: 8, lineCap: .round, lineJoin: .round))
+                        path.stroke(Tok.hcLine, style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round, dash: [9, 4]))
+                    } else {
+                        path.stroke(.black.opacity(0.22), style: StrokeStyle(lineWidth: 3, lineCap: .round, dash: [8, 5])).offset(x: 0.7, y: 1.3)
+                        path.stroke(model.paper.thread, style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round, dash: [8, 5]))
+                    }
+                }
+                .allowsHitTesting(false).accessibilityHidden(true)
+            }
+        }
+    }
+}
+
+private struct RampFlap: View {
+    let paper: PaperState
+    let lit: Double
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        ZStack {
+            Rectangle().fill(hc ? Color.white : paper.tileFace)
+            if !hc { Color.white.opacity(lit) }
+            Stripes(spacing: 100.0 / 7).stroke(hc ? Color.black : Tok.ink900.opacity(0.26), lineWidth: hc ? 2 : 1)
+            Rectangle().strokeBorder(hc ? Color.black : Tok.ink900.opacity(0.30), lineWidth: hc ? 3 : 0.8)
+        }
+    }
+}
+
+private struct CreaseLine: View {
+    let a: CGPoint, b: CGPoint
+    let glow: Double
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        let line = Path { p in p.move(to: a); p.addLine(to: b) }
+        ZStack {
+            if hc { line.stroke(.black, lineWidth: 2) }
+            else {
+                line.stroke(Tok.ink900.opacity(0.30), lineWidth: 0.8)
+                line.offsetBy(dx: 0, dy: 1.6).stroke(.white.opacity(0.95), lineWidth: 1.1)
+            }
+            if glow > 0 { line.stroke(.white, lineWidth: 5).blur(radius: 3).opacity(0.9 * glow) }
+        }
+        .allowsHitTesting(false).accessibilityHidden(true)
+    }
+}
+
+/// Tap and VoiceOver targets in screen space, one per visible square, sized to its projected quad: hit testing and
+/// accessibility frames then match what the camera shows, whatever the page angle.
+private struct ProjectedTargets: View {
+    let model: GameModel
+    let geo: BookGeometry
+    let rotorSpace: Namespace.ID
+    let cam: BookCamera
+    let fold: SIMD3<Double>
+    let th: Double
+
+    struct Target: Identifiable { let cell: Cell; let rect: CGRect; let quad: [CGPoint]; var id: Cell { cell } }
+
+    func targets() -> [Target] {
+        let s = geo.spread, W = Double(geo.pageSize.width), H = Double(geo.pageSize.height), h = geo.tile / 2
+        func quad(_ c: CGPoint, _ pt: (Double, Double) -> SIMD3<Double>) -> (CGRect, [CGPoint]) {
+            let ps = [(-h, -h), (h, -h), (h, h), (-h, h)].map { cam.project(pt(Double(c.x) + $0.0, Double(c.y) + $0.1)) }
+            let xs = ps.map(\.x), ys = ps.map(\.y)
+            let r = CGRect(x: xs.min()!, y: ys.min()!, width: xs.max()! - xs.min()!, height: ys.max()! - ys.min()!)
+            return (r, ps.map { CGPoint(x: $0.x - r.minX, y: $0.y - r.minY) })
+        }
+        func target(_ cell: Cell, _ q: (CGRect, [CGPoint])) -> Target { Target(cell: cell, rect: q.0, quad: q.1) }
+        let closed = th >= 160, showFolding = th < 20 || model.posture == .standing
+        var out: [Target] = []
+        for x in 0..<s.slotsAcross { for y in 0..<s.slotsDown {
+            let c = geo.center(x: x, y: y), fc = s.cell(page: .fixed, x: x, y: y)
+            if closed {
+                out.append(target(fc, quad(c) { u, v in SIMD3(u - W / 2, 0, 0) + v * fold }))
+            } else {
+                out.append(target(fc, quad(c) { u, v in SIMD3(u - W / 2, v, 0) }))
+                if showFolding {
+                    out.append(target(s.cell(page: .folding, x: x, y: y), quad(c) { u, v in SIMD3(u - W / 2, 0, 0) + (H - v) * fold }))
+                }
+            }
+        } }
+        return out
+    }
+
+    var body: some View {
+        ForEach(targets()) { t in
+            Color.clear
+                .frame(width: max(1, t.rect.width), height: max(1, t.rect.height))
+                .contentShape(QuadShape(points: t.quad))   // touch = the square as drawn; VoiceOver frame = its bounds
+                .onTapGesture { model.tap(t.cell) }
+                .modifier(TileAccessibility(model: model, cell: t.cell, hidden: false, rotorSpace: rotorSpace))
+                .accessibilitySortPriority(5000 - Double(t.rect.midY) - Double(t.rect.midX) / 1000)
+                .position(x: t.rect.midX, y: t.rect.midY)
+        }
+    }
+}
+
+nonisolated struct QuadShape: Shape {
+    let points: [CGPoint]
+    func path(in r: CGRect) -> Path { Path { p in p.addLines(points.map { CGPoint(x: r.minX + $0.x, y: r.minY + $0.y) }); p.closeSubpath() } }
 }
