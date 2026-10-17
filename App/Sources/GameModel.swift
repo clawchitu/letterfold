@@ -12,7 +12,7 @@ struct Chapter: Identifiable {
     let soon: Bool
     var numeral: String { ["一", "二", "三", "四", "五"][id - 1] }
     var name: String { L10n.t("ch.\(id)") }
-    var englishName: String { AppSettings.shared.language == "en" ? "" : Bundle.main.path(forResource: "en", ofType: "lproj").flatMap(Bundle.init(path:))?.localizedString(forKey: "ch.\(id)", value: nil, table: "Localizable") ?? "" }
+    var englishName: String { L10n.lang.hasPrefix("en") ? "" : Bundle.main.path(forResource: "en", ofType: "lproj").flatMap(Bundle.init(path:))?.localizedString(forKey: "ch.\(id)", value: nil, table: "Localizable") ?? "" }
 
     static let all: [Chapter] = [
         Chapter(id: 1, levelIDs: ["bridge", "facing", "back", "key", "ink"], unlocked: true, soon: false),

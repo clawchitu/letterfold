@@ -219,7 +219,11 @@ private struct BookBody: View {
         let horizontal = geo.horizontal
         let fixedOrigin = horizontal ? CGPoint(x: 0, y: page.height) : .zero
         let foldOrigin = horizontal ? CGPoint.zero : CGPoint(x: page.width, y: 0)
-        let showBack = va > 90
+        // The camera looks down at the fixed page. Up to 130° the folding page leans back, away from the viewer
+        // (shorter in perspective, its face and the fixed page both visible: frames v2-2 / a11y-c2); from 130° to
+        // 180° it swings over and lies down on the fixed page.
+        let tilt = BookBody.tilt(va)
+        let showBack = horizontal ? tilt > 90 : va > 90
         let pressed = model.press * 2
         ZStack(alignment: .topLeading) {
             // the fixed page, with the folding page's shadow creeping over it
@@ -229,15 +233,15 @@ private struct BookBody: View {
             // the folding page: front up to 90°, back beyond
             ZStack {
                 if showBack {
-                    BackFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: va)
+                    BackFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: horizontal ? 90 + (tilt - 90) * 90 / 90 : va)
                         .scaleEffect(x: horizontal ? 1 : -1, y: horizontal ? -1 : 1)
                 } else {
-                    FrontFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: va)
+                    FrontFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: horizontal ? tilt : va)
                 }
             }
             .frame(width: page.width, height: page.height)
-            .rotation3DEffect(.degrees(horizontal ? va : -va), axis: horizontal ? (x: 1, y: 0, z: 0) : (x: 0, y: 1, z: 0),
-                              anchor: horizontal ? .bottom : .leading, perspective: 0.32)
+            .rotation3DEffect(.degrees(horizontal ? tilt : -va), axis: horizontal ? (x: 1, y: 0, z: 0) : (x: 0, y: 1, z: 0),
+                              anchor: horizontal ? .bottom : .leading, perspective: horizontal ? 0.5 : 0.32)
             .offset(x: foldOrigin.x, y: foldOrigin.y + (showBack ? pressed : 0))
             .shadow(color: .black.opacity(hc ? 0 : 0.10 * sin(a) + (showBack ? 0.06 : 0)), radius: 8 * sin(a / 2) + 2, x: 0, y: 3)
             // the crease: a bright line and a dark line (design-spec §4), lit up when the pages touch
@@ -269,6 +273,12 @@ private struct BookBody: View {
                 .offset(x: horizontal ? 0 : page.width - 12, y: horizontal ? page.height - 12 : 0)
         }
         .frame(width: geo.bookSize.width, height: geo.bookSize.height, alignment: .topLeading)
+    }
+
+    /// Displayed lean-back of the folding page (degrees from flat) for a fold angle.
+    static func tilt(_ a: Double) -> Double {
+        if a <= 130 { return a * 62 / 130 }
+        return 62 + (min(a, 180) - 130) / 50 * 118 + max(0, a - 180)
     }
 }
 

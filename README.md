@@ -103,4 +103,5 @@ tools/                      sync-from-proto.sh、make-strings.js（原生专用�
 - `xcodebuild test`：**全绿**。FoldCore 19 个（含 trail、Spread）+ XCUITest 5 个：书封 → 地图 → 关卡（默认界面没有滑块和按钮）；**真拖页**把上页拖下合上（读屏值变成 "Closed, 180°"）→ 点终点 → 纸人走过合上的书 → 啊哈后书自动摊平 → 下一关；拖到半开吸附；按钮控制的 15° 步进、撤销、合上、「走」书签；日文。
 - iPhone 18 Pro 模拟器截图对照过定稿：书封、地图、信、1-1…1-5 打开 / 90 / 130 / 合上、啊哈、高对比、超大格子、日文、设置。
 - **TestFlight 归档**：`xcodebuild archive … -allowProvisioningUpdates -authenticationKeyPath/ID/IssuerID`，团队 C29GS8XSA6（从 App Store Connect API 的 bundleId seedId 查到），自动签名成功（"Apple Development: Created via API (ZU4A2DNRY5)"），**ARCHIVE SUCCEEDED**，版本 0.1 (1)。没有建 App Store Connect 记录，没有上传。
-- 已知小问题：英文界面的章节卡片会把英文名再写一遍（副标题应该隐藏）；130° 时翻过来的上页背面占了下页上半，真机上再调透视。
+- 修正（评审后）：竖屏下上页到 130° 前是向后仰（远离观者、透视变短、正面朝上，下页完整可见），130°→180° 才翻过来盖到下页；英文界面的章节卡片不再重复英文名；Info.plist 加 ITSAppUsesNonExemptEncryption = NO，版本 0.1 (2)。
+- **App Store Connect**：API 密钥不能建 App 记录（POST /v1/apps → 403 "does not allow CREATE"），altool 没有建 App 的命令，fastlane produce 需要 Apple ID 登录和双重认证。所以记录要在网页上建（Bundle ID com.haoqianglyu.letterfold 也还没注册；归档时 Xcode 自动签名用的是通配 / 开发描述文件）。
