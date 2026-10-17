@@ -3,15 +3,33 @@ import Foundation
 /// Strings live in Localizable.xcstrings / Levels.xcstrings, generated from fold-proto's i18n.js by tools/make-strings.js.
 /// Templates keep the web's named placeholders ({name}); Korean particles are written {word:이} and chosen by the
 /// final consonant, as in i18n.js. Named placeholders let every language keep its own word order.
+/// The language follows the system unless Settings picks one (read through AppSettings, so views re-render).
 enum L10n {
-    static var lang: String { Bundle.main.preferredLocalizations.first ?? "en" }
+    static let supported = ["zh-Hans", "en", "ja", "ko"]
+    private static var bundles: [String: Bundle] = [:]
+
+    static var lang: String {
+        let pick = AppSettings.shared.language
+        return pick.isEmpty ? (Bundle.main.preferredLocalizations.first ?? "en") : pick
+    }
+
+    static var bundle: Bundle {
+        let pick = AppSettings.shared.language
+        if pick.isEmpty { return .main }
+        if let b = bundles[pick] { return b }
+        guard let path = Bundle.main.path(forResource: pick, ofType: "lproj"), let b = Bundle(path: path) else { return .main }
+        bundles[pick] = b
+        return b
+    }
+
+    static var locale: Locale { Locale(identifier: lang) }
 
     static func t(_ key: String, _ params: [String: any CustomStringConvertible] = [:]) -> String {
-        fill(Bundle.main.localizedString(forKey: key, value: key, table: "Localizable"), params)
+        fill(bundle.localizedString(forKey: key, value: key, table: "Localizable"), params)
     }
 
     static func level(_ id: String) -> (name: String, line: String, hint: String) {
-        func get(_ part: String) -> String { Bundle.main.localizedString(forKey: "\(id).\(part)", value: id, table: "Levels") }
+        func get(_ part: String) -> String { bundle.localizedString(forKey: "\(id).\(part)", value: id, table: "Levels") }
         return (get("name"), get("line"), get("hint"))
     }
 
