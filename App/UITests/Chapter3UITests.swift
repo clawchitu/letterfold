@@ -51,4 +51,30 @@ final class Chapter3UITests: XCTestCase {
         f.lean(to: 42, tol: 6)
         XCTAssertTrue(isHere(1, 2), "slid with the shadow: \(tile(1, 2).label)")
     }
+
+    /// design-review-ch3 §6.4: 15° steps (buttons / VoiceOver) stop on 75°, 60°, 45° and 30° in the leaning window and
+    /// stay there: 90°'s detent does not swallow 75°, and 3-3's lock (29°–33°) does not pull 30° onto 31°. Both ways.
+    func testFifteenDegreeStepsStopInTheLean() {
+        app = XCUIApplication()
+        app.launchArguments = ["-resetProgress", "YES", "-noOpener", "YES", "-startLevel", "14", "-buttonControl", "YES",
+                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
+        app.launch()
+        f = FoldDriver(app: app)
+        let more = app.buttons["fold.more"], less = app.buttons["fold.less"]
+        XCTAssertTrue(more.waitForExistence(timeout: 8))
+        Thread.sleep(forTimeInterval: 1)
+        func check(_ want: Int) {
+            Thread.sleep(forTimeInterval: 0.8)
+            XCTAssertEqual(f.fold.value as? String, "斜起 \(want)°", "stops on \(want)°")
+            Thread.sleep(forTimeInterval: 1.2)
+            XCTAssertEqual(f.phys(), want, "still on \(want)° after a while: nothing pulls it away")
+        }
+        for _ in 0..<6 { more.tap(); usleep(600_000) }
+        Thread.sleep(forTimeInterval: 0.6)
+        XCTAssertEqual(f.phys(), 90)
+        for want in [75, 60, 45, 30] { more.tap(); check(want) }
+        for want in [45, 60, 75] { less.tap(); check(want) }
+        less.tap(); Thread.sleep(forTimeInterval: 0.8)
+        XCTAssertEqual(f.phys(), 90)
+    }
 }

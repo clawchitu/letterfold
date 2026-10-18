@@ -83,6 +83,21 @@ final class GameModel {
     @ObservationIgnored private var lockFlashTask: Task<Void, Never>?
     private(set) var canUndo = false
     private(set) var angle: Double = 0
+    /// The crush (design-review-ch3 §2, §6.1): FoldCore has already sent the figure home; for 260 ms it is drawn
+    /// flattening where the stone came down (`squash` 0 → 1), then it reappears at the start. Reduce motion: no squash.
+    private(set) var crushAt: Cell?
+    private(set) var squash: Double = 0
+    @ObservationIgnored private var crushTask: Task<Void, Never>?
+    /// The rigid impact waits for the slap so the two land as one (a held drag that never reaches it: 150 ms).
+    @ObservationIgnored private var crushWaiting = false
+    /// Where the figure is drawn: under the stone while it is being crushed, else where FoldCore has it.
+    var figureCell: Cell { crushAt ?? char }
+    /// The lamp behind the top page, timed (design-review-ch3 §6.7): out over 350 ms the moment the book shuts,
+    /// back over 350 ms when it leans again. Multiplied with the 89°→82° angle ramp in `lamp(_:)`.
+    private(set) var lampLevel: Double = 1
+    @ObservationIgnored private var lampTask: Task<Void, Never>?
+    @ObservationIgnored private var lampGoal: Double = 1
+    @ObservationIgnored private var rideIdle: Task<Void, Never>?
     private(set) var won = false
 
     // the hinge's feel
@@ -240,6 +255,8 @@ final class GameModel {
     var level: Level { pack.levels[index] }
     var levelText: (name: String, line: String, hint: String) { L10n.level(level.id) }
     var isLeaning: Bool { config.isLeaning(angle) }
+    /// Chapter 3 between 89° and 60° (physical): leaning, not standing (the 15° stops at 75° and 60°, review-ch3 §6.4).
+    var leansNotStands: Bool { paper.backlit && angle > 90 && isLeaning }
     var chapter: Chapter { Chapter.all.first { $0.levelIDs.contains(level.id) } ?? Chapter.all[0] }
     var chapterLevelIndices: [Int] { chapter.levelIDs.compactMap { id in pack.levels.firstIndex { $0.id == id } } }
     var code: String {
@@ -252,7 +269,8 @@ final class GameModel {
     // MARK: words
 
     var modeWord: String {
-        let key = posture == .closed ? "fold" : posture == .standing ? "pop" : isLeaning ? "lean" : "open"
+        // chapter 3 has no tabs: past 90° the page leans, whatever the standing window says (design-ch3 §5)
+        let key = posture == .closed ? "fold" : leansNotStands ? "lean" : posture == .standing ? "pop" : isLeaning ? "lean" : "open"
         return L10n.t("mode.\(key)")
     }
     var angleText: String { L10n.t("angle", ["a": shownAngle]) }
@@ -283,6 +301,7 @@ final class GameModel {
         pending = Pending(); saidAngle = 0; nopes = 0; hintAvailable = false; toast = nil
         angle = 0
         cameraTask?.cancel(); cameraTask = nil; cameraPitch = Self.handPitch
+        setLamp(1, now: true)
         sync()
         lockWindows = Self.lockWindows(game.board, rules); lockedCells = []; lockFlashTask?.cancel(); lockFlash = []
         if hingeKind == .device, settings.hingeFold, let a = (device as? AnyHingeAngle)?.lastAngle {
@@ -350,12 +369,14 @@ final class GameModel {
             if angleSamples.count > 64 || (angleSamples.first.map { now - $0.t > 0.3 } ?? false) { angleSamples.removeAll { now - $0.t > 0.3 } }
             if angle < 179.5 && a >= 179.5, let v = CloseFeel.speed(angleSamples.filter { now - $0.t < 0.2 }) { landing = (now, v) }
         }
-        let before = angle
+        let before = angle, figure = char
         let events = game.setAngle(a)
         angle = game.angle
         sync()
+        if paper.backlit { setLamp(posture == .closed ? 0 : 1, now: false) }   // reduce motion keeps the timed fade too
         if !quiet {
-            handle(events, from: wasPosture)
+            handle(events, from: wasPosture, at: figure)
+            rideFeel()
             // design-ch3 §5: the page is held up to the lamp once it leans past 89° (physical)
             if paper.backlit && before < 91 && angle >= 91 && angle < config.foldMin { pending.lit = true }
             lockCheck(from: before)
@@ -418,9 +439,90 @@ final class GameModel {
         }
     }
 
+    /// The lamp behind the top page by angle: 0 → 1 between 89° and 82° (physical), the paper lights up before the
+    /// first shadow (design-review-ch3 §6.3). Going out is timed, not by angle (§6.7): see `lampLevel`.
+    static func lit(_ a: Double) -> Double { max(0, min(1, (a - 91) / 7)) }
+    /// What the views draw: the angle ramp times the timed level.
+    func lamp(_ a: Double) -> Double { Self.lit(a) * lampLevel }
+
+    /// Fade the lamp towards `goal` over 350 ms (a jump — undo, a level start — sets it at once).
+    private func setLamp(_ goal: Double, now: Bool) {
+        if now { lampTask?.cancel(); lampTask = nil; lampGoal = goal; if lampLevel != goal { lampLevel = goal }; return }
+        guard goal != lampGoal else { return }
+        lampGoal = goal
+        lampTask?.cancel()
+        let from = lampLevel, t0 = CACurrentMediaTime()
+        lampTask = Task { [weak self] in
+            while !Task.isCancelled {
+                let u = min(1, (CACurrentMediaTime() - t0) / 0.35)
+                guard let self else { return }
+                // out: ease-out (the light drops at once, then lingers); in: ease-in-out
+                let e = goal < from ? 1 - (1 - u) * (1 - u) : Curve.cubic(u, 0.42, 0, 0.58, 1)
+                self.lampLevel = from + (goal - from) * e
+                if u >= 1 { self.lampTask = nil; return }
+                try? await Task.sleep(for: .milliseconds(8))
+            }
+        }
+    }
+
+    // MARK: riding a shadow: a continuous hum as strong as the shadow is fast (design-ch3 §4, spec §6)
+
+    /// Called on every angle change: on a shadow, and the shadow moving → hum; 90 ms without motion → silence.
+    private func rideFeel() {
+        let n = config.columnsPerPage
+        guard paper.backlit, crushAt == nil, !rules.isRight(char.c), !board[char].isFloor, let src = shade[char] else { stopRideFeel(); return }
+        let now = CACurrentMediaTime()
+        let recent = angleSamples.filter { now - $0.t < 0.06 }
+        guard let first = recent.first, let last = recent.last, last.t - first.t > 0.004 else { return }
+        // the shadow sits d·(−cos fold) squares from the crease: it moves d·sin(fold)·dθ/dt squares a second
+        let d = Double(src - n + 1), w = (last.a - first.a) / (last.t - first.t) * .pi / 180
+        let speed = abs(d * sin(angle * .pi / 180) * w)
+        guard speed > 0.05 else { return }
+        haptics.ride(0.2 + 0.8 * min(1, speed / 4))
+        rideIdle?.cancel()
+        rideIdle = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(90))
+            if !Task.isCancelled { self?.haptics.rideStop() }
+        }
+    }
+
+    private func stopRideFeel() { rideIdle?.cancel(); rideIdle = nil; haptics.rideStop() }
+
+    // MARK: the crush
+
+    /// The stone comes down on the figure at `cell`: hold it there, flatten it with the slap, then send it home.
+    private func beginCrush(at cell: Cell) {
+        crushTask?.cancel()
+        stopRideFeel()
+        crushWaiting = true
+        crushAt = settings.motionReduced ? nil : cell
+        squash = 0
+        crushTask = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(150))
+            // an animated close is on its way to the slap: contact() lands the crush with it (Codex review 6)
+            while !Task.isCancelled, let self, self.crushWaiting, self.motionTarget != nil { try? await Task.sleep(for: .milliseconds(16)) }
+            guard !Task.isCancelled, let self, self.crushWaiting else { return }
+            self.crushLands()
+        }
+    }
+
+    /// The pages touch over the figure: Impact .rigid with the 「啪」, 260 ms of flattening, then the start again.
+    private func crushLands() {
+        crushWaiting = false
+        crushTask?.cancel()
+        haptics.crush()
+        guard crushAt != nil else { return }
+        withAnimation(.timingCurve(0.5, 0, 0.75, 0.4, duration: 0.26)) { squash = 1 }
+        crushTask = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(260 + 140))
+            guard !Task.isCancelled, let self else { return }
+            self.crushAt = nil; self.squash = 0
+        }
+    }
+
+    private func clearCrush() { crushTask?.cancel(); crushTask = nil; crushWaiting = false; crushAt = nil; squash = 0 }
+
     /// Chapters 1–2 detent at 0 / 90 / 130 / 180. Chapter 3 leans freely: 91°–154° (fold) has no detent (spec §5).
-    /// The lamp behind the top page: 0 → 1 between 89° and 82° (physical), off again as the book shuts (design-review-ch3 §6.3, §6.7).
-    static func lit(_ a: Double) -> Double { max(0, min(1, (a - 91) / 7)) * max(0, min(1, (160 - a) / 6)) }
 
     var detents: [Double] { chapter.id >= 3 ? [0, 90, 180] : Self.snapPoints }
 
@@ -555,7 +657,7 @@ final class GameModel {
     func contact() {
         let feel = CloseFeel(speed: closingSpeed)
         released = nil; landing = nil
-        haptics.contact(feel)
+        if crushWaiting { crushLands() } else { haptics.contact(feel) }
         sound.slap(feel)
         if settings.motionReduced {
             withAnimation(.linear(duration: 0.2)) { glow = 1 }
@@ -734,6 +836,8 @@ final class GameModel {
         }
         pending = Pending(); saidAngle = Int(angle.rounded())
         forgetMotion()
+        clearCrush(); stopRideFeel()
+        if paper.backlit { setLamp(posture == .closed ? 0 : 1, now: true) }
         aimCamera(at: angle)
     }
 
@@ -811,6 +915,7 @@ final class GameModel {
     func stopWalk() { walkTask?.cancel(); walkTask = nil; walking = false }
     private func stopAll() {
         stopWalk(); stopMotion(); stopGhost(); freezeCamera(); settleTask?.cancel(); ahaTask?.cancel(); stuckTask?.cancel()
+        clearCrush(); stopRideFeel()
         hingeIdle?.cancel(); hingeIdle = nil; hingeActive = false; hingeSamples = []
     }
 
@@ -829,6 +934,7 @@ final class GameModel {
             angle = game.angle; rubber = 0
             sync()
         }
+        if paper.backlit { setLamp(posture == .closed ? 0 : 1, now: true) }
         forgetMotion()
         aimCamera(at: angle)
         hintAvailable = true
@@ -842,7 +948,9 @@ final class GameModel {
         board = game.board; char = game.char; trail = game.trail; posture = game.posture; shade = game.shade; canUndo = game.canUndo
     }
 
-    private func handle(_ events: [GameEvent], from: Posture) {
+    /// `at`: where the figure stood before these events (a crush is drawn there; FoldCore has already moved it home).
+    private func handle(_ events: [GameEvent], from: Posture, at figure: Cell? = nil) {
+        var here = figure ?? char
         for e in events {
             switch e {
             case .postureChanged(_, let to):
@@ -868,13 +976,14 @@ final class GameModel {
             case .shadeChanged:
                 pending.shade = true
             case .slid(let to):
+                here = to
                 haptics.tick()
                 sound.note(row: to.r, timbre: .paper, pan: pan(of: to), volume: 0.45)   // one gliding note per square ridden
                 announce(L10n.t("slid", ["pos": pos(to)]))
             case .fell(let crushed):
                 // crushed: the closing goes on to the slap (stopping it left the book at ~155°, Codex review 5)
-                stopWalk(); if !crushed { stopMotion() }
-                haptics.fall()
+                stopWalk(); stopRideFeel()
+                if crushed { beginCrush(at: here) } else { stopMotion(); haptics.fall() }
                 show(L10n.t(crushed ? "crushed" : "fell"))
             case .stepped, .blocked:
                 break
@@ -978,6 +1087,8 @@ final class GameModel {
         var parts: [String] = []
         switch posture {
         case .closed: parts.append(L10n.t("book.closed"))
+        case .standing where leansNotStands:
+            parts.append(L10n.t("book.lean", ["a": 180 - a]))
         case .standing:
             let bridge = (0..<board.h).contains { board[config.columnsPerPage - 1, $0] == .tab && board[config.columnsPerPage, $0] == .tab }
             parts.append(L10n.t(bridge ? "book.popBridge" : "book.pop", ["a": 180 - a]))

@@ -82,6 +82,41 @@ final class Haptics {
     /// Bumping into a wall / out of reach: Impact .light 0.4, dull.
     func nope() { if !play([tap(0, 0.4, 0.1)]) { impactLight.impactOccurred(intensity: 0.4 * scale) } }
     func undo() { tick() }
-    /// Falling or being crushed.
+    /// Crushed under a stone (design-review-ch3 §2, §6.1): Impact .rigid, the same instant as the 「啪」.
+    func crush() { guard scale > 0 else { return }; impactRigid.impactOccurred(intensity: scale) }
+
+    // MARK: riding a shadow (design-ch3 §4, spec §6): one continuous hum whose strength follows the shadow's speed
+
+    private var ridePlayer: CHHapticAdvancedPatternPlayer?
+
+    /// `strength` 0…1 (the shadow's speed under the figure); starts the hum if it is not running.
+    func ride(_ strength: Double, retry: Bool = true) {
+        guard scale > 0, let engine else { rideStop(); return }
+        let v = Float(max(0.05, min(1, strength)) * scale)
+        do {
+            if ridePlayer == nil {
+                // long enough for any ride; stopped as soon as the shadow stops (rideStop)
+                let pattern = try CHHapticPattern(events: [hum(0, 30, 1.0 / max(0.01, scale), 0.25)], parameters: [])
+                let p = try engine.makeAdvancedPlayer(with: pattern)
+                try engine.start()
+                try p.start(atTime: CHHapticTimeImmediate)
+                ridePlayer = p
+            }
+            try ridePlayer?.sendParameters([CHHapticDynamicParameter(parameterID: .hapticIntensityControl, value: v, relativeTime: 0)],
+                                           atTime: CHHapticTimeImmediate)
+        } catch {
+            // an engine reset invalidates its players: make a fresh one once (Codex review 6)
+            ridePlayer = nil
+            if retry { ride(strength, retry: false) }
+        }
+    }
+
+    func rideStop() {
+        guard let p = ridePlayer else { return }
+        ridePlayer = nil
+        try? p.stop(atTime: CHHapticTimeImmediate)
+    }
+
+    /// Falling off a shadow.
     func fall() { if !play([tap(0, 1.0, 0.2), hum(0.02, 0.2, 0.4, 0.05)]) { impactSoft.impactOccurred(intensity: scale) } }
 }

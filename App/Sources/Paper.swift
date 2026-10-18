@@ -402,10 +402,13 @@ struct ShadeMark: View {
 struct StoneSilhouette: View {
     let size: Double
     var reduced = false
+    /// The backlit rim (#FBF6EA, 1.5 pt outside), where the stone hangs over its own shadow's hatch
+    var rim = false
     @Environment(\.highContrast) private var hc
     var body: some View {
         let s = StoneOutline()
         ZStack {
+            if rim && !hc { s.stroke(Tok.rimLight, style: StrokeStyle(lineWidth: 3, lineJoin: .round)) }
             if hc {
                 s.fill(.white)
                 Hatch(spacing: 5).stroke(.black, lineWidth: 1.5).clipShape(s)

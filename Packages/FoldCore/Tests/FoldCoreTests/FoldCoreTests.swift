@@ -181,6 +181,26 @@ final class GameTests: XCTestCase {
         XCTAssertEqual(s.turn(b, Cell(1, 1), 130, 100), Cell(1, 1))
     }
 
+    /// design-review-ch3 §6.4: the 15° stops inside the leaning window (75°, 60°, 45°, 30° physical = fold 105…150)
+    /// are plain angles: the hinge stays exactly there, open (never shut), leaning, and each stone d squares from the
+    /// crease shades the bottom page only while d·cos(physical) ≥ 0.5, on column n − round(d·cos).
+    func testFifteenDegreeStopsInTheLean() throws {
+        for id in ["shadow", "press", "lock", "ride", "rideBack", "lamp"] {
+            let g = try FoldGame(level: level(id)), n = g.rules.n
+            for fold in [105.0, 120, 135, 150] {
+                g.setAngle(fold)
+                XCTAssertEqual(g.angle, fold, "\(id) \(fold)")
+                XCTAssertNotEqual(g.posture, .closed, "\(id) \(fold)")
+                XCTAssertTrue(g.config.isLeaning(fold), "\(id) \(fold)")
+                for r in 0..<g.board.h { for c in n..<(2 * n) where g.board[c, r].isOpaque {
+                    let reach = Double(c - n + 1) * -cos(fold * .pi / 180), q = n - Int((reach + 0.5).rounded(.down))
+                    if reach < 0.5 { XCTAssertFalse(g.shade.contains { $0.key.r == r && $0.value == c }, "\(id) \(fold) \(c),\(r)") }
+                    else { XCTAssertNotNil(g.shade[Cell(q, r)], "\(id) \(fold): stone \(c),\(r) shades \(q)") }
+                } }
+            }
+        }
+    }
+
     /// The rule is one-sided: left-page stones never move, so the right page only blocks.
     func testCrushIsOneSided() throws {
         let r = Rules()
