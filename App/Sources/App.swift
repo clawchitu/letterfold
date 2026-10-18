@@ -38,6 +38,7 @@ struct RootView: View {
     let settings = AppSettings.shared
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
     var body: some View {
         ZStack {
@@ -55,6 +56,7 @@ struct RootView: View {
         .typesettingLanguage(.init(identifier: L10n.lang))
         .onChange(of: reduceMotion, initial: true) { _, v in settings.systemReduceMotion = v }
         .onChange(of: contrast, initial: true) { _, v in settings.systemIncreaseContrast = v == .increased }
+        .onChange(of: reduceTransparency, initial: true) { _, v in settings.systemReduceTransparency = v }
         .onAppear { FontBook.shared.load() }
         .tint(Tok.ink900)
         .background(HingeHost(provider: model.device))

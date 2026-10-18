@@ -19,6 +19,10 @@ enum Tok {
     static let figure = Color(hex: 0x221C17)
     static let thread = Color(hex: 0xC0473A)
     static let threadAged = Color(hex: 0xB23A2E)
+    static let shade = Color(hex: 0x6E604E)          // a stone's shadow on the backlit page, 5.05:1 (design-ch3 §5)
+    static let lamp = Color(hex: 0xFFD08A)           // the lamp's glow through the top page: decoration only
+    static let lockEdge = Color(hex: 0xC98A2B)       // a gap's outline lighting up when the shadows lock
+    static let rimLight = Color(hex: 0xFBF6EA)       // the figure's backlit rim on a shadow
     static let threadDark = Color(hex: 0x93362C)
     static let sealMuted = Color(hex: 0xB9493B)
     static let hcLine = Color(hex: 0x8E2419)

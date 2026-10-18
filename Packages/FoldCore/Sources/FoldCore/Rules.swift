@@ -74,8 +74,16 @@ public struct Rules: Sendable {
         return out
     }
 
+    /// Closing drops the right page's stones onto their mirror cells: a character on the left page under one
+    /// is crushed (design-review-ch3 §2). A ridden shadow ends in that same cell, so the two readings agree.
+    /// Stones on the left page never move, so standing on the right page above one only blocks, never crushes.
+    public func crushed(_ b: Board, _ from: Cell, _ a: Double) -> Bool {
+        a >= config.foldMin && !isRight(from.c) && b[mirror(from.c), from.r].isOpaque
+    }
+
     /// Standing on nothing but a shadow? The shadow carries the character. nil means it falls (or is crushed).
     public func ride(_ b: Board, _ from: Cell, _ src: Int?, _ a: Double) -> Cell? {
+        if crushed(b, from, a) { return nil }
         if b[from].isFloor { return from }
         guard let src else { return nil }
         let q = shadowColumn(src, a)

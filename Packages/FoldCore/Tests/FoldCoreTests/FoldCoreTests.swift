@@ -8,7 +8,7 @@ final class SolverTests: XCTestCase {
     override func setUpWithError() throws { pack = try LevelPack.bundled() }
 
     func testPackDecodes() throws {
-        XCTAssertEqual(pack.levels.count, 13)
+        XCTAssertEqual(pack.levels.count, 17)
         XCTAssertEqual(pack.config, .standard)
         for lv in pack.levels { XCTAssertNoThrow(try Board(level: lv), lv.id) }
     }
@@ -39,7 +39,7 @@ final class SolverTests: XCTestCase {
             "bridge": [\.needsFoldOpt], "facing": [\.needsFoldOpt], "back": [\.needsFoldOpt],
             "key": [\.needsKey], "ink": [\.needsInk], "stand": [\.needsPopOpt], "twoBridges": [\.needsPopOpt], "standClose": [\.needsPopOpt, \.needsFoldOpt],
             "doorBridge": [\.needsKey, \.needsPopOpt], "inkBridge": [\.needsInk, \.needsPopOpt],
-            "crease": [\.needsKey, \.needsInk, \.needsPopOpt], "shadow": [\.needsShade], "ride": [\.needsShade, \.needsRide],
+            "crease": [\.needsKey, \.needsInk, \.needsPopOpt], "shadow": [\.needsShade], "ride": [\.needsShade, \.needsRide], "press": [\.needsShade], "lock": [\.needsShade], "rideBack": [\.needsShade], "lamp": [\.needsShade, \.needsRide, \.needsFoldOpt],
         ]
         for lv in pack.levels {
             let report = solver.report(lv)
@@ -160,6 +160,45 @@ final class GameTests: XCTestCase {
         let events = g.setAngle(180)
         XCTAssertTrue(events.contains(.fell(crushed: true)))
         XCTAssertEqual(g.char, g.board.start)
+    }
+
+    /// design-review-ch3 §2: standing on paper under a right-page stone and closing the book crushes (3-2 「压」).
+    func testClosingOnAStoneCrushes() throws {
+        let g = try FoldGame(level: level("press"))
+        g.setAngle(130)
+        XCTAssertNotNil(g.walk(to: Cell(1, 1)))
+        XCTAssertEqual(g.char, Cell(1, 1))
+        let events = g.setAngle(180)
+        XCTAssertTrue(events.contains(.fell(crushed: true)))
+        XCTAssertEqual(g.char, g.board.start)
+    }
+
+    /// The solver agrees with the game (Codex review 5): from 3-2's (1,1) closing is not a move, leaning is.
+    func testSolverKnowsTheCrush() throws {
+        let b = try FoldGame(level: level("press")).board
+        let s = Solver(.standard)
+        XCTAssertNil(s.turn(b, Cell(1, 1), 130, 180))
+        XCTAssertEqual(s.turn(b, Cell(1, 1), 130, 100), Cell(1, 1))
+    }
+
+    /// The rule is one-sided: left-page stones never move, so the right page only blocks.
+    func testCrushIsOneSided() throws {
+        let r = Rules()
+        let b = try FoldGame(level: level("press")).board
+        XCTAssertTrue(r.crushed(b, Cell(1, 1), 180))
+        XCTAssertFalse(r.crushed(b, Cell(1, 1), 150))
+        XCTAssertFalse(r.crushed(b, Cell(6, 1), 180))
+        XCTAssertFalse(r.crushed(b, Cell(5, 1), 180))
+    }
+
+    /// Chapters 1 and 2 keep their solutions: no reachable cell there is newly crushed.
+    func testCrushLeavesEarlierChaptersAlone() throws {
+        for id in ["bridge", "facing", "back", "key", "ink", "stand", "twoBridges", "standClose", "doorBridge", "inkBridge", "crease"] {
+            let g = try FoldGame(level: level(id)), r = Rules()
+            for c in r.reachable(g.board, from: g.board.start, .open, [:]) where !r.isRight(c.c) {
+                XCTAssertFalse(r.crushed(g.board, c, 180), "\(id) \(c)")
+            }
+        }
     }
 
     func testStandingTabsBridgeTheCrease() throws {

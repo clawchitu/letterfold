@@ -781,6 +781,36 @@
         }
       }
     },
+    "ch.3.line": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影子也是路。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shadows are paths too."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影も、道になる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자도 길이 된다."
+          }
+        }
+      }
+    },
     "ch.4": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -3091,6 +3121,36 @@
         }
       }
     },
+    "hint.portrait.shadow": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "把书慢慢合到一半多一点，上页石头的影子会落在缺口上。影子能走。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close the book slowly, a little past halfway: the shadow of the top page's stone falls on the gap. Shadows can be walked on."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本をゆっくり半分より少し多く閉じると、上のページの石の影がすき間に落ちる。影は歩ける。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책을 반보다 조금 더 천천히 닫으면 위 페이지 돌의 그림자가 틈에 떨어져요. 그림자 위는 걸을 수 있어요."
+          }
+        }
+      }
+    },
     "hint.portrait.stand": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -3987,6 +4047,96 @@
           "stringUnit": {
             "state": "translated",
             "value": "오른쪽 강가에서 온 편지"
+          }
+        }
+      }
+    },
+    "letter.3.body": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯在你那岸。\n你的石头把影子递过河来，\n我踩着它，又近了一点。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The lamp is on your bank.\nYour stones passed their shadows across the river,\nand I walked on them,\na little closer."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯はきみの岸にある。\nきみの石が影を川向こうへ差し出し、\nわたしはそれを踏んで、少し近づいた。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "등불은 네 쪽 강가에 있다.\n네 돌들이 그림자를 강 건너로 건네주어,\n나는 그것을 밟고 조금 더 가까워졌다."
+          }
+        }
+      }
+    },
+    "letter.3.sign": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——左岸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— the Left Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——左岸より"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— 왼쪽 강가에서"
+          }
+        }
+      }
+    },
+    "letter.3.title": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左岸来信"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A Letter from the Left Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左岸からの手紙"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "왼쪽 강가에서 온 편지"
           }
         }
       }
@@ -5761,6 +5911,66 @@
         }
       }
     },
+    "paper.ch3": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "背光的纸，影子能走。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paper held to the lamp; shadows can be walked on."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯にかざした紙。影の上を歩ける。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "등불에 비춘 종이, 그림자 위를 걸을 수 있어요."
+          }
+        }
+      }
+    },
+    "paper.lit": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这页纸举到了灯前"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The page is held up to the lamp"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ページが灯にかざされた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "페이지를 등불에 비췄어요"
+          }
+        }
+      }
+    },
     "pos": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {r} {c}",
       "extractionState": "manual",
@@ -5967,6 +6177,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "2장 끝. 다음 편지는 아직 오는 중이에요."
+          }
+        }
+      }
+    },
+    "preview.end3": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三章完。下一封信，还在路上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of chapter three. The next letter is still on its way."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三章、おわり。次の手紙は、まだ旅の途中。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3장 끝. 다음 편지는 아직 오는 중이에요."
           }
         }
       }
@@ -6811,6 +7051,36 @@
         }
       }
     },
+    "shadowGap": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {c}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影子盖住了第{c}列的缺口"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a shadow covers the gap in column {c}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影が{c}列目のすき間をふさいだ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자가 {c}열의 틈을 덮었어요"
+          }
+        }
+      }
+    },
     "shadowGone": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -7287,6 +7557,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "책은 반만 펼칠 수도 있어요"
+          }
+        }
+      }
+    },
+    "teach.lean": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "书可以停在立起和合上之间的任何地方"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The book can rest anywhere between standing and closed"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本は、立てた状態と閉じた状態のあいだのどこでも止められる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책은 세운 상태와 닫힌 상태 사이 어디에서든 멈출 수 있어요"
           }
         }
       }
