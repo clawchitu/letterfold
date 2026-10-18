@@ -39,7 +39,7 @@ final class SolverTests: XCTestCase {
             "bridge": [\.needsFoldOpt], "facing": [\.needsFoldOpt], "back": [\.needsFoldOpt],
             "key": [\.needsKey], "ink": [\.needsInk], "stand": [\.needsPopOpt], "twoBridges": [\.needsPopOpt], "standClose": [\.needsPopOpt, \.needsFoldOpt],
             "doorBridge": [\.needsKey, \.needsPopOpt], "inkBridge": [\.needsInk, \.needsPopOpt],
-            "crease": [\.needsKey, \.needsInk, \.needsPopOpt], "shadow": [\.needsShade], "ride": [\.needsShade, \.needsRide], "press": [\.needsShade], "lock": [\.needsShade], "rideBack": [\.needsShade, \.needsRide], "lamp": [\.needsShade, \.needsRide],
+            "crease": [\.needsKey, \.needsInk, \.needsPopOpt], "shadow": [\.needsShade], "ride": [\.needsShade, \.needsRide], "press": [\.needsShade], "lock": [\.needsShade], "rideBack": [\.needsShade], "lamp": [\.needsShade, \.needsRide, \.needsFoldOpt],
         ]
         for lv in pack.levels {
             let report = solver.report(lv)
