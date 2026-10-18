@@ -145,6 +145,15 @@ final class GameModel {
     @ObservationIgnored private var teachTask: Task<Void, Never>?
     @ObservationIgnored private var teachCount = 0
     @ObservationIgnored private var hingeSamples: [(t: Double, p: Double)] = []
+    /// Recent (time, fold) samples of every input that turns the page, for the closing speed (CloseFeel).
+    @ObservationIgnored private var angleSamples: [(t: Double, a: Double)] = []
+    /// The finger's speed when it let go (fold °/s) and when: a reduce-motion close lands in one jump.
+    @ObservationIgnored private var released: (t: Double, v: Double)?
+    /// The next setAngle is a jump, not motion (reduce motion's cross-fade, undo): keep it out of the speed.
+    @ObservationIgnored private var jumping = false
+    /// The closing speed measured the moment the page reached the other page (a spring can then rubber-band at 180°
+    /// for a while before it settles and `contact()` runs).
+    @ObservationIgnored private var landing: (t: Double, v: Double)?
     @ObservationIgnored private var hingeActive = false
     @ObservationIgnored private var hingeTarget = 0.0
     @ObservationIgnored private var hingeIdle: Task<Void, Never>?
@@ -317,6 +326,12 @@ final class GameModel {
     /// Every angle change goes through here (drag, springs, buttons, device hinge).
     func setAngle(_ a: Double) {
         let wasPosture = posture
+        let now = CACurrentMediaTime()
+        if jumping { angleSamples = [] } else {
+            angleSamples.append((now, a))
+            if angleSamples.count > 64 || (angleSamples.first.map { now - $0.t > 0.3 } ?? false) { angleSamples.removeAll { now - $0.t > 0.3 } }
+            if angle < 179.5 && a >= 179.5, let v = CloseFeel.speed(angleSamples.filter { now - $0.t < 0.2 }) { landing = (now, v) }
+        }
         let events = game.setAngle(a)
         angle = game.angle
         sync()
@@ -343,7 +358,9 @@ final class GameModel {
         if !dragging && !hingeActive && !ghostDriving { aimCamera(at: target) }
         if settings.motionReduced {
             // design-spec §5 reduce.motion: a 200 ms linear cross-fade, no turning, no bounce (BookView fades)
+            jumping = true
             withAnimation(.linear(duration: 0.2)) { setAngle(target); rubber = 0 }
+            jumping = false
             arrived(at: target); done?()
             return
         }
@@ -418,10 +435,27 @@ final class GameModel {
         if !aha { settle() }
     }
 
-    /// The two pages touch: press 2pt, the crease glows, Impact .rigid 0.9, 「啪」 (design-spec §5, §6).
+    /// How fast the page came down, fold °/s: the last ~80 ms of motion (finger, spring or hinge) when it reached the
+    /// other page; a reduce-motion jump uses the finger's release speed; otherwise a medium close.
+    var closingSpeed: Double {
+        let now = CACurrentMediaTime()
+        if let l = landing, now - l.t < 2 { return l.v }
+        if let m = CloseFeel.speed(angleSamples.filter { now - $0.t < 0.2 }) { return m }
+        if let r = released, now - r.t < 0.5 { return max(0, r.v) }   // a reduce-motion jump: the finger's speed
+        return CloseFeel.defaultSpeed
+    }
+
+    /// The angle was restored, not moved (undo, a cancelled drag): no speed carries across.
+    private func forgetMotion() { angleSamples = []; released = nil; landing = nil }
+
+    /// The two pages touch: press 2pt, the crease glows, a 「啪」 and a tap as hard as the page came down
+    /// (design-spec §5, §6; 0.1 (6): CloseFeel). The silent switch and system volume govern the sound (ambient
+    /// session); the haptic follows Settings › Haptics. Reduce motion changes the visuals only.
     func contact() {
-        haptics.contact()
-        sound.slap()
+        let feel = CloseFeel(speed: closingSpeed)
+        released = nil; landing = nil
+        haptics.contact(feel)
+        sound.slap(feel)
         if settings.motionReduced {
             withAnimation(.linear(duration: 0.2)) { glow = 1 }
             withAnimation(.linear(duration: 0.2).delay(0.25)) { glow = 0 }
@@ -568,6 +602,7 @@ final class GameModel {
     func dragEnded(velocity: Double) {
         guard dragging else { return }
         dragging = false
+        released = (CACurrentMediaTime(), velocity)
         let projected = angle + velocity * 0.12
         let target = Self.snapPoints.min { abs($0 - projected) < abs($1 - projected) } ?? 0
         if abs(target - dragFrom) < 0.5 && abs(angle - dragFrom) < 0.5 { game.dropUndo(); canUndo = game.canUndo }
@@ -592,6 +627,7 @@ final class GameModel {
             }
         }
         pending = Pending(); saidAngle = Int(angle.rounded())
+        forgetMotion()
         aimCamera(at: angle)
     }
 
@@ -687,6 +723,7 @@ final class GameModel {
             angle = game.angle; rubber = 0
             sync()
         }
+        forgetMotion()
         aimCamera(at: angle)
         hintAvailable = true
         saidAngle = Int(angle.rounded()); pending = Pending()

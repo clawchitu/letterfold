@@ -93,35 +93,38 @@ struct TileFace: View {
     var inkSpent = false        // wet ink that has printed across, faded
     var mirrorAxisVertical = true
     var printedAt: Date? = nil
+    /// Only what sits on the square (flag, key, door, ink, tab stripes), not the square itself: the closed stack
+    /// draws its own squares (design-review-3 §closed).
+    var bare = false
     @Environment(\.highContrast) private var hc
 
     var body: some View {
         switch tile {
         case .empty: EmptyView()
-        case .paper: PathTile(size: size, paper: paper)
+        case .paper: if !bare { PathTile(size: size, paper: paper) }
         case .start:
             ZStack {
-                PathTile(size: size, paper: paper)
+                if !bare { PathTile(size: size, paper: paper) }
                 StartDimple(size: size)
             }
         case .goal:
             ZStack {
-                PathTile(size: size, paper: paper, doubleFrame: hc)
+                if !bare { PathTile(size: size, paper: paper, doubleFrame: hc) }
                 Flag(size: size)
             }
         case .stone: PaperStone(size: size)
         case .key: KeyGlyph().frame(width: size * 0.62, height: size * 0.3).shadowed(hc)
-        case .door: ZStack { PathTile(size: size, paper: paper); DoorGlyph(open: false, size: size) }
-        case .openDoor: ZStack { PathTile(size: size, paper: paper); DoorGlyph(open: true, size: size) }
+        case .door: ZStack { if !bare { PathTile(size: size, paper: paper) }; DoorGlyph(open: false, size: size) }
+        case .openDoor: ZStack { if !bare { PathTile(size: size, paper: paper) }; DoorGlyph(open: true, size: size) }
         case .ink:
             // wet ink is walkable: it sits on a path square like every other floor (frame v2-1)
             ZStack {
-                PathTile(size: size, paper: paper)
+                if !bare { PathTile(size: size, paper: paper) }
                 WetInk(size: size, paper: paper, mirrored: inkPrint, spent: inkSpent, verticalMirror: mirrorAxisVertical, printedAt: inkPrint ? printedAt : nil)
             }
         case .tab:
             ZStack {
-                PathTile(size: size, paper: paper)
+                if !bare { PathTile(size: size, paper: paper) }
                 Stripes(spacing: size * 0.12).stroke(Tok.ink900.opacity(hc ? 1 : 0.18), lineWidth: hc ? 2 : 1)
                     .clipShape(RoundedRectangle(cornerRadius: 3)).padding(2)
             }

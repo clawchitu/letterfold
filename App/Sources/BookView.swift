@@ -671,9 +671,10 @@ private struct FrontFace: View {
 }
 
 /// The back of the folding page, laid out in fixed-page coordinates: what you see of the closed book.
-/// The sheet is new paper (translucency 0.05), so the stacked squares only show as pressed-through ghosts:
-/// the folding page's squares (its own, seen from behind) and, fainter, the squares underneath. The thread and the
-/// figure walk on top, on the stack.
+/// Closing, the sheet turns into tracing paper (design-review-3 §closed): once shut, the stacked map underneath reads
+/// clearly through it. Solid-edged squares are the bottom page's, finely dashed ones (cooler, the emboss reversed)
+/// come from the top page, both = a solid square with a dashed one inside; gaps are bare paper. The thread and the
+/// figure walk on top.
 private struct BackFace: View {
     let model: GameModel
     let geo: BookGeometry
@@ -689,31 +690,101 @@ private struct BackFace: View {
         let closed = angle >= 160
         let under = (0..<s.slotsAcross).flatMap { x in (0..<s.slotsDown).map { y in
             (cell: s.cell(page: .fixed, x: x, y: y), slot: geo.center(x: x, y: y)) } }
-        let over = under.map { (cell: Cell(rules.mirror($0.cell.c), $0.cell.r), slot: $0.slot) }
         ZStack(alignment: .topLeading) {
             if hc { Tok.hcGround.overlay(Rectangle().strokeBorder(.black, lineWidth: 1.5)) }
             else {
                 // closing, the sheet turns into tracing paper: the page below shows through (translucency, review-2 §2.5)
                 let veil = max(0, min(1, (angle - 110) / 30, (160 - angle) / 10))
                 PaperSurface(color: Tok.paperBack, back: true).opacity(1 - model.paper.translucency * 2.5 * veil)
-            }
-            if closed {
-                TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: under, interactive: false, dim: hc ? 0.5 : 0.3)
-                // the stack's own elements (tap targets + VoiceOver) are the cells underneath, labelled with what lies on them
-                TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: over, interactive: false, dim: hc ? 0.75 : 0.5, mirrorPrints: false)
-                if targets { StackTargets(model: model, geo: geo, rotorSpace: rotorSpace, cells: under) }
-                ThreadLayer(model: model, pieces: stackPieces(model, geo), end: model.trail.last.map(geo.stackCenter))
-                PuppetLayer(model: model, geo: geo, at: geo.stackCenter(model.char))
-            }
-            if !hc {
-                // lit as it comes down; the spine at the crease is a mountain fold: a highlight, then shade
+                // lit as it comes down; the spine at the crease is a mountain fold: a highlight, then shade.
+                // On the paper only: the stack, the thread and the figure sit above it (review-3 §closed)
                 Color.black.opacity(0.12 * sin(a)).allowsHitTesting(false)
                 LinearGradient(colors: [.white.opacity(0.55), .white.opacity(0), .black.opacity(0.05)], startPoint: geo.horizontal ? .top : .trailing,
                                endPoint: UnitPoint(x: geo.horizontal ? 0.5 : 0.9, y: geo.horizontal ? 0.12 : 0.5))
                     .allowsHitTesting(false)
             }
+            if closed {
+                // fades in over the last 12° of the close, not all at once at 160°
+                let fade = AppSettings.shared.motionReduced ? 1 : max(0, min(1, (angle - 160) / 12))
+                ZStack(alignment: .topLeading) {
+                    ForEach(under, id: \.cell) { item in
+                        let c = item.cell, m = Cell(rules.mirror(c.c), c.r)
+                        StackTile(model: model, size: geo.tile, lower: c, upper: m, flipVertical: geo.horizontal)
+                            .position(item.slot)
+                    }
+                }
+                .opacity(fade)
+                .allowsHitTesting(false).accessibilityHidden(true)
+                if targets { StackTargets(model: model, geo: geo, rotorSpace: rotorSpace, cells: under) }
+                ThreadLayer(model: model, pieces: stackPieces(model, geo), end: model.trail.last.map(geo.stackCenter))
+                PuppetLayer(model: model, geo: geo, at: geo.stackCenter(model.char))
+            }
         }
         .frame(width: page.width, height: page.height, alignment: .topLeading)
+    }
+}
+
+/// One square of the closed stack (design-review-3 §closed). `lower` is the bottom page's cell, `upper` the top
+/// page's cell lying on it. Objects stay upright (they are what you look for); only the carried square's emboss is
+/// reversed, as a print seen from the back. Wet ink keeps its mirrored print (v2-①).
+private struct StackTile: View {
+    let model: GameModel
+    let size: Double
+    let lower: Cell
+    let upper: Cell
+    let flipVertical: Bool
+    @Environment(\.highContrast) private var hc
+
+    var body: some View {
+        let L = model.board[lower], U = model.board[upper]
+        let lowSquare = L.isFloor || L == .door, upSquare = U.isFloor || U == .door
+        let r = RoundedRectangle(cornerRadius: 3, style: .continuous)
+        ZStack {
+            if lowSquare {
+                if hc { PathTile(size: size, paper: model.paper, doubleFrame: L == .goal) }
+                else {
+                    PathTile(size: size, paper: model.paper)
+                        .overlay(r.fill(Tok.paperBack.opacity(0.15)))          // the tracing paper, thin
+                        .overlay(r.strokeBorder(Tok.edgeLower, lineWidth: 1))
+                }
+            }
+            if upSquare {
+                let inset: CGFloat = lowSquare ? (hc ? 7 : 4) : 0
+                let dash = StrokeStyle(lineWidth: hc ? (lowSquare ? 2 : 3) : 1, dash: hc ? [7, 4] : [4, 3])
+                if hc {
+                    if !lowSquare { r.fill(.white) }
+                    r.inset(by: inset + (lowSquare ? 1 : 1.5)).stroke(.black, style: dash)
+                    // the goal's double frame (design-spec §7) on a carried goal too; inside the dashed frame on a stack
+                    if U == .goal { r.inset(by: lowSquare ? 12 : 8).stroke(.black, lineWidth: 2) }
+                } else {
+                    if !lowSquare {
+                        // the top page's square from behind: cooler, the emboss reversed (dark above, lit below)
+                        r.fill(Tok.tileMirror)
+                            .overlay(r.fill(LinearGradient(colors: [.black.opacity(0.05), .clear, .white.opacity(0.35)], startPoint: .top, endPoint: .bottom)))
+                    }
+                    r.inset(by: inset + 0.5).stroke(Tok.edgeUpper, style: dash)
+                }
+            }
+            if L == .stone { PaperStone(size: size) }
+            if U == .stone {
+                PaperStone(size: size)
+                    .overlay(r.inset(by: 0.5).stroke(hc ? Color.black : Tok.edgeUpper, style: StrokeStyle(lineWidth: hc ? 2 : 1, dash: hc ? [7, 4] : [4, 3])))
+            }
+            // what sits on the squares, upright and at full strength; the lower page's first, the upper on top
+            glyph(L, cell: lower)
+            glyph(U, cell: upper)
+        }
+        .frame(width: size, height: size)
+        // a refused step shakes the square, whichever of its two cells was tapped
+        .modifier(Shake(trigger: (model.shake[lower] ?? 0) + (model.shake[upper] ?? 0)))
+    }
+
+    @ViewBuilder private func glyph(_ t: Tile, cell c: Cell) -> some View {
+        if t != .empty && t != .stone && t != .paper {
+            TileFace(tile: t, size: size, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
+                     mirrorAxisVertical: flipVertical, printedAt: model.inkPrintedAt[c], bare: true)
+                .frame(width: size, height: size)
+        }
     }
 }
 

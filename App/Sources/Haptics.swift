@@ -1,5 +1,6 @@
 import UIKit
 import CoreHaptics
+import FoldCore
 
 /// Touch feedback, design-spec §6 and plan §9, through Core Haptics (UIKit generators where it is unavailable).
 /// Every intensity is scaled by Settings › Haptics (off / light 0.6x / strong 1.0x).
@@ -60,9 +61,14 @@ final class Haptics {
     func tick() { guard scale > 0 else { return }; selection.selectionChanged() }
     /// Snapping to 0 / 90 / 130 / 180: Impact .medium 0.6.
     func snap() { if !play([tap(0, 0.6, 0.5)]) { impactMedium.impactOccurred(intensity: 0.6 * scale) } }
-    /// The two pages touching: Impact .rigid 0.9, a dry paper slap (sharpness 0.3 body + a crisp edge).
-    func contact() {
-        if !play([tap(0, 0.9, 0.3), tap(0.012, 0.5, 0.9)]) { impactRigid.impactOccurred(intensity: 0.9 * scale) }
+    /// The two pages touching, as hard as they met (CloseFeel): a soft touch is one dull tap; a fast close a firm
+    /// body plus a crisp edge (at full speed ≈ the old Impact .rigid 0.9).
+    func contact(_ feel: CloseFeel) {
+        var events = [tap(0, feel.intensity, feel.sharpness * 0.45)]
+        if feel.strength > 0.15 { events.append(tap(0.012, feel.intensity * 0.55, feel.sharpness)) }
+        if !play(events) {
+            (feel.strength < 0.35 ? impactSoft : impactRigid).impactOccurred(intensity: feel.intensity * scale)
+        }
     }
     /// A path connects: two light taps, like two sheets meeting, then a 0.3 s low hum.
     func connect() {

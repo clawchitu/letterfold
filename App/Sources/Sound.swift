@@ -99,9 +99,14 @@ final class SoundBoard {
 
     // MARK: effects
 
-    /// 「啪」: dry paper on paper, 80 ms, no reverb.
-    func slap() {
-        play("slap", volume: 0.9) { Self.noiseBurst(0.08, decay: 55, lowpass: 2600, gain: 2.4) }
+    /// 「啪」: dry paper on paper, 80 ms, no reverb; as loud and as bright as the pages met (CloseFeel). A soft
+    /// close is a quiet, dull touch with a slower decay; a fast one a loud, crisp slap. Eight cached brightnesses.
+    func slap(_ feel: CloseFeel) {
+        let step = Int((feel.strength * 7).rounded())
+        let e = Double(step) / 7, lowpass = 900 + 3300 * e
+        play("slap\(step)", volume: feel.volume * 0.95) {
+            Self.noiseBurst(0.09, decay: 38 + 22 * e, lowpass: lowpass, gain: 2.4 * sqrt(2600 / lowpass))
+        }
     }
     /// 「笃」: a wooden seal.
     func seal() {

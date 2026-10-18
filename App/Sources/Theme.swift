@@ -24,6 +24,10 @@ enum Tok {
     static let hcLine = Color(hex: 0x8E2419)
     static let hcGround = Color(hex: 0xEDEDED)
     static let table = Color(hex: 0xEAE5DC)
+    // the closed stack (design-review-3 §closed): solid edge = bottom page, fine dashed edge = top page; ≥ 3:1 on paperBack
+    static let edgeLower = Color(hex: 0x7D7163)       // 4.04:1
+    static let edgeUpper = Color(hex: 0x5F6873)       // 4.81:1
+    static let tileMirror = Color(hex: 0xF1ECE3).mix(with: Color(hex: 0x8C96A0), by: 0.12)
 }
 
 /// The only per-chapter variables (design-spec §0.1, §3): paper colour, translucency, ink saturation, backlight.
