@@ -213,13 +213,15 @@ final class PlaythroughUITests: XCTestCase {
     /// Stand the page at 90° with one realistic drag; if the hand missed the window, finish with the fold control's
     /// small corrective drags, and say so in the log.
     func stand(fromClosed: Bool = false) {
-        if fromClosed { drag(0.78, 0.54, hold: 0.4) } else { drag(0.30, 0.55, hold: 0.4) }
+        // 0.1 (5): above the 12° pitch the grabbed point follows the finger 1:1 on screen (design-review-3 §4), so
+        // standing the page takes a shorter pull than the old table-projection mapping
+        if fromClosed { drag(0.78, 0.54, hold: 0.4) } else { drag(0.30, 0.42, hold: 0.4) }
         var v = fold.value as? String ?? ""
         if !v.contains(" 90°") { print("STAND-FALLBACK after drag: \(v)") }
         var n = 0
         while !v.contains(" 90°") && n < 5 {
             let a = Int(v.split(separator: " ").last.map { String($0.dropLast()) } ?? "") ?? 180
-            if a > 90 { drag(0.40, 0.52, hold: 0.4) } else { drag(0.62, 0.50, hold: 0.4) }
+            if a > 90 { drag(0.40, 0.47, hold: 0.4) } else { drag(0.62, 0.56, hold: 0.4) }
             v = fold.value as? String ?? ""; n += 1
             print("STAND-FALLBACK step \(n): \(v)")
         }

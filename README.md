@@ -103,15 +103,26 @@ tools/                      sync-from-proto.sh、make-strings.js（原生专用�
 - `xcodebuild test`：**全绿**。FoldCore 19 个（含 trail、Spread）+ XCUITest 5 个：书封 → 地图 → 关卡（默认界面没有滑块和按钮）；**真拖页**把上页拖下合上（读屏值变成 "Closed, 180°"）→ 点终点 → 纸人走过合上的书 → 啊哈后书自动摊平 → 下一关；拖到半开吸附；按钮控制的 15° 步进、撤销、合上、「走」书签；日文。
 - iPhone 18 Pro 模拟器截图对照过定稿：书封、地图、信、1-1…1-5 打开 / 90 / 130 / 合上、啊哈、高对比、超大格子、日文、设置。
 - **TestFlight 归档**：`xcodebuild archive … -allowProvisioningUpdates -authenticationKeyPath/ID/IssuerID`，团队 C29GS8XSA6（从 App Store Connect API 的 bundleId seedId 查到），自动签名成功（"Apple Development: Created via API (ZU4A2DNRY5)"），**ARCHIVE SUCCEEDED**，版本 0.1 (1)。没有建 App Store Connect 记录，没有上传。
-- 修正（评审后）：竖屏下上页到 130° 前是向后仰（远离观者、透视变短、正面朝上，下页完整可见），130°→180° 才翻过来盖到下页；英文界面的章节卡片不再重复英文名；Info.plist 加 ITSAppUsesNonExemptEncryption = NO，版本 0.1 (2)。
+- 修正（评审后）：英文界面的章节卡片不再重复英文名；Info.plist 加 ITSAppUsesNonExemptEncryption = NO，版本 0.1 (2)。
 - **App Store Connect**：API 密钥不能建 App 记录（POST /v1/apps → 403 "does not allow CREATE"），altool 没有建 App 的命令，fastlane produce 需要 Apple ID 登录和双重认证。所以记录要在网页上建（Bundle ID com.haoqianglyu.letterfold 也还没注册；归档时 Xcode 自动签名用的是通配 / 开发描述文件）。
 ## 0.1 (4)：第二章「立」（2026-10-17）
 
 - **数据（单一来源）**：fold-proto `levels.js` 加入 twoBridges、standClose（design-review-2 §5），第二章 6 关；`export.js` 导出 v2，阈值是物理角（closedMax 25 / popMin 60 / popMax 120 / shadeMax 89），FoldCore 在 `LevelPack.Thresholds` 换算一次，内部仍用折角（= 180 − 物理角）。CI：`ParTests`（每关 ≤ 3 次姿态变化、≤ 2 次合上）+ fold-proto `check.js`。
 - **角度一律物理角**（界面、读屏、测试）：180° 摊平、90° 立起、0° 合上；取代上面「和设计稿的出入」第 1 条。读屏折页控件「上扫 = 角度变大 = 展开」。
-- **相机书**（`BookCamera` / `CameraBook`，竖屏）：pitch = 16° + 24°·sin a、yaw = 18°·sin a（减少动态效果 28° / 0°），每一页是 3-D 平面，用精确的透视单应（`ProjectionTransform`）绘制；90° 时上页是墙，两片纸片从 120° 起翻、在 90° 合成 45° 坡道（横纹 + 两侧 V 撑），纸人站在坡道上，朱线在书打开时跨过中缝。点击和读屏目标在屏幕空间按投影四边形生成（`ProjectedTargets`），跟着倾斜。横屏 / Duo 仍是原来的侧翻。
+- **相机书**（`BookCamera` / `CameraBook`，竖屏）：相机姿势见下面 0.1 (5)（design-review-3 §3 取代了这里原来的 pitch = 16° + 24°·sin a）；每一页是 3-D 平面，用精确的透视单应（`ProjectionTransform`）绘制；90° 时上页是墙，两片纸片从 120° 起翻、在 90° 合成 45° 坡道（横纹 + 两侧 V 撑），纸人站在坡道上，朱线在书打开时跨过中缝。点击和读屏目标在屏幕空间按投影四边形生成（`ProjectedTargets`），跟着倾斜。横屏 / Duo 仍是原来的侧翻。
 - **第二章**：第一章送达后解锁；章首「二 · 立 / 纸也会站起来。」（米纸从左上擦入 600 ms，只放一次）；纸片扣成桥 = Impact .medium + 纸声 + 折痕亮 400 ms，桥上不落「通」；2-1 无文字教学（8 s 没折，或合上失败后 1.5 s，幽灵手把页拉到 90° 并停住；减少动态效果只出「?」，读屏播一句）；合上过程上页像描图纸透出下页（透光 0.15）；右岸来信；地图去掉「5 / 9」，二章送达落「通」。
 - **书封 7-1 拉线**：48×72 朱红纸签、竖排「开始」19pt、下拉 ≥ 64pt 或轻点、拉的时候「折」那页跟手往下折、1.5 s 轻晃一次、右上 44pt 设置图标、中文屏不显示 Letterfold；第一次打开直接进 1-1。
 - **铰链（plan §12.1）**：拖页在所有设备上都可用；铰链为并行输入（300 ms 内 ≥ 8° 才接管，160 ms 追上，物理 30°–90° 压到 0°–90°，停 300 ms 交回并吸附，进撤销栈；手指、按钮、读屏随时收回）；设置「铰链折页」默认开，只在有铰链时出现。未在真机上验证。
 - **测试**：`PlaythroughUITests.testPlaythroughChapters1And2` 以中文从书封玩通第一、二章（真拖页、点格；第二章 2-1 用「合上失败 → 幽灵手」那条路），约 200 s。QA 记录见 `tmp/fold/qa-2.md`。
 - **留到以后**：坡道深度按 0.35 格（现在 1 格，真机看是否挡住墙页第 3 行）；铰链驱动时仍播吸附触觉；地图「通」落印动画（M4）；铰链版幽灵手（M2）；FoldCore 内部改物理角。
+
+## 0.1 (5)：上页朝观者折（2026-10-17，design-review-3）
+
+Shuai：第一章全程「折纸的时候是朝我反方向折」。旋转本来就朝观者（`fold = (0, −cos t, sin t)`，一个符号没改），是 0.1 (4) 的相机俯角跟着页角走（16° → 40°），两页同步变矮，读成整本书往后倒。
+
+- **一台相机、两个姿势**（`GameModel.cameraPitch`）：手里的相机 pitch **12°**——摊平、合上、50° 影子姿态、**所有拖动和铰链驱动**；看墙的相机 **40°**——松手吸附到 90° 后，从松手那一刻起 320 ms ease-in-out 俯下来（减少动态效果 200 ms 线性）；离开 90° 松手后 320 ms 回到 12°。手指或铰链一碰页，相机冻结在当前值。yaw 仍是 18°·sin a（减少动态效果 0）。`k` 按「摊平 @12°」和「立起 @40°」两个框拟合，折痕在屏幕上不动。
+- **拖动映射**（`BookView.cameraRaw`）：t ≥ pitch 时抓点在屏幕上的 y 1:1 跟手（在 [pitch, 180°] 上二分 20 次求逆）；t < pitch 时沿用桌面投影（acos）；两段在接缝处重新取锚点、连续。接缝不是正好 t = pitch：有透视时抓点的屏幕 y 在 pitch 之后还会再升约 asin(k·d/f) ≈ 11°，所以接缝取这段「离桌」的真正顶点（黄金分割搜索），二分只在真正单调的那段上做（Codex 评审 P1）。2-1 幽灵手拖页期间相机同样冻结，松手才俯下。从摊平拖，只有一次 ≈ 20 pt 的「离桌」抬头，之后页边一路向下、78° 翻面、背面盖到下页上。
+- 删除 `BookBody.tilt` 和 `legacyBody` 的横折痕分支（0.1 (2) 的「先后仰 62° 再翻过来」）；`legacyBody` 只剩 Duo / 横屏的竖折痕侧翻。
+- 测试：`testDragFromFlatDoesNotLiftThePageAway`（`-probe YES`：从摊平往下拖 40 pt，上页外缘在屏幕上抬起 ≤ 24 pt）；其余拖页用例断言不变。截图参数新增 `-cameraPitch <deg>`（`-startAngle 90` 默认就是看墙的相机）。
+- 真机待看（review-3 §8）：立住后的俯下像奖励还是像晃（太晃缩到 240 ms）；从墙上拖回摊平的最后 40° 页边躺下、手指继续上走，是否被当成 bug。
+

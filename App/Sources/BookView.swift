@@ -56,7 +56,12 @@ struct BookView: View {
     @State private var scrollY: Double = 0
     @State private var pan = PanState()
 
-    struct PanState { var active = false; var twoFinger = false; var d = 1.0; var proj0 = 0.0; var scroll0 = 0.0 }
+    struct PanState {
+        var active = false, twoFinger = false, d = 1.0, proj0 = 0.0, scroll0 = 0.0
+        // the camera book's two-part mapping (design-review-3 §4): the frozen pitch, which part we are in, and its anchor
+        var pitch = 0.0, low = 0.0, high = 180.0, screen = false, anchorT = 0.0, anchorV = 0.0, gx = 0.0
+        var edge0: Double?
+    }
 
     var body: some View {
         let orientation: Spread.Orientation = model.hingeKind == .device || available.width > available.height * 1.15 ? .verticalCrease : .horizontalCrease
@@ -93,6 +98,13 @@ struct BookView: View {
                     .padding(.bottom, 8)
                     .accessibilityHidden(true)
                     .allowsHitTesting(false)
+            }
+        }
+        .overlay(alignment: .topLeading) {
+            if probing {
+                Color.clear.frame(width: 2, height: 2)
+                    .accessibilityElement().accessibilityIdentifier("probe.edge")
+                    .accessibilityValue(String(format: "%.1f %.1f", model.probeRise, model.probeAngle))
             }
         }
         .onChange(of: orientation, initial: true) { _, o in model.orientation = o }
@@ -146,6 +158,83 @@ struct BookView: View {
         pan.proj0 = pan.d * cos(a)
         pan.active = true
         model.dragBegan()
+        if geo.horizontal {
+            // design-review-3 §4: the camera is frozen for the whole drag; above the pitch the grabbed point's screen y
+            // follows the finger 1:1, below it the table projection (acos) as before
+            pan.pitch = model.cameraPitch
+            pan.gx = min(geo.pageSize.width / 2, max(-geo.pageSize.width / 2, local.x - geo.pageSize.width / 2))
+            // review-3 §4 puts the seam at t = pitch; with perspective G's screen y keeps rising ~asin(k·d/f) past it,
+            // so the seam is the real top of that lift and the bisection runs on the truly monotonic stretch
+            pan.low = extremum(from: pan.pitch, to: min(180, pan.pitch + 45), minimum: true, geo: geo)
+            pan.high = extremum(from: max(pan.low, 90), to: 180, minimum: false, geo: geo)
+            pan.screen = model.angle >= pan.low
+            pan.anchorT = 0
+            pan.anchorV = pan.screen ? grabY(model.angle, geo: geo) : pan.proj0
+            if probing { pan.edge0 = edgeY(model.angle + model.rubber, geo: geo) }
+        }
+    }
+
+    private var probing: Bool { UserDefaults.standard.bool(forKey: "probe") }
+
+    private func camera(_ fold: Double, geo: BookGeometry) -> BookCamera {
+        BookCamera.make(fold: fold, pitch: pan.pitch, page: geo.pageSize, container: geo.bookSize,
+                        reduceMotion: settings.motionReduced, large: settings.largeGrid)
+    }
+    /// Screen y (book frame) of the grabbed point G, d from the crease on the top page, at fold angle `t`.
+    private func grabY(_ t: Double, geo: BookGeometry) -> Double {
+        let r = t * .pi / 180
+        return Double(camera(t, geo: geo).project(SIMD3(pan.gx, -pan.d * cos(r), pan.d * sin(r))).y)
+    }
+    /// Screen y of the middle of the top page's free edge (the UI test's probe).
+    private func edgeY(_ t: Double, geo: BookGeometry) -> Double {
+        let r = max(0, min(180, t)) * .pi / 180, H = Double(geo.pageSize.height)
+        return Double(camera(t, geo: geo).project(SIMD3(0, -H * cos(r), H * sin(r))).y)
+    }
+
+    /// Golden-section search for G's highest (minimum y) or lowest (maximum y) screen point on [a, b].
+    private func extremum(from a: Double, to b: Double, minimum: Bool, geo: BookGeometry) -> Double {
+        var lo = a, hi = b
+        let r = (sqrt(5.0) - 1) / 2
+        for _ in 0..<30 {
+            let m1 = hi - r * (hi - lo), m2 = lo + r * (hi - lo)
+            let y1 = grabY(m1, geo: geo), y2 = grabY(m2, geo: geo)
+            if minimum ? y1 < y2 : y1 > y2 { hi = m2 } else { lo = m1 }
+        }
+        return (lo + hi) / 2
+    }
+
+    /// design-review-3 §4: t < pitch → the table projection follows the finger (acos); t ≥ pitch → G's screen y
+    /// follows it 1:1, solved by bisection on [pitch, 180] where it is monotonic. Re-anchored where they meet.
+    private func cameraRaw(_ ty: Double, geo: BookGeometry) -> Double {
+        let d = pan.d, p = pan.low
+        for _ in 0..<3 {
+            if !pan.screen {
+                let proj = pan.anchorV - (ty - pan.anchorT)
+                if proj > d { return -(proj - d) / d * 57.3 }
+                if proj > d * cos(p * .pi / 180) { return acos(proj / d) * 180 / .pi }
+                // crossed into the screen-following part at exactly t = pitch
+                pan.anchorT += pan.anchorV - d * cos(p * .pi / 180)
+                pan.anchorV = grabY(p, geo: geo)
+                pan.screen = true
+            } else {
+                let want = pan.anchorV + (ty - pan.anchorT), low = grabY(p, geo: geo)
+                if want < low {
+                    pan.anchorT += low - pan.anchorV
+                    pan.anchorV = d * cos(p * .pi / 180)
+                    pan.screen = false
+                    continue
+                }
+                let high = grabY(pan.high, geo: geo)
+                if want >= high { return pan.high + (want - high) / d * 57.3 }
+                var lo = p, hi = pan.high
+                for _ in 0..<20 {
+                    let mid = (lo + hi) / 2
+                    if grabY(mid, geo: geo) < want { lo = mid } else { hi = mid }
+                }
+                return (lo + hi) / 2
+            }
+        }
+        return model.angle
     }
 
     private func panChanged(_ t: CGPoint, touches: Int, geo: BookGeometry, overflow: Double) {
@@ -159,8 +248,16 @@ struct BookView: View {
             return
         }
         guard pan.active else { return }
-        // the page's free edge follows the finger 1:1: its projection on the table is d·cos(angle)
-        let proj = geo.horizontal ? pan.proj0 - t.y : pan.proj0 + t.x
+        if geo.horizontal {
+            model.dragChanged(cameraRaw(Double(t.y), geo: geo))
+            if let e0 = pan.edge0 {
+                model.probeRise = e0 - edgeY(model.angle + model.rubber, geo: geo)
+                model.probeAngle = max(model.probeAngle, model.angle)
+            }
+            return
+        }
+        // side-on turn (Duo / landscape): the page's free edge follows the finger 1:1 on the table, d·cos(angle)
+        let proj = pan.proj0 + t.x
         let d = pan.d
         let raw: Double
         if proj > d { raw = -(proj - d) / d * 57.3 }
@@ -229,94 +326,58 @@ private struct BookBody: View {
         if geo.horizontal { CameraBook(model: model, geo: geo, rotorSpace: rotorSpace) } else { legacyBody }
     }
 
+    /// The side-on turn (Duo / landscape, vertical crease): the top page turns about the crease towards the viewer
+    /// (+z out of the screen). Portrait phones use the camera book.
     @ViewBuilder private var legacyBody: some View {
         let page = geo.pageSize
         let va = model.angle + model.rubber + model.tease
         let a = max(0, min(180, va)) * .pi / 180
-        let horizontal = geo.horizontal
-        let fixedOrigin = horizontal ? CGPoint(x: 0, y: page.height) : .zero
-        let foldOrigin = horizontal ? CGPoint.zero : CGPoint(x: page.width, y: 0)
-        // The camera looks down at the fixed page. Up to 130° the folding page leans back, away from the viewer
-        // (shorter in perspective, its face and the fixed page both visible: frames v2-2 / a11y-c2); from 130° to
-        // 180° it swings over and lies down on the fixed page.
-        let tilt = BookBody.tilt(va)
-        let showBack = horizontal ? tilt > 90 : va > 90
+        let showBack = va > 90
         let pressed = model.press * 2
         ZStack(alignment: .topLeading) {
             // the fixed page, with the folding page's shadow creeping over it
             FixedPage(model: model, geo: geo, rotorSpace: rotorSpace, angle: va)
                 .frame(width: page.width, height: page.height)
-                .offset(x: fixedOrigin.x, y: fixedOrigin.y)
             // the folding page: front up to 90°, back beyond
             ZStack {
                 if showBack {
-                    BackFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: horizontal ? 90 + (tilt - 90) * 90 / 90 : va)
-                        .scaleEffect(x: horizontal ? 1 : -1, y: horizontal ? -1 : 1)
+                    BackFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: va).scaleEffect(x: -1, y: 1)
                 } else {
-                    FrontFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: horizontal ? tilt : va)
+                    FrontFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: va)
                 }
             }
             .frame(width: page.width, height: page.height)
-            .rotation3DEffect(.degrees(horizontal ? tilt : -va), axis: horizontal ? (x: 1, y: 0, z: 0) : (x: 0, y: 1, z: 0),
-                              anchor: horizontal ? .bottom : .leading, perspective: horizontal ? 0.5 : 0.32)
-            .offset(x: foldOrigin.x, y: foldOrigin.y + (showBack ? pressed : 0))
+            .rotation3DEffect(.degrees(-va), axis: (x: 0, y: 1, z: 0), anchor: .leading, perspective: 0.32)
+            .offset(x: page.width, y: showBack ? pressed : 0)
             .shadow(color: .black.opacity(hc ? 0 : 0.10 * sin(a) + (showBack ? 0.06 : 0)), radius: 8 * sin(a / 2) + 2, x: 0, y: 3)
             // the crease: a bright line and a dark line (design-spec §4), lit up when the pages touch
-            Crease(horizontal: horizontal, length: horizontal ? page.width : page.height, glow: model.glow)
-                .offset(x: horizontal ? 0 : page.width - 1, y: horizontal ? page.height - 1 : 0)
+            Crease(horizontal: false, length: page.height, glow: model.glow)
+                .offset(x: page.width - 1, y: 0)
                 .allowsHitTesting(false)
-            // the pop-up tabs on the crease: they rise as the page sweeps 120°→90° (physical) and lie back below 60°
-            if horizontal {
-                let rise = max(0, 1 - abs(va - 90) / 30)
-                if rise > 0 {
-                    let n = model.config.columnsPerPage
-                    ForEach(0..<model.board.h, id: \.self) { r in
-                        if model.board[n - 1, r] == .tab && model.board[n, r] == .tab {
-                            TabBridge(tile: geo.tile, rise: rise, standing: model.posture == .standing, paper: model.paper)
-                                .position(x: geo.center(x: r, y: 0).x, y: page.height)
-                        }
-                    }
-                }
-            }
             if model.angleHint {
                 Text(L10n.t("angle", ["a": model.shownAngle]))
                     .font(.system(size: 11, weight: .medium).monospacedDigit())
                     .foregroundStyle(Tok.ink600)
                     .padding(.horizontal, 5).padding(.vertical, 2)
                     .background(Capsule().fill(Tok.paperNew.opacity(0.9)))
-                    .position(x: horizontal ? page.width - 22 : page.width + 26, y: horizontal ? page.height + 14 : page.height - 14)
+                    .position(x: page.width + 26, y: page.height - 14)
                     .transition(.opacity)
                     .accessibilityHidden(true)
             }
             // the small seal 「通」 lands on the river where the thread crossed (frame final-10 ③)
             if model.sealShown {
-                let x = model.crossingSlotX.map { geo.center(x: $0, y: 0).x } ?? page.width / 2
                 Seal(glyph: "通", size: 26)
                     .scaleEffect(model.sealSettled ? 1 : 1.02)
-                    .position(x: horizontal ? x : page.width, y: horizontal ? page.height : geo.center(x: 0, y: model.crossingSlotX ?? 0).y)
+                    .position(x: page.width, y: geo.center(x: 0, y: model.crossingSlotX ?? 0).y)
                     .transition(AppSettings.shared.motionReduced ? .opacity : .asymmetric(insertion: .scale(scale: 1.6).combined(with: .opacity), removal: .opacity))
-                    .accessibilityHidden(true)
-            }
-            // the ghost hand on 1-1: a fingertip presses the top page and draws it down towards the crease
-            if horizontal && model.ghost > 0 {
-                GhostFinger()
-                    .position(x: page.width * 0.5, y: model.ghost >= 2 ? page.height * 0.80 : page.height * 0.32)
-                    .transition(.opacity)
-                    .allowsHitTesting(false)
                     .accessibilityHidden(true)
             }
             // VoiceOver / Switch Control: the page itself is an adjustable control (frame a11y-c2)
             FoldControl(model: model)
-                .frame(width: horizontal ? page.width : 24, height: horizontal ? 24 : page.height)
-                .offset(x: horizontal ? 0 : page.width - 12, y: horizontal ? page.height - 12 : 0)
+                .frame(width: 24, height: page.height)
+                .offset(x: page.width - 12, y: 0)
         }
         .frame(width: geo.bookSize.width, height: geo.bookSize.height, alignment: .topLeading)
-    }
-
-    /// Displayed lean-back of the folding page (degrees from flat) for a fold angle.
-    static func tilt(_ a: Double) -> Double {
-        if a <= 130 { return a * 62 / 130 }
-        return 62 + (min(a, 180) - 130) / 50 * 118 + max(0, a - 180)
     }
 }
 
@@ -705,36 +766,14 @@ private struct PageSheet: View {
     }
 }
 
-/// The two pop-up tabs locked across the crease (design-review-2 §1.4, §6.4). Drawn in this top-down view as a striped
-/// paper bridge over the crease; the 40° camera and the 45° ramp are still to come (README, deferred).
-private struct TabBridge: View {
-    let tile: Double
-    let rise: Double
-    let standing: Bool
-    let paper: PaperState
-    @Environment(\.highContrast) private var hc
-    var body: some View {
-        let r = RoundedRectangle(cornerRadius: 3, style: .continuous)
-        ZStack {
-            r.fill(hc ? Color.white : paper.tileFace)
-            Stripes(spacing: hc ? 6 : tile * 0.09).stroke(hc ? Color.black : Tok.ink900.opacity(0.28), lineWidth: hc ? 2 : 1).clipShape(r)
-            r.strokeBorder(hc ? Color.black : Tok.ink900.opacity(standing ? 0.35 : 0.15), lineWidth: hc ? 3 : 1)
-        }
-        .frame(width: tile * 0.62, height: max(2, tile * 0.5 * rise))
-        .shadow(color: .black.opacity(hc ? 0 : 0.18 * rise), radius: 3, y: 2)
-        .opacity(0.35 + 0.65 * rise)
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
-    }
-}
+// MARK: - the camera book (design-review-3 §3; review-2 §4.1 for the yaw and the ramp)
 
-
-// MARK: - the camera book (design-review-2 §4.1, §6.4)
-
-/// One camera for every chapter: pitch 16° + 24°·sin a, yaw 18°·sin a, a = the physical page angle (flat and shut:
-/// 16° / 0°; standing: 40° / 18°). Reduce motion: 28° / 0°. Book space: x along the crease, y from the crease towards
-/// the viewer across the bottom page, z up from the table. Every page is a plane, drawn through its exact perspective
-/// homography, so the standing page is a wall and the tabs a 45° ramp.
+/// One camera, two poses (design-review-3 §3): in the hand, pitch 12° (flat, shut, 50°, and every drag or hinge
+/// motion: the camera never moves under a finger); looking at the wall, pitch 40°, once the page has snapped to 90°.
+/// `GameModel.cameraPitch` owns the pitch and its 320 ms ease between the two. Yaw 18°·sin a, a = the physical page
+/// angle (reduce motion: 0). Book space: x along the crease, y from the crease towards the viewer across the bottom
+/// page, z up from the table. Every page is a plane drawn through its exact perspective homography; the top page lies
+/// along (0, −cos t, sin t), so it lifts off the table, comes towards the viewer and lands face down on the bottom page.
 struct BookCamera {
     var pitch: Double, yaw: Double, f: Double, k: Double, cx: Double, cy: Double
     var pitchDegrees: Double { pitch * 180 / .pi }
@@ -761,21 +800,20 @@ struct BookCamera {
 
     /// How tall the flat book is on screen (large grid: it may scroll).
     static func flatHeight(page: CGSize, container: CGSize, reduceMotion: Bool, large: Bool) -> Double {
-        let c = make(fold: 0, page: page, container: container, reduceMotion: reduceMotion, large: large)
+        let c = make(fold: 0, pitch: GameModel.handPitch, page: page, container: container, reduceMotion: reduceMotion, large: large)
         let W = Double(page.width), H = Double(page.height)
         let ys = [SIMD3<Double>(-W / 2, H, 0), SIMD3(W / 2, H, 0), SIMD3(-W / 2, -H, 0), SIMD3(W / 2, -H, 0)].map { Double(c.project($0).y) }
         return ys.max()! - min(0, ys.min()!)
     }
 
-    /// Fitted once for the flat and the standing book, so nothing zooms while the page turns; the book only slides
-    /// sideways with the yaw (like the prototype's translateX).
-    static func make(fold: Double, page: CGSize, container: CGSize, reduceMotion rm: Bool, large: Bool) -> BookCamera {
+    /// `pitch` in degrees (the model's camera pose). The scale is fitted once for the flat book @12° and the standing
+    /// book @40°, so nothing zooms while the page turns or the camera moves; the crease stays put on screen (cy is
+    /// anchored to the flat frame) and the book only slides sideways with the yaw.
+    static func make(fold: Double, pitch: Double, page: CGSize, container: CGSize, reduceMotion rm: Bool, large: Bool) -> BookCamera {
         let W = Double(page.width), H = Double(page.height), Wc = Double(container.width), Hc = Double(container.height)
         let f = 2.6 * Hc
-        func pose(_ a: Double) -> (Double, Double) {
-            let s = max(0, sin(a * .pi / 180))
-            return rm ? (28 * .pi / 180, 0) : ((16 + 24 * s) * .pi / 180, 18 * s * .pi / 180)
-        }
+        func yaw(_ a: Double) -> Double { rm ? 0 : 18 * max(0, sin(a * .pi / 180)) * .pi / 180 }
+        func pose(_ a: Double, _ p: Double) -> (Double, Double) { (p * .pi / 180, yaw(a)) }
         func box(_ c: BookCamera, _ a: Double) -> CGRect {
             let t = a * .pi / 180, e = SIMD3<Double>(0, -cos(t), sin(t))
             let l = SIMD3<Double>(-W / 2, 0, 0), r = SIMD3<Double>(W / 2, 0, 0)
@@ -783,12 +821,12 @@ struct BookCamera {
             let xs = pts.map(\.x), ys = pts.map(\.y)
             return CGRect(x: xs.min()!, y: ys.min()!, width: xs.max()! - xs.min()!, height: ys.max()! - ys.min()!)
         }
-        let (p0, q0) = pose(0), (p1, q1) = pose(90)
+        let (p0, q0) = pose(0, GameModel.handPitch), (p1, q1) = pose(90, GameModel.wallPitch)
         let flat = box(BookCamera(pitch: p0, yaw: q0, f: f, k: 1, cx: 0, cy: 0), 0)
         let stand = box(BookCamera(pitch: p1, yaw: q1, f: f, k: 1, cx: 0, cy: 0), 90)
         var k = min(1, (Wc - 6) / Double(max(flat.width, stand.width)))
         if !large { k = min(k, Hc / Double(flat.height)) }
-        let (p, q) = pose(fold)
+        let (p, q) = pose(fold, pitch)
         var c = BookCamera(pitch: p, yaw: q, f: f, k: k, cx: 0, cy: 0)
         let ref = box(BookCamera(pitch: p0, yaw: q0, f: f, k: k, cx: 0, cy: 0), 0)
         c.cx = Wc / 2 - Double(box(c, fold).midX)
@@ -817,7 +855,7 @@ private struct CameraBook: View {
     var body: some View {
         let page = geo.pageSize, W = Double(page.width), H = Double(page.height)
         let th = model.angle + model.rubber + model.tease            // fold degrees (0 flat … 180 shut)
-        let cam = BookCamera.make(fold: th, page: page, container: geo.bookSize, reduceMotion: AppSettings.shared.motionReduced,
+        let cam = BookCamera.make(fold: th, pitch: model.cameraPitch, page: page, container: geo.bookSize, reduceMotion: AppSettings.shared.motionReduced,
                                   large: AppSettings.shared.largeGrid)
         let t = th * .pi / 180
         let fold = SIMD3<Double>(0, -cos(t), sin(t))                  // from the crease along the folding page

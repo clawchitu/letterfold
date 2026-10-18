@@ -123,6 +123,17 @@ final class GameModel {
     private(set) var ghost: Double = 0
     /// Degrees the top page lifts under the ghost finger. Drawn only; the rules never see it.
     private(set) var tease: Double = 0
+    /// The camera's pitch in degrees (design-review-3 §3): 12° in the hand (flat, shut, 50°, every drag and hinge
+    /// motion), 40° looking at the wall once the page has snapped to 90° with no finger on it. Frozen while driven.
+    private(set) var cameraPitch: Double = GameModel.handPitch
+    static let handPitch = 12.0, wallPitch = 40.0
+    @ObservationIgnored private var cameraTask: Task<Void, Never>?
+    /// UI tests (-probe YES): how far the top page's free edge rose on screen during the last drag (pt, + = up).
+    var probeRise: Double = 0
+    /// UI tests: the largest fold angle reached while dragging (proves the drag was seen).
+    var probeAngle: Double = 0
+    /// The 2-1 ghost hand is drawing the page: like a finger, it holds the camera until it lets go.
+    @ObservationIgnored private var ghostDriving = false
     @ObservationIgnored private(set) var motionTarget: Double?
     @ObservationIgnored private var pending = Pending()
     @ObservationIgnored private var saidAngle = 0
@@ -173,7 +184,8 @@ final class GameModel {
     }
 
     /// Launch arguments (screenshots and UI tests): -resetProgress YES, -startLevel <1-based>, -startAngle <deg>,
-    /// -walkTo c,r (walk there first, at 180° if needed), -autoplay YES, -hinge simulated|device, -aha YES.
+    /// -walkTo c,r (walk there first, at 180° if needed), -autoplay YES, -hinge simulated|device, -aha YES,
+    /// -cameraPitch <deg> (screenshots), -probe YES (UI tests: the drag's edge probe).
     static func launch() -> GameModel {
         let d = UserDefaults.standard
         if d.bool(forKey: "resetProgress") { d.removeObject(forKey: doneKey); d.removeObject(forKey: "opener.2") }
@@ -188,7 +200,11 @@ final class GameModel {
                 m.game.walk(to: target); m.sync()
             }
         }
-        if d.object(forKey: "startAngle") != nil { m.setAngle(d.double(forKey: "startAngle")); m.pending = Pending(); m.saidAngle = Int(m.angle) }
+        if d.object(forKey: "startAngle") != nil {
+            m.setAngle(d.double(forKey: "startAngle")); m.pending = Pending(); m.saidAngle = Int(m.angle)
+            m.cameraPitch = m.angle == 90 ? wallPitch : handPitch
+        }
+        if d.object(forKey: "cameraPitch") != nil { m.cameraPitch = d.double(forKey: "cameraPitch") }   // screenshots: a mid-drag frame
         if let h = d.string(forKey: "hinge").flatMap(HingeKind.init(rawValue:)) { m.selectHinge(h) }
         if d.bool(forKey: "autoplay") { m.autoplay() }
         if d.bool(forKey: "aha") { m.won = true; m.startAha() }
@@ -240,8 +256,12 @@ final class GameModel {
         threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]
         pending = Pending(); saidAngle = 0; nopes = 0; hintAvailable = false; toast = nil
         angle = 0
+        cameraTask?.cancel(); cameraTask = nil; cameraPitch = Self.handPitch
         sync()
-        if hingeKind == .device, settings.hingeFold, let a = (device as? AnyHingeAngle)?.lastAngle { setAngle(Self.virtualFold(a)); pending = Pending() }
+        if hingeKind == .device, settings.hingeFold, let a = (device as? AnyHingeAngle)?.lastAngle {
+            setAngle(Self.virtualFold(a)); pending = Pending()
+            if abs(angle - 90) < 0.5 { cameraPitch = Self.wallPitch }   // a hinge already standing: look at the wall
+        }
         announce(intro, delay: 0.6)
         stuckTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(45))
@@ -320,6 +340,7 @@ final class GameModel {
     func move(to target: Double, _ curve: Curve, then done: (() -> Void)? = nil) {
         stopMotion()
         let target = min(180, max(0, target))
+        if !dragging && !hingeActive && !ghostDriving { aimCamera(at: target) }
         if settings.motionReduced {
             // design-spec §5 reduce.motion: a 200 ms linear cross-fade, no turning, no bounce (BookView fades)
             withAnimation(.linear(duration: 0.2)) { setAngle(target); rubber = 0 }
@@ -366,6 +387,30 @@ final class GameModel {
             let d = self.motionDone; self.motionDone = nil; d?()
         }
     }
+
+    /// design-review-3 §3: one camera, two poses. Released onto 90° → ease down to look at the wall (320 ms
+    /// ease-in-out from the release; reduce motion 200 ms linear); released anywhere else → back to 12°.
+    /// Never while a finger or the hinge drives the page: those freeze the camera where it is.
+    func aimCamera(at target: Double) {
+        let goal = abs(target - 90) < 0.5 ? Self.wallPitch : Self.handPitch
+        cameraTask?.cancel(); cameraTask = nil
+        guard goal != cameraPitch else { return }
+        let from = cameraPitch, t0 = CACurrentMediaTime(), rm = settings.motionReduced
+        let duration = rm ? 0.2 : 0.32
+        cameraTask = Task { [weak self] in
+            while !Task.isCancelled {
+                let u = min(1, (CACurrentMediaTime() - t0) / duration)
+                let e = rm ? u : Curve.cubic(u, 0.42, 0, 0.58, 1)
+                guard let self else { return }
+                self.cameraPitch = from + (goal - from) * e
+                if u >= 1 { self.cameraTask = nil; return }
+                try? await Task.sleep(for: .milliseconds(8))
+            }
+        }
+    }
+
+    /// The finger or the hinge has the page: the camera holds still.
+    private func freezeCamera() { cameraTask?.cancel(); cameraTask = nil }
 
     private func arrived(at target: Double) {
         if target >= 180 { contact() }
@@ -438,9 +483,13 @@ final class GameModel {
             guard !Task.isCancelled else { return }
             self.pushUndo()
             withAnimation(.timingCurve(0.4, 0, 0.3, 1, duration: 0.6)) { self.ghost = 2 }
+            self.ghostDriving = true
             self.move(to: 90, .bezier(0.4, 0, 0.3, 1, duration: 0.6))
+            self.ghostDriving = false
             try? await Task.sleep(for: .milliseconds(650))
             guard !Task.isCancelled else { return }
+            // the fingertip lets go at 90°: the camera comes down to look at the wall (review-3 §4)
+            if !self.dragging && self.angle == 90 { self.aimCamera(at: 90) }
             withAnimation(.easeIn(duration: 0.3)) { self.ghost = 0 }
             self.teachTask = nil
         }
@@ -464,6 +513,7 @@ final class GameModel {
         if !hingeActive {
             guard let first = hingeSamples.first, abs(physical - first.p) >= 8 else { return }
             hingeActive = true
+            freezeCamera()
             stopWalk(); stopGhost(); hasFolded = true
             pushUndo()   // one undo step per hinge fold, on the same stack as the finger
             move(to: hingeTarget, .bezier(0.2, 0.7, 0.2, 1, duration: 0.16)) { [weak self] in
@@ -483,13 +533,15 @@ final class GameModel {
             if self.motionTarget == nil && abs(self.hingeTarget - self.angle) > 0.5 { self.setAngle(self.hingeTarget) }
             self.hingeActive = false; self.hingeSamples = []
             let target = Self.snapPoints.min { abs($0 - self.angle) < abs($1 - self.angle) } ?? self.angle
-            if abs(target - self.angle) > 0.5 && !self.dragging { self.move(to: target, .release) } else { self.settle() }
+            if abs(target - self.angle) > 0.5 && !self.dragging { self.move(to: target, .release) }
+            else { if !self.dragging { self.aimCamera(at: target) }; self.settle() }
         }
     }
 
     func dragBegan() {
         if aha { finishAhaNow() }
         stopMotion(); stopWalk(); stopGhost(); hasFolded = true
+        freezeCamera(); probeAngle = 0
         hingeIdle?.cancel(); hingeActive = false; hingeSamples = []   // the finger has the page now
         pushUndo()
         dragging = true; dragFrom = angle
@@ -523,8 +575,8 @@ final class GameModel {
             try? await Task.sleep(for: .milliseconds(1))
             withAnimation(.easeOut(duration: 0.6)) { self?.angleHint = false }
         }
-        if target == angle && rubber == 0 { arrived(at: target); return }
-        move(to: target, target >= 180 ? .closeSnap : .release)
+        if target == angle && rubber == 0 { aimCamera(at: target); arrived(at: target); return }
+        move(to: target, target >= 180 ? .closeSnap : .release)   // aims the camera from the moment of release
     }
 
     /// The drag turned into a two-finger gesture (or the system cancelled it): put everything back as it was when the
@@ -540,6 +592,7 @@ final class GameModel {
             }
         }
         pending = Pending(); saidAngle = Int(angle.rounded())
+        aimCamera(at: angle)
     }
 
     func selectHinge(_ kind: HingeKind) {
@@ -615,7 +668,7 @@ final class GameModel {
     }
     func stopWalk() { walkTask?.cancel(); walkTask = nil; walking = false }
     private func stopAll() {
-        stopWalk(); stopMotion(); stopGhost(); settleTask?.cancel(); ahaTask?.cancel(); stuckTask?.cancel()
+        stopWalk(); stopMotion(); stopGhost(); freezeCamera(); settleTask?.cancel(); ahaTask?.cancel(); stuckTask?.cancel()
         hingeIdle?.cancel(); hingeIdle = nil; hingeActive = false; hingeSamples = []
     }
 
@@ -634,6 +687,7 @@ final class GameModel {
             angle = game.angle; rubber = 0
             sync()
         }
+        aimCamera(at: angle)
         hintAvailable = true
         saidAngle = Int(angle.rounded()); pending = Pending()
         announce(L10n.t("undone", ["pos": pos(game.char), "a": shownAngle]))
@@ -756,6 +810,7 @@ final class GameModel {
         ahaTask?.cancel(); stopMotion()
         quiet = true
         setAngle(0); rubber = 0; press = 0; glow = 0
+        cameraTask?.cancel(); cameraTask = nil; cameraPitch = Self.handPitch
         caption = false; threadProgress = 1; sealShown = chapter.id == 1; sealSettled = true
         finishAha()
     }

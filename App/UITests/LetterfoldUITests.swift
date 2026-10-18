@@ -73,6 +73,22 @@ final class LetterfoldUITests: XCTestCase {
         XCTAssertTrue(["Standing, 90°", "Leaning, 50°"].contains(v), v)
     }
 
+    /// design-review-3 §7.6: dragging 40 pt down from flat, the top page's free edge must not climb back up the screen
+    /// (the 0.1 (4) camera lifted it ~30 pt the wrong way). Allowed: the 20 pt "lift off the table" at 12°.
+    func testDragFromFlatDoesNotLiftThePageAway() {
+        let app = launch(["-startLevel", "1", "-probe", "YES"])
+        let probe = app.descendants(matching: .any)["probe.edge"]
+        XCTAssertTrue(probe.waitForExistence(timeout: 8))
+        let a = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25))
+        a.press(forDuration: 0.1, thenDragTo: a.withOffset(CGVector(dx: 0, dy: 40)), withVelocity: .slow, thenHoldForDuration: 0.2)
+        keep(app, "after-40pt")
+        let v = (probe.value as? String ?? "").split(separator: " ").compactMap { Double($0) }
+        XCTAssertEqual(v.count, 2, "probe has a value")
+        let rise = v.first ?? .nan
+        XCTAssertGreaterThan(v.last ?? 0, 8, "the drag turned the page")
+        XCTAssertLessThanOrEqual(rise, 24, "the top page's free edge rose \(rise) pt during a 40 pt drag down")
+    }
+
     func testButtonControlStepsAndUndo() {
         let app = launch(["-startLevel", "1", "-buttonControl", "YES"])
         let more = app.buttons["fold.more"]
