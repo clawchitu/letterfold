@@ -77,7 +77,7 @@ public final class FoldGame {
         // shadows move; a character standing on nothing but shadow goes with them
         let previous = shade
         shade = rules.shadows(board, a)
-        if !rules.isRight(char.c) && !board[char].isFloor {
+        if !rules.isRight(char.c) && (!board[char].isFloor || rules.crushed(board, char, a)) {
             if rideSrc == nil { rideSrc = previous[char] ?? shade[char] }
             if let to = rules.ride(board, char, rideSrc, a) {
                 if to.c != char.c { char = to; trail.append(to); events.append(.slid(to: to)) }

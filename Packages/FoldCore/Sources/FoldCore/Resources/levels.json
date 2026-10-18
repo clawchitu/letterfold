@@ -214,6 +214,43 @@
       }
     },
     {
+      "id": "press",
+      "map": [
+        "--------",
+        "-.-S-.x-",
+        "-.------",
+        "-G------"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 1,
+        "needsFold": false,
+        "needsPop": false,
+        "needsShade": true,
+        "needsRide": false,
+        "stepped15": true
+      }
+    },
+    {
+      "id": "lock",
+      "map": [
+        "-S------",
+        "-------x",
+        "------x-",
+        "-.------",
+        "-G------"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 1,
+        "needsFold": false,
+        "needsPop": false,
+        "needsShade": true,
+        "needsRide": false,
+        "stepped15": true
+      }
+    },
+    {
       "id": "ride",
       "map": [
         "G.------",
@@ -225,6 +262,43 @@
         "solvable": true,
         "changes": 2,
         "needsFold": false,
+        "needsPop": false,
+        "needsShade": true,
+        "needsRide": true,
+        "stepped15": true
+      }
+    },
+    {
+      "id": "rideBack",
+      "map": [
+        "--------",
+        "S--.--x-",
+        "---.----",
+        "---G----"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 2,
+        "needsFold": false,
+        "needsPop": false,
+        "needsShade": true,
+        "needsRide": false,
+        "stepped15": true
+      }
+    },
+    {
+      "id": "lamp",
+      "map": [
+        "--------",
+        "---S---x",
+        "------x-",
+        "-.------",
+        "------G-"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 3,
+        "needsFold": true,
         "needsPop": false,
         "needsShade": true,
         "needsRide": true,
