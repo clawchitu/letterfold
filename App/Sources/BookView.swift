@@ -60,6 +60,8 @@ struct BookView: View {
         var active = false, twoFinger = false, d = 1.0, proj0 = 0.0, scroll0 = 0.0
         // the camera book's two-part mapping (design-review-3 §4): the frozen pitch, which part we are in, and its anchor
         var pitch = 0.0, low = 0.0, high = 180.0, screen = false, anchorT = 0.0, anchorV = 0.0, gx = 0.0
+        /// Screen points per degree past `high`: the finger's gain is capped there (0.1 (7))
+        var rate = 1.0
         var edge0: Double?
     }
 
@@ -166,7 +168,17 @@ struct BookView: View {
             // review-3 §4 puts the seam at t = pitch; with perspective G's screen y keeps rising ~asin(k·d/f) past it,
             // so the seam is the real top of that lift and the bisection runs on the truly monotonic stretch
             pan.low = extremum(from: pan.pitch, to: min(180, pan.pitch + 45), minimum: true, geo: geo)
-            pan.high = extremum(from: max(pan.low, 90), to: 180, minimum: false, geo: geo)
+            let bottom = extremum(from: max(pan.low, 90), to: 180, minimum: false, geo: geo)
+            // near that lowest point G hardly moves on screen, so a point of finger travel was many degrees: right where
+            // chapter 3's 5° windows sit (29°–33°). Past the angle where G's speed drops to 40% of the table rate,
+            // the page follows the finger linearly at that rate instead: continuous, monotonic, never twitchy.
+            pan.rate = pan.d / 57.3 * 0.4
+            pan.high = bottom
+            var t = max(pan.low, 90)
+            while t < bottom {
+                if grabY(t + 0.5, geo: geo) - grabY(t, geo: geo) < pan.rate * 0.5 { pan.high = t; break }
+                t += 0.5
+            }
             pan.screen = model.angle >= pan.low
             pan.anchorT = 0
             pan.anchorV = pan.screen ? grabY(model.angle, geo: geo) : pan.proj0
@@ -225,7 +237,7 @@ struct BookView: View {
                     continue
                 }
                 let high = grabY(pan.high, geo: geo)
-                if want >= high { return pan.high + (want - high) / d * 57.3 }
+                if want >= high { return pan.high + (want - high) / pan.rate }
                 var lo = p, hi = pan.high
                 for _ in 0..<20 {
                     let mid = (lo + hi) / 2
@@ -469,11 +481,12 @@ private struct TileItem: View {
         let r = RoundedRectangle(cornerRadius: 3, style: .continuous)
         ZStack {
             face
+            if shaded { ShadeMark(size: geo.tile) }
+            // over the shadow too, the edge last (Codex review 5)
             if veiled && !hc && (t.isFloor || shaded) {
-                r.fill(Tok.paperBack.opacity(0.15))
+                r.fill(model.paper.color.opacity(0.15))
                 r.strokeBorder(Tok.edgeLower, lineWidth: 1)
             }
-            if shaded { ShadeMark(size: geo.tile) }
             // the shadows lock onto this gap: its outline lights up for 400 ms (design-review-ch3 §3)
             if model.lockFlash.contains(c) {
                 r.strokeBorder(hc ? Color.black : Tok.lockEdge, lineWidth: hc ? 3 : 2)
@@ -666,6 +679,11 @@ private struct FrontFace: View {
             ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .folding),
                         end: model.trail.last.flatMap { s.page(of: $0.c) == .folding ? geo.center($0) : nil })
             if !model.puppetOnRamp && s.page(of: model.char.c) == .folding { PuppetLayer(model: model, geo: geo, at: geo.center(model.char)) }
+            // chapter 3: the paper lights up as it leans past 89°, before the first shadow (design-review-ch3 §6.3)
+            if model.paper.backlit && !hc && !AppSettings.shared.transparencyReduced && angle > 90 {
+                RadialGradient(colors: [Tok.lamp.opacity(0.5 * GameModel.lit(angle)), .clear], center: .center, startRadius: 0, endRadius: page.width * 0.75)
+                    .allowsHitTesting(false)
+            }
             // turning away from the light
             if !hc {
                 Color.black.opacity(0.13 * sin(a)).allowsHitTesting(false)

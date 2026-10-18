@@ -38,9 +38,8 @@ final class Chapter3UITests: XCTestCase {
         launch(14)
         let a = f.lean(to: 31, tol: 2)
         XCTAssertEqual(a, 31, "settled on the window's middle")
-        f.by(-3); f.by(3)                                 // a small wobble inside the window: still 31
-        Thread.sleep(forTimeInterval: 0.5)
-        XCTAssertEqual(f.phys(), 31)
+        f.pull(-0.012)                                    // open it a little out of the window …
+        XCTAssertEqual(f.lean(to: 30, tol: 1), 31, "… and aim for 30: let go inside the window, it rests on 31")
     }
 
     /// 3-4 乘影: stand on the shadow at ~60° on (2,2), close past 51°: the shadow carries the figure to (1,2).

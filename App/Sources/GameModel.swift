@@ -429,11 +429,13 @@ final class GameModel {
     func restTarget(_ projected: Double) -> Double {
         guard chapter.id >= 3 else { return Self.snapPoints.min { abs($0 - projected) < abs($1 - projected) } ?? 0 }
         let p = min(180, max(0, projected))
-        if let w = lockWindows.first(where: { p >= $0.lo - 0.5 && p <= $0.hi + 0.5 }) ?? lockWindows.first(where: { angle >= $0.lo && angle <= $0.hi }) {
-            return w.mid
-        }
+        // where the page actually is decides first (Codex review 5): a lock holds it, a free lean stays, and only a
+        // real throw shuts it; the projection is for pages let go outside the leaning window
+        if let w = lockWindows.first(where: { angle >= $0.lo - 0.5 && angle <= $0.hi + 0.5 }) { return w.mid }
+        if angle > 90 && angle < config.foldMin { return p >= 170 ? 180 : angle }
+        if let w = lockWindows.first(where: { p >= $0.lo && p <= $0.hi }) { return w.mid }
         if p >= config.foldMin { return 180 }
-        if p > 90 { return angle > 90 && angle < config.foldMin ? angle : p }
+        if p > 90 { return p }
         return p < 45 ? 0 : 90
     }
 
@@ -704,7 +706,10 @@ final class GameModel {
         guard dragging else { return }
         dragging = false
         released = (CACurrentMediaTime(), velocity)
-        let projected = angle + velocity * 0.12
+        // chapter 3 aims at 5° windows: a finger that came to rest (no angle change for 60 ms) throws nothing, whatever
+        // speed the recogniser still reports from before the pause
+        let still = angleSamples.last.map { CACurrentMediaTime() - $0.t > 0.06 } ?? true
+        let projected = angle + (chapter.id >= 3 && still ? 0 : velocity) * 0.12
         let target = restTarget(projected)
         if abs(target - dragFrom) < 0.5 && abs(angle - dragFrom) < 0.5 { game.dropUndo(); canUndo = game.canUndo }
         hintFadeTask = Task { [weak self] in
@@ -864,9 +869,11 @@ final class GameModel {
                 pending.shade = true
             case .slid(let to):
                 haptics.tick()
+                sound.note(row: to.r, timbre: .paper, pan: pan(of: to), volume: 0.45)   // one gliding note per square ridden
                 announce(L10n.t("slid", ["pos": pos(to)]))
             case .fell(let crushed):
-                stopWalk(); stopMotion()
+                // crushed: the closing goes on to the slap (stopping it left the book at ~155°, Codex review 5)
+                stopWalk(); if !crushed { stopMotion() }
                 haptics.fall()
                 show(L10n.t(crushed ? "crushed" : "fell"))
             case .stepped, .blocked:

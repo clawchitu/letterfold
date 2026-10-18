@@ -23,7 +23,8 @@ public struct Solver: Sendable {
         let step = a1 > a0 ? 5.0 : -5.0
         var a = a0 + step
         while step > 0 ? a <= a1 : a >= a1 {
-            if !rules.isRight(cur.c) && !b[cur].isFloor {
+            // design-review-ch3 §2: a figure on paper under a top-page stone is crushed when the book shuts
+            if !rules.isRight(cur.c) && (!b[cur].isFloor || rules.crushed(b, cur, a)) {
                 if src == nil { src = rules.shadows(b, a - step)[cur] }
                 guard let to = rules.ride(b, cur, src, a) else { return nil }
                 cur = to

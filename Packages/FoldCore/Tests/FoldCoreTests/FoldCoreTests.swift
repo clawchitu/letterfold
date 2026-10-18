@@ -173,6 +173,14 @@ final class GameTests: XCTestCase {
         XCTAssertEqual(g.char, g.board.start)
     }
 
+    /// The solver agrees with the game (Codex review 5): from 3-2's (1,1) closing is not a move, leaning is.
+    func testSolverKnowsTheCrush() throws {
+        let b = try FoldGame(level: level("press")).board
+        let s = Solver(.standard)
+        XCTAssertNil(s.turn(b, Cell(1, 1), 130, 180))
+        XCTAssertEqual(s.turn(b, Cell(1, 1), 130, 100), Cell(1, 1))
+    }
+
     /// The rule is one-sided: left-page stones never move, so the right page only blocks.
     func testCrushIsOneSided() throws {
         let r = Rules()

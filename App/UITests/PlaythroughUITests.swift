@@ -231,7 +231,7 @@ final class PlaythroughUITests: XCTestCase {
         open()
         f.lean(to: 40, tol: 8)
         shot("3-1-leaning")
-        print("VO 3-1 lean: fold=\(fold.value as? String ?? "") tile-1-2=\(tile(1, 2).label) tile-7-2=\(tile(7, 2).label)")
+        print("VO 3-1 lean: fold=\(fold.value as? String ?? "") tile-1-2=\(tile(1, 2).label)")
         walk(1, 4, wait: 2.2)
         win("3-1")
 
