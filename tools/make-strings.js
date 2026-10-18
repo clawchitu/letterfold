@@ -108,6 +108,8 @@ const NATIVE = {
   'letter.2.title': ['右岸来信', 'A Letter from the Right Bank', '右岸からの手紙', '오른쪽 강가에서 온 편지'],
   'letter.2.body': ['河没有变窄，\n纸却先站了起来，\n替我走到岸边。', 'The river is no narrower,\nbut the paper stood up first\nand walked to the bank for me.', '川は狭くならない。\nけれど紙が先に立ちあがり、\nわたしの代わりに岸まで歩いた。', '강은 좁아지지 않았다.\n그런데 종이가 먼저 일어서서\n나 대신 강가까지 걸어갔다.'],
   'letter.2.sign': ['——右岸', '— the Right Bank', '——右岸より', '— 오른쪽 강가에서'],
+  'hint.portrait.shadow': ['把书慢慢合到一半多一点，上页石头的影子会落在缺口上。影子能走。', 'Close the book slowly, a little past halfway: the shadow of the top page\'s stone falls on the gap. Shadows can be walked on.', '本をゆっくり半分より少し多く閉じると、上のページの石の影がすき間に落ちる。影は歩ける。', '책을 반보다 조금 더 천천히 닫으면 위 페이지 돌의 그림자가 틈에 떨어져요. 그림자 위는 걸을 수 있어요.'],
+  'preview.end3': ['第三章完。下一封信，还在路上。', 'End of chapter three. The next letter is still on its way.', '第三章、おわり。次の手紙は、まだ旅の途中。', '3장 끝. 다음 편지는 아직 오는 중이에요.'],
   'preview.end2': ['第二章完。下一封信，还在路上。', 'End of chapter two. The next letter is still on its way.', '第二章、おわり。次の手紙は、まだ旅の途中。', '2장 끝. 다음 편지는 아직 오는 중이에요.'],
   'hint.portrait.stand': ['把上页立起到一半：折痕上的两片纸片会连成一座桥。', 'Stand the top page halfway: the two tabs on the crease join into a bridge.', '上のページを半分だけ立てると、折り目の紙片がつながって橋になる。', '위 페이지를 반쯤 세우면 접는 선의 종이 조각이 이어져 다리가 돼요.'],
   'hint.portrait.twoBridges': ['立起到一半，两座桥都在：走过一座，沿着立起的上页走，再从另一座回来。', 'Stand the page halfway: both bridges are up. Cross one, walk along the standing page, come back over the other.', '半分立てると橋が二つ。一つを渡り、立ったページを歩いて、もう一つで戻る。', '반쯤 세우면 다리가 둘이에요. 하나를 건너 선 페이지를 걷고, 다른 다리로 돌아와요.'],

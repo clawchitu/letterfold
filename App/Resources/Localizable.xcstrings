@@ -3121,6 +3121,36 @@
         }
       }
     },
+    "hint.portrait.shadow": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "把书慢慢合到一半多一点，上页石头的影子会落在缺口上。影子能走。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close the book slowly, a little past halfway: the shadow of the top page's stone falls on the gap. Shadows can be walked on."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本をゆっくり半分より少し多く閉じると、上のページの石の影がすき間に落ちる。影は歩ける。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책을 반보다 조금 더 천천히 닫으면 위 페이지 돌의 그림자가 틈에 떨어져요. 그림자 위는 걸을 수 있어요."
+          }
+        }
+      }
+    },
     "hint.portrait.stand": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -6147,6 +6177,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "2장 끝. 다음 편지는 아직 오는 중이에요."
+          }
+        }
+      }
+    },
+    "preview.end3": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三章完。下一封信，还在路上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of chapter three. The next letter is still on its way."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三章、おわり。次の手紙は、まだ旅の途中。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3장 끝. 다음 편지는 아직 오는 중이에요."
           }
         }
       }

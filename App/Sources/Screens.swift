@@ -220,6 +220,10 @@ struct ChapterMapView: View {
         let doneCount = ch1.filter { model.done.contains($0) }.count
         let ch2 = model.chapterIndices(Chapter.all[1])
         let ch2Done = !ch2.isEmpty && ch2.allSatisfy { model.done.contains($0) }
+        let ch3 = model.chapterIndices(Chapter.all[2])
+        let ch3Done = !ch3.isEmpty && ch3.allSatisfy { model.done.contains($0) }
+        let built = Chapter.all.flatMap { model.chapterIndices($0) }
+        let doneAll = built.filter { model.done.contains($0) }.count
         let playable = Chapter.all.filter { model.isUnlocked($0) }.flatMap { model.chapterIndices($0) }
         VStack(spacing: 0) {
             HStack {
@@ -229,6 +233,10 @@ struct ChapterMapView: View {
                 }
                 .accessibilityIdentifier("map.back")
                 Spacer()
+                // letters delivered across the whole book, e.g. 11 / 17 (design-review-ch3 §4 ③)
+                Text("\(doneAll) / \(built.count)").font(.subheadline.monospacedDigit()).foregroundStyle(Tok.ink700)
+                    .accessibilityLabel(L10n.t("ch.count", ["n": doneAll, "total": built.count]))
+                    .accessibilityIdentifier("map.count")
             }
             .padding(.horizontal, 16)
             HStack(alignment: .firstTextBaseline) {
@@ -242,7 +250,7 @@ struct ChapterMapView: View {
                     ZStack(alignment: .top) {
                         // the crease is the river; the thread runs down it to the chapter being played
                         Rectangle().fill(Tok.ink900.opacity(0.12)).frame(width: 1).frame(maxHeight: .infinity)
-                        let reach = doneCount == ch1.count ? 200.0 : 120.0
+                        let reach = ch2Done ? 330.0 : doneCount == ch1.count ? 200.0 : 120.0
                         ThreadDrop(from: 0, to: reach, color: hc ? Tok.hcLine : Tok.thread).frame(height: reach + 2)
                         Knot(color: hc ? Tok.hcLine : Tok.thread, small: true).offset(y: reach - 7)
                         VStack(spacing: 18) {
@@ -255,7 +263,7 @@ struct ChapterMapView: View {
                                 }
                             }
                             // the end of this preview, under the last card (never over a card, at any text size)
-                            if ch2Done { PreviewEndNote(key: "preview.end2").padding(.top, 10) }
+                            if ch3Done { PreviewEndNote(key: "preview.end3").padding(.top, 10) }
                         }
                         .padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 100)
                     }
@@ -443,19 +451,20 @@ struct LetterView: View {
                         }
                     }
                 }
-                .background(PaperSurface(color: Tok.paperNew))
+                // chapter 3's letter is on the backlit rice paper, the thread aged (frame 8-5)
+                .background(PaperSurface(color: chapter >= 3 ? PaperState.chapter3.color : Tok.paperNew))
                 .clipShape(RoundedRectangle(cornerRadius: 4))
                 .shadow(color: .black.opacity(0.14), radius: 10, y: 4)
                 .overlay(alignment: .topTrailing) {
                     // the untied thread lying across the letter's corner, like a cut string (frame final-8), all on screen
-                    LooseThread().stroke(hc ? Tok.hcLine : Tok.thread, style: StrokeStyle(lineWidth: 2.4, lineCap: .round))
+                    LooseThread().stroke(hc ? Tok.hcLine : chapter >= 3 ? Tok.threadAged : Tok.thread, style: StrokeStyle(lineWidth: 2.4, lineCap: .round))
                         .frame(width: 34, height: 110).offset(x: 14, y: -14).accessibilityHidden(true)
                 }
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(text.replacingOccurrences(of: "\n", with: " ") + " " + sign)
                 .padding(.horizontal, 30).padding(.top, 14).padding(.bottom, 20)
                 // only the last letter of this preview says the next one is still on its way
-                if chapter == 2 { PreviewEndNote(key: "preview.end2").padding(.bottom, 24).opacity(unfolded >= 3 ? 1 : 0) }
+                if chapter == 3 { PreviewEndNote(key: "preview.end3").padding(.bottom, 24).opacity(unfolded >= 3 ? 1 : 0) }
             }
             .clipped()
             Button { router.go(.map) } label: {

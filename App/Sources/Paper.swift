@@ -387,11 +387,41 @@ struct ShadeMark: View {
     var body: some View {
         let r = RoundedRectangle(cornerRadius: 3)
         ZStack {
-            r.fill(Tok.ink900.opacity(hc ? 0 : 0.42)).blur(radius: hc ? 0 : 2)
-            CrossHatch(spacing: 6).stroke(hc ? .black : Tok.paperNew.opacity(0.5), lineWidth: hc ? 1.8 : 1).clipShape(r)
+            // a whole square, soft-edged, ±45° crosshatch (design-ch3 §4); #6E604E is 5.05:1 on the backlit paper
+            r.fill(Tok.shade.opacity(hc ? 0 : 0.94)).blur(radius: hc ? 0 : 1.5)
+            CrossHatch(spacing: 6).stroke(hc ? .black : Tok.paperNew.opacity(0.32), lineWidth: hc ? 1.8 : 0.8).clipShape(r)
             if hc { r.strokeBorder(.black, style: StrokeStyle(lineWidth: 2.5, dash: [5, 3])) }
         }
         .frame(width: size, height: size)
+    }
+}
+
+/// A stone on the backlit top page, seen through the paper: a black cut-out (design-ch3 §4). High contrast: one 45°
+/// hatch and a 3 pt outline (a shadow is crosshatched, so the two never read alike); reduce transparency: solid with a
+/// white ridge.
+struct StoneSilhouette: View {
+    let size: Double
+    var reduced = false
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        let s = StoneOutline()
+        ZStack {
+            if hc {
+                s.fill(.white)
+                Hatch(spacing: 5).stroke(.black, lineWidth: 1.5).clipShape(s)
+                s.stroke(.black, lineWidth: 3)
+            } else {
+                s.fill(Tok.figure).blur(radius: reduced ? 0 : 0.6)
+                if reduced { StoneRidge().stroke(.white.opacity(0.9), style: StrokeStyle(lineWidth: 1.2, lineCap: .round, lineJoin: .round)) }
+            }
+        }
+        .frame(width: size * 0.72, height: size * 0.56)
+    }
+}
+
+nonisolated struct StoneRidge: Shape {
+    func path(in r: CGRect) -> Path {
+        Path { p in p.addLines([(0.14, 0.34), (0.43, 0.12), (0.86, 0.20)].map { CGPoint(x: r.minX + $0.0 * r.width, y: r.minY + $0.1 * r.height) }) }
     }
 }
 

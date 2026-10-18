@@ -19,10 +19,18 @@ struct Chapter: Identifiable {
         // not in this preview build yet: shown as coming soon, never as a sealed chapter that looks openable
         // chapter 2 ships 6 levels (design-review-2 §4.5); it opens once chapter 1's letter is delivered (isUnlocked)
         Chapter(id: 2, levelIDs: ["stand", "twoBridges", "standClose", "doorBridge", "inkBridge", "crease"], unlocked: true, soon: false),
-        Chapter(id: 3, levelIDs: [], unlocked: false, soon: true),
+        // chapter 3 ships 6 levels (design-ch3 §2); the whole book has four chapters (design-review-ch3 §4 ③)
+        Chapter(id: 3, levelIDs: ["shadow", "press", "lock", "ride", "rideBack", "lamp"], unlocked: true, soon: false),
         Chapter(id: 4, levelIDs: [], unlocked: false, soon: true),
-        Chapter(id: 5, levelIDs: [], unlocked: false, soon: true),
     ]
+}
+
+/// A stretch of the leaning window where every stone on the top page shades a gap (design-review-ch3 §3): fold degrees.
+struct LockWindow: Equatable {
+    var lo, hi: Double
+    let cells: [Cell]
+    /// Where a page let go inside the window comes to rest (a whole degree, so the reading is steady).
+    var mid: Double { ((lo + hi) / 2).rounded() }
 }
 
 /// Timing curves from design-spec §5.
@@ -68,6 +76,11 @@ final class GameModel {
     private(set) var trail: [Cell]
     private(set) var posture: Posture = .open
     private(set) var shade: [Cell: Int] = [:]
+    /// Gaps outlined for 400 ms when the shadows lock onto them (design-review-ch3 §3).
+    private(set) var lockFlash: Set<Cell> = []
+    @ObservationIgnored private(set) var lockWindows: [LockWindow] = []
+    @ObservationIgnored private var lockedCells: [Cell] = []
+    @ObservationIgnored private var lockFlashTask: Task<Void, Never>?
     private(set) var canUndo = false
     private(set) var angle: Double = 0
     private(set) var won = false
@@ -158,7 +171,7 @@ final class GameModel {
     @ObservationIgnored private var hingeTarget = 0.0
     @ObservationIgnored private var hingeIdle: Task<Void, Never>?
 
-    private struct Pending { var mode = false, connected = false, lost = false, shade = false, hadShade = false; var stamps: [Rules.Stamp] = [] }
+    private struct Pending { var mode = false, connected = false, lost = false, shade = false, hadShade = false, lit = false; var stamps: [Rules.Stamp] = [] }
 
     static let step = 15.0
     static let snapPoints: [Double] = [0, 90, 130, 180]
@@ -197,10 +210,14 @@ final class GameModel {
     /// -cameraPitch <deg> (screenshots), -probe YES (UI tests: the drag's edge probe).
     static func launch() -> GameModel {
         let d = UserDefaults.standard
-        if d.bool(forKey: "resetProgress") { d.removeObject(forKey: doneKey); d.removeObject(forKey: "opener.2") }
+        if d.bool(forKey: "resetProgress") { d.removeObject(forKey: doneKey); d.removeObject(forKey: "opener.2"); d.removeObject(forKey: "opener.3") }
         let m = GameModel(pack: try! LevelPack.bundled())
         let start = d.integer(forKey: "startLevel")
         if start > 0 { m.go(start - 1) }
+        // a leaning start angle comes first, so -walkTo can step onto its shadows
+        if d.object(forKey: "startAngle") != nil && d.double(forKey: "startAngle") > 90 && d.double(forKey: "startAngle") < 155 {
+            m.setAngle(d.double(forKey: "startAngle")); m.pending = Pending()
+        }
         if let w = d.string(forKey: "walkTo") {
             let p = w.split(separator: ",").compactMap { Int($0) }
             if p.count == 2 {
@@ -229,7 +246,7 @@ final class GameModel {
         let n = (chapter.levelIDs.firstIndex(of: level.id) ?? 0) + 1
         return L10n.t("level.code", ["ch": chapter.id, "n": n])
     }
-    var paper: PaperState { chapter.id == 2 ? .chapter2 : .chapter1 }
+    var paper: PaperState { [PaperState.chapter1, .chapter2, .chapter3][min(2, max(0, chapter.id - 1))] }
     var isLastInChapter: Bool { chapterLevelIndices.last == index }
 
     // MARK: words
@@ -267,6 +284,7 @@ final class GameModel {
         angle = 0
         cameraTask?.cancel(); cameraTask = nil; cameraPitch = Self.handPitch
         sync()
+        lockWindows = Self.lockWindows(game.board, rules); lockedCells = []; lockFlashTask?.cancel(); lockFlash = []
         if hingeKind == .device, settings.hingeFold, let a = (device as? AnyHingeAngle)?.lastAngle {
             setAngle(Self.virtualFold(a)); pending = Pending()
             if abs(angle - 90) < 0.5 { cameraPitch = Self.wallPitch }   // a hinge already standing: look at the wall
@@ -280,7 +298,7 @@ final class GameModel {
         if index == 0 && !done.contains(0) { startGhost(after: 3.5) }
         // 2-1: no text; the ghost hand stands the page after 8 s without a fold (or after a failed close, in tap())
         teachCount = 0
-        if level.id == "stand" { startTeach(after: 8) }
+        if level.id == "stand" || level.id == "shadow" { startTeach(after: 8) }
     }
 
     /// The ghost hand (README "下一步", design-spec §5): loops until the player folds, never with reduce motion.
@@ -332,10 +350,91 @@ final class GameModel {
             if angleSamples.count > 64 || (angleSamples.first.map { now - $0.t > 0.3 } ?? false) { angleSamples.removeAll { now - $0.t > 0.3 } }
             if angle < 179.5 && a >= 179.5, let v = CloseFeel.speed(angleSamples.filter { now - $0.t < 0.2 }) { landing = (now, v) }
         }
+        let before = angle
         let events = game.setAngle(a)
         angle = game.angle
         sync()
-        if !quiet { handle(events, from: wasPosture) }
+        if !quiet {
+            handle(events, from: wasPosture)
+            // design-ch3 §5: the page is held up to the lamp once it leans past 89° (physical)
+            if paper.backlit && before < 91 && angle >= 91 && angle < config.foldMin { pending.lit = true }
+            lockCheck(from: before)
+        }
+    }
+
+    // MARK: the shadow lock (design-review-ch3 §3)
+
+    /// A gap: an empty square on the bottom page next to paper, where a shadow would make a path.
+    static func isGap(_ b: Board, _ rules: Rules, _ c: Cell) -> Bool {
+        guard !rules.isRight(c.c), b[c] == .empty else { return false }
+        return [(1, 0), (-1, 0), (0, 1), (0, -1)].contains { d in
+            let n = Cell(c.c + d.0, c.r + d.1)
+            return n.c >= 0 && n.c < rules.n && n.r >= 0 && n.r < b.h && b[n].isFloor
+        }
+    }
+    func isGap(_ c: Cell) -> Bool { Self.isGap(board, rules, c) }
+
+    /// Every stretch of the leaning window (fold 91°–154°) where each top-page stone's shadow lies on a gap.
+    static func lockWindows(_ b: Board, _ rules: Rules) -> [LockWindow] {
+        let n = rules.n
+        let stones = (0..<b.h).flatMap { r in (n..<2 * n).map { Cell($0, r) } }.filter { b[$0].isOpaque }
+        guard !stones.isEmpty else { return [] }
+        var out: [LockWindow] = []
+        var a = 91.0
+        while a < rules.config.foldMin {
+            let sh = rules.shadows(b, a)
+            let cells = stones.map { s in sh.first { $0.key.r == s.r && $0.value == s.c && isGap(b, rules, $0.key) }?.key }
+            if cells.allSatisfy({ $0 != nil }) {
+                let cs = cells.compactMap { $0 }
+                if let last = out.last, last.cells == cs, abs(last.hi - (a - 0.25)) < 1e-6 { out[out.count - 1].hi = a }
+                else { out.append(LockWindow(lo: a, hi: a, cells: cs)) }
+            }
+            a += 0.25
+        }
+        return out
+    }
+
+    /// Entering a lock clicks (Selection), outlines the gaps for 400 ms and makes their hollow note solid (two at once:
+    /// a two-note chord). A fast sweep straight across a window clicks too.
+    private func lockCheck(from before: Double) {
+        guard !lockWindows.isEmpty else { return }
+        let a = angle
+        let here = lockWindows.first { a >= $0.lo && a <= $0.hi }
+        defer { lockedCells = here?.cells ?? [] }
+        if let w = here { if w.cells != lockedCells { lockEntered(w.cells) }; return }
+        let lo = min(before, a), hi = max(before, a)
+        if let w = lockWindows.first(where: { $0.hi >= lo && $0.lo <= hi && $0.cells != lockedCells }) { lockEntered(w.cells) }
+    }
+
+    private func lockEntered(_ cells: [Cell]) {
+        haptics.tick()
+        for c in cells { sound.note(row: c.r, timbre: .wood, pan: pan(of: c), volume: 0.55) }
+        lockFlashTask?.cancel()
+        withAnimation(.easeOut(duration: 0.08)) { lockFlash = Set(cells) }
+        lockFlashTask = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(400))
+            guard !Task.isCancelled, let self else { return }
+            withAnimation(.easeIn(duration: 0.2)) { self.lockFlash = [] }
+        }
+    }
+
+    /// Chapters 1–2 detent at 0 / 90 / 130 / 180. Chapter 3 leans freely: 91°–154° (fold) has no detent (spec §5).
+    /// The lamp behind the top page: 0 → 1 between 89° and 82° (physical), off again as the book shuts (design-review-ch3 §6.3, §6.7).
+    static func lit(_ a: Double) -> Double { max(0, min(1, (a - 91) / 7)) * max(0, min(1, (160 - a) / 6)) }
+
+    var detents: [Double] { chapter.id >= 3 ? [0, 90, 180] : Self.snapPoints }
+
+    /// Where a let-go page comes to rest. Chapters 1–2: the nearest detent. Chapter 3: inside a lock window, the
+    /// window's middle; elsewhere in the leaning window it stays where it is; 90°'s capture ends at 90°.
+    func restTarget(_ projected: Double) -> Double {
+        guard chapter.id >= 3 else { return Self.snapPoints.min { abs($0 - projected) < abs($1 - projected) } ?? 0 }
+        let p = min(180, max(0, projected))
+        if let w = lockWindows.first(where: { p >= $0.lo - 0.5 && p <= $0.hi + 0.5 }) ?? lockWindows.first(where: { angle >= $0.lo && angle <= $0.hi }) {
+            return w.mid
+        }
+        if p >= config.foldMin { return 180 }
+        if p > 90 { return angle > 90 && angle < config.foldMin ? angle : p }
+        return p < 45 ? 0 : 90
     }
 
     func stopMotion() {
@@ -431,7 +530,7 @@ final class GameModel {
 
     private func arrived(at target: Double) {
         if target >= 180 { contact() }
-        else if Self.snapPoints.contains(target) { haptics.snap() }
+        else if detents.contains(target) { haptics.snap() }
         if !aha { settle() }
     }
 
@@ -500,7 +599,9 @@ final class GameModel {
     /// 2-1's teaching moment, no text (design-review-2 §2.4, §4.2): a fingertip draws the top page down to 90° and lets
     /// go; the book really stays there (snapped) with the bridge up. Reduce motion: only the 「?」. VoiceOver: a sentence.
     func startTeach(after delay: Double) {
-        guard level.id == "stand", !won, teachTask == nil, teachCount < 2 else { return }
+        // 3-1 (design-ch3 §2): the fingertip leans the page to 50° (physical) and lets go; it stays there
+        guard level.id == "stand" || level.id == "shadow", !won, teachTask == nil, teachCount < 2 else { return }
+        let lean = level.id == "shadow", to: Double = lean ? 130 : 90
         let quietMode = settings.motionReduced || settings.voiceOver
         teachTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(delay))
@@ -508,7 +609,7 @@ final class GameModel {
             self.teachCount += 1
             self.hintAvailable = true
             if quietMode {
-                if self.settings.voiceOver { self.announce(L10n.t("teach.half")) }
+                if self.settings.voiceOver { self.announce(L10n.t(lean ? "teach.lean" : "teach.half")) }
                 self.teachTask = nil
                 return
             }
@@ -516,9 +617,9 @@ final class GameModel {
             try? await Task.sleep(for: .milliseconds(350))
             guard !Task.isCancelled else { return }
             self.pushUndo()
-            withAnimation(.timingCurve(0.4, 0, 0.3, 1, duration: 0.6)) { self.ghost = 2 }
+            withAnimation(.timingCurve(0.4, 0, 0.3, 1, duration: lean ? 0.9 : 0.6)) { self.ghost = 2 }
             self.ghostDriving = true
-            self.move(to: 90, .bezier(0.4, 0, 0.3, 1, duration: 0.6))
+            self.move(to: to, .bezier(0.4, 0, 0.3, 1, duration: lean ? 0.9 : 0.6))
             self.ghostDriving = false
             try? await Task.sleep(for: .milliseconds(650))
             guard !Task.isCancelled else { return }
@@ -566,7 +667,7 @@ final class GameModel {
             guard let self, !Task.isCancelled else { return }
             if self.motionTarget == nil && abs(self.hingeTarget - self.angle) > 0.5 { self.setAngle(self.hingeTarget) }
             self.hingeActive = false; self.hingeSamples = []
-            let target = Self.snapPoints.min { abs($0 - self.angle) < abs($1 - self.angle) } ?? self.angle
+            let target = self.restTarget(self.angle)
             if abs(target - self.angle) > 0.5 && !self.dragging { self.move(to: target, .release) }
             else { if !self.dragging { self.aimCamera(at: target) }; self.settle() }
         }
@@ -592,7 +693,7 @@ final class GameModel {
         let before = angle
         if clamped != angle { setAngle(clamped) }
         // detents: a snap point under the finger clicks harder than the 15° ratchet; 180 is the slap itself
-        let crossed = Self.snapPoints.contains { p in p < 180 && ((before < p && angle >= p) || (before > p && angle <= p)) }
+        let crossed = detents.contains { p in p < 180 && ((before < p && angle >= p) || (before > p && angle <= p)) }
         if crossed { haptics.snap() }
         else if Int(before / Self.step) != Int(angle / Self.step) { haptics.tick() }
         if before < 179.5 && angle >= 179.5 { contact() }
@@ -604,7 +705,7 @@ final class GameModel {
         dragging = false
         released = (CACurrentMediaTime(), velocity)
         let projected = angle + velocity * 0.12
-        let target = Self.snapPoints.min { abs($0 - projected) < abs($1 - projected) } ?? 0
+        let target = restTarget(projected)
         if abs(target - dragFrom) < 0.5 && abs(angle - dragFrom) < 0.5 { game.dropUndo(); canUndo = game.canUndo }
         hintFadeTask = Task { [weak self] in
             try? await Task.sleep(for: .milliseconds(1))
@@ -865,7 +966,7 @@ final class GameModel {
         let a = Int(angle.rounded())
         let p = pending
         pending = Pending(hadShade: !shade.isEmpty)
-        if a == saidAngle && !p.mode && !p.connected && !p.shade && p.stamps.isEmpty { return }
+        if a == saidAngle && !p.mode && !p.connected && !p.shade && !p.lit && p.stamps.isEmpty { return }
         saidAngle = a
         var parts: [String] = []
         switch posture {
@@ -877,10 +978,15 @@ final class GameModel {
             if a == 0 { parts.append(L10n.t("book.opened")) }
             else { parts.append(L10n.t(isLeaning ? "book.lean" : "book.open", ["a": 180 - a])) }
         }
+        if p.lit { parts.append(L10n.t("paper.lit")) }
         if p.connected { parts.append(L10n.t("connected")) } else if p.lost { parts.append(L10n.t("lost")) }
         for s in p.stamps { parts.append(L10n.t(s.kind == .door ? "doorOpened" : "inkPrinted")) }
         if p.shade {
-            if !shade.isEmpty {
+            let gaps = shade.keys.filter(isGap).sorted { ($0.r, $0.c) < ($1.r, $1.c) }
+            if !gaps.isEmpty {
+                // the moment a shadow lands in a gap says more than a list of squares (design-ch3 §3)
+                parts.append(gaps.map { L10n.t("shadowGap", ["c": $0.c + 1]) }.joined(separator: L10n.t("sep")))
+            } else if !shade.isEmpty {
                 let cells = shade.keys.sorted { ($0.r, $0.c) < ($1.r, $1.c) }.map(pos).joined(separator: L10n.t("list"))
                 parts.append(L10n.t("shadowOn", ["cells": cells]))
             } else if p.hadShade { parts.append(L10n.t("shadowGone")) }

@@ -354,16 +354,6 @@ private struct BookBody: View {
             Crease(horizontal: false, length: page.height, glow: model.glow)
                 .offset(x: page.width - 1, y: 0)
                 .allowsHitTesting(false)
-            if model.angleHint {
-                Text(L10n.t("angle", ["a": model.shownAngle]))
-                    .font(.system(size: 11, weight: .medium).monospacedDigit())
-                    .foregroundStyle(Tok.ink600)
-                    .padding(.horizontal, 5).padding(.vertical, 2)
-                    .background(Capsule().fill(Tok.paperNew.opacity(0.9)))
-                    .position(x: page.width + 26, y: page.height - 14)
-                    .transition(.opacity)
-                    .accessibilityHidden(true)
-            }
             // the small seal 「通」 lands on the river where the thread crossed (frame final-10 ③)
             if model.sealShown {
                 Seal(glyph: "通", size: 26)
@@ -447,11 +437,13 @@ private struct TileLayer: View {
     var interactive: Bool
     var dim: Double = 1
     var mirrorPrints = true
+    /// Drawn over the backlit top page: the tracing-paper veil and a 1 pt edge (design-review-ch3 §4 ②)
+    var veiled = false
     @Environment(\.highContrast) private var hc
 
     var body: some View {
         ForEach(cells, id: \.cell) { item in
-            TileItem(model: model, geo: geo, rotorSpace: rotorSpace, cell: item.cell, interactive: interactive, dim: dim)
+            TileItem(model: model, geo: geo, rotorSpace: rotorSpace, cell: item.cell, interactive: interactive, dim: dim, veiled: veiled)
                 .position(item.slot)
                 .accessibilitySortPriority(Double(1000 - Int(item.slot.y)) - Double(item.slot.x) / 1000)
         }
@@ -465,6 +457,8 @@ private struct TileItem: View {
     let cell: Cell
     let interactive: Bool
     let dim: Double
+    var veiled = false
+    @Environment(\.highContrast) private var hc
 
     var body: some View {
         let c = cell
@@ -472,9 +466,19 @@ private struct TileItem: View {
         let shaded = model.shade[c] != nil && !t.isFloor
         let face = TileFace(tile: t, size: geo.tile, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
                             mirrorAxisVertical: geo.horizontal, printedAt: model.inkPrintedAt[c])
+        let r = RoundedRectangle(cornerRadius: 3, style: .continuous)
         ZStack {
             face
+            if veiled && !hc && (t.isFloor || shaded) {
+                r.fill(Tok.paperBack.opacity(0.15))
+                r.strokeBorder(Tok.edgeLower, lineWidth: 1)
+            }
             if shaded { ShadeMark(size: geo.tile) }
+            // the shadows lock onto this gap: its outline lights up for 400 ms (design-review-ch3 §3)
+            if model.lockFlash.contains(c) {
+                r.strokeBorder(hc ? Color.black : Tok.lockEdge, lineWidth: hc ? 3 : 2)
+                    .shadow(color: hc ? .clear : Tok.lamp, radius: 4)
+            }
         }
         .frame(width: geo.tile, height: geo.tile)
         .opacity(dim)
@@ -539,7 +543,8 @@ private struct PuppetLayer: View {
     let at: CGPoint
     var body: some View {
         // standing on wet ink, the black figure gets a paper rim so it does not vanish into the blot
-        let onInk = model.board[model.char] == .ink
+        // and on a shadow it gets the backlit rim: the figure is only 2.76:1 on #6E604E (design-ch3 §5)
+        let onInk = model.board[model.char] == .ink || (model.shade[model.char] != nil && !model.board[model.char].isFloor)
         Group {
             if model.walking && !AppSettings.shared.motionReduced {
                 // the two walking frames only tick while walking (no idle redraws)
@@ -607,6 +612,8 @@ private struct FixedPage: View {
     let angle: Double
     /// false: taps and VoiceOver go to ProjectedTargets instead (camera book)
     var targets = true
+    /// The bottom page's squares, shadows, thread and figure redrawn over the backlit top page (design-review-ch3 §4 ②)
+    var overlay = false
     @Environment(\.highContrast) private var hc
 
     var body: some View {
@@ -616,8 +623,8 @@ private struct FixedPage: View {
         let cells = (0..<s.slotsAcross).flatMap { x in (0..<s.slotsDown).map { y in
             (cell: s.cell(page: .fixed, x: x, y: y), slot: geo.center(x: x, y: y)) } }
         ZStack(alignment: .topLeading) {
-            PageSheet(horizontal: geo.horizontal, isFixed: true, color: model.paper.color)
-            TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: !covered && targets)
+            if !overlay { PageSheet(horizontal: geo.horizontal, isFixed: true, color: model.paper.color) }
+            TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: !covered && targets && !overlay, veiled: overlay)
             // kept in the tree while the book is closed (hidden, not removed): re-inserting it mid-aha lost the
             // thread's redraw and left this page without its thread after the book reopened
             ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .fixed),
@@ -625,7 +632,7 @@ private struct FixedPage: View {
                 .opacity(covered ? 0 : 1)
             if !covered && !model.puppetOnRamp && s.page(of: model.char.c) == .fixed { PuppetLayer(model: model, geo: geo, at: geo.center(model.char)) }
             // the folding page's shadow: a soft band from the crease that grows as it closes over this page
-            if !hc && angle > 0 {
+            if !hc && angle > 0 && !overlay {
                 let extent = geo.depth * (1 - cos(a)) / 2 + 14 * sin(a)
                 LinearGradient(colors: [.black.opacity(0.20 * sin(a) + 0.05 * (1 - cos(a))), .clear],
                                startPoint: geo.horizontal ? .top : .trailing, endPoint: geo.horizontal ? .bottom : .leading)
@@ -690,9 +697,23 @@ private struct BackFace: View {
         let closed = angle >= 160
         let under = (0..<s.slotsAcross).flatMap { x in (0..<s.slotsDown).map { y in
             (cell: s.cell(page: .fixed, x: x, y: y), slot: geo.center(x: x, y: y)) } }
+        let backlit = model.paper.backlit && !closed
+        let lit = backlit ? GameModel.lit(angle) : 0
+        let rt = AppSettings.shared.transparencyReduced
         ZStack(alignment: .topLeading) {
             if hc { Tok.hcGround.overlay(Rectangle().strokeBorder(.black, lineWidth: 1.5)) }
-            else {
+            else if backlit {
+                // chapter 3: the top page held up to the lamp (design-ch3 §4): warm, translucent, fibres showing; the
+                // lamp is on the viewer's side above the book, never under the canopy (design-review-ch3 §5.1)
+                PaperSurface(color: model.paper.color, back: true).opacity(rt ? 1 : 0.86 + 0.14 * max(0, min(1, (angle - 154) / 6)))
+                if rt { Rectangle().strokeBorder(Tok.edgeLower, lineWidth: 1.5) }
+                else {
+                    RadialGradient(colors: [Tok.lamp.opacity(0.62 * lit), Tok.lamp.opacity(0.22 * lit), .clear], center: UnitPoint(x: 0.5, y: 0.55),
+                                   startRadius: 0, endRadius: page.width * 0.75)
+                        .allowsHitTesting(false)
+                    Color.black.opacity(0.05 * (1 - lit)).allowsHitTesting(false)
+                }
+            } else {
                 // closing, the sheet turns into tracing paper: the page below shows through (translucency, review-2 §2.5)
                 let veil = max(0, min(1, (angle - 110) / 30, (160 - angle) / 10))
                 PaperSurface(color: Tok.paperBack, back: true).opacity(1 - model.paper.translucency * 2.5 * veil)
@@ -702,6 +723,17 @@ private struct BackFace: View {
                 LinearGradient(colors: [.white.opacity(0.55), .white.opacity(0), .black.opacity(0.05)], startPoint: geo.horizontal ? .top : .trailing,
                                endPoint: UnitPoint(x: geo.horizontal ? 0.5 : 0.9, y: geo.horizontal ? 0.12 : 0.5))
                     .allowsHitTesting(false)
+            }
+            if backlit && lit > 0 {
+                // the top page's stones, seen through the lit paper as black cut-outs (in the paper layer)
+                let n = model.config.columnsPerPage
+                let stones = (0..<model.board.h).flatMap { r in (n..<2 * n).map { Cell($0, r) } }.filter { model.board[$0].isOpaque }
+                ForEach(stones, id: \.self) { st in
+                    StoneSilhouette(size: geo.tile, reduced: rt)
+                        .position(geo.center(Cell(rules.mirror(st.c), st.r)))
+                        .opacity(hc ? 1 : lit)
+                }
+                .allowsHitTesting(false).accessibilityHidden(true)
             }
             if closed {
                 // fades in over the last 12° of the close, not all at once at 160°
@@ -950,6 +982,18 @@ private struct CameraBook: View {
             }
             .offset(y: showBack ? model.press * 2 : 0)
             .shadow(color: .black.opacity(hc ? 0 : 0.12 * max(0, sin(t))), radius: 6, x: 0, y: 3)
+            // chapter 3 leaning: what lies under the lit top page is drawn over it, veiled, only where it is covered
+            if model.paper.backlit && showBack && th < 160 {
+                let quad = [edge0, edge0 + W * ex, edge0 + W * ex + H * fold, edge0 + H * fold].map(cam.project)
+                ZStack(alignment: .topLeading) {
+                    FixedPage(model: model, geo: geo, rotorSpace: rotorSpace, angle: th, targets: false, overlay: true)
+                        .frame(width: page.width, height: page.height)
+                        .projectionEffect(cam.transform(o: edge0, eu: ex, ev: SIMD3(0, 1, 0)))
+                }
+                .frame(width: geo.bookSize.width, height: geo.bookSize.height, alignment: .topLeading)
+                .mask(QuadShape(points: quad))
+                .allowsHitTesting(false).accessibilityHidden(true)
+            }
             CreaseLine(a: cam.project(edge0), b: cam.project(SIMD3(W / 2, 0, 0)), glow: model.glow)
             if rise > 0 { ramps(cam, fold: fold, rise: rise, W: W, H: H) }
             if model.puppetOnRamp {
@@ -966,14 +1010,6 @@ private struct CameraBook: View {
                     .position(cam.project(SIMD3(x - W / 2, 0, 0)))
                     .transition(AppSettings.shared.motionReduced ? .opacity : .asymmetric(insertion: .scale(scale: 1.6).combined(with: .opacity), removal: .opacity))
                     .accessibilityHidden(true)
-            }
-            if model.angleHint {
-                Text(L10n.t("angle", ["a": model.shownAngle]))
-                    .font(.system(size: 11, weight: .medium).monospacedDigit()).foregroundStyle(Tok.ink600)
-                    .padding(.horizontal, 5).padding(.vertical, 2)
-                    .background(Capsule().fill(Tok.paperNew.opacity(0.9)))
-                    .position(cam.project(SIMD3(W / 2 - 24, 16, 0)))
-                    .transition(.opacity).accessibilityHidden(true)
             }
             if model.ghost > 0 {
                 GhostFinger()

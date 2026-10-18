@@ -30,6 +30,9 @@ final class AppSettings {
     private(set) var onOffLabels = UIAccessibility.isOnOffSwitchLabelsEnabled
     var systemReduceMotion = false
     var systemIncreaseContrast = false
+    var systemReduceTransparency = false
+    /// -reduceTransparency YES (screenshots) or the system setting: the backlit page is drawn solid (design-ch3 §5).
+    var transparencyReduced: Bool { systemReduceTransparency || d.bool(forKey: "reduceTransparency") }
 
     var hapticScale: Double { [0, 0.6, 1.0][max(0, min(2, hapticLevel))] }
     /// The five-button footer appears only for assistive tech or when asked for (design-review §4).

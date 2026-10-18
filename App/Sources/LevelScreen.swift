@@ -101,8 +101,9 @@ struct LevelScreen: View {
     /// 二 · 立: the first time chapter 2 opens, its opener plays once (frame 6-A). -noOpener YES skips it.
     private func checkOpener() {
         let d = UserDefaults.standard
-        guard model.level.id == "stand", !d.bool(forKey: "opener.2"), !d.bool(forKey: "noOpener") else { return }
-        d.set(true, forKey: "opener.2")
+        let key = ["stand": "opener.2", "shadow": "opener.3"][model.level.id]
+        guard let key, !d.bool(forKey: key), !d.bool(forKey: "noOpener") else { return }
+        d.set(true, forKey: key)
         opener = true
     }
 
@@ -345,21 +346,22 @@ private struct ChapterOpener: View {
         let cjk = L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("ja")
         ZStack {
             PaperSurface(color: Tok.paperNew).ignoresSafeArea()
-            PaperSurface(color: PaperState.chapter2.color).ignoresSafeArea()
+            PaperSurface(color: chapter.id >= 3 ? PaperState.chapter3.color : PaperState.chapter2.color).ignoresSafeArea()
                 .mask(WipeShape(progress: wipe).ignoresSafeArea())
             VStack(spacing: 18) {
                 Text(chapter.numeral).font(FontBook.shared.songti(.bold, 30, relativeTo: .title)).foregroundStyle(Tok.ink900)
                 Text(chapter.name).font(cjk ? FontBook.shared.songti(.black, 150, relativeTo: .largeTitle) : FontBook.shared.songti(.bold, 52, relativeTo: .largeTitle))
                     .foregroundStyle(Tok.ink900).lineLimit(1).minimumScaleFactor(0.4)
-                Text(L10n.tight(L10n.t("ch.2.line"), size: 19)).font(FontBook.shared.songti(.regular, 19, relativeTo: .title3))
+                Text(L10n.tight(L10n.t("ch.\(chapter.id).line"), size: 19)).font(FontBook.shared.songti(.regular, 19, relativeTo: .title3))
                     .foregroundStyle(Tok.ink700).multilineTextAlignment(.center)
+                if chapter.id == 3 { LampBook().frame(width: 150, height: 120).padding(.top, 22).accessibilityHidden(true) }
             }
             .padding(.horizontal, 24)
         }
         .contentShape(Rectangle())
         .onTapGesture { done() }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(L10n.t("ch.label", ["n": chapter.id, "name": chapter.name]) + L10n.t("sep") + L10n.t("ch.2.line"))
+        .accessibilityLabel(L10n.t("ch.label", ["n": chapter.id, "name": chapter.name]) + L10n.t("sep") + L10n.t("ch.\(chapter.id).line"))
         .accessibilityAddTraits([.isHeader, .isButton])
         .accessibilityAction { done() }
         .accessibilityIdentifier("chapter.opener")
@@ -368,6 +370,38 @@ private struct ChapterOpener: View {
             UIAccessibility.post(notification: .screenChanged, argument: nil)
             // VoiceOver users dismiss it themselves (activate), so it is never missed
             if !UIAccessibility.isVoiceOverRunning { DispatchQueue.main.asyncAfter(deadline: .now() + 2.6) { done() } }
+        }
+    }
+}
+
+/// 三 · 影's small book (frame 8-1): leaning at 50°, the top page lit from behind, one stone's shadow on the page below.
+private struct LampBook: View {
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        GeometryReader { g in
+            let w = g.size.width, h = g.size.height, t = w * 0.17
+            ZStack(alignment: .topLeading) {
+                // the bottom page
+                Rectangle().fill(PaperState.chapter3.color.mix(with: Color(hex: 0x8A7A62), by: 0.06))
+                    .frame(width: w * 0.84, height: h * 0.56).offset(x: w * 0.08, y: h * 0.40)
+                    .shadow(color: .black.opacity(hc ? 0 : 0.12), radius: 4, y: 2)
+                // a row of squares; the middle one is a gap covered by the stone's shadow
+                ForEach(0..<3, id: \.self) { i in
+                    let x = w * 0.5 + (Double(i) - 1) * t * 1.15 - t / 2
+                    Group {
+                        if i == 1 { ShadeMark(size: t) } else { PathTile(size: t, paper: .chapter3) }
+                    }
+                    .frame(width: t, height: t).offset(x: x, y: h * 0.47)
+                }
+                // the top page, leaning towards us: its back, warm with the lamp behind it, the stone a cut-out
+                Path { p in p.addLines([CGPoint(x: w * 0.04, y: h * 0.40), CGPoint(x: w * 0.96, y: h * 0.40), CGPoint(x: w * 0.86, y: h * 0.06), CGPoint(x: w * 0.14, y: h * 0.06)]); p.closeSubpath() }
+                    .fill(PaperState.chapter3.color.opacity(hc ? 1 : 0.9))
+                    .overlay(hc ? nil : RadialGradient(colors: [Tok.lamp.opacity(0.75), .clear], center: UnitPoint(x: 0.5, y: 0.2), startRadius: 0, endRadius: w * 0.5)
+                        .mask(Path { p in p.addLines([CGPoint(x: w * 0.04, y: h * 0.40), CGPoint(x: w * 0.96, y: h * 0.40), CGPoint(x: w * 0.86, y: h * 0.06), CGPoint(x: w * 0.14, y: h * 0.06)]); p.closeSubpath() }))
+                    .overlay(Path { p in p.addLines([CGPoint(x: w * 0.04, y: h * 0.40), CGPoint(x: w * 0.96, y: h * 0.40), CGPoint(x: w * 0.86, y: h * 0.06), CGPoint(x: w * 0.14, y: h * 0.06)]); p.closeSubpath() }
+                        .stroke(hc ? Color.black : Tok.edgeLower.opacity(0.5), lineWidth: hc ? 1.5 : 0.75))
+                StoneSilhouette(size: t).position(x: w * 0.5, y: h * 0.30)
+            }
         }
     }
 }

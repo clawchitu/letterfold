@@ -49,7 +49,7 @@ final class PlaythroughUITests: XCTestCase {
         Thread.sleep(forTimeInterval: 1.0)
     }
 
-    func testPlaythroughChapters1And2() {
+    func testPlaythroughChapters1To3() {
         app = XCUIApplication()
         app.launchArguments = ["-resetProgress", "YES", "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
         app.launch()
@@ -204,10 +204,89 @@ final class PlaythroughUITests: XCTestCase {
         XCTAssertTrue(back2.waitForExistence(timeout: 5))
         Thread.sleep(forTimeInterval: 1.8)
         shot("letter-2")
-        XCTAssertTrue(app.descendants(matching: .any)["preview.end"].exists)
+        XCTAssertFalse(app.descendants(matching: .any)["preview.end"].exists, "chapter 3 follows now")
         back2.tap()
         Thread.sleep(forTimeInterval: 0.8)
         shot("map-ch2-done")
+        playChapter3()
+    }
+
+    /// Chapter 3 「影」: every lean is a real drag; the page stays where it is let go (or on a lock's middle).
+    func playChapter3() {
+        let f = FoldDriver(app: app)
+        app.buttons["map.continue"].tap()
+        let opener = app.descendants(matching: .any)["chapter.opener"]
+        XCTAssertTrue(opener.waitForExistence(timeout: 4), "三 · 影 opens once")
+        Thread.sleep(forTimeInterval: 0.7)
+        shot("3-0-opener")
+        Thread.sleep(forTimeInterval: 2.6)
+        if opener.exists { opener.tap() }
+        Thread.sleep(forTimeInterval: 0.6)
+        XCTAssertTrue(fold.waitForExistence(timeout: 4))
+        shot("3-1-start")
+
+        // 3-1 影: a first close shows only the stone pressed down; then lean to ~40° and walk over the shadow
+        close()
+        shot("3-1-closed")
+        open()
+        f.lean(to: 40, tol: 8)
+        shot("3-1-leaning")
+        print("VO 3-1 lean: fold=\(fold.value as? String ?? "") tile-1-2=\(tile(1, 2).label) tile-7-2=\(tile(7, 2).label)")
+        walk(1, 4, wait: 2.2)
+        win("3-1")
+
+        // 3-2 压: lean only, never shut; the stone's own shadow is the bridge
+        f.lean(to: 46, tol: 8)
+        walk(1, 3, wait: 2.4)
+        win("3-2")
+
+        // 3-3 远近: both shadows line up only at 29°–33°; the lock holds the page on 31°
+        XCTAssertEqual(f.lean(to: 31, tol: 2), 31)
+        shot("3-3-locked")
+        walk(1, 4, wait: 2.2)
+        win("3-3")
+
+        // 3-4 乘影: stand on the shadow, close a little more, ride it, walk home
+        f.lean(to: 60, tol: 5)
+        walk(2, 2, wait: 1.2)
+        shot("3-4-on-shadow")
+        f.lean(to: 42, tol: 6)
+        shot("3-4-ridden")
+        walk(0, 0, wait: 1.6)
+        win("3-4")
+
+        // 3-5 回程: the shadow reaches you only near shut; step on, then open all the way
+        f.lean(to: 30, tol: 3)
+        walk(1, 1, wait: 0.9)
+        shot("3-5-on-shadow")
+        open()
+        shot("3-5-carried-back")
+        walk(3, 3, wait: 1.4)
+        win("3-5")
+
+        // 3-6 灯下: on the shadow at ~60°, down to 31° where both line up, step off onto paper, then close
+        f.lean(to: 60, tol: 5)
+        walk(2, 1, wait: 0.9)
+        f.lean(to: 31, tol: 2)
+        shot("3-6-lined-up")
+        walk(1, 3, wait: 1.4)
+        close()
+        shot("3-6-closed")
+        walk(1, 4, wait: 1.6)
+        Thread.sleep(forTimeInterval: 0.45)
+        let read3 = app.buttons["win.next"]
+        XCTAssertTrue(read3.waitForExistence(timeout: 6), "3-6 is won")
+        shot("3-6-won")
+        read3.tap()
+        let back3 = app.buttons["letter.next"]
+        XCTAssertTrue(back3.waitForExistence(timeout: 5))
+        Thread.sleep(forTimeInterval: 1.8)
+        shot("letter-3")
+        XCTAssertTrue(app.descendants(matching: .any)["preview.end"].exists)
+        back3.tap()
+        Thread.sleep(forTimeInterval: 0.8)
+        shot("map-ch3-done")
+        XCTAssertEqual(app.descendants(matching: .any)["map.count"].label.filter(\.isNumber), "1717")
     }
 
     /// Stand the page at 90° with one realistic drag; if the hand missed the window, finish with the fold control's

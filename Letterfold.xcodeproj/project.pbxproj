@@ -19,7 +19,9 @@
 		4E042B49889CAFAFFA62FB4A /* Levels.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 93CA716983C6FD7D2F2CB18E /* Levels.xcstrings */; };
 		632B7BC5D43A1FE091458D59 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */; };
 		83E16CC195AEC3EC5512860E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B5BC6A962BF940695C18366 /* Assets.xcassets */; };
+		940B2DA1796BB58F3B8FCFAD /* Chapter3UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33328FA03A6FDAE3C9019CD5 /* Chapter3UITests.swift */; };
 		99273F2D8C732350A8BCA85B /* Screens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CBDC31A0224AF98A0B8641 /* Screens.swift */; };
+		ACE672D75211636A787E4B4A /* FoldDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */; };
 		D8A70EB3F8BBE29228DA425A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 379A2157A36D86786F6D27BF /* PrivacyInfo.xcprivacy */; };
 		E06BF6C6CF71DF946E87BED5 /* LevelScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B298358295F0A825501A00E9 /* LevelScreen.swift */; };
 		E6F6C5E335E9922EBEEF96E7 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5597D142A9CB8FB0E573B6 /* Theme.swift */; };
@@ -42,6 +44,7 @@
 /* Begin PBXFileReference section */
 		23DC96729D3FCEAF07A7743F /* Paper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paper.swift; sourceTree = "<group>"; };
 		2991315D14E1D1169059EEE2 /* Hinge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hinge.swift; sourceTree = "<group>"; };
+		33328FA03A6FDAE3C9019CD5 /* Chapter3UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter3UITests.swift; sourceTree = "<group>"; };
 		379A2157A36D86786F6D27BF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		4097B0AC06804266642AEB30 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		45EBF8A2E746E16AE1153A20 /* GameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
@@ -50,6 +53,7 @@
 		5DCB74D3A0DCC9D491D54DCD /* FoldCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FoldCore; path = Packages/FoldCore; sourceTree = SOURCE_ROOT; };
 		661C1BE741FF0CB5D1E9EE51 /* PlaythroughUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaythroughUITests.swift; sourceTree = "<group>"; };
 		73CBDC31A0224AF98A0B8641 /* Screens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screens.swift; sourceTree = "<group>"; };
+		76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldDriver.swift; sourceTree = "<group>"; };
 		79DDBB77B419ABE4C00953E0 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		93CA716983C6FD7D2F2CB18E /* Levels.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Levels.xcstrings; sourceTree = "<group>"; };
@@ -79,6 +83,8 @@
 		1C210CCE02486A8D4BB29BFE /* UITests */ = {
 			isa = PBXGroup;
 			children = (
+				33328FA03A6FDAE3C9019CD5 /* Chapter3UITests.swift */,
+				76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */,
 				B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */,
 				661C1BE741FF0CB5D1E9EE51 /* PlaythroughUITests.swift */,
 			);
@@ -278,6 +284,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				940B2DA1796BB58F3B8FCFAD /* Chapter3UITests.swift in Sources */,
+				ACE672D75211636A787E4B4A /* FoldDriver.swift in Sources */,
 				325A01DF0182BD81C710BC54 /* LetterfoldUITests.swift in Sources */,
 				4808A9C05E1935D6FFE4F8B2 /* PlaythroughUITests.swift in Sources */,
 			);
