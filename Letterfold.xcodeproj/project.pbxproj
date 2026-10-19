@@ -23,6 +23,7 @@
 		99273F2D8C732350A8BCA85B /* Screens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CBDC31A0224AF98A0B8641 /* Screens.swift */; };
 		AAC6885CD98A69713F89E05E /* Chapter4UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0494484CEC40B87ECCEA13 /* Chapter4UITests.swift */; };
 		ACE672D75211636A787E4B4A /* FoldDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */; };
+		CDAFA5AA7DB1731BE06494F7 /* Petals.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF748F41958AB1E89B0C34D9 /* Petals.swift */; };
 		D8A70EB3F8BBE29228DA425A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 379A2157A36D86786F6D27BF /* PrivacyInfo.xcprivacy */; };
 		E06BF6C6CF71DF946E87BED5 /* LevelScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B298358295F0A825501A00E9 /* LevelScreen.swift */; };
 		E6F6C5E335E9922EBEEF96E7 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5597D142A9CB8FB0E573B6 /* Theme.swift */; };
@@ -68,6 +69,7 @@
 		CC0494484CEC40B87ECCEA13 /* Chapter4UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter4UITests.swift; sourceTree = "<group>"; };
 		D7F376A74B6D07769C3C7A89 /* LetterfoldUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LetterfoldUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EABD85E9AF4932093EFF07E7 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		EF748F41958AB1E89B0C34D9 /* Petals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Petals.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +107,7 @@
 				9E9E382EAE32A5BCA3D71BC9 /* L10n.swift */,
 				B298358295F0A825501A00E9 /* LevelScreen.swift */,
 				23DC96729D3FCEAF07A7743F /* Paper.swift */,
+				EF748F41958AB1E89B0C34D9 /* Petals.swift */,
 				73CBDC31A0224AF98A0B8641 /* Screens.swift */,
 				4097B0AC06804266642AEB30 /* Settings.swift */,
 				A9AA4B7A8AA01181783D9B58 /* Sound.swift */,
@@ -276,6 +279,7 @@
 				EC45A98D94C4BC1BBB07EF81 /* L10n.swift in Sources */,
 				E06BF6C6CF71DF946E87BED5 /* LevelScreen.swift in Sources */,
 				3C0775AFD33349CA0C055368 /* Paper.swift in Sources */,
+				CDAFA5AA7DB1731BE06494F7 /* Petals.swift in Sources */,
 				99273F2D8C732350A8BCA85B /* Screens.swift in Sources */,
 				287378E19EFCA32706FC4E35 /* Settings.swift in Sources */,
 				F82CD4AB1512484854127089 /* Sound.swift in Sources */,
@@ -397,7 +401,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -497,7 +501,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -36,6 +36,13 @@ public enum SavedProgress {
         d.removeObject(forKey: legacyKey)
     }
 
+    /// The strict chapter rule (owner, 0.1 (10)): a chapter opens only once every level of the previous chapter is
+    /// delivered. No exception for a chapter already played: a 0.1 (8) save that finished chapters 1–2 before
+    /// chapter 2 grew two levels must play those two before chapter 3 opens again.
+    public static func chapterOpen(previous: [String], done: Set<String>) -> Bool {
+        !previous.isEmpty && previous.allSatisfy(done.contains)
+    }
+
     public static func reset(_ d: UserDefaults = .standard) {
         d.removeObject(forKey: idsKey); d.removeObject(forKey: legacyKey)
     }

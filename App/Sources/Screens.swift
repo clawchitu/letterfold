@@ -12,18 +12,40 @@ struct CoverView: View {
     /// Set: a first launch (nothing delivered yet) goes straight into 1-1 (design-review-2 §4.4).
     var model: GameModel? = nil
     @Environment(\.highContrast) private var hc
+    /// 落樱 (design-cover.md): the falling petals, the lamp they fade with, where the tag sits, S3 leaving the tag.
+    @State private var petals = PetalEngine()
+    @State private var lampOn = true
+    @State private var tagSlot: CGRect = .zero
+    @State private var tagPetalGone = false
 
     /// The 「折」 logo is the same Chinese Song glyph in every language (Hiragino's taller Mincho ran into the title in ja).
     private var logoFont: Font {
         fonts.songtiReady ? .custom("STSongti-SC-Black", size: 212, relativeTo: .largeTitle) : fonts.songti(.black, 212, relativeTo: .largeTitle)
     }
 
+    /// Reduce Motion — and Low Power / a hot device (§6) — draws the seven still petals.
+    private var stillPetals: Bool {
+        AppSettings.shared.motionReduced || ProcessInfo.processInfo.isLowPowerModeEnabled
+            || ProcessInfo.processInfo.thermalState.rawValue >= ProcessInfo.ThermalState.serious.rawValue
+    }
+
     var body: some View {
         GeometryReader { g in
             let w = g.size.width, h = g.size.height
+            let top = g.safeAreaInsets.top
             let foldL = h * 0.40, foldR = h * 0.47
             ZStack(alignment: .top) {
                 PaperSurface(color: Tok.paperNew).ignoresSafeArea()
+                // the lamp behind the sheet (§2): 10 % at (0.55 W, 0.35 H) to nothing at 0.7 W; out past 120° (§5.4)
+                if !AppSettings.shared.transparencyReduced && !hc {
+                    GeometryReader { s in
+                        RadialGradient(colors: [Tok.lamp.opacity(0.10), Tok.lamp.opacity(0)], center: UnitPoint(x: 0.55, y: 0.35),
+                                       startRadius: 0, endRadius: s.size.width * 0.7)
+                    }
+                    .ignoresSafeArea()
+                    .opacity(lampOn ? 1 : 0)
+                    .allowsHitTesting(false)
+                }
                 // below the mountain fold the sheet turns from the light
                 FoldBand(left: foldL, right: foldR)
                     .fill(LinearGradient(colors: [.black.opacity(0.07), .black.opacity(0.02)], startPoint: .top, endPoint: .bottom))
@@ -36,8 +58,6 @@ struct CoverView: View {
                 Path { p in p.move(to: CGPoint(x: 0, y: h * 0.70)); p.addLine(to: CGPoint(x: w, y: h * 0.70)) }
                     .stroke(Tok.ink900.opacity(0.10), style: StrokeStyle(lineWidth: 0.8, dash: [3, 3]))
 
-                // the thread: from the top edge down the seam, into the paper above the title
-                ThreadDrop(from: 0, to: h * 0.18, color: hc ? Tok.hcLine : Tok.thread).frame(width: w)
                 VStack(spacing: 0) {
                     Spacer().frame(height: h * 0.20)
                     // 「折」: the same logo in every language; the half past the seam sits in the fold's shade
@@ -51,29 +71,76 @@ struct CoverView: View {
                     .typesettingLanguage(.init(identifier: "zh-Hans"))
                     .dynamicTypeSize(...DynamicTypeSize.large)
                     .accessibilityHidden(true)
+                    .onGeometryChange(for: CGRect.self) { $0.frame(in: .named("cover")) } action: { petals.marks.glyph = $0.offsetBy(dx: 0, dy: top) }
                     // pulling the tag folds the cover down like the top page (hinge.drag: it follows the finger)
                     .rotation3DEffect(.degrees(-Double(min(pull, 140)) * 0.3), axis: (x: 1, y: 0, z: 0), anchor: .bottom, perspective: 0.45)
                     Text("《折信》").font(fonts.songti(.bold, 34, relativeTo: .title)).foregroundStyle(Tok.ink900)
                         .environment(\.locale, Locale(identifier: "zh-Hans"))
                         .accessibilityLabel(L10n.t("brandSub"))
                         .accessibilityAddTraits(.isHeader)
-                    // the subtitle follows the language; the Chinese cover is only 《折信》 (design-review-2 §2.8)
-                    if !L10n.lang.hasPrefix("zh") {
-                        Text(L10n.lang.hasPrefix("en") ? "Letterfold" : L10n.t("brandSub"))
-                            .font(.system(.title2, design: .serif).italic()).foregroundStyle(Tok.ink700)
-                            .padding(.top, 2)
-                            .accessibilityHidden(true)
-                    }
+                        .onGeometryChange(for: CGRect.self) { $0.frame(in: .named("cover")) } action: { petals.marks.title = $0.offsetBy(dx: 0, dy: top) }
+                    // the italic subtitle under 《折信》: "Letterfold" in Chinese and English, the local title elsewhere
+                    Text(L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("en") ? "Letterfold" : L10n.t("brandSub"))
+                        .font(.system(.title2, design: .serif).italic()).foregroundStyle(Tok.ink700)
+                        .padding(.top, 2)
+                        .accessibilityHidden(true)
+                        .onGeometryChange(for: CGRect.self) { $0.frame(in: .named("cover")) } action: { petals.marks.subtitle = $0.offsetBy(dx: 0, dy: top) }
                     Spacer().frame(height: h * 0.06)
                     Text(L10n.t("cover.tagline")).font(.body).foregroundStyle(Tok.ink900)
                         .multilineTextAlignment(.center).padding(.horizontal, 24)
-                    // 7-1 「拉线」: the thread ends in a vermilion tag; pull it down (or tap it) to begin
-                    PullTag(pull: $pull) { begin() }
+                        .onGeometryChange(for: CGRect.self) { $0.frame(in: .named("cover")) } action: { petals.marks.tagline = $0.offsetBy(dx: 0, dy: top) }
+                    // 7-1 「拉线」: the thread ends in a vermilion tag. It is laid out here but drawn above the petals
+                    // (layer order §2: … front petals → thread → tag → the petal on the tag).
+                    Color.clear.frame(width: 88, height: 112)
                         .padding(.top, 4)
+                        .onGeometryChange(for: CGRect.self) { $0.frame(in: .named("cover")) } action: { r in
+                            tagSlot = r
+                            petals.marks.tag = CGRect(x: r.midX - 24, y: r.minY + 4 + 40 + top, width: 48, height: 72)
+                        }
+                        .accessibilityHidden(true)
                     Spacer(minLength: 0)
                 }
                 .frame(width: w)
+
+                PetalLayer(engine: petals, reduced: stillPetals)
+                    .ignoresSafeArea()
+                    .onGeometryChange(for: CGSize.self) { $0.size } action: { petals.marks.size = $0 }
+
+                // the thread: from the top edge down the seam, into the paper above the title
+                ThreadDrop(from: 0, to: h * 0.18, color: hc ? Tok.hcLine : Tok.thread).frame(width: w)
+                ZStack(alignment: .topLeading) {
+                    Color.clear.allowsHitTesting(false)
+                    PullTag(pull: $pull, petalGone: tagPetalGone, onSpringBack: { petals.sprangBack() }) { begin() }
+                        .offset(x: tagSlot.minX, y: tagSlot.minY + 4)
+                        .opacity(tagSlot == .zero ? 0 : 1)
+                }
+                .frame(width: w, height: h)
             }
+            .coordinateSpace(.named("cover"))
+            .onAppear {
+                petals.marks.foldL = foldL + top; petals.marks.foldR = foldR + top
+                petals.marks.threadTop = top; petals.marks.threadBottom = h * 0.18 + top
+            }
+            .onChange(of: g.size) {
+                petals.marks.foldL = foldL + top; petals.marks.foldR = foldR + top
+                petals.marks.threadTop = top; petals.marks.threadBottom = h * 0.18 + top
+            }
+        }
+        // any touch wakes petals that idled to a stop (§7)
+        .simultaneousGesture(DragGesture(minimumDistance: 0).onChanged { _ in petals.touch() })
+        .onChange(of: pull) { _, v in
+            petals.pulled(v)
+            // the pull as the page's fold angle: 90° at the 64 pt threshold; the lamp goes out past 120° (§5.4)
+            let theta = min(180, Double(v) * 90 / 64)
+            petals.thetaTarget = theta
+            let on = theta < 120
+            if on != lampOn { withAnimation(stillPetals ? .linear(duration: 0.2) : .easeInOut(duration: 0.35)) { lampOn = on }; petals.lampOn = on }
+        }
+        .onAppear {
+            tagPetalGone = false
+            // screenshots: -coverPull <pt> holds the tag pulled that far
+            let held = UserDefaults.standard.double(forKey: "coverPull")
+            if held > 0 { Task { @MainActor in try? await Task.sleep(for: .milliseconds(600)); pull = held } }
         }
         .overlay(alignment: .topTrailing) {
             // settings: a 44pt folded-corner icon, top right, in every language (design-review-2 §4.4)
@@ -90,6 +157,8 @@ struct CoverView: View {
 
     private func begin() {
         if AppSettings.shared.hapticScale > 0 { UIImpactFeedbackGenerator(style: .medium).impactOccurred(intensity: AppSettings.shared.hapticScale) }
+        // S3 slides off the tag with the Impact (§5.3): 400 ms, fading — the last pink on the screen
+        if stillPetals { tagPetalGone = true } else { withAnimation(.easeIn(duration: 0.4)) { tagPetalGone = true } }
         if let model, model.done.isEmpty { model.go(0); router.go(.level) } else { router.go(.map) }
     }
 }
@@ -99,8 +168,13 @@ struct CoverView: View {
 /// appears it sways once (±4°, 600 ms); with reduce motion it stays still and a static arrow shows instead.
 struct PullTag: View {
     @Binding var pull: CGFloat
+    /// S3 has slid off (a completed pull).
+    var petalGone = false
+    var onSpringBack: () -> Void = {}
     let action: () -> Void
     @State private var sway = 0.0
+    /// S3 slips 1.5 pt down the tag when it sways, and stays there (friction).
+    @State private var petalSlid = 0.0
     @Environment(\.highContrast) private var hc
 
     var body: some View {
@@ -127,6 +201,8 @@ struct PullTag: View {
             }
             .frame(minWidth: 48, minHeight: 72)
             .fixedSize()
+            // S3 rides on the tag's left shoulder (design-cover §4): it turns with the sway and comes down with the pull
+            .overlay(alignment: .topLeading) { TagPetal(slid: petalSlid, gone: petalGone) }
             .dynamicTypeSize(...DynamicTypeSize.accessibility2)
             if rm { Image(systemName: "chevron.compact.down").font(.title3).foregroundStyle(Tok.ink600).padding(.top, 6) }
         }
@@ -141,7 +217,7 @@ struct PullTag: View {
             .onEnded { v in
                 let y = v.translation.height
                 if y >= 64 || (abs(y) < 8 && abs(v.translation.width) < 8) { action(); pull = 0 }
-                else { withAnimation(rm ? .linear(duration: 0.2) : .spring(response: 0.3, dampingFraction: 0.7)) { pull = 0 } }
+                else { onSpringBack(); withAnimation(rm ? .linear(duration: 0.2) : .spring(response: 0.3, dampingFraction: 0.7)) { pull = 0 } }
             })
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(L10n.t("cover.beginLabel"))
@@ -153,6 +229,7 @@ struct PullTag: View {
             Task { @MainActor in
                 try? await Task.sleep(for: .seconds(1.5))
                 withAnimation(.easeInOut(duration: 0.15)) { sway = 4 }
+                withAnimation(.easeOut(duration: 0.6)) { petalSlid = 1.5 }
                 try? await Task.sleep(for: .milliseconds(150))
                 withAnimation(.easeInOut(duration: 0.3)) { sway = -4 }
                 try? await Task.sleep(for: .milliseconds(300))
@@ -304,14 +381,13 @@ struct ChapterMapView: View {
 
 extension GameModel {
     func chapterIndices(_ ch: Chapter) -> [Int] { ch.levelIDs.compactMap { id in pack.levels.firstIndex { $0.id == id } } }
-    /// Built chapters open in order: chapter 2 once chapter 1's letter is delivered.
+    /// Built chapters open in order: each once every level of the one before is delivered.
     func isUnlocked(_ ch: Chapter) -> Bool {
         guard ch.unlocked else { return false }
         if ch.id == 1 { return true }
-        let prev = chapterIndices(Chapter.all[ch.id - 2])
-        // a chapter already played stays open (a 0.1 (8) save: chapter 2 has grown by two levels since)
-        if chapterIndices(ch).contains(where: { done.contains($0) }) { return true }
-        return !prev.isEmpty && prev.allSatisfy { done.contains($0) }
+        // strict: every level of the previous chapter delivered, nothing else (FoldCore.SavedProgress.chapterOpen)
+        let prev = Chapter.all[ch.id - 2].levelIDs.filter { id in pack.levels.contains { $0.id == id } }
+        return SavedProgress.chapterOpen(previous: prev, done: Set(done.map { pack.levels[$0].id }))
     }
     /// 「2-3」 for a level index.
     func code(for i: Int) -> String {

@@ -12,6 +12,9 @@ struct LevelScreen: View {
     @State private var walkOpen = false
     @State private var opener = false
 
+    /// 1 while the book is shut (180°), 0 once the top page has lifted 8° (it rises through the caption's band).
+    static func captionOpacity(_ angle: Double) -> Double { min(1, max(0, (angle - 172) / 6)) }
+
     var body: some View {
         let big = typeSize.isAccessibilitySize || settings.largeGrid
         VStack(spacing: 0) {
@@ -44,6 +47,9 @@ struct LevelScreen: View {
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 24)
                             .position(x: g.size.width / 2, y: g.size.height * 0.27)
+                            // the reopened finale: the caption sits where the top page rises, so it fades out
+                            // within the first few degrees of opening and back in as the book shuts (0.1 (10))
+                            .opacity(Self.captionOpacity(model.angle))
                     }
                     .transition(.opacity)
                     .accessibilityHidden(true)

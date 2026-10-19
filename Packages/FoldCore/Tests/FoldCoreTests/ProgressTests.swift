@@ -43,4 +43,23 @@ final class ProgressTests: XCTestCase {
         SavedProgress.save(["bridge"], d); XCTAssertEqual(SavedProgress.load(d), ["bridge"])
         SavedProgress.reset(d); XCTAssertNil(d.stringArray(forKey: SavedProgress.idsKey))
     }
+
+    /// The strict rule (owner, 0.1 (10)): a 0.1 (8) player who finished chapters 1–2 (old indices 0–10) keeps
+    /// chapter 2 open but not chapter 3 — chapter 2 has two new levels to play first. Nothing in chapter 3 was
+    /// played, and a played chapter is no exception either.
+    func testStrictChapterRuleAfterA0_1_8Save() {
+        d.set(Array(0...10), forKey: "fold.done")
+        var done = SavedProgress.load(d)
+        let ch1 = ["bridge", "facing", "back", "key", "ink"]
+        let ch2 = ["stand", "twoBridges", "standClose", "doorBridge", "inkBridge", "inkTwice", "crease", "rightBank"]
+        XCTAssertTrue(SavedProgress.chapterOpen(previous: ch1, done: done))
+        XCTAssertFalse(SavedProgress.chapterOpen(previous: ch2, done: done))
+        // a chapter-3 level played on 0.1 (8) does not keep chapter 3 open
+        XCTAssertFalse(SavedProgress.chapterOpen(previous: ch2, done: done.union(["shadow"])))
+        done.insert("inkTwice")
+        XCTAssertFalse(SavedProgress.chapterOpen(previous: ch2, done: done))
+        done.insert("rightBank")
+        XCTAssertTrue(SavedProgress.chapterOpen(previous: ch2, done: done))
+        XCTAssertFalse(SavedProgress.chapterOpen(previous: [], done: done))
+    }
 }
