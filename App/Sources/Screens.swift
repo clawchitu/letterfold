@@ -129,7 +129,7 @@ struct CoverView: View {
             .accessibilityIdentifier("cover.settings")
             .padding(.trailing, 12)
             // it belongs to the cover: it goes with the page, before the map's own corner shows under it
-            .opacity(closing || petals.fold.animating && petals.fold.to > 0 ? 0 : 1 - min(1, petals.fold.to / 45))
+            .opacity(closing || petals.fold.animating ? 0 : 1 - min(1, petals.fold.to / 45))
             .animation(.easeInOut(duration: 0.2), value: petals.fold.animating)
         }
     }
@@ -140,10 +140,12 @@ struct CoverView: View {
         let open = t.animating || t.to > 0.01
         ZStack {
             PaperSurface(color: Tok.paperNew).ignoresSafeArea()
-            if !firstLaunch, let model { ChapterMapView(model: model, router: router).opacity(rm ? 1 : (lampOn ? 0.4 : 1)) }
+            if open, !firstLaunch, let model { ChapterMapView(model: model, router: router).opacity(rm ? 1 : (lampOn ? 0.4 : 1)) }
         }
         .opacity(open ? 1 : 0)
         .allowsHitTesting(false)
+        // a picture, not the map: keep its buttons out of the accessibility tree (VoiceOver, UI tests)
+        .accessibilityElement(children: .ignore)
         .accessibilityHidden(true)
     }
 
@@ -168,7 +170,7 @@ struct CoverView: View {
     private func springBack() {
         guard !closing else { return }
         petals.sprangBack()
-        if rm { petals.fold = .hold(0) } else { petals.animateFold(.spring, to: 0, duration: FoldDrive.springDuration) }
+        if rm { withAnimation(.linear(duration: 0.2)) { petals.fold = .hold(0) } } else { petals.animateFold(.spring, to: 0, duration: FoldDrive.springDuration) }
         syncLamp(0)
     }
 

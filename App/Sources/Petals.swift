@@ -684,7 +684,8 @@ struct PetalLayer: View {
                 let marks = engine.marks
                 // still, but on the page they ride its fold: redrawn only while the page moves
                 TimelineView(.animation(minimumInterval: 1.0 / 60, paused: !engine.fold.animating)) { tl in
-                    let angle = engine.foldAngle(at: tl.date.timeIntervalSinceReferenceDate)
+                    // Reduce Motion: the cover does not fold, so neither do the petals on it (Low Power stills still ride it)
+                    let angle = AppSettings.shared.motionReduced ? 0 : engine.foldAngle(at: tl.date.timeIntervalSinceReferenceDate)
                     Canvas { ctx, size in _ = marks; engine.drawStill(&ctx, size: size, angle: angle) }
                 }
             } else {
