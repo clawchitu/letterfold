@@ -8,7 +8,7 @@ final class SolverTests: XCTestCase {
     override func setUpWithError() throws { pack = try LevelPack.bundled() }
 
     func testPackDecodes() throws {
-        XCTAssertEqual(pack.levels.count, 17)
+        XCTAssertEqual(pack.levels.count, 25)
         XCTAssertEqual(pack.config, .standard)
         for lv in pack.levels { XCTAssertNoThrow(try Board(level: lv), lv.id) }
     }
@@ -32,20 +32,63 @@ final class SolverTests: XCTestCase {
         }
     }
 
-    /// Each level actually requires the mechanic it teaches.
-    func testEachMechanicRequired() throws {
+    /// Each level actually requires the mechanics it declares in levels.js `needs` (check.js asserts the same).
+    func testEachLevelNeedsWhatItDeclares() throws {
         let solver = Solver(pack.config)
-        let teaches: [String: [KeyPath<Expectation, Bool?>]] = [
-            "bridge": [\.needsFoldOpt], "facing": [\.needsFoldOpt], "back": [\.needsFoldOpt],
-            "key": [\.needsKey], "ink": [\.needsInk], "stand": [\.needsPopOpt], "twoBridges": [\.needsPopOpt], "standClose": [\.needsPopOpt, \.needsFoldOpt],
-            "doorBridge": [\.needsKey, \.needsPopOpt], "inkBridge": [\.needsInk, \.needsPopOpt],
-            "crease": [\.needsKey, \.needsInk, \.needsPopOpt], "shadow": [\.needsShade], "ride": [\.needsShade, \.needsRide], "press": [\.needsShade], "lock": [\.needsShade], "rideBack": [\.needsShade], "lamp": [\.needsShade, \.needsRide, \.needsFoldOpt],
-        ]
         for lv in pack.levels {
-            let report = solver.report(lv)
-            for kp in try XCTUnwrap(teaches[lv.id], "no mechanic listed for \(lv.id)") {
-                XCTAssertEqual(report[keyPath: kp], true, "\(lv.id) does not need \(kp)")
-            }
+            let needs = try XCTUnwrap(lv.needs, "\(lv.id) declares no needs")
+            XCTAssertFalse(needs.isEmpty, lv.id)
+            let report = solver.report(lv, withDifficulty: false)
+            for need in needs { XCTAssertEqual(report.flag(need), true, "\(lv.id) does not need \(need)") }
+        }
+    }
+}
+
+/// design-difficulty.md §2 in CI: the Swift port of check.js `analyse()` gives the same numbers as the JS one, and
+/// every level scores inside the tier its designer declared.
+final class DifficultyTests: XCTestCase {
+    /// analyse() explores every state; run it once for the whole suite.
+    static let shared: (pack: LevelPack, reports: [String: Difficulty.Report]) = {
+        let pack = try! LevelPack.bundled(), d = Difficulty(Solver(pack.config))
+        var out: [String: Difficulty.Report] = [:]
+        for lv in pack.levels { out[lv.id] = d.analyse(lv) }
+        return (pack, out)
+    }()
+    var pack: LevelPack { Self.shared.pack }
+    struct Cached { let reports: [String: Difficulty.Report]; func analyse(_ lv: Level) -> Difficulty.Report? { reports[lv.id] } }
+
+    func testEveryLevelMeetsItsDeclaredTier() throws {
+        let d = Cached(reports: Self.shared.reports)
+        for lv in pack.levels {
+            let tier = try XCTUnwrap(lv.tier, "\(lv.id) declares no tier")
+            let range = try XCTUnwrap(Difficulty.range(of: tier), "\(lv.id): unknown tier \(tier)")
+            let r = try XCTUnwrap(d.analyse(lv), lv.id)
+            XCTAssertTrue(range.contains(r.score), "\(lv.id) scored \(r.score) (\(r.tier)), declared \(tier) = \(range)")
+            XCTAssertEqual(r.dead, 0, "\(lv.id): dead ends appeared (design-difficulty.md §2)")
+        }
+    }
+
+    func testMatchesJavaScriptMetric() throws {
+        let d = Cached(reports: Self.shared.reports)
+        for lv in pack.levels {
+            let js = try XCTUnwrap(lv.expect?.difficulty, lv.id)
+            XCTAssertEqual(d.analyse(lv)?.summary, js, lv.id)
+        }
+    }
+
+    /// The curve of design-difficulty.md §3: 一 2 2 3 2 3 · 二 2 2 3 4 3 5 5 5 · 三 2 4 3 4 5 7 · 四 6 7 7 7 8 8.
+    func testTheCurve() {
+        let d = Cached(reports: Self.shared.reports)
+        XCTAssertEqual(pack.levels.map { d.analyse($0)?.score ?? -1 },
+                       [2, 2, 3, 2, 3, 2, 2, 3, 4, 3, 5, 5, 5, 2, 4, 3, 4, 5, 7, 6, 7, 7, 7, 8, 8])
+    }
+
+    /// Every chapter ends on its hardest level, and starts again from teach (except chapter 4, all interaction).
+    func testChaptersEndOnTheirHardest() {
+        let d = Cached(reports: Self.shared.reports)
+        let scores = pack.levels.map { d.analyse($0)?.score ?? -1 }
+        for range in [0..<5, 5..<13, 13..<19, 19..<25] {
+            XCTAssertEqual(scores[range].last, scores[range].max(), "chapter \(range)")
         }
     }
 }
@@ -185,7 +228,7 @@ final class GameTests: XCTestCase {
     /// are plain angles: the hinge stays exactly there, open (never shut), leaning, and each stone d squares from the
     /// crease shades the bottom page only while d·cos(physical) ≥ 0.5, on column n − round(d·cos).
     func testFifteenDegreeStopsInTheLean() throws {
-        for id in ["shadow", "press", "lock", "ride", "rideBack", "lamp"] {
+        for id in ["shadow", "press", "lock", "ride", "rideBack", "lamp", "twoShades", "bridgeShade", "inkShore", "stoneRain", "shadeDoor", "twoFigures"] {
             let g = try FoldGame(level: level(id)), n = g.rules.n
             for fold in [105.0, 120, 135, 150] {
                 g.setAngle(fold)
@@ -213,7 +256,7 @@ final class GameTests: XCTestCase {
 
     /// Chapters 1 and 2 keep their solutions: no reachable cell there is newly crushed.
     func testCrushLeavesEarlierChaptersAlone() throws {
-        for id in ["bridge", "facing", "back", "key", "ink", "stand", "twoBridges", "standClose", "doorBridge", "inkBridge", "crease"] {
+        for id in ["bridge", "facing", "back", "key", "ink", "stand", "twoBridges", "standClose", "doorBridge", "inkBridge", "inkTwice", "crease", "rightBank"] {
             let g = try FoldGame(level: level(id)), r = Rules()
             for c in r.reachable(g.board, from: g.board.start, .open, [:]) where !r.isRight(c.c) {
                 XCTAssertFalse(r.crushed(g.board, c, 180), "\(id) \(c)")

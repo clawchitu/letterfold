@@ -818,25 +818,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "倾"
+            "value": "岸"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tilt"
+            "value": "Shore"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "傾き"
+            "value": "岸"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "기울기"
+            "value": "강가"
+          }
+        }
+      }
+    },
+    "ch.4.line": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两岸相触。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The two banks touch."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "両岸がふれる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 강가가 맞닿는다."
           }
         }
       }
@@ -3511,6 +3541,36 @@
         }
       }
     },
+    "kind.figure": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对岸的人，合上时相遇"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the other one, on the far bank; you meet when the book is shut"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向こう岸の人。閉じると出会う"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "건너편 사람, 책을 닫으면 만나요"
+          }
+        }
+      }
+    },
     "kind.i": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -4081,6 +4141,36 @@
         }
       }
     },
+    "letter.3.end": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三章完。\n下一封信，还在路上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of Chapter Three.\nThe next letter is still on its way."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三章 了。\n次の手紙は、まだ途中。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제3장 끝.\n다음 편지는 아직 오는 길."
+          }
+        }
+      }
+    },
     "letter.3.sign": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -4137,6 +4227,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "왼쪽 강가에서 온 편지"
+          }
+        }
+      }
+    },
+    "letter.4.body": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上的那一下，我们站在同一格里。\n打开，河还在。\n没关系——这本书还有下一页，\n我先翻过去等你。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For the moment the book was shut, we stood in the same square.\nOpen it, and the river is still there.\nNever mind: this book has another page.\nI will turn it first, and wait for you there."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じたあの一瞬、わたしたちは同じ枡に立っていた。\n開けば、川はまだそこにある。\nいい——この本には、次の頁がある。\n先にめくって、そこで待っている。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책이 닫힌 그 순간, 우리는 같은 칸에 서 있었다.\n펼치면, 강은 여전히 거기 있다.\n괜찮아. 이 책에는 다음 페이지가 있다.\n내가 먼저 넘겨서, 거기서 기다릴게."
+          }
+        }
+      }
+    },
+    "letter.4.end": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷一《两岸》完。\n下一页，还在折。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of Book One, The Two Banks.\nThe next page is still being folded."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第一巻『両岸』了。\n次の頁は、まだ折っている。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제1권 《두 강가》 끝.\n다음 페이지는 아직 접는 중."
+          }
+        }
+      }
+    },
+    "letter.4.sign": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——右岸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— the Right Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——右岸より"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— 오른쪽 강가에서"
+          }
+        }
+      }
+    },
+    "letter.4.title": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右岸来信"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A Letter from the Right Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右岸からの手紙"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오른쪽 강가에서 온 편지"
           }
         }
       }
@@ -5941,6 +6151,36 @@
         }
       }
     },
+    "paper.ch4": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "旧纸，折痕发白。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Old paper; the crease has gone white."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "古い紙。折り目が白くなっている。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오래된 종이, 접는 선이 하얗게 바랬어요."
+          }
+        }
+      }
+    },
     "paper.lit": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -5967,6 +6207,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "페이지를 등불에 비췄어요"
+          }
+        }
+      }
+    },
+    "paper.worn": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这页纸已经折过很多次"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This page has been folded many times"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このページは何度も折られてきた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 페이지는 여러 번 접혔어요"
           }
         }
       }

@@ -32,7 +32,7 @@ const NATIVE = {
   'ch.1': ['对页', 'Facing Page', '見開き', '맞은편'],
   'ch.2': ['立', 'Stand', '立つ', '일어서다'],
   'ch.3': ['影', 'Shade', '影', '그림자'],
-  'ch.4': ['倾', 'Tilt', '傾き', '기울기'],
+  'ch.4': ['岸', 'Shore', '岸', '강가'],
   'ch.5': ['翻页', 'Turn the Page', 'ページをめくる', '책장 넘기기'],
   'ch.label': ['第{n}章，{name}', 'Chapter {n}, {name}', '第{n}章、{name}', '{n}장, {name}'],
   'ch.delivered': ['已送达', 'Delivered', '届いた', '도착함'],

@@ -181,6 +181,96 @@
         }
       }
     },
+    "bridgeShade.hint": {
+      "comment": "Level \"bridgeShade\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先合上一次开门。再把书打开到 75° 左右：纸片桥还立着，远处石头的影子正好落在桥头的缺口上。过桥、踩影子、走到岸。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close once to open the door. Then open the book to about 75°: the tabs still stand, and the far stone’s shadow lands on the gap at the foot of the bridge. Cross, step on the shadow, walk to the shore."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まず一度閉じて扉を開ける。それから本を75°ほどまで開く。紙片の橋はまだ立ち、遠い石の影が橋のたもとのすき間に落ちる。渡り、影を踏み、岸へ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 한 번 닫아 문을 열어요. 그다음 책을 75° 정도까지 펼쳐요. 종이 다리는 아직 서 있고, 먼 돌의 그림자가 다리 발치의 틈에 떨어져요. 건너서 그림자를 밟고 강가로 걸어요."
+          }
+        }
+      }
+    },
+    "bridgeShade.line": {
+      "comment": "Level \"bridgeShade\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "桥立着的时候，影子也在。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "While the bridge stands, the shadow is there too."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "橋が立っている間、影もそこにある。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다리가 선 동안, 그림자도 거기 있다."
+          }
+        }
+      }
+    },
+    "bridgeShade.name": {
+      "comment": "Level \"bridgeShade\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "桥下影"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bridge and Shade"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "橋と影"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다리와 그림자"
+          }
+        }
+      }
+    },
     "crease.hint": {
       "comment": "Level \"crease\": hint. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -458,25 +548,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "合上一次，墨会印到右页的缺口上；展开后它还在。"
+            "value": "合上一次：墨印到右页，你也顺着叠在一起的纸走到右页。打开，踩着印过去的墨走到信前。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close once: the ink prints onto the gap on the right page, and stays when you open."
+            "value": "Close once: the ink prints onto the right page, and you walk across the stacked pages onto it. Open, and walk the printed ink to the letter."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "一度閉じると、墨が右ページのすき間に写る。開いても残る。"
+            "value": "一度閉じる。墨が右ページに写り、重なった紙を伝ってあなたも右ページへ。開いて、写った墨を踏んでゴールまで。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "한 번 닫으면 먹이 오른쪽 틈에 찍혀요. 펼쳐도 남아 있어요."
+            "value": "한 번 닫아요. 먹이 오른쪽 페이지에 찍히고, 겹친 종이를 따라 나도 오른쪽으로 건너가요. 펼친 다음 찍힌 먹을 밟고 도착점까지 걸어요."
           }
         }
       }
@@ -631,6 +721,186 @@
         }
       }
     },
+    "inkShore.hint": {
+      "comment": "Level \"inkShore\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "站在影子上合书，你会掉下去。先合上一次，让墨印到对岸那格缺口上——那就是岸。打开，斜起到 60°，走过影子站到墨上，再合上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close the book while standing on a shadow and you fall. Close once first, so the ink prints onto the gap across the way: that is your shore. Open, lean to 60°, cross the shadow onto the ink, then close."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影の上で本を閉じれば落ちる。まず一度閉じ、向かいのすき間に墨を写す。それが岸。開いて60°まで傾け、影をわたって墨の上に立ち、閉じる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자 위에서 책을 닫으면 떨어져요. 먼저 한 번 닫아 맞은편 틈에 먹을 찍어요. 그게 강가예요. 펼쳐서 60°로 기울이고, 그림자를 건너 먹 위에 선 다음 닫아요."
+          }
+        }
+      }
+    },
+    "inkShore.line": {
+      "comment": "Level \"inkShore\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影子是路，不是岸。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A shadow is a road, not a shore."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影は道であって、岸ではない。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자는 길이지, 강가가 아니다."
+          }
+        }
+      }
+    },
+    "inkShore.name": {
+      "comment": "Level \"inkShore\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨岸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ink Shore"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨の岸"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먹의 강가"
+          }
+        }
+      }
+    },
+    "inkTwice.hint": {
+      "comment": "Level \"inkTwice\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上一次，墨印到墙上；立起来走过它；再合上一次。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close once so the ink prints onto the wall; stand and walk across it; close once more."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一度閉じて、墨を壁に写す。立てて、その上を渡る。もう一度閉じる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "한 번 닫아 먹을 벽에 찍어요. 세워서 그 위를 건너요. 다시 한 번 닫아요."
+          }
+        }
+      }
+    },
+    "inkTwice.line": {
+      "comment": "Level \"inkTwice\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨先去，人再去。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ink first, then you."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨が先、人は後。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먹이 먼저, 사람은 나중에."
+          }
+        }
+      }
+    },
+    "inkTwice.name": {
+      "comment": "Level \"inkTwice\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两次合"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close Twice"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二度閉じる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 번 닫기"
+          }
+        }
+      }
+    },
     "key.hint": {
       "comment": "Level \"key\": hint. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -728,25 +998,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "站上影子慢慢合书；两道影子排成一列时，往下走到纸上。再合上：终点在对页。书合拢之前，一定要先离开影子。"
+            "value": "别先合上——头顶那块石头会压下来。站上影子慢慢合书；两道影子排成一列时，往下走到纸上。再合上：终点在对页。书合拢之前，一定要先离开影子。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Stand on a shadow and close slowly; where the two shadows line up, step down onto the paper. Then close: the goal is on the facing page. Get off the shadow before the book shuts."
+            "value": "Do not close first: the stone over your head comes down. Stand on a shadow and close slowly; where the two shadows line up, step down onto the paper. Then close: the goal is on the facing page. Get off the shadow before the book shuts."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影に乗ってゆっくり閉じる。二つの影がそろったら、下の紙へ降りる。それから閉じる。ゴールは向かいのページ。閉じきる前に、かならず影から降りること。"
+            "value": "先に閉じないこと。頭の上の石が落ちてくる。影に乗ってゆっくり閉じる。二つの影がそろったら、下の紙へ降りる。それから閉じる。ゴールは向かいのページ。閉じきる前に、かならず影から降りること。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자 위에 서서 천천히 닫아요. 두 그림자가 나란히 서면 아래 종이로 내려가요. 그다음 닫아요. 도착점은 맞은편 페이지예요. 책이 닫히기 전에 꼭 그림자에서 내려와요."
+            "value": "먼저 닫지 마세요. 머리 위 돌이 내려와요. 그림자 위에 서서 천천히 닫아요. 두 그림자가 나란히 서면 아래 종이로 내려가요. 그다음 닫아요. 도착점은 맞은편 페이지예요. 책이 닫히기 전에 꼭 그림자에서 내려와요."
           }
         }
       }
@@ -980,13 +1250,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "重し"
+            "value": "圧"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "누름돌"
+            "value": "누름"
           }
         }
       }
@@ -1167,6 +1437,186 @@
           "stringUnit": {
             "state": "translated",
             "value": "돌아오는 길"
+          }
+        }
+      }
+    },
+    "rightBank.hint": {
+      "comment": "Level \"rightBank\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上一次：门开了，墨也印过去了。立起来过桥、穿门、踩着墨走到头，最后合上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close once: the door opens and the ink prints across. Stand, cross, go through the door, walk the ink to the end, then close."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一度閉じる。扉が開き、墨も写る。立てて橋を渡り、扉を抜け、墨を踏んで端まで歩き、最後に閉じる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "한 번 닫아요. 문이 열리고 먹도 찍혀요. 세워서 다리를 건너 문을 지나고, 먹을 밟아 끝까지 걸은 뒤 마지막에 닫아요."
+          }
+        }
+      }
+    },
+    "rightBank.line": {
+      "comment": "Level \"rightBank\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "信，在立起的那页上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The letter is on the standing page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "手紙は、立った頁の上に。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "편지는 일어선 페이지 위에."
+          }
+        }
+      }
+    },
+    "rightBank.name": {
+      "comment": "Level \"rightBank\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右岸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Right Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右岸"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오른쪽 강가"
+          }
+        }
+      }
+    },
+    "shadeDoor.hint": {
+      "comment": "Level \"shadeDoor\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先合上一次，钥匙开门。再斜起到 75° 踩上影子，慢慢合到 45°：影子带你穿过开着的门，落在门后的纸上。另一道影子通向一座孤岛——别上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close once: the key opens the door. Lean to 75°, step on the shadow, and close slowly to 45°: it carries you through the open door onto the paper beyond. The other shadow leads to an island. Leave it."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まず一度閉じて鍵で扉を開ける。75°まで傾けて影に乗り、ゆっくり45°まで閉じる。影が開いた扉をくぐって、向こうの紙に降ろしてくれる。もう一つの影は孤島へ続く。乗らないこと。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 한 번 닫아 열쇠로 문을 열어요. 75°로 기울여 그림자에 올라서고, 천천히 45°까지 닫아요. 그림자가 열린 문을 지나 너머의 종이에 내려 줘요. 다른 그림자는 외딴 섬으로 이어져요. 타지 마세요."
+          }
+        }
+      }
+    },
+    "shadeDoor.line": {
+      "comment": "Level \"shadeDoor\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影子过不了锁着的门。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A shadow cannot pass a locked door."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影は、鍵のかかった扉を通れない。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자는 잠긴 문을 지나지 못한다."
+          }
+        }
+      }
+    },
+    "shadeDoor.name": {
+      "comment": "Level \"shadeDoor\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "门下影"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shade at the Door"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扉の下の影"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "문 아래 그림자"
           }
         }
       }
@@ -1441,6 +1891,96 @@
         }
       }
     },
+    "stoneRain.hint": {
+      "comment": "Level \"stoneRain\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "路上每一格头顶都有石头，只有最后一格没有——合上之前先走到那里。墨印过去以后，斜起到 50° 左右踩上中间的影子，再慢慢打开到 75°：影子带你到墨边，下去。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every square of the road has a stone above it except the last: get there before you close. Once the ink has printed, lean to about 50°, step onto the middle shadow, then open slowly to 75°: the shadow carries you to the ink. Step down."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "道のどの枡の上にも石がある。最後の枡だけは違う。閉じる前にそこまで歩く。墨が写ったら、50°ほど傾けて真ん中の影に乗り、ゆっくり75°まで開く。影が墨のそばまで運ぶ。降りる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "길의 모든 칸 위에 돌이 있어요. 마지막 칸만 빼고요. 닫기 전에 거기까지 걸어가요. 먹이 찍히면 50° 정도 기울여 가운데 그림자에 올라서고, 천천히 75°까지 펼쳐요. 그림자가 먹 옆까지 데려다줘요. 내려가요."
+          }
+        }
+      }
+    },
+    "stoneRain.line": {
+      "comment": "Level \"stoneRain\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三块石头悬在路上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Three stones hang over the road."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三つの石が道の上に吊られている。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌 세 개가 길 위에 매달려 있다."
+          }
+        }
+      }
+    },
+    "stoneRain.name": {
+      "comment": "Level \"stoneRain\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石雨"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stone Rain"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石の雨"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌 비"
+          }
+        }
+      }
+    },
     "twoBridges.hint": {
       "comment": "Level \"twoBridges\": hint. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -1527,6 +2067,186 @@
           "stringUnit": {
             "state": "translated",
             "value": "두 다리"
+          }
+        }
+      }
+    },
+    "twoFigures.hint": {
+      "comment": "Level \"twoFigures\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对岸的人在岸边等。先走到最下面那格纸，别站在石头正对面合书。书快合上时踩上影子，再打开：影子把你送回岸边。在那里合上——钥匙开门，两岸相触，你就站到了那个人的格子里。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The other one waits at the edge of the far bank. Walk down to the last square of paper; do not close while standing opposite the stone. When the book is nearly shut, step onto the shadow, then open: it carries you back to the shore. Close there: the key opens the door, the two banks touch, and you are standing in their square."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向こう岸の人が岸の縁で待っている。いちばん下の紙の枡まで歩く。石の真向かいでは閉じないこと。本がほとんど閉じたとき影に乗り、開く。影が岸まで送り返す。そこで閉じる。鍵が扉を開け、両岸がふれ、あなたはその人の枡に立っている。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "건너편 사람이 강가 끝에서 기다려요. 맨 아래 종이 칸까지 걸어가요. 돌 맞은편에서는 닫지 마세요. 책이 거의 닫혔을 때 그림자에 올라서고, 펼쳐요. 그림자가 강가로 돌려보내 줘요. 거기서 닫아요. 열쇠가 문을 열고, 두 강가가 맞닿고, 당신은 그 사람의 칸에 서 있어요."
+          }
+        }
+      }
+    },
+    "twoFigures.line": {
+      "comment": "Level \"twoFigures\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两岸相触。信，到了。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The two banks touch. The letter has arrived."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "両岸がふれる。手紙は、届いた。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 강가가 맞닿는다. 편지가, 도착했다."
+          }
+        }
+      }
+    },
+    "twoFigures.name": {
+      "comment": "Level \"twoFigures\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两人"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two Figures"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二人"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 사람"
+          }
+        }
+      }
+    },
+    "twoShades.hint": {
+      "comment": "Level \"twoShades\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "斜起到 75° 左右，踩上远处石头的影子，合到快合上：它把你放在岸边那一格纸上。就在那里，近处石头的影子刚好伸到脚边——站上去，再把书打开，它带你回到折痕边。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lean to about 75°, step on the far stone’s shadow and close almost all the way: it sets you down on the one square of paper. Right there the near stone’s shadow has just reached your feet. Step on it and open the book: it carries you back towards the crease."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "75°ほど傾け、遠い石の影に乗り、閉じる直前まで閉じる。岸の一枡の紙に降りる。そこへ近い石の影がちょうど届く。乗って本を開けば、折り目のそばへ戻れる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "75° 정도 기울여 먼 돌의 그림자에 올라서고, 거의 닫힐 때까지 닫아요. 강가의 종이 한 칸에 내려요. 바로 거기까지 가까운 돌의 그림자가 닿아요. 올라선 뒤 책을 펼치면 접는 선 가까이로 돌아와요."
+          }
+        }
+      }
+    },
+    "twoShades.line": {
+      "comment": "Level \"twoShades\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一道影子送你出去，另一道接你回来。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One shadow carries you out; the other brings you back."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一つの影が運び出し、もう一つが連れ帰る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "한 그림자가 데려가고, 다른 그림자가 데려온다."
+          }
+        }
+      }
+    },
+    "twoShades.name": {
+      "comment": "Level \"twoShades\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两道影"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two Shades"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二つの影"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 그림자"
           }
         }
       }
