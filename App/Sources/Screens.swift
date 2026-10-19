@@ -17,102 +17,78 @@ struct CoverView: View {
     @State private var lampOn = true
     @State private var tagSlot: CGRect = .zero
     @State private var tagPetalGone = false
-
-    /// The 「折」 logo is the same Chinese Song glyph in every language (Hiragino's taller Mincho ran into the title in ja).
-    private var logoFont: Font {
-        fonts.songtiReady ? .custom("STSongti-SC-Black", size: 212, relativeTo: .largeTitle) : fonts.songti(.black, 212, relativeTo: .largeTitle)
-    }
+    /// The pull completed: the page is shutting and the map is next.
+    @State private var closing = false
 
     /// Reduce Motion — and Low Power / a hot device (§6) — draws the seven still petals.
     private var stillPetals: Bool {
         AppSettings.shared.motionReduced || ProcessInfo.processInfo.isLowPowerModeEnabled
             || ProcessInfo.processInfo.thermalState.rawValue >= ProcessInfo.ThermalState.serious.rawValue
     }
+    /// Reduce Motion: no fold at all. The pull crossfades the cover toward the page under it (owner, 0.1 (11)).
+    private var rm: Bool { AppSettings.shared.motionReduced }
+    private var firstLaunch: Bool { model.map { $0.done.isEmpty } ?? false }
 
     var body: some View {
         GeometryReader { g in
             let w = g.size.width, h = g.size.height
             let top = g.safeAreaInsets.top
             let foldL = h * 0.40, foldR = h * 0.47
+            let hingeL = petals.marks.ready ? petals.marks.hingeY - top : h * 0.66
+            // Reduce Motion's crossfade: the cover gives way as the tag comes down, and is gone once the lamp is out
+            let rmAngle = rm ? petals.foldAngle(at: Date().timeIntervalSinceReferenceDate) : 0
+            let rmFade = rm ? (lampOn ? 1 - 0.55 * min(1, rmAngle / 120) : 0) : 1
             ZStack(alignment: .top) {
-                PaperSurface(color: Tok.paperNew).ignoresSafeArea()
-                // the lamp behind the sheet (§2): 10 % at (0.55 W, 0.35 H) to nothing at 0.7 W; out past 120° (§5.4)
-                if !AppSettings.shared.transparencyReduced && !hc {
-                    GeometryReader { s in
-                        RadialGradient(colors: [Tok.lamp.opacity(0.10), Tok.lamp.opacity(0)], center: UnitPoint(x: 0.55, y: 0.35),
-                                       startRadius: 0, endRadius: s.size.width * 0.7)
+                // under the cover page (§5): the chapter map (a first launch: the blank first page), 40 % while the lamp
+                // is lit, all there from the moment it goes out (350 ms)
+                innerPage
+                // the lower half stays on the table
+                CoverSheet(w: w, h: h, top: top, foldL: foldL, foldR: foldR, lampOn: lampOn, petals: petals, tagSlot: $tagSlot)
+                    .clipShape(HalfPlane(y: hingeL, above: false))
+                    .opacity(rmFade)
+                // the upper half is the page: it lifts toward you about the crease, turns its back, and comes down
+                // over the lower half as tracing paper. Redrawn every frame only while it is animating.
+                TimelineView(.animation(minimumInterval: 1.0 / 60, paused: !petals.fold.animating)) { tl in
+                    let t = rm ? 0 : petals.foldAngle(at: tl.date.timeIntervalSinceReferenceDate)
+                    let f = petals.pageFold, front = f.frontFacing(t), s = sin(t * .pi / 180)
+                    ZStack(alignment: .top) {
+                        // the lower half darkens a little as the page comes over it
+                        LinearGradient(colors: [.black.opacity(0.10 * s), .black.opacity(0.02 * s)], startPoint: .top, endPoint: .bottom)
+                            .frame(height: max(0, h - hingeL + 60)).offset(y: hingeL).ignoresSafeArea()
+                            .allowsHitTesting(false)
+                        CoverSheet(w: w, h: h, top: top, foldL: foldL, foldR: foldR, lampOn: lampOn, petals: nil, tagSlot: nil)
+                            .overlay {
+                                ZStack {
+                                    // the face turning from the lamp, then the back: tracing paper, the face showing
+                                    // through mirrored (S1 too), clearer while the lamp still shines through it
+                                    Color.black.opacity(front ? 0.08 * s : 0).ignoresSafeArea()
+                                    PaperSurface(color: Tok.paperBack, back: true).ignoresSafeArea()
+                                        .opacity(front ? 0 : (lampOn ? 0.62 : 0.78))
+                                    Color.black.opacity(front ? 0 : 0.05 * s).ignoresSafeArea()
+                                }
+                                .allowsHitTesting(false)
+                            }
+                            .clipShape(HalfPlane(y: hingeL, above: true))
+                            .opacity(front ? 1 : 0.9)
+                            .projectionEffect(ProjectionTransform(f.transform(t, dy: top)))
+                            .allowsHitTesting(false)
+                            .accessibilityHidden(true)
                     }
-                    .ignoresSafeArea()
-                    .opacity(lampOn ? 1 : 0)
-                    .allowsHitTesting(false)
+                    .opacity(rmFade)
                 }
-                // below the mountain fold the sheet turns from the light
-                FoldBand(left: foldL, right: foldR)
-                    .fill(LinearGradient(colors: [.black.opacity(0.07), .black.opacity(0.02)], startPoint: .top, endPoint: .bottom))
-                    .ignoresSafeArea()
-                FoldLine(left: foldL, right: foldR).stroke(.white.opacity(0.95), lineWidth: 1.4).offset(y: -0.8).ignoresSafeArea()
-                FoldLine(left: foldL, right: foldR).stroke(Tok.ink900.opacity(0.16), lineWidth: 0.8).offset(y: 0.8).ignoresSafeArea()
-                // the centre seam and a valley fold lower down
-                Rectangle().fill(.white.opacity(0.7)).frame(width: 1).frame(maxHeight: .infinity).ignoresSafeArea()
-                Rectangle().fill(Tok.ink900.opacity(0.06)).frame(width: 0.8).offset(x: 1.2).frame(maxHeight: .infinity).ignoresSafeArea()
-                Path { p in p.move(to: CGPoint(x: 0, y: h * 0.70)); p.addLine(to: CGPoint(x: w, y: h * 0.70)) }
-                    .stroke(Tok.ink900.opacity(0.10), style: StrokeStyle(lineWidth: 0.8, dash: [3, 3]))
-
-                VStack(spacing: 0) {
-                    Spacer().frame(height: h * 0.20)
-                    // 「折」: the same logo in every language; the half past the seam sits in the fold's shade
-                    ZStack {
-                        Text("折").font(logoFont).foregroundStyle(Tok.ink900)
-                            .mask(HStack(spacing: 0) { Color.black; Color.clear })
-                        Text("折").font(logoFont).foregroundStyle(hc ? Tok.ink900 : Color(hex: 0x4A433B))
-                            .mask(HStack(spacing: 0) { Color.clear; Color.black })
-                    }
-                    .environment(\.locale, Locale(identifier: "zh-Hans"))
-                    .typesettingLanguage(.init(identifier: "zh-Hans"))
-                    .dynamicTypeSize(...DynamicTypeSize.large)
-                    .accessibilityHidden(true)
-                    .onGeometryChange(for: CGRect.self) { $0.frame(in: .named("cover")) } action: { petals.marks.glyph = $0.offsetBy(dx: 0, dy: top) }
-                    // pulling the tag folds the cover down like the top page (hinge.drag: it follows the finger)
-                    .rotation3DEffect(.degrees(-Double(min(pull, 140)) * 0.3), axis: (x: 1, y: 0, z: 0), anchor: .bottom, perspective: 0.45)
-                    Text("《折信》").font(fonts.songti(.bold, 34, relativeTo: .title)).foregroundStyle(Tok.ink900)
-                        .environment(\.locale, Locale(identifier: "zh-Hans"))
-                        .accessibilityLabel(L10n.t("brandSub"))
-                        .accessibilityAddTraits(.isHeader)
-                        .onGeometryChange(for: CGRect.self) { $0.frame(in: .named("cover")) } action: { petals.marks.title = $0.offsetBy(dx: 0, dy: top) }
-                    // the italic subtitle under 《折信》: "Letterfold" in Chinese and English, the local title elsewhere
-                    Text(L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("en") ? "Letterfold" : L10n.t("brandSub"))
-                        .font(.system(.title2, design: .serif).italic()).foregroundStyle(Tok.ink700)
-                        .padding(.top, 2)
-                        .accessibilityHidden(true)
-                        .onGeometryChange(for: CGRect.self) { $0.frame(in: .named("cover")) } action: { petals.marks.subtitle = $0.offsetBy(dx: 0, dy: top) }
-                    Spacer().frame(height: h * 0.06)
-                    Text(L10n.t("cover.tagline")).font(.body).foregroundStyle(Tok.ink900)
-                        .multilineTextAlignment(.center).padding(.horizontal, 24)
-                        .onGeometryChange(for: CGRect.self) { $0.frame(in: .named("cover")) } action: { petals.marks.tagline = $0.offsetBy(dx: 0, dy: top) }
-                    // 7-1 「拉线」: the thread ends in a vermilion tag. It is laid out here but drawn above the petals
-                    // (layer order §2: … front petals → thread → tag → the petal on the tag).
-                    Color.clear.frame(width: 88, height: 112)
-                        .padding(.top, 4)
-                        .onGeometryChange(for: CGRect.self) { $0.frame(in: .named("cover")) } action: { r in
-                            tagSlot = r
-                            petals.marks.tag = CGRect(x: r.midX - 24, y: r.minY + 4 + 40 + top, width: 48, height: 72)
-                        }
-                        .accessibilityHidden(true)
-                    Spacer(minLength: 0)
-                }
-                .frame(width: w)
 
                 PetalLayer(engine: petals, reduced: stillPetals)
                     .ignoresSafeArea()
                     .onGeometryChange(for: CGSize.self) { $0.size } action: { petals.marks.size = $0 }
+                    // the stills fade with the lamp (the moving petals fade themselves, frame by frame)
+                    .opacity(stillPetals ? (lampOn ? rmFade : 0) : 1)
 
-                // the thread: from the top edge down the seam, into the paper above the title
-                ThreadDrop(from: 0, to: h * 0.18, color: hc ? Tok.hcLine : Tok.thread).frame(width: w)
                 ZStack(alignment: .topLeading) {
                     Color.clear.allowsHitTesting(false)
-                    PullTag(pull: $pull, petalGone: tagPetalGone, onSpringBack: { petals.sprangBack() }) { begin() }
+                    PullTag(pull: $pull, petalGone: tagPetalGone, onDrag: { dragged($0) }, onSpringBack: { springBack() }) { begin() }
                         .offset(x: tagSlot.minX, y: tagSlot.minY + 4)
                         .opacity(tagSlot == .zero ? 0 : 1)
+                        .allowsHitTesting(!closing)
                 }
                 .frame(width: w, height: h)
             }
@@ -128,19 +104,19 @@ struct CoverView: View {
         }
         // any touch wakes petals that idled to a stop (§7)
         .simultaneousGesture(DragGesture(minimumDistance: 0).onChanged { _ in petals.touch() })
-        .onChange(of: pull) { _, v in
-            petals.pulled(v)
-            // the pull as the page's fold angle: 90° at the 64 pt threshold; the lamp goes out past 120° (§5.4)
-            let theta = min(180, Double(v) * 90 / 64)
-            petals.thetaTarget = theta
-            let on = theta < 120
-            if on != lampOn { withAnimation(stillPetals ? .linear(duration: 0.2) : .easeInOut(duration: 0.35)) { lampOn = on }; petals.lampOn = on }
-        }
         .onAppear {
-            tagPetalGone = false
-            // screenshots: -coverPull <pt> holds the tag pulled that far
-            let held = UserDefaults.standard.double(forKey: "coverPull")
-            if held > 0 { Task { @MainActor in try? await Task.sleep(for: .milliseconds(600)); pull = held } }
+            tagPetalGone = false; closing = false
+            petals.fold = .hold(0)
+            // screenshots: -coverPull <pt> holds the tag pulled that far; -coverFold <deg> holds the page at an angle
+            let d = UserDefaults.standard
+            let held = d.double(forKey: "coverPull"), angle = d.double(forKey: "coverFold")
+            if held > 0 || angle > 0 {
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(600))
+                    if held > 0 { pull = held; dragged(held) }
+                    if angle > 0 { petals.fold = .hold(min(180, angle)); syncLamp(min(180, angle)) }
+                }
+            }
         }
         .overlay(alignment: .topTrailing) {
             // settings: a 44pt folded-corner icon, top right, in every language (design-review-2 §4.4)
@@ -152,14 +128,180 @@ struct CoverView: View {
             .accessibilityLabel(L10n.t("cover.settings"))
             .accessibilityIdentifier("cover.settings")
             .padding(.trailing, 12)
+            .opacity(closing ? 0 : 1)
         }
     }
 
+    /// What the lifting page uncovers. Not interactive, not read: it is a picture of the next screen until it is it.
+    @ViewBuilder private var innerPage: some View {
+        let t = petals.fold
+        let open = t.animating || t.to > 0.01
+        ZStack {
+            PaperSurface(color: Tok.paperNew).ignoresSafeArea()
+            if !firstLaunch, let model { ChapterMapView(model: model, router: router).opacity(rm ? 1 : (lampOn ? 0.4 : 1)) }
+        }
+        .opacity(open ? 1 : 0)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+
+    /// The tag moved under the finger: the page follows it 1:1 (θ = pull · 90/64, 90° at the 64 pt threshold).
+    private func dragged(_ v: CGFloat) {
+        guard !closing else { return }
+        petals.pulled(v)
+        let theta = min(180, Double(v) * 90 / 64)
+        petals.fold = .hold(theta)
+        syncLamp(theta)
+    }
+
+    /// The lamp goes out past 120° and comes back below it (§5.4–5).
+    private func syncLamp(_ theta: Double) {
+        let on = theta < 120
+        guard on != lampOn else { return }
+        withAnimation(rm ? .linear(duration: 0.2) : .easeInOut(duration: 0.35)) { lampOn = on }
+        petals.lampOn = on
+    }
+
+    /// Let go short of the threshold: the page springs back with the tag (Reduce Motion: straight back).
+    private func springBack() {
+        guard !closing else { return }
+        petals.sprangBack()
+        if rm { petals.fold = .hold(0) } else { petals.animateFold(.spring, to: 0, duration: FoldDrive.springDuration) }
+        syncLamp(0)
+    }
+
+    /// Pulled past the threshold or tapped: Impact, S3 slides off, the page shuts (320 ms from flat, less from
+    /// where the finger left it), the lamp goes out as it passes 120°, the map behind comes up to full (350 ms),
+    /// and only then the map takes over — a crossfade from a picture of itself.
     private func begin() {
+        guard !closing else { return }
+        closing = true
         if AppSettings.shared.hapticScale > 0 { UIImpactFeedbackGenerator(style: .medium).impactOccurred(intensity: AppSettings.shared.hapticScale) }
         // S3 slides off the tag with the Impact (§5.3): 400 ms, fading — the last pink on the screen
         if stillPetals { tagPetalGone = true } else { withAnimation(.easeIn(duration: 0.4)) { tagPetalGone = true } }
-        if let model, model.done.isEmpty { model.go(0); router.go(.level) } else { router.go(.map) }
+        withAnimation(rm ? nil : .spring(response: 0.3, dampingFraction: 0.8)) { pull = 0 }
+        let go = { [router, model] in
+            if let model, model.done.isEmpty { model.go(0); router.go(.level) } else { router.go(.map) }
+        }
+        if rm {
+            // no motion: the cover crossfades away (200 ms) and the next screen fades in
+            petals.fold = .hold(180)
+            syncLamp(180)
+            Task { @MainActor in try? await Task.sleep(for: .milliseconds(200)); go() }
+            return
+        }
+        let now = Date().timeIntervalSinceReferenceDate, from = petals.foldAngle(at: now)
+        let duration = max(0.18, 0.32 * ((180 - from) / 180).squareRoot())
+        petals.animateFold(.ease, to: 180, duration: duration)
+        let lampAt = (petals.fold.time(reaching: 120) ?? now) - now
+        Task { @MainActor in
+            if lampAt > 0 { try? await Task.sleep(for: .seconds(lampAt)) }
+            syncLamp(180)
+            try? await Task.sleep(for: .seconds(max(duration - max(0, lampAt), 0.35)))
+            go()
+        }
+    }
+}
+
+/// Everything printed on the cover sheet — paper, lamp, folds, 「折」, titles, the thread's top run — drawn twice:
+/// the lower half stays, the upper half is the page that folds. Only the lower copy reports where things are.
+struct CoverSheet: View {
+    let w: Double, h: Double, top: Double, foldL: Double, foldR: Double
+    let lampOn: Bool
+    let petals: PetalEngine?
+    let tagSlot: Binding<CGRect>?
+    let fonts = FontBook.shared
+    @Environment(\.highContrast) private var hc
+
+    /// The 「折」 logo is the same Chinese Song glyph in every language (Hiragino's taller Mincho ran into the title in ja).
+    private var logoFont: Font {
+        fonts.songtiReady ? .custom("STSongti-SC-Black", size: 212, relativeTo: .largeTitle) : fonts.songti(.black, 212, relativeTo: .largeTitle)
+    }
+
+    private func mark<V: View>(_ v: V, _ set: @escaping (inout CoverMarks, CGRect) -> Void) -> some View {
+        v.onGeometryChange(for: CGRect.self) { $0.frame(in: .named("cover")) } action: { r in
+            if let petals { set(&petals.marks, r.offsetBy(dx: 0, dy: top)) }
+        }
+    }
+
+    var body: some View {
+        ZStack(alignment: .top) {
+            PaperSurface(color: Tok.paperNew).ignoresSafeArea()
+            // the lamp behind the sheet (§2): 10 % at (0.55 W, 0.35 H) to nothing at 0.7 W; out past 120° (§5.4)
+            if !AppSettings.shared.transparencyReduced && !hc {
+                GeometryReader { s in
+                    RadialGradient(colors: [Tok.lamp.opacity(0.10), Tok.lamp.opacity(0)], center: UnitPoint(x: 0.55, y: 0.35),
+                                   startRadius: 0, endRadius: s.size.width * 0.7)
+                }
+                .ignoresSafeArea()
+                .opacity(lampOn ? 1 : 0)
+                .allowsHitTesting(false)
+            }
+            // below the mountain fold the sheet turns from the light
+            FoldBand(left: foldL, right: foldR)
+                .fill(LinearGradient(colors: [.black.opacity(0.07), .black.opacity(0.02)], startPoint: .top, endPoint: .bottom))
+                .ignoresSafeArea()
+            FoldLine(left: foldL, right: foldR).stroke(.white.opacity(0.95), lineWidth: 1.4).offset(y: -0.8).ignoresSafeArea()
+            FoldLine(left: foldL, right: foldR).stroke(Tok.ink900.opacity(0.16), lineWidth: 0.8).offset(y: 0.8).ignoresSafeArea()
+            // the centre seam and a valley fold lower down
+            Rectangle().fill(.white.opacity(0.7)).frame(width: 1).frame(maxHeight: .infinity).ignoresSafeArea()
+            Rectangle().fill(Tok.ink900.opacity(0.06)).frame(width: 0.8).offset(x: 1.2).frame(maxHeight: .infinity).ignoresSafeArea()
+            Path { p in p.move(to: CGPoint(x: 0, y: h * 0.70)); p.addLine(to: CGPoint(x: w, y: h * 0.70)) }
+                .stroke(Tok.ink900.opacity(0.10), style: StrokeStyle(lineWidth: 0.8, dash: [3, 3]))
+
+            VStack(spacing: 0) {
+                Spacer().frame(height: h * 0.20)
+                // 「折」: the same logo in every language; the half past the seam sits in the fold's shade
+                mark(ZStack {
+                    Text("折").font(logoFont).foregroundStyle(Tok.ink900)
+                        .mask(HStack(spacing: 0) { Color.black; Color.clear })
+                    Text("折").font(logoFont).foregroundStyle(hc ? Tok.ink900 : Color(hex: 0x4A433B))
+                        .mask(HStack(spacing: 0) { Color.clear; Color.black })
+                }
+                .environment(\.locale, Locale(identifier: "zh-Hans"))
+                .typesettingLanguage(.init(identifier: "zh-Hans"))
+                .dynamicTypeSize(...DynamicTypeSize.large)
+                .accessibilityHidden(true)) { $0.glyph = $1 }
+                mark(Text("《折信》").font(fonts.songti(.bold, 34, relativeTo: .title)).foregroundStyle(Tok.ink900)
+                    .environment(\.locale, Locale(identifier: "zh-Hans"))
+                    .accessibilityLabel(L10n.t("brandSub"))
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityHidden(petals == nil)) { $0.title = $1 }
+                // the italic subtitle under 《折信》: "Letterfold" in Chinese and English, the local title elsewhere
+                mark(Text(L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("en") ? "Letterfold" : L10n.t("brandSub"))
+                    .font(.system(.title2, design: .serif).italic()).foregroundStyle(Tok.ink700)
+                    .padding(.top, 2)
+                    .accessibilityHidden(true)) { $0.subtitle = $1 }
+                Spacer().frame(height: h * 0.06)
+                mark(Text(L10n.t("cover.tagline")).font(.body).foregroundStyle(Tok.ink900)
+                    .multilineTextAlignment(.center).padding(.horizontal, 24)
+                    .accessibilityHidden(petals == nil)) { $0.tagline = $1 }
+                // 7-1 「拉线」: the thread ends in a vermilion tag. It is laid out here but drawn above the petals
+                // (layer order §2: … front petals → thread → tag → the petal on the tag).
+                Color.clear.frame(width: 88, height: 112)
+                    .padding(.top, 4)
+                    .onGeometryChange(for: CGRect.self) { $0.frame(in: .named("cover")) } action: { r in
+                        guard let petals, let tagSlot else { return }
+                        tagSlot.wrappedValue = r
+                        petals.marks.tag = CGRect(x: r.midX - 24, y: r.minY + 4 + 40 + top, width: 48, height: 72)
+                    }
+                    .accessibilityHidden(true)
+                Spacer(minLength: 0)
+            }
+            .frame(width: w)
+
+            // the thread: from the top edge down the seam, into the paper above the title (it folds with the page)
+            ThreadDrop(from: 0, to: h * 0.18, color: hc ? Tok.hcLine : Tok.thread).frame(width: w)
+        }
+    }
+}
+
+/// Everything above (or below) a horizontal line, reaching well past the view's bounds (the sheet ignores the safe area).
+nonisolated struct HalfPlane: Shape {
+    let y: Double, above: Bool
+    func path(in r: CGRect) -> Path {
+        let big = 4000.0
+        return Path(above ? CGRect(x: -big, y: -big, width: 3 * big, height: big + y) : CGRect(x: -big, y: y, width: 3 * big, height: big))
     }
 }
 
@@ -170,6 +312,7 @@ struct PullTag: View {
     @Binding var pull: CGFloat
     /// S3 has slid off (a completed pull).
     var petalGone = false
+    var onDrag: (CGFloat) -> Void = { _ in }
     var onSpringBack: () -> Void = {}
     let action: () -> Void
     @State private var sway = 0.0
@@ -213,11 +356,13 @@ struct PullTag: View {
             .onChanged { v in
                 let y = max(0, v.translation.height)
                 pull = y < 64 ? y : 64 + (y - 64) * 0.35
+                onDrag(pull)
             }
             .onEnded { v in
                 let y = v.translation.height
-                if y >= 64 || (abs(y) < 8 && abs(v.translation.width) < 8) { action(); pull = 0 }
-                else { onSpringBack(); withAnimation(rm ? .linear(duration: 0.2) : .spring(response: 0.3, dampingFraction: 0.7)) { pull = 0 } }
+                // past the threshold or a tap: the cover takes it from here (it shuts the page, then lets the tag go)
+                if y >= 64 || (abs(y) < 8 && abs(v.translation.width) < 8) { action() }
+                else { onSpringBack(); if rm { pull = 0 } else { withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { pull = 0 } } }
             })
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(L10n.t("cover.beginLabel"))
