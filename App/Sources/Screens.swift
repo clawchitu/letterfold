@@ -54,14 +54,14 @@ struct CoverView: View {
                     ZStack(alignment: .top) {
                         // the lower half darkens a little as the page comes over it
                         LinearGradient(colors: [.black.opacity(0.10 * s), .black.opacity(0.02 * s)], startPoint: .top, endPoint: .bottom)
-                            .frame(height: max(0, h - hingeL + 60)).offset(y: hingeL).ignoresSafeArea()
+                            .frame(height: max(0, h - hingeL + 60)).offset(y: hingeL)
                             .allowsHitTesting(false)
                         CoverSheet(w: w, h: h, top: top, foldL: foldL, foldR: foldR, lampOn: lampOn, petals: nil, tagSlot: nil)
                             .overlay {
                                 ZStack {
                                     // the face turning from the lamp, then the back: tracing paper, the face showing
                                     // through mirrored (S1 too), clearer while the lamp still shines through it
-                                    Color.black.opacity(front ? 0.08 * s : 0).ignoresSafeArea()
+                                    Color.black.opacity(front ? 0.05 * s : 0).ignoresSafeArea()
                                     PaperSurface(color: Tok.paperBack, back: true).ignoresSafeArea()
                                         .opacity(front ? 0 : (lampOn ? 0.62 : 0.78))
                                     Color.black.opacity(front ? 0 : 0.05 * s).ignoresSafeArea()
@@ -128,7 +128,9 @@ struct CoverView: View {
             .accessibilityLabel(L10n.t("cover.settings"))
             .accessibilityIdentifier("cover.settings")
             .padding(.trailing, 12)
-            .opacity(closing ? 0 : 1)
+            // it belongs to the cover: it goes with the page, before the map's own corner shows under it
+            .opacity(closing || petals.fold.animating && petals.fold.to > 0 ? 0 : 1 - min(1, petals.fold.to / 45))
+            .animation(.easeInOut(duration: 0.2), value: petals.fold.animating)
         }
     }
 
