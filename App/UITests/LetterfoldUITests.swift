@@ -35,6 +35,28 @@ final class LetterfoldUITests: XCTestCase {
         keep(app, "map")
     }
 
+    /// Pulling the tag (not tapping it) folds the cover page shut and opens the chapter map (0.1 (11)); a short pull
+    /// springs back and stays on the cover.
+    func testPullTheTagReachesTheMap() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-fold.doneIDs", "(bridge)", "-screen", "cover", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        let begin = app.buttons["cover.begin"]
+        XCTAssertTrue(begin.waitForExistence(timeout: 8))
+        sleep(2)
+        let from = begin.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        from.press(forDuration: 0.1, thenDragTo: from.withOffset(CGVector(dx: 0, dy: 36)), withVelocity: .slow, thenHoldForDuration: 0.2)
+        sleep(1)
+        XCTAssertTrue(begin.isHittable, "short of 64 pt the tag springs back")
+        XCTAssertFalse(app.buttons["map.continue"].exists, "the map under the cover is a picture, not in the tree")
+        let pull = Double(ProcessInfo.processInfo.environment["PULL_SPEED"] ?? "") ?? 240
+        from.press(forDuration: 0.1, thenDragTo: from.withOffset(CGVector(dx: 0, dy: 190)), withVelocity: XCUIGestureVelocity(pull), thenHoldForDuration: 0.3)
+        XCTAssertTrue(begin.waitForNonExistence(timeout: 5), "the cover gives way to the map")
+        XCTAssertTrue(app.buttons["map.continue"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["map.continue"].isHittable)
+        keep(app, "pulled-to-map")
+    }
+
     /// Drag the top page down onto the bottom one, then tap the goal: the figure walks across the closed book.
     func testDragTheBookShutAndWin() {
         let app = launch(["-startLevel", "1"])

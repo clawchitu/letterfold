@@ -89,6 +89,86 @@ struct RestingPetal {
     var slot: Int? = nil          // the airborne petal it came from: hidden until that slot's cycle ends
     var cycle: Int = 0
     var leaveFrom: CGPoint = .zero, leaveRho = 0.0
+    var leaveCos = 1.0                // shaken off the page: how foreshortened / turned over it was at that moment
+}
+
+/// The cover page folding about its crease (design-cover §5), seen by one still camera (design-review-3 §3: the
+/// camera never moves while a finger is on the page). The half above the crease swings toward the viewer — its
+/// top edge leaves the screen plane, grows nearer and wider, passes edge-on just short of 90° and comes down
+/// back-up over the lower half. Screen points, y down; `t` is the fold angle in degrees (0 flat … 180 shut).
+nonisolated struct CoverFold {
+    var hinge: Double, camX: Double, camY: Double, depth: Double
+
+    /// The camera looks down the screen's centre from 1.6 screen-heights away (H / f ≈ 0.6 for the page: the top
+    /// edge is ~1.7× wide at 90°, so it reads as coming out at you, not tipping into the screen).
+    static func make(size: CGSize, hinge: Double) -> CoverFold {
+        CoverFold(hinge: hinge, camX: size.width / 2, camY: size.height / 2, depth: max(400, size.height * 1.6))
+    }
+
+    func project(_ p: CGPoint, _ t: Double) -> CGPoint {
+        guard t > 0.001 else { return p }
+        let s = hinge - p.y, a = t * .pi / 180
+        let y = hinge - s * cos(a), z = s * sin(a)
+        let k = depth / max(1, depth - z)
+        return CGPoint(x: camX + (p.x - camX) * k, y: camY + (y - camY) * k)
+    }
+
+    /// The local affine map of the projection at `p` (petals are small enough for it to be exact to a hair).
+    func jacobian(_ p: CGPoint, _ t: Double) -> CGAffineTransform {
+        let q = project(p, t), qx = project(CGPoint(x: p.x + 1, y: p.y), t), qy = project(CGPoint(x: p.x, y: p.y + 1), t)
+        return CGAffineTransform(a: qx.x - q.x, b: qx.y - q.y, c: qy.x - q.x, d: qy.y - q.y, tx: q.x, ty: q.y)
+    }
+
+    /// The page's front still faces the camera (the plane's normal against the camera ray at the crease).
+    func frontFacing(_ t: Double) -> Bool {
+        let a = t * .pi / 180
+        return depth * cos(a) > (hinge - camY) * sin(a)
+    }
+
+    /// The same projection for a view whose local y is the screen's minus `dy` (the cover's safe-area top).
+    func transform(_ t: Double, dy: Double) -> CATransform3D {
+        guard t > 0.001 else { return CATransform3DIdentity }
+        let h = hinge - dy, c = camY - dy
+        var m = CATransform3DMakeTranslation(-camX, -h, 0)
+        m = CATransform3DConcat(m, CATransform3DMakeRotation(-t * .pi / 180, 1, 0, 0))
+        m = CATransform3DConcat(m, CATransform3DMakeTranslation(0, h - c, 0))
+        var p = CATransform3DIdentity; p.m34 = -1 / depth
+        m = CATransform3DConcat(m, p)
+        return CATransform3DConcat(m, CATransform3DMakeTranslation(camX, c, 0))
+    }
+}
+
+/// The fold angle as a pure function of time, so the page (a SwiftUI projection) and the petals riding on it (the
+/// Canvas) read the same angle in the same frame: held where the finger puts it, or animated (spring back short of
+/// the threshold, ease shut on completion). Clock: reference-date seconds, the TimelineView's.
+nonisolated struct FoldDrive: Equatable {
+    enum Kind: Equatable { case hold, spring, ease }
+    var kind = Kind.hold
+    var from = 0.0, to = 0.0, t0 = 0.0, duration = 0.0
+
+    static func hold(_ a: Double) -> FoldDrive { FoldDrive(kind: .hold, from: a, to: a) }
+
+    func angle(at t: Double) -> Double {
+        let u = max(0, t - t0)
+        switch kind {
+        case .hold: return to
+        case .spring:
+            // hinge.drag's spring back (response 0.3, damping 0.7), as SwiftUI would run it
+            guard u < duration else { return to }
+            return from + Spring(response: 0.3, dampingRatio: 0.7).value(target: to - from, initialVelocity: 0, time: u)
+        case .ease:
+            guard u < duration, duration > 0 else { return to }
+            return from + (to - from) * UnitCurve.easeInOut.value(at: u / duration)
+        }
+    }
+    var animating: Bool { kind != .hold }
+    /// When an animated angle first reaches `a` (to schedule the lamp), by sampling.
+    func time(reaching a: Double) -> Double? {
+        guard kind != .hold else { return nil }
+        for i in 0...60 { let t = t0 + duration * Double(i) / 60; if angle(at: t) >= a { return t } }
+        return nil
+    }
+    static var springDuration: Double { Spring(response: 0.3, dampingRatio: 0.7).settlingDuration }
 }
 
 @Observable
@@ -99,10 +179,22 @@ final class PetalEngine {
     /// Observed: a still (Reduce Motion) canvas redraws when the layout it hangs petals on arrives.
     var marks = CoverMarks()
     @ObservationIgnored var reduced = false
-    /// The pull as the page's fold angle θ in degrees (0 flat … 180 shut), set by the tag; `theta` eases after it
-    /// (time constant 80 ms) so petals on the page slide back with the page's spring rather than jump.
-    @ObservationIgnored var thetaTarget = 0.0
+    /// The page's fold angle θ in degrees (0 flat … 180 shut) as a function of time, set by the tag. Observed: the
+    /// page and the still petals redraw when it changes; `theta` is this frame's value.
+    var fold = FoldDrive()
     @ObservationIgnored private(set) var theta = 0.0
+    func foldAngle(at t: Double) -> Double { fold.angle(at: t) }
+    /// Animate the page; when it is done the drive holds, so the timelines that follow it can pause.
+    func animateFold(_ kind: FoldDrive.Kind, to: Double, duration: Double) {
+        let now = Date().timeIntervalSinceReferenceDate
+        let d = FoldDrive(kind: kind, from: fold.angle(at: now), to: to, t0: now, duration: duration)
+        fold = d
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(duration + 0.02))
+            if let self, self.fold == d { self.fold = .hold(to) }
+        }
+    }
+    var pageFold: CoverFold { CoverFold.make(size: marks.size, hinge: marks.hingeY) }
     @ObservationIgnored var lampOn = true
     @ObservationIgnored private(set) var lamp = 1.0
     @ObservationIgnored private var wall = 0.0          // real time of the last frame
@@ -230,7 +322,11 @@ final class PetalEngine {
 
     // MARK: one airborne petal at time t
 
-    struct Pose { var x: Double, y: Double, rho: Double, cosPhi: Double, len: Double, alpha: Double, layer: Int, variant: Int, crease: Bool }
+    struct Pose {
+        var x: Double, y: Double, rho: Double, cosPhi: Double, len: Double, alpha: Double, layer: Int, variant: Int, crease: Bool
+        /// On the folding page: (x, y) are page coordinates, drawn through the page's projection.
+        var page = false
+    }
 
     private func cycle(_ i: Int, at t: Double) -> (n: Int, tau: Double) {
         let s = slots[i], u = t + s.offset
@@ -328,15 +424,14 @@ final class PetalEngine {
     func sprangBack() { guard !reduced else { return }; windV.dy -= 20 }
 
     private func step(_ now: Double) -> Double {
-        if !started { started = true; wall = now; lastTouch = now; te = 0; return 0 }
+        if !started { started = true; wall = now; lastTouch = now; te = 0; theta = fold.angle(at: now); return 0 }
         let dt = max(0, min(0.1, now - wall)); wall = now
         // idle (§7): no touch for 90 s → slow to a stop over 2 s; a touch → back up within 1 s
         let idle = now - lastTouch > 90
         speed = idle ? max(0, speed - dt / 2) : min(1, speed + dt / 1)
         if idle && speed == 0 && !paused { Task { @MainActor in self.paused = true; self.stopMotion() } }
         te += dt * speed
-        theta += (thetaTarget - theta) * (1 - exp(-dt / 0.08))
-        if abs(thetaTarget - theta) < 0.05 { theta = thetaTarget }
+        theta = fold.angle(at: now)
         // the lamp (§5.4): off past 120°, 350 ms each way
         lamp = lampOn ? min(1, lamp + dt / 0.35) : max(0, lamp - dt / 0.35)
         // the fanned air decays with a 500 ms time constant
@@ -396,8 +491,11 @@ final class PetalEngine {
                 // ≥ 25 s on the paper: the next gust lifts it off
                 if g.env > 0.05 && te - r.t0 >= 25 && theta < 1 { r.phase = .leaving; r.t0 = te; r.leaveFrom = sp[r.spot].p; r.leaveRho = sp[r.spot].rho }
                 // the page folds past 110°: what lies on its upper half is shaken off (§5.1)
-                else if theta >= 110 && sp[r.spot].p.y < marks.hingeY {
-                    r.phase = .falling; r.t0 = te; r.leaveFrom = CGPoint(x: sp[r.spot].p.x, y: sp[r.spot].p.y + slide(theta)); r.leaveRho = sp[r.spot].rho
+                else if theta >= 110 && sp[r.spot].p.y < marks.hingeY && !reduced {
+                    // it leaves from where the page has carried it, as foreshortened and turned over as it was there
+                    let f = pageFold, at = CGPoint(x: sp[r.spot].p.x, y: sp[r.spot].p.y + slide(theta)), j = f.jacobian(at, theta)
+                    r.phase = .falling; r.t0 = te; r.leaveFrom = CGPoint(x: j.tx, y: j.ty); r.leaveRho = sp[r.spot].rho
+                    r.leaveCos = max(-1, min(1, (j.a * j.d - j.b * j.c) / max(0.01, hypot(j.a, j.b))))
                 }
             case .leaving, .falling: break
             }
@@ -423,6 +521,13 @@ final class PetalEngine {
         let x = r.leaveFrom.x + fall * (shaken ? 14 : 34) + 10 * sin(fall * 1.3)
         let y = r.leaveFrom.y + lift + v * fall
         let rho = r.leaveRho * .pi / 180 + (shaken ? 60 : 30) * .pi / 180 * sin(fall * 2.1)
+        if shaken {
+            // from under the turned page: it starts as turned over as the page was, and comes out from behind the
+            // tracing paper over 150 ms (no pop at the moment it lets go)
+            let phi0 = acos(r.leaveCos), out = min(1, u / 0.15)
+            return Pose(x: x, y: y, rho: rho, cosPhi: cos(phi0 + omega * fall), len: r.len,
+                        alpha: PetalInk.rest * (0.35 + 0.65 * out), layer: 0, variant: r.variant, crease: true)
+        }
         return Pose(x: x, y: y, rho: rho, cosPhi: cos(omega * fall), len: r.len, alpha: PetalInk.rest, layer: 0, variant: r.variant, crease: true)
     }
 
@@ -447,6 +552,7 @@ final class PetalEngine {
         initResting()
         frameSpots = spots()
         let dt = step(now)
+        frameFold = pageFold; pageFront = frameFold.frontFacing(theta)
         settle(dt: dt)
         updateResting()
         ctx.opacity = lamp
@@ -477,10 +583,15 @@ final class PetalEngine {
             let rho = r.fromRho + (s.rho * .pi / 180 - r.fromRho) * e
             return Pose(x: r.from.x + (s.p.x - r.from.x) * e, y: r.from.y + (s.p.y - r.from.y) * e, rho: rho,
                         cosPhi: r.fromCos + (1 - r.fromCos) * e, len: r.len / 0.9 * (1 - 0.1 * e),
-                        alpha: r.fromAlpha + (PetalInk.rest - r.fromAlpha) * e, layer: 1, variant: r.variant, crease: true)
+                        alpha: r.fromAlpha + (PetalInk.rest - r.fromAlpha) * e, layer: 1, variant: r.variant, crease: true,
+                        page: s.p.y < marks.hingeY)
         case .resting:
-            let dy = s.p.y < marks.hingeY ? slide(theta) : 0
-            return Pose(x: s.p.x, y: s.p.y + dy, rho: s.rho * .pi / 180, cosPhi: 1, len: r.len, alpha: PetalInk.rest, layer: 1, variant: r.variant, crease: true)
+            // on the upper half it is part of the page: it slides down it (not with Reduce Motion) and is drawn
+            // through the page's fold
+            let onPage = s.p.y < marks.hingeY
+            let dy = onPage && !reduced ? slide(theta) : 0
+            return Pose(x: s.p.x, y: s.p.y + dy, rho: s.rho * .pi / 180, cosPhi: 1, len: r.len, alpha: PetalInk.rest, layer: 1,
+                        variant: r.variant, crease: true, page: onPage)
         case .leaving, .falling:
             return departed(r)
         }
@@ -492,41 +603,62 @@ final class PetalEngine {
         if r.phase == .leaving { a *= max(0, 1 - (te - r.t0) / 0.3) }
         guard a > 0.005 else { return }
         let onPage = frameSpots[r.spot].p.y < marks.hingeY
-        let stretch = onPage && r.phase == .resting ? min(1, slide(theta) / 24) : 0
+        let stretch = onPage && r.phase == .resting && !reduced ? min(1, slide(theta) / 24) : 0
+        if p.page && !pageFront { a *= 0.35 }
         var c = ctx
-        c.translateBy(x: p.x + 1, y: p.y + 1.5 + 1.5 * stretch)
+        place(&c, p, dx: 1, dy: 1.5 + 1.5 * stretch)
         c.rotate(by: .radians(p.rho))
         c.scaleBy(x: p.len * max(0.08, abs(p.cosPhi)), y: p.len)
         c.fill(PetalShape.paths[p.variant], with: .color(PetalInk.shadow.opacity(a)))
     }
 
+    @ObservationIgnored private var pageFront = true
+    @ObservationIgnored private var frameFold = CoverFold(hinge: 0, camX: 0, camY: 0, depth: 1)
+
+    /// Move the context to a petal: straight there, or through the page's projection if it lies on the page.
+    private func place(_ c: inout GraphicsContext, _ p: Pose, dx: Double = 0, dy: Double = 0) {
+        if p.page && theta > 0.001 { c.concatenate(frameFold.jacobian(CGPoint(x: p.x + dx, y: p.y + dy), theta)) }
+        else { c.translateBy(x: p.x + dx, y: p.y + dy) }
+    }
+
     private func petal(_ ctx: inout GraphicsContext, _ p: Pose) {
         let m = p.len
-        guard p.x > -m, p.x < marks.size.width + m, p.y > -m, p.y < marks.size.height + m else { return }
+        let at = p.page ? frameFold.project(CGPoint(x: p.x, y: p.y), theta) : CGPoint(x: p.x, y: p.y)
+        guard at.x > -m, at.x < marks.size.width + m, at.y > -m, at.y < marks.size.height + m else { return }
         let cphi = p.cosPhi, back = cphi < 0
         var c = ctx
-        c.translateBy(x: p.x, y: p.y)
+        place(&c, p)
         c.rotate(by: .radians(p.rho))
         c.scaleBy(x: m * (back ? -1 : 1) * max(0.08, abs(cphi)), y: m)
         var a = foldShade(p.x, p.y, p.alpha)
         if back { a *= 0.55 }
+        // the page has turned its back to you: what lies on its face shows through the paper, faintly
+        let under = p.page && !pageFront
+        if under { a *= 0.35 }
         c.fill(PetalShape.paths[p.variant], with: .color(PetalInk.color(a)))
-        if p.crease && !back && abs(cphi) > 0.25 {
+        if p.crease && !back && !under && abs(cphi) > 0.25 {
             c.stroke(PetalShape.crease, with: .color(PetalInk.creaseInk), lineWidth: 0.5 / m)
         }
     }
 
     // MARK: Reduce Motion (§6): seven still petals
 
-    func drawStill(_ ctx: inout GraphicsContext, size: CGSize) {
+    /// The seven stills react to the pull without moving (codex-review-8): on the page they ride its fold at
+    /// `angle` (Low Power / thermal — the page still folds), and the whole layer fades with the lamp (the view).
+    func drawStill(_ ctx: inout GraphicsContext, size: CGSize, angle: Double = 0) {
         guard marks.ready else { return }
+        theta = angle; frameFold = pageFold; pageFront = frameFold.frontFacing(angle)
         let sp = spots(), w = size.width / 393, H = size.height / 852
-        let rest = [sp[0], sp[1]]
-        for s in rest {
-            let p = Pose(x: s.p.x, y: s.p.y, rho: s.rho * .pi / 180, cosPhi: 1, len: 17.5, alpha: PetalInk.rest, layer: 1, variant: s.variant, crease: true)
+        let rest = [sp[0], sp[1]].map { s in
+            Pose(x: s.p.x, y: s.p.y, rho: s.rho * .pi / 180, cosPhi: 1, len: 17.5, alpha: PetalInk.rest, layer: 1, variant: s.variant,
+                 crease: true, page: s.p.y < marks.hingeY)
+        }
+        for p in rest {
             var c = ctx
-            c.translateBy(x: p.x + 1, y: p.y + 1.5); c.rotate(by: .radians(p.rho)); c.scaleBy(x: p.len, y: p.len)
-            c.fill(PetalShape.paths[p.variant], with: .color(PetalInk.shadow.opacity(0.28)))
+            var a = 0.28
+            if p.page && !pageFront { a *= 0.35 }
+            place(&c, p, dx: 1, dy: 1.5); c.rotate(by: .radians(p.rho)); c.scaleBy(x: p.len, y: p.len)
+            c.fill(PetalShape.paths[p.variant], with: .color(PetalInk.shadow.opacity(a)))
         }
         let air: [Pose] = [
             Pose(x: 62 * w, y: 150 * H, rho: 50 * .pi / 180, cosPhi: 0.8, len: 20, alpha: PetalInk.accent, layer: 1, variant: 0, crease: false),   // N1, accent
@@ -535,7 +667,7 @@ final class PetalEngine {
             Pose(x: 40 * w, y: 560 * H, rho: -40 * .pi / 180, cosPhi: 0.7, len: 12.5, alpha: PetalInk.layerAlpha[2], layer: 2, variant: 0, crease: false),  // F2
         ]
         for p in air.reversed() { petal(&ctx, p) }
-        for s in rest { petal(&ctx, Pose(x: s.p.x, y: s.p.y, rho: s.rho * .pi / 180, cosPhi: 1, len: 17.5, alpha: PetalInk.rest, layer: 1, variant: s.variant, crease: true)) }
+        for p in rest { petal(&ctx, p) }
     }
 }
 
@@ -550,7 +682,12 @@ struct PetalLayer: View {
         Group {
             if reduced {
                 let marks = engine.marks
-                Canvas { ctx, size in _ = marks; engine.drawStill(&ctx, size: size) }
+                // still, but on the page they ride its fold: redrawn only while the page moves
+                TimelineView(.animation(minimumInterval: 1.0 / 60, paused: !engine.fold.animating)) { tl in
+                    // Reduce Motion: the cover does not fold, so neither do the petals on it (Low Power stills still ride it)
+                    let angle = AppSettings.shared.motionReduced ? 0 : engine.foldAngle(at: tl.date.timeIntervalSinceReferenceDate)
+                    Canvas { ctx, size in _ = marks; engine.drawStill(&ctx, size: size, angle: angle) }
+                }
             } else {
                 TimelineView(.animation(minimumInterval: 1.0 / 60, paused: engine.paused || !visible || phase != .active)) { tl in
                     Canvas { ctx, size in engine.draw(&ctx, size: size, now: tl.date.timeIntervalSinceReferenceDate) }
