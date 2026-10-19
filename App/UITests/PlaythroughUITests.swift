@@ -355,7 +355,7 @@ final class PlaythroughUITests: XCTestCase {
         // 4-4 石雨: only (1,3) is safe to close from; then 55°, onto the middle stone's shadow, open to ~72°: ride
         walk(1, 3, wait: 1.6)
         close()
-        f.lean(to: 55, tol: 5)
+        f.lean(to: 50, tol: 3)   // the middle shadow reaches (2,2) at 45–55° only
         walk(2, 2, wait: 1.2)
         shot("4-4-on-shadow")
         f.creep(to: 71, tol: 6)

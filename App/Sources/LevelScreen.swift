@@ -96,7 +96,7 @@ struct LevelScreen: View {
         // the finale: 1.5 s after 「信，到了。」 the fourth letter opens (design-review-ch4 §4.5)
         .onChange(of: model.finaleLetter) { _, go in if go { router.go(.letter) } }
         .onChange(of: model.index) { _, _ in fadeName(); checkOpener() }
-        .onDisappear { model.stopGhost() }        // no teaching moves behind the map's back
+        .onDisappear { model.stopGhost(); if !model.finaleLetter { model.leaveLevel() } }        // no teaching moves behind the map's back
         .accessibilityAction(.escape) { router.go(.map) }
     }
 

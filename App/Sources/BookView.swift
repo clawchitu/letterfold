@@ -110,7 +110,7 @@ struct BookView: View {
                 // UI tests: the shadow lock, the camera's pose and the finale's seal (design-review-ch4 §4.3–4.5)
                 Color.clear.frame(width: 2, height: 2)
                     .accessibilityElement().accessibilityIdentifier("probe.state")
-                    .accessibilityValue("lock=\(model.lockedCells.map { "\($0.c),\($0.r)" }.joined(separator: " "));cam=\(Int(model.cameraPitch.rounded()));seal=\(model.finaleSeal ? 1 : 0)")
+                    .accessibilityValue("lock=\(model.lockedCells.map { "\($0.c),\($0.r)" }.joined(separator: " "));cam=\(Int(model.cameraPitch.rounded()));seal=\(model.finaleSeal ? 1 : 0);split=\(model.finaleSealSplit ? 1 : 0);aha=\(model.aha ? 1 : 0);me=\(model.figureCell.c),\(model.figureCell.r)")
             }
         }
         .environment(\.goalIsFigure, model.goalIsFigure)
@@ -355,12 +355,18 @@ private struct BookBody: View {
             // the fixed page, with the folding page's shadow creeping over it
             FixedPage(model: model, geo: geo, rotorSpace: rotorSpace, angle: va)
                 .frame(width: page.width, height: page.height)
+                .overlay { if model.finaleSealSplit, let g = model.goalStackSlot {
+                    FinaleSealHalf(edge: .leading, at: CGPoint(x: page.width, y: geo.center(x: 0, y: g.y).y))
+                } }
             // the folding page: front up to 90°, back beyond
             ZStack {
                 if showBack {
                     BackFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: va).scaleEffect(x: -1, y: 1)
                 } else {
                     FrontFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: va)
+                    if model.finaleSealSplit, let g = model.goalStackSlot {
+                        FinaleSealHalf(edge: .trailing, at: CGPoint(x: 0, y: geo.center(x: 0, y: g.y).y))
+                    }
                 }
             }
             .frame(width: page.width, height: page.height)
@@ -372,7 +378,7 @@ private struct BookBody: View {
                 .offset(x: page.width - 1, y: 0)
                 .allowsHitTesting(false)
             // the small seal 「通」 lands on the river where the thread crossed (frame final-10 ③)
-            if model.finaleSeal, let g = model.goalStackSlot {
+            if model.finaleSeal && !model.finaleSealSplit, let g = model.goalStackSlot {
                 FinaleSeal(model: model).position(x: page.width, y: geo.center(x: 0, y: g.y).y)
             }
             if model.sealShown {
@@ -1075,15 +1081,41 @@ private struct FinaleSeal: View {
     }
 }
 
+/// One half of 「成」 once the book opens, drawn in its page's own coordinates so it turns with the page. `edge` is
+/// the half kept (.top: the glyph's upper half, and so on); `at` is the point of the crease, in page coordinates,
+/// the seal's middle sits on.
+private struct FinaleSealHalf: View {
+    let edge: Edge
+    let at: CGPoint
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        let s: CGFloat = 24, across = edge == .top || edge == .bottom
+        let w = across ? s : s / 2, h = across ? s / 2 : s
+        let align: Alignment = [.top: .top, .bottom: .bottom, .leading: .leading, .trailing: .trailing][edge]!
+        let x = across ? at.x - s / 2 : (edge == .leading ? at.x - s / 2 : at.x)
+        let y = across ? (edge == .top ? at.y - s / 2 : at.y) : at.y - s / 2
+        Seal(glyph: "成", size: s, color: Tok.cinnabar, outlined: hc)
+            .frame(width: w, height: h, alignment: align)
+            .clipped()
+            .offset(x: x, y: y)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+    }
+}
+
 extension GameModel {
     /// The goal's slot on the shut book (4-6: where the seal lands).
     var goalStackSlot: (x: Int, y: Int)? { goal.map { spread.stackSlot($0) } }
+    /// 「成」 opened again: half on each page (design-review-ch4 §2 ②, Codex review 7 #4); whole only while shut.
+    var finaleSealSplit: Bool { finaleSeal && angle + rubber < 179.5 }
 
     /// 4-6: where the two stand in one square (shut, or opened again on her bank), each steps a little aside so his
     /// cane and her bun both show: she to the right, he to the left. Elsewhere 0.
     func meetShift(_ c: Cell, _ tile: Double) -> Double {
         guard goalIsFigure, let g = goal else { return 0 }
-        let together = posture == .closed ? Cell(rules.proj(char.c), char.r) == Cell(rules.proj(g.c), g.r) : char == g
+        let me = figureCell
+        let together = posture == .closed ? Cell(rules.proj(me.c), me.r) == Cell(rules.proj(g.c), g.r) : me == g
         let here = posture == .closed ? Cell(rules.proj(c.c), c.r) == Cell(rules.proj(g.c), g.r) : c == g
         return together && here ? tile * 0.17 : 0
     }
@@ -1125,6 +1157,9 @@ private struct CameraBook: View {
         ZStack(alignment: .topLeading) {
             FixedPage(model: model, geo: geo, rotorSpace: rotorSpace, angle: th, targets: false)
                 .frame(width: page.width, height: page.height)
+                .overlay { if model.finaleSealSplit, let g = model.goalStackSlot {
+                    FinaleSealHalf(edge: .bottom, at: CGPoint(x: geo.center(x: g.x, y: 0).x, y: 0))
+                } }
                 .projectionEffect(cam.transform(o: edge0, eu: ex, ev: SIMD3(0, 1, 0)))
             Group {
                 if showBack {
@@ -1134,6 +1169,9 @@ private struct CameraBook: View {
                 } else {
                     FrontFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: th, targets: false)
                         .frame(width: page.width, height: page.height)
+                        .overlay { if model.finaleSealSplit, let g = model.goalStackSlot {
+                            FinaleSealHalf(edge: .top, at: CGPoint(x: geo.center(x: g.x, y: 0).x, y: page.height))
+                        } }
                         .projectionEffect(cam.transform(o: edge0 + H * fold, eu: ex, ev: -fold))
                 }
             }
@@ -1171,7 +1209,7 @@ private struct CameraBook: View {
                     .allowsHitTesting(false).accessibilityHidden(true)
             }
             // 「成」 on the folded edge of the shut book, over the square where the two meet (design-review-ch4 §2 ②)
-            if model.finaleSeal, let g = model.goalStackSlot {
+            if model.finaleSeal && !model.finaleSealSplit, let g = model.goalStackSlot {
                 FinaleSeal(model: model).position(cam.project(SIMD3(Double(geo.center(x: g.x, y: 0).x) - W / 2, 0, 0)))
             }
             if model.sealShown {

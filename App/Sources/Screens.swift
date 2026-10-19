@@ -309,6 +309,8 @@ extension GameModel {
         guard ch.unlocked else { return false }
         if ch.id == 1 { return true }
         let prev = chapterIndices(Chapter.all[ch.id - 2])
+        // a chapter already played stays open (a 0.1 (8) save: chapter 2 has grown by two levels since)
+        if chapterIndices(ch).contains(where: { done.contains($0) }) { return true }
         return !prev.isEmpty && prev.allSatisfy { done.contains($0) }
     }
     /// 「2-3」 for a level index.

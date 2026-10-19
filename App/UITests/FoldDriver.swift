@@ -78,4 +78,10 @@ struct FoldDriver {
         }
         return (lock, cam, seal)
     }
+    /// One field of the probe (split, aha, me = where the figure is drawn).
+    func probe(_ key: String) -> String {
+        let v = app.descendants(matching: .any)["probe.state"].value as? String ?? ""
+        for part in v.split(separator: ";") where part.hasPrefix(key + "=") { return String(part.dropFirst(key.count + 1)) }
+        return ""
+    }
 }

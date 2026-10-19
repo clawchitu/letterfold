@@ -89,7 +89,8 @@ final class GameModel {
     /// The rigid impact waits for the slap so the two land as one (a held drag that never reaches it: 150 ms).
     @ObservationIgnored private var crushWaiting = false
     /// Where the figure is drawn: under the stone while it is being crushed, else where FoldCore has it.
-    var figureCell: Cell { crushAt ?? char }
+    /// At the finale, opened again: the sender back on his own bank (design-ch4 §3–4, Codex review 7 #2).
+    var figureCell: Cell { crushAt ?? (posture == .closed ? nil : finaleBank) ?? char }
     /// The lamp behind the top page, timed (design-review-ch3 §6.7): out over 350 ms the moment the book shuts,
     /// back over 350 ms when it leans again. Multiplied with the 89°→82° angle ramp in `lamp(_:)`.
     private(set) var lampLevel: Double = 1
@@ -120,6 +121,14 @@ final class GameModel {
     private(set) var finaleSettled = false
     /// Set 1.5 s after the caption: LevelScreen turns to the fourth letter.
     private(set) var finaleLetter = false
+    /// After the finale the two meet only while the book is shut: opened, the sender stands on the last square of
+    /// his own page he walked, across the river from her (design-ch4 §3–4: 「打开，河还在。」).
+    private(set) var finaleBank: Cell?
+    /// The fourth letter's delivery, apart from the seal's timeline: a touch that cuts the timeline short still
+    /// brings the letter (Codex review 7 #3). Cancelled only when the level changes or the player leaves.
+    @ObservationIgnored private var letterTask: Task<Void, Never>?
+    /// -finaleLetterDelay <s> (UI tests): the pause between 「信，到了。」 and the letter, 1.5 s by design.
+    static var letterDelay: Double { UserDefaults.standard.object(forKey: "finaleLetterDelay") != nil ? UserDefaults.standard.double(forKey: "finaleLetterDelay") : 1.5 }
 
     var orientation: Spread.Orientation = .horizontalCrease
     var spread: Spread { Spread(orientation, columnsPerPage: config.columnsPerPage, rows: board.h) }
@@ -128,6 +137,8 @@ final class GameModel {
     private(set) var lastAnnouncement: String?
     private(set) var shake: [Cell: Int] = [:]
     private(set) var done: Set<Int>
+    /// What is saved: level IDs, so inserting levels never moves progress (FoldCore.SavedProgress).
+    @ObservationIgnored private var doneIDs: Set<String>
     private(set) var hingeKind: HingeKind = .simulated
     private(set) var hintAvailable = false
     private(set) var inkPrintedAt: [Cell: Date] = [:]
@@ -194,14 +205,14 @@ final class GameModel {
 
     static let step = 15.0
     static let snapPoints: [Double] = [0, 90, 130, 180]
-    private static let doneKey = "fold.done"
 
     init(pack: LevelPack) {
         self.pack = pack
         let first = try! FoldGame(level: pack.levels[0], config: pack.config)
         game = first
         board = first.board; original = first.board; char = first.char; trail = first.trail
-        done = Set(UserDefaults.standard.array(forKey: Self.doneKey) as? [Int] ?? [])
+        doneIDs = SavedProgress.load()
+        done = Set(doneIDs.compactMap { id in pack.levels.firstIndex { $0.id == id } })
         if #available(iOS 27.1, *) { device = UIHingeProvider() } else { device = nil }
         simulated.onAngle = { [weak self] a in self?.setAngle(a) }
         device?.onAngle = { [weak self] a in
@@ -229,7 +240,7 @@ final class GameModel {
     /// -cameraPitch <deg> (screenshots), -probe YES (UI tests: the drag's edge probe).
     static func launch() -> GameModel {
         let d = UserDefaults.standard
-        if d.bool(forKey: "resetProgress") { d.removeObject(forKey: doneKey); for k in 2...4 { d.removeObject(forKey: "opener.\(k)") } }
+        if d.bool(forKey: "resetProgress") { SavedProgress.reset(d); for k in 2...4 { d.removeObject(forKey: "opener.\(k)") } }
         let m = GameModel(pack: try! LevelPack.bundled())
         let start = d.integer(forKey: "startLevel")
         if start > 0 { m.go(start - 1) }
@@ -316,7 +327,8 @@ final class GameModel {
         game = try! FoldGame(level: pack.levels[index], config: config)
         original = game.board
         won = false; aha = false; caption = false; sealShown = false; sealSettled = false; showNext = false
-        finaleSeal = false; finaleSettled = false; finaleLetter = false
+        finaleSeal = false; finaleSettled = false; finaleLetter = false; finaleBank = nil
+        letterTask?.cancel(); letterTask = nil
         quiet = false; dragging = false; angleHint = false; walking = false
         threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]
         pending = Pending(); saidAngle = 0; nopes = 0; hintAvailable = false; toast = nil
@@ -1013,7 +1025,8 @@ final class GameModel {
         won = true
         stopWalk()
         done.insert(index)
-        UserDefaults.standard.set(Array(done).sorted(), forKey: Self.doneKey)
+        doneIDs.insert(level.id); SavedProgress.save(doneIDs)
+        if isFinale { finaleBank = trail.last { !rules.isRight($0.c) } ?? trail.first }
         startAha()
     }
 
@@ -1093,11 +1106,24 @@ final class GameModel {
             try? await Task.sleep(for: .milliseconds(1000))
             if Task.isCancelled { return }
             self.finishAha()
-            try? await Task.sleep(for: .milliseconds(1500))
-            if Task.isCancelled { return }
+            self.deliverLetter()
+        }
+    }
+
+    /// The fourth letter, `letterDelay` after the caption; never pulled from under a finger turning the page.
+    private func deliverLetter() {
+        guard letterTask == nil, !finaleLetter else { return }
+        letterTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(Self.letterDelay))
+            while self?.dragging == true && !Task.isCancelled { try? await Task.sleep(for: .milliseconds(200)) }
+            guard let self, !Task.isCancelled else { return }
+            self.letterTask = nil
             self.finaleLetter = true
         }
     }
+
+    /// The level screen went away (the map, another level): no letter arrives behind its back.
+    func leaveLevel() { letterTask?.cancel(); letterTask = nil }
 
     private func finishAha() {
         aha = false; quiet = false
@@ -1121,6 +1147,7 @@ final class GameModel {
             rubber = 0; press = 0; glow = 0
             finaleSeal = true; finaleSettled = true; caption = true
             finishAha()
+            deliverLetter()
             return
         }
         setAngle(0); rubber = 0; press = 0; glow = 0
@@ -1225,7 +1252,7 @@ final class GameModel {
         var parts = [pos(c, r), k]
         // closed: the square on top of this stack can be the goal (the folding page lies on the fixed one)
         if posture == .closed && !rules.isRight(c) && M == .goal && tl != .goal { parts.append(kind(.goal)) }
-        if char == Cell(c, r) { parts.append(L10n.t("hereYou")) }
+        if figureCell == Cell(c, r) { parts.append(L10n.t("hereYou")) }
         else if posture == .closed && char == Cell(m, r) { parts.append(L10n.t("hereStack")) }
         var extra = ""
         if !rules.isRight(c) {

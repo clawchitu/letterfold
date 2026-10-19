@@ -104,4 +104,52 @@ final class Chapter4UITests: XCTestCase {
         shot("4-6-hc-closed")
         XCTAssertTrue(app.buttons["letter.next"].waitForExistence(timeout: 6), "the letter follows by itself")
     }
+
+    /// 4-6 up to the meeting: the walker stands in her square of the shut book, the finale has begun.
+    func meet() {
+        XCTAssertTrue(f.tile(4, 1).label.contains("对岸的人"), f.tile(4, 1).label)
+        f.walk(1, 3, wait: 1.8)
+        f.lean(to: 30, tol: 3)
+        f.walk(1, 4, wait: 1.0)
+        f.drag(0.78, 0.20, speed: 700)
+        XCTAssertEqual(f.phys(), 180, "open")
+        XCTAssertTrue(f.isHere(3, 4), "carried back to the shore: \(f.tile(3, 4).label)")
+        close()
+        f.walk(3, 1, wait: 0.05)
+        let t0 = Date()
+        while f.probe("aha") != "1" && Date().timeIntervalSince(t0) < 6 { Thread.sleep(forTimeInterval: 0.05) }
+        XCTAssertEqual(f.probe("aha"), "1", "the finale is playing")
+    }
+
+    /// Codex review 7 #3: a touch during the finale cuts it to its last frame, and the letter still comes by itself.
+    func testInterruptedFinaleStillOpensTheLetter() {
+        launch(25)
+        meet()
+        f.tile(3, 1).tap()
+        XCTAssertTrue(f.probe().seal, "「成」 is down at once")
+        XCTAssertTrue(app.buttons["letter.next"].waitForExistence(timeout: 6), "the letter follows by itself")
+    }
+
+    /// Codex review 7 #2 / #4 (design-ch4 §3–4, design-review-ch4 §4.16): they meet only while the book is shut.
+    /// Opened again she is still in (4,1) and he is back on his own bank, the river between; 「成」 is split, half on
+    /// each page. The letter still arrives afterwards.
+    func testOpeningAfterTheFinaleShowsTheRiver() {
+        launch(25, ["-finaleLetterDelay", "12"])
+        meet()
+        Thread.sleep(forTimeInterval: 2)
+        XCTAssertEqual(f.probe("aha"), "0", "the finale has played out")
+        XCTAssertEqual(f.probe("me"), "4,1", "shut: in her square")
+        XCTAssertEqual(f.probe("split"), "0", "shut: 「成」 whole")
+        f.drag(0.78, 0.20, speed: 700)
+        XCTAssertEqual(f.phys(), 180, "open")
+        Thread.sleep(forTimeInterval: 0.6)
+        XCTAssertTrue(f.tile(4, 1).label.contains("对岸的人"), "she is still on her bank: \(f.tile(4, 1).label)")
+        XCTAssertFalse(f.isHere(4, 1), "not in her square once open")
+        let me = f.probe("me").split(separator: ",").compactMap { Int($0) }
+        XCTAssertEqual(me.count, 2); XCTAssertLessThan(me.first ?? 9, 4, "on the sender's page: \(me)")
+        XCTAssertTrue(f.isHere(me[0], me[1]), "VoiceOver agrees: \(f.tile(me[0], me[1]).label)")
+        XCTAssertEqual(f.probe("split"), "1", "「成」 split across the two pages")
+        shot("4-6-reopened")
+        XCTAssertTrue(app.buttons["letter.next"].waitForExistence(timeout: 16), "the letter still comes")
+    }
 }
