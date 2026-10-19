@@ -1,6 +1,6 @@
 import XCTest
 
-/// Real one-finger drags on the book, shared by the chapter 3 tests and the playthrough.
+/// Real one-finger drags on the book, shared by the chapter 3–4 tests and the playthrough.
 struct FoldDriver {
     let app: XCUIApplication
     var fold: XCUIElement { app.descendants(matching: .any)["fold.page"] }
@@ -20,7 +20,7 @@ struct FoldDriver {
     }
     /// Lean the page to a physical angle with real drags, correcting like a hand would: each drag teaches it how far
     /// the page goes per point here (the gain changes with the angle). Small corrections go the safe way first
-    /// (towards standing, never towards shut), then come back. Chapter 3 leans freely: the page stays where let go.
+    /// (towards standing, never towards shut), then come back. Chapters 3–4 lean freely: the page stays where let go.
     @discardableResult func lean(to target: Int, tol: Int = 2) -> Int {
         var k = 0.0026                                     // screen fraction per degree, learnt as we go
         for _ in 0..<16 {
@@ -42,5 +42,40 @@ struct FoldDriver {
             print("LEAN to \(target): now \(phys()) k=\(k)")
         }
         return phys()
+    }
+    /// For a figure riding a shadow: move towards a physical angle without ever passing it, either way (past the
+    /// shadow's reach it would drop). Each drag covers about half of what is left.
+    @discardableResult func creep(to target: Int, tol: Int = 3) -> Int {
+        var k = 0.0022
+        for _ in 0..<20 {
+            let delta = Double(phys() - target)
+            if abs(delta) <= Double(tol) { return phys() }
+            let want = delta * (abs(delta) > 12 ? 0.5 : 0.7)
+            let moved = pull(want * k)
+            if moved != 0 && (moved > 0) == (want > 0) { k = min(0.012, max(0.0008, k * want / Double(moved) * 0.9)) }
+            else if moved == 0 { k = min(0.012, k * 1.5) }
+            print("CREEP to \(target): now \(phys()) k=\(k)")
+        }
+        return phys()
+    }
+
+    func tile(_ c: Int, _ r: Int) -> XCUIElement { app.descendants(matching: .any)["tile-\(c)-\(r)"] }
+    func isHere(_ c: Int, _ r: Int) -> Bool { tile(c, r).label.contains("你在这里") }
+    func walk(_ c: Int, _ r: Int, wait: TimeInterval = 1.6) {
+        XCTAssertTrue(tile(c, r).waitForExistence(timeout: 3), "tile-\(c)-\(r)")
+        tile(c, r).tap()
+        Thread.sleep(forTimeInterval: wait)
+    }
+    /// The UI-test probe (-probe YES): the locked gaps, the camera pitch and the finale seal.
+    func probe() -> (lock: String, cam: Int, seal: Bool) {
+        let v = app.descendants(matching: .any)["probe.state"].value as? String ?? ""
+        var lock = "", cam = -1, seal = false
+        for part in v.split(separator: ";") {
+            let kv = part.split(separator: "=", maxSplits: 1).map(String.init)
+            guard kv.count == 2 || (kv.count == 1 && part.hasSuffix("=")) else { continue }
+            let val = kv.count == 2 ? kv[1] : ""
+            switch kv[0] { case "lock": lock = val; case "cam": cam = Int(val) ?? -1; case "seal": seal = val == "1"; default: break }
+        }
+        return (lock, cam, seal)
     }
 }

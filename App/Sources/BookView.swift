@@ -107,6 +107,10 @@ struct BookView: View {
                 Color.clear.frame(width: 2, height: 2)
                     .accessibilityElement().accessibilityIdentifier("probe.edge")
                     .accessibilityValue(String(format: "%.1f %.1f", model.probeRise, model.probeAngle))
+                // UI tests: the shadow lock, the camera's pose and the finale's seal (design-review-ch4 §4.3–4.5)
+                Color.clear.frame(width: 2, height: 2)
+                    .accessibilityElement().accessibilityIdentifier("probe.state")
+                    .accessibilityValue("lock=\(model.lockedCells.map { "\($0.c),\($0.r)" }.joined(separator: " "));cam=\(Int(model.cameraPitch.rounded()));seal=\(model.finaleSeal ? 1 : 0)")
             }
         }
         .environment(\.goalIsFigure, model.goalIsFigure)

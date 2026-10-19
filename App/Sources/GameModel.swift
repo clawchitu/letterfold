@@ -76,7 +76,8 @@ final class GameModel {
     /// FoldCore's lock windows for where the figure stands now (design-review-ch4 §2): recomputed when it moves.
     @ObservationIgnored private(set) var lockWindows: [LockWindow] = []
     @ObservationIgnored private var lockKey: (board: Board, char: Cell)?
-    @ObservationIgnored private var lockedCells: [Cell] = []
+    /// The gaps the shadows are locked onto right now (the UI tests' probe reads it).
+    private(set) var lockedCells: [Cell] = []
     @ObservationIgnored private var lockFlashTask: Task<Void, Never>?
     private(set) var canUndo = false
     private(set) var angle: Double = 0
@@ -323,7 +324,7 @@ final class GameModel {
         cameraTask?.cancel(); cameraTask = nil; cameraPitch = Self.handPitch
         setLamp(1, now: true)
         sync()
-        lockKey = nil; refreshLock(); lockedCells = []; lockFlashTask?.cancel(); lockFlash = []
+        lockKey = nil; refreshLock(); if !lockedCells.isEmpty { lockedCells = [] }; lockFlashTask?.cancel(); lockFlash = []
         sound.figureMotif = goalIsFigure
         if hingeKind == .device, settings.hingeFold, let a = (device as? AnyHingeAngle)?.lastAngle {
             setAngle(Self.virtualFold(a)); pending = Pending()
@@ -427,10 +428,10 @@ final class GameModel {
     /// Entering a lock clicks (Selection), outlines the gaps for 400 ms and makes their hollow note solid (two at once:
     /// a two-note chord). A fast sweep straight across a window clicks too.
     private func lockCheck(from before: Double) {
-        guard !lockWindows.isEmpty else { return }
+        guard !lockWindows.isEmpty else { if !lockedCells.isEmpty { lockedCells = [] }; return }
         let a = angle
         let here = lockWindows.first { a >= $0.lo && a <= $0.hi }
-        defer { lockedCells = here?.cells ?? [] }
+        defer { let now = here?.cells ?? []; if now != lockedCells { lockedCells = now } }
         if let w = here { if w.cells != lockedCells { lockEntered(w.cells) }; return }
         let lo = min(before, a), hi = max(before, a)
         if let w = lockWindows.first(where: { $0.hi >= lo && $0.lo <= hi && $0.cells != lockedCells }) { lockEntered(w.cells) }
