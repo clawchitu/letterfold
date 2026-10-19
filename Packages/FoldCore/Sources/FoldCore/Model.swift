@@ -60,13 +60,34 @@ public struct Expectation: Sendable, Codable, Equatable {
     public var needsKey: Bool?
     public var needsInk: Bool?
     public var stepped15: Bool
+    /// tools/check.js `analyse()` (design-difficulty.md §2); the Swift `Difficulty` port must agree.
+    public var difficulty: Difficulty.Summary?
+
+    /// The solver flag a level declares in `needs` ("needsFold", …), or nil for an unknown name.
+    public func flag(_ name: String) -> Bool? {
+        switch name {
+        case "needsFold": return needsFold
+        case "needsPop": return needsPop
+        case "needsShade": return needsShade
+        case "needsRide": return needsRide
+        case "needsKey": return needsKey
+        case "needsInk": return needsInk
+        default: return nil
+        }
+    }
 }
 
 public struct Level: Sendable, Codable, Identifiable, Equatable {
     public var id: String
     public var map: [String]
     public var expect: Expectation?
-    public init(id: String, map: [String], expect: Expectation? = nil) { self.id = id; self.map = map; self.expect = expect }
+    /// The difficulty band the designer declared (levels.js `tier`: teach / easy / mid / hard / final).
+    public var tier: String?
+    /// Solver flags that must stay true (levels.js `needs`), so an edit cannot quietly remove the level's mechanic.
+    public var needs: [String]?
+    public init(id: String, map: [String], expect: Expectation? = nil, tier: String? = nil, needs: [String]? = nil) {
+        self.id = id; self.map = map; self.expect = expect; self.tier = tier; self.needs = needs
+    }
 }
 
 /// levels.json, exported from fold-proto by `node tools/export.js`.

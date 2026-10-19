@@ -21,6 +21,7 @@ final class ParTests: XCTestCase {
         XCTAssertEqual(pack.version, 2)
         XCTAssertEqual(pack.config, FoldConfig.standard)   // closedMax 25 / shadeMax 89 decode to fold 155 / 91
         let ids = pack.levels.map(\.id)
-        XCTAssertEqual(Array(ids[5...10]), ["stand", "twoBridges", "standClose", "doorBridge", "inkBridge", "crease"])
+        XCTAssertEqual(Array(ids[5...12]), ["stand", "twoBridges", "standClose", "doorBridge", "inkBridge", "inkTwice", "crease", "rightBank"])
+        XCTAssertEqual(Array(ids[19...]), ["twoShades", "bridgeShade", "inkShore", "stoneRain", "shadeDoor", "twoFigures"])
     }
 }

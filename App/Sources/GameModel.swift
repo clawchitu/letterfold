@@ -17,20 +17,15 @@ struct Chapter: Identifiable {
     static let all: [Chapter] = [
         Chapter(id: 1, levelIDs: ["bridge", "facing", "back", "key", "ink"], unlocked: true, soon: false),
         // not in this preview build yet: shown as coming soon, never as a sealed chapter that looks openable
-        // chapter 2 ships 6 levels (design-review-2 §4.5); it opens once chapter 1's letter is delivered (isUnlocked)
-        Chapter(id: 2, levelIDs: ["stand", "twoBridges", "standClose", "doorBridge", "inkBridge", "crease"], unlocked: true, soon: false),
-        // chapter 3 ships 6 levels (design-ch3 §2); the whole book has four chapters (design-review-ch3 §4 ③)
+        // chapter 2 ships 8 levels (design-difficulty.md §3); it opens once chapter 1's letter is delivered (isUnlocked)
+        Chapter(id: 2, levelIDs: ["stand", "twoBridges", "standClose", "doorBridge", "inkBridge", "inkTwice", "crease", "rightBank"], unlocked: true, soon: false),
+        // chapter 3 ships 6 levels (design-ch3 §2)
         Chapter(id: 3, levelIDs: ["shadow", "press", "lock", "ride", "rideBack", "lamp"], unlocked: true, soon: false),
-        Chapter(id: 4, levelIDs: [], unlocked: false, soon: true),
+        // chapter 4 「岸」 ends book one, 《两岸》 (design-ch4.md)
+        Chapter(id: 4, levelIDs: ["twoShades", "bridgeShade", "inkShore", "stoneRain", "shadeDoor", "twoFigures"], unlocked: true, soon: false),
+        // the book goes on (roadmap.md §1): a dashed 「下一页 · 卷二」 card, never a sealed chapter that looks openable
+        Chapter(id: 5, levelIDs: [], unlocked: false, soon: true),
     ]
-}
-
-/// A stretch of the leaning window where every stone on the top page shades a gap (design-review-ch3 §3): fold degrees.
-struct LockWindow: Equatable {
-    var lo, hi: Double
-    let cells: [Cell]
-    /// Where a page let go inside the window comes to rest (a whole degree, so the reading is steady).
-    var mid: Double { ((lo + hi) / 2).rounded() }
 }
 
 /// Timing curves from design-spec §5.
@@ -78,8 +73,11 @@ final class GameModel {
     private(set) var shade: [Cell: Int] = [:]
     /// Gaps outlined for 400 ms when the shadows lock onto them (design-review-ch3 §3).
     private(set) var lockFlash: Set<Cell> = []
+    /// FoldCore's lock windows for where the figure stands now (design-review-ch4 §2): recomputed when it moves.
     @ObservationIgnored private(set) var lockWindows: [LockWindow] = []
-    @ObservationIgnored private var lockedCells: [Cell] = []
+    @ObservationIgnored private var lockKey: (board: Board, char: Cell)?
+    /// The gaps the shadows are locked onto right now (the UI tests' probe reads it).
+    private(set) var lockedCells: [Cell] = []
     @ObservationIgnored private var lockFlashTask: Task<Void, Never>?
     private(set) var canUndo = false
     private(set) var angle: Double = 0
@@ -91,7 +89,8 @@ final class GameModel {
     /// The rigid impact waits for the slap so the two land as one (a held drag that never reaches it: 150 ms).
     @ObservationIgnored private var crushWaiting = false
     /// Where the figure is drawn: under the stone while it is being crushed, else where FoldCore has it.
-    var figureCell: Cell { crushAt ?? char }
+    /// At the finale, opened again: the sender back on his own bank (design-ch4 §3–4, Codex review 7 #2).
+    var figureCell: Cell { crushAt ?? (posture == .closed ? nil : finaleBank) ?? char }
     /// The lamp behind the top page, timed (design-review-ch3 §6.7): out over 350 ms the moment the book shuts,
     /// back over 350 ms when it leans again. Multiplied with the 89°→82° angle ramp in `lamp(_:)`.
     private(set) var lampLevel: Double = 1
@@ -116,6 +115,20 @@ final class GameModel {
     private(set) var sealShown = false
     private(set) var sealSettled = false
     private(set) var showNext = false
+    /// The finale (4-6 两人, design-review-ch4 §3.3): the 「成」 seal across the crease of the shut book, then
+    /// 「信，到了。」, then the letter. The book stays shut.
+    private(set) var finaleSeal = false
+    private(set) var finaleSettled = false
+    /// Set 1.5 s after the caption: LevelScreen turns to the fourth letter.
+    private(set) var finaleLetter = false
+    /// After the finale the two meet only while the book is shut: opened, the sender stands on the last square of
+    /// his own page he walked, across the river from her (design-ch4 §3–4: 「打开，河还在。」).
+    private(set) var finaleBank: Cell?
+    /// The fourth letter's delivery, apart from the seal's timeline: a touch that cuts the timeline short still
+    /// brings the letter (Codex review 7 #3). Cancelled only when the level changes or the player leaves.
+    @ObservationIgnored private var letterTask: Task<Void, Never>?
+    /// -finaleLetterDelay <s> (UI tests): the pause between 「信，到了。」 and the letter, 1.5 s by design.
+    static var letterDelay: Double { UserDefaults.standard.object(forKey: "finaleLetterDelay") != nil ? UserDefaults.standard.double(forKey: "finaleLetterDelay") : 1.5 }
 
     var orientation: Spread.Orientation = .horizontalCrease
     var spread: Spread { Spread(orientation, columnsPerPage: config.columnsPerPage, rows: board.h) }
@@ -124,6 +137,8 @@ final class GameModel {
     private(set) var lastAnnouncement: String?
     private(set) var shake: [Cell: Int] = [:]
     private(set) var done: Set<Int>
+    /// What is saved: level IDs, so inserting levels never moves progress (FoldCore.SavedProgress).
+    @ObservationIgnored private var doneIDs: Set<String>
     private(set) var hingeKind: HingeKind = .simulated
     private(set) var hintAvailable = false
     private(set) var inkPrintedAt: [Cell: Date] = [:]
@@ -190,14 +205,14 @@ final class GameModel {
 
     static let step = 15.0
     static let snapPoints: [Double] = [0, 90, 130, 180]
-    private static let doneKey = "fold.done"
 
     init(pack: LevelPack) {
         self.pack = pack
         let first = try! FoldGame(level: pack.levels[0], config: pack.config)
         game = first
         board = first.board; original = first.board; char = first.char; trail = first.trail
-        done = Set(UserDefaults.standard.array(forKey: Self.doneKey) as? [Int] ?? [])
+        doneIDs = SavedProgress.load()
+        done = Set(doneIDs.compactMap { id in pack.levels.firstIndex { $0.id == id } })
         if #available(iOS 27.1, *) { device = UIHingeProvider() } else { device = nil }
         simulated.onAngle = { [weak self] a in self?.setAngle(a) }
         device?.onAngle = { [weak self] a in
@@ -225,7 +240,7 @@ final class GameModel {
     /// -cameraPitch <deg> (screenshots), -probe YES (UI tests: the drag's edge probe).
     static func launch() -> GameModel {
         let d = UserDefaults.standard
-        if d.bool(forKey: "resetProgress") { d.removeObject(forKey: doneKey); d.removeObject(forKey: "opener.2"); d.removeObject(forKey: "opener.3") }
+        if d.bool(forKey: "resetProgress") { SavedProgress.reset(d); for k in 2...4 { d.removeObject(forKey: "opener.\(k)") } }
         let m = GameModel(pack: try! LevelPack.bundled())
         let start = d.integer(forKey: "startLevel")
         if start > 0 { m.go(start - 1) }
@@ -243,7 +258,7 @@ final class GameModel {
         }
         if d.object(forKey: "startAngle") != nil {
             m.setAngle(d.double(forKey: "startAngle")); m.pending = Pending(); m.saidAngle = Int(m.angle)
-            m.cameraPitch = m.angle == 90 ? wallPitch : handPitch
+            m.cameraPitch = m.looksAtWall(m.angle) ? wallPitch : handPitch
         }
         if d.object(forKey: "cameraPitch") != nil { m.cameraPitch = d.double(forKey: "cameraPitch") }   // screenshots: a mid-drag frame
         if let h = d.string(forKey: "hinge").flatMap(HingeKind.init(rawValue:)) { m.selectHinge(h) }
@@ -256,14 +271,30 @@ final class GameModel {
     var levelText: (name: String, line: String, hint: String) { L10n.level(level.id) }
     var isLeaning: Bool { config.isLeaning(angle) }
     /// Chapter 3 between 89° and 60° (physical): leaning, not standing (the 15° stops at 75° and 60°, review-ch3 §6.4).
-    var leansNotStands: Bool { paper.backlit && angle > 90 && isLeaning }
+    /// A page with tabs standing (4-2) is standing first: the bridge is up, the shadow is the news.
+    var leansNotStands: Bool { paper.backlit && angle > 90 && isLeaning && !hasTabs }
+    /// The level has pop-up tabs (纸片).
+    var hasTabs: Bool { board.grid.contains { $0.contains(.tab) } }
+    /// 4-6 两人: the goal square is the other figure (design-ch4 §1).
+    var goalIsFigure: Bool { level.id == "twoFigures" }
+    var isFinale: Bool { goalIsFigure }
+    /// The goal square (in 4-6, her square).
+    var goal: Cell? { game.goal }
     var chapter: Chapter { Chapter.all.first { $0.levelIDs.contains(level.id) } ?? Chapter.all[0] }
     var chapterLevelIndices: [Int] { chapter.levelIDs.compactMap { id in pack.levels.firstIndex { $0.id == id } } }
     var code: String {
         let n = (chapter.levelIDs.firstIndex(of: level.id) ?? 0) + 1
         return L10n.t("level.code", ["ch": chapter.id, "n": n])
     }
-    var paper: PaperState { [PaperState.chapter1, .chapter2, .chapter3][min(2, max(0, chapter.id - 1))] }
+    var paper: PaperState {
+        guard chapter.id >= 4 else { return [PaperState.chapter1, .chapter2, .chapter3][min(2, max(0, chapter.id - 1))] }
+        if isFinale { return .aged }
+        // design-ch4 §4: the crease whitens level by level, 0 → 100% (4-6 whitest)
+        var p = PaperState.chapter4
+        let k = chapter.levelIDs.firstIndex(of: level.id) ?? 0
+        p.creaseWhite = Double(k) / Double(max(1, chapter.levelIDs.count - 1))
+        return p
+    }
     var isLastInChapter: Bool { chapterLevelIndices.last == index }
 
     // MARK: words
@@ -296,6 +327,8 @@ final class GameModel {
         game = try! FoldGame(level: pack.levels[index], config: config)
         original = game.board
         won = false; aha = false; caption = false; sealShown = false; sealSettled = false; showNext = false
+        finaleSeal = false; finaleSettled = false; finaleLetter = false; finaleBank = nil
+        letterTask?.cancel(); letterTask = nil
         quiet = false; dragging = false; angleHint = false; walking = false
         threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]
         pending = Pending(); saidAngle = 0; nopes = 0; hintAvailable = false; toast = nil
@@ -303,10 +336,11 @@ final class GameModel {
         cameraTask?.cancel(); cameraTask = nil; cameraPitch = Self.handPitch
         setLamp(1, now: true)
         sync()
-        lockWindows = Self.lockWindows(game.board, rules); lockedCells = []; lockFlashTask?.cancel(); lockFlash = []
+        lockKey = nil; refreshLock(); if !lockedCells.isEmpty { lockedCells = [] }; lockFlashTask?.cancel(); lockFlash = []
+        sound.figureMotif = goalIsFigure
         if hingeKind == .device, settings.hingeFold, let a = (device as? AnyHingeAngle)?.lastAngle {
             setAngle(Self.virtualFold(a)); pending = Pending()
-            if abs(angle - 90) < 0.5 { cameraPitch = Self.wallPitch }   // a hinge already standing: look at the wall
+            if looksAtWall(angle) { cameraPitch = Self.wallPitch }   // a hinge already standing: look at the wall
         }
         announce(intro, delay: 0.6)
         stuckTask = Task { [weak self] in
@@ -395,33 +429,21 @@ final class GameModel {
     }
     func isGap(_ c: Cell) -> Bool { Self.isGap(board, rules, c) }
 
-    /// Every stretch of the leaning window (fold 91°–154°) where each top-page stone's shadow lies on a gap.
-    static func lockWindows(_ b: Board, _ rules: Rules) -> [LockWindow] {
-        let n = rules.n
-        let stones = (0..<b.h).flatMap { r in (n..<2 * n).map { Cell($0, r) } }.filter { b[$0].isOpaque }
-        guard !stones.isEmpty else { return [] }
-        var out: [LockWindow] = []
-        var a = 91.0
-        while a < rules.config.foldMin {
-            let sh = rules.shadows(b, a)
-            let cells = stones.map { s in sh.first { $0.key.r == s.r && $0.value == s.c && isGap(b, rules, $0.key) }?.key }
-            if cells.allSatisfy({ $0 != nil }) {
-                let cs = cells.compactMap { $0 }
-                if let last = out.last, last.cells == cs, abs(last.hi - (a - 0.25)) < 1e-6 { out[out.count - 1].hi = a }
-                else { out.append(LockWindow(lo: a, hi: a, cells: cs)) }
-            }
-            a += 0.25
-        }
-        return out
+    /// The lock depends on where the figure stands (design-review-ch4 §2: every shadow on a gap joins the path it can
+    /// walk now), so its windows are worked out again whenever the figure or the board changes.
+    private func refreshLock() {
+        if let k = lockKey, k.char == char, k.board == board { return }
+        lockKey = (board, char)
+        lockWindows = rules.lockWindows(board, from: char)
     }
 
     /// Entering a lock clicks (Selection), outlines the gaps for 400 ms and makes their hollow note solid (two at once:
     /// a two-note chord). A fast sweep straight across a window clicks too.
     private func lockCheck(from before: Double) {
-        guard !lockWindows.isEmpty else { return }
+        guard !lockWindows.isEmpty else { if !lockedCells.isEmpty { lockedCells = [] }; return }
         let a = angle
         let here = lockWindows.first { a >= $0.lo && a <= $0.hi }
-        defer { lockedCells = here?.cells ?? [] }
+        defer { let now = here?.cells ?? []; if now != lockedCells { lockedCells = now } }
         if let w = here { if w.cells != lockedCells { lockEntered(w.cells) }; return }
         let lo = min(before, a), hi = max(before, a)
         if let w = lockWindows.first(where: { $0.hi >= lo && $0.lo <= hi && $0.cells != lockedCells }) { lockEntered(w.cells) }
@@ -522,7 +544,7 @@ final class GameModel {
 
     private func clearCrush() { crushTask?.cancel(); crushTask = nil; crushWaiting = false; crushAt = nil; squash = 0 }
 
-    /// Chapters 1–2 detent at 0 / 90 / 130 / 180. Chapter 3 leans freely: 91°–154° (fold) has no detent (spec §5).
+    /// Chapters 1–2 detent at 0 / 90 / 130 / 180. Chapters 3–4 lean freely: 91°–154° (fold) has no detent (spec §5).
 
     var detents: [Double] { chapter.id >= 3 ? [0, 90, 180] : Self.snapPoints }
 
@@ -608,11 +630,16 @@ final class GameModel {
         }
     }
 
-    /// design-review-3 §3: one camera, two poses. Released onto 90° → ease down to look at the wall (320 ms
-    /// ease-in-out from the release; reduce motion 200 ms linear); released anywhere else → back to 12°.
+    /// design-review-ch4 §2 ①: the tabs stand (60°–120°), the page is still and no finger is on it → look at the wall.
+    /// For chapter 2 that is the old rule (the page only rests standing on the 90° detent); chapter 3 has no tabs and
+    /// never turns the camera, not even at a lock; 4-2's lock at 75° brings the camera down with the bridge.
+    func looksAtWall(_ a: Double) -> Bool { hasTabs && rules.posture(a) == .standing }
+
+    /// design-review-3 §3: one camera, two poses. Released with the tabs standing → ease down to look at the wall
+    /// (320 ms ease-in-out from the release; reduce motion 200 ms linear); anywhere else → back to 12°.
     /// Never while a finger or the hinge drives the page: those freeze the camera where it is.
     func aimCamera(at target: Double) {
-        let goal = abs(target - 90) < 0.5 ? Self.wallPitch : Self.handPitch
+        let goal = looksAtWall(target) ? Self.wallPitch : Self.handPitch
         cameraTask?.cancel(); cameraTask = nil
         guard goal != cameraPitch else { return }
         let from = cameraPitch, t0 = CACurrentMediaTime(), rm = settings.motionReduced
@@ -946,6 +973,7 @@ final class GameModel {
 
     private func sync() {
         board = game.board; char = game.char; trail = game.trail; posture = game.posture; shade = game.shade; canUndo = game.canUndo
+        refreshLock()
     }
 
     /// `at`: where the figure stood before these events (a crush is drawn there; FoldCore has already moved it home).
@@ -997,7 +1025,8 @@ final class GameModel {
         won = true
         stopWalk()
         done.insert(index)
-        UserDefaults.standard.set(Array(done).sorted(), forKey: Self.doneKey)
+        doneIDs.insert(level.id); SavedProgress.save(doneIDs)
+        if isFinale { finaleBank = trail.last { !rules.isRight($0.c) } ?? trail.first }
         startAha()
     }
 
@@ -1010,6 +1039,7 @@ final class GameModel {
     func startAha() {
         ahaTask?.cancel()
         aha = true; quiet = true
+        if isFinale { startFinale(); return }
         let rm = settings.motionReduced
         ahaTask = Task { [weak self] in
             guard let self else { return }
@@ -1050,19 +1080,76 @@ final class GameModel {
         }
     }
 
+    /// 4-6 两人 (design-review-ch4 §3.3, §4.5): the two banks touch and you stand in her square. The book stays shut:
+    /// 「啪」, then 「成」 drops across the crease (seal.drop 180 + 90 ms; reduce motion: it is simply there), then
+    /// 「信，到了。」 fades in over 1 s, and 1.5 s later the fourth letter. No reunion: opening the book shows the river.
+    private func startFinale() {
+        let rm = settings.motionReduced
+        ahaTask = Task { [weak self] in
+            guard let self else { return }
+            if self.angle < 180 {
+                await withCheckedContinuation { (k: CheckedContinuation<Void, Never>) in self.move(to: 180, .closeSnap) { k.resume() } }
+            } else { self.contact() }
+            if Task.isCancelled { return }
+            if self.settings.soundMode { self.sound.meet() }   // the two motifs become one chord (design-ch4 §5)
+            try? await Task.sleep(for: .milliseconds(rm ? 120 : 260))
+            if Task.isCancelled { return }
+            withAnimation(rm ? nil : .easeOut(duration: 0.18)) { self.finaleSeal = true }
+            try? await Task.sleep(for: .milliseconds(rm ? 0 : 180))
+            if Task.isCancelled { return }
+            self.haptics.seal(); self.sound.seal()
+            withAnimation(rm ? nil : .timingCurve(0.3, 1.5, 0.6, 1, duration: 0.09)) { self.finaleSettled = true }
+            try? await Task.sleep(for: .milliseconds(90))
+            if Task.isCancelled { return }
+            withAnimation(.easeInOut(duration: rm ? 0.2 : 1.0)) { self.caption = true }
+            self.haptics.success()
+            try? await Task.sleep(for: .milliseconds(1000))
+            if Task.isCancelled { return }
+            self.finishAha()
+            self.deliverLetter()
+        }
+    }
+
+    /// The fourth letter, `letterDelay` after the caption; never pulled from under a finger turning the page.
+    private func deliverLetter() {
+        guard letterTask == nil, !finaleLetter else { return }
+        letterTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(Self.letterDelay))
+            while self?.dragging == true && !Task.isCancelled { try? await Task.sleep(for: .milliseconds(200)) }
+            guard let self, !Task.isCancelled else { return }
+            self.letterTask = nil
+            self.finaleLetter = true
+        }
+    }
+
+    /// The level screen went away (the map, another level): no letter arrives behind its back.
+    func leaveLevel() { letterTask?.cancel(); letterTask = nil }
+
     private func finishAha() {
         aha = false; quiet = false
         pending = Pending(); saidAngle = Int(angle.rounded())
         withAnimation(.easeOut(duration: 0.3)) { showNext = true }
-        UIAccessibility.post(notification: .screenChanged, argument: L10n.t("closed.caption") + " " + L10n.t("levelDone", ["name": levelText.name]))
-        lastAnnouncement = L10n.t("closed.caption")
+        UIAccessibility.post(notification: .screenChanged, argument: L10n.t(captionKey) + " " + L10n.t("levelDone", ["name": levelText.name]))
+        lastAnnouncement = L10n.t(captionKey)
     }
+
+    /// 「信，送到了。」, or at the finale 「信，到了。」 (design-ch4 §4).
+    var captionKey: String { isFinale ? "closed.arrived" : "closed.caption" }
 
     /// A finger during the aha: jump to its last frame.
     func finishAhaNow() {
         guard aha else { return }
         ahaTask?.cancel(); stopMotion()
         quiet = true
+        if isFinale {
+            // the finale's last frame is the shut book with its seal and caption; the knot then opens the letter
+            if angle < 180 { setAngle(180) }
+            rubber = 0; press = 0; glow = 0
+            finaleSeal = true; finaleSettled = true; caption = true
+            finishAha()
+            deliverLetter()
+            return
+        }
         setAngle(0); rubber = 0; press = 0; glow = 0
         cameraTask?.cancel(); cameraTask = nil; cameraPitch = Self.handPitch
         caption = false; threadProgress = 1; sealShown = chapter.id == 1; sealSettled = true
@@ -1157,14 +1244,15 @@ final class GameModel {
     func label(_ c: Int, _ r: Int) -> String {
         let n = config.columnsPerPage
         let tl = board[c, r], m = rules.mirror(c), M = board[m, r]
-        func kind(_ t: Tile) -> String { L10n.t("kind.\(t == .start ? "." : String(t.rawValue))") }
+        let figure = goalIsFigure
+        func kind(_ t: Tile) -> String { t == .goal && figure ? L10n.t("kind.figure") : L10n.t("kind.\(t == .start ? "." : String(t.rawValue))") }
         func noun(_ t: Tile) -> String { L10n.t("noun.\(t == .start ? "." : String(t.rawValue))") }
         var k = shade[Cell(c, r)] != nil && !tl.isFloor ? L10n.t("kindShadow") : kind(tl)
         if tl == .tab && posture == .standing { k = L10n.t("kindTabUp") }
         var parts = [pos(c, r), k]
         // closed: the square on top of this stack can be the goal (the folding page lies on the fixed one)
         if posture == .closed && !rules.isRight(c) && M == .goal && tl != .goal { parts.append(kind(.goal)) }
-        if char == Cell(c, r) { parts.append(L10n.t("hereYou")) }
+        if figureCell == Cell(c, r) { parts.append(L10n.t("hereYou")) }
         else if posture == .closed && char == Cell(m, r) { parts.append(L10n.t("hereStack")) }
         var extra = ""
         if !rules.isRight(c) {

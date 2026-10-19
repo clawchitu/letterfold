@@ -26,6 +26,7 @@ enum Tok {
     static let threadDark = Color(hex: 0x93362C)
     static let sealMuted = Color(hex: 0xB9493B)
     static let hcLine = Color(hex: 0x8E2419)
+    static let cinnabar = Color(hex: 0xC8322B)       // 「成」 only: the one full-cinnabar mark in the game (spec §0.7)
     static let hcGround = Color(hex: 0xEDEDED)
     static let table = Color(hex: 0xEAE5DC)
     // the closed stack (design-review-3 §closed): solid edge = bottom page, fine dashed edge = top page; ≥ 3:1 on paperBack
@@ -41,11 +42,20 @@ struct PaperState: Equatable {
     var inkSaturation: Double
     var backlit: Bool
     var thread: Color
+    /// How much of the lamp comes through while the page leans (design-ch4 §4: 0.60 rice paper, 0.45 old thick paper).
+    var backlight: Double = 0.60
+    /// The crease gone white with folding (design-spec §4, design-ch4 §4): 0 … 1, chapter 4 only.
+    var creaseWhite: Double = 0
 
     static let chapter1 = PaperState(color: Tok.paperNew, translucency: 0.05, inkSaturation: 0.82, backlit: false, thread: Tok.thread)
     static let chapter2 = PaperState(color: Color(hex: 0xF3EDE2), translucency: 0.15, inkSaturation: 0.78, backlit: false, thread: Tok.thread)
     static let chapter3 = PaperState(color: Color(hex: 0xF1E9D8), translucency: 0.60, inkSaturation: 0.70, backlit: true, thread: Tok.threadAged)
-    static let chapter4 = PaperState(color: Color(hex: 0xEFE6D2), translucency: 0.10, inkSaturation: 0.88, backlit: false, thread: Tok.threadAged)
+    /// paper.worn: old paper, thick, lit only while it leans (design-ch4 §4)
+    static let chapter4 = PaperState(color: Color(hex: 0xEFE6D2), translucency: 0.10, inkSaturation: 0.88, backlit: true, thread: Tok.threadAged, backlight: 0.45)
+    /// paper.aged, the finale 4-6
+    static let aged = PaperState(color: Color(hex: 0xEBE0C7), translucency: 0.10, inkSaturation: 0.95, backlit: true, thread: Tok.threadAged, backlight: 0.45, creaseWhite: 1)
+    /// The lamp's strength relative to chapter 3's rice paper.
+    var lampScale: Double { backlight / 0.60 }
 
     /// One step darker than the paper: the face of a walkable tile (design-spec §4).
     var tileFace: Color { color.mix(with: Color(hex: 0x8A7A62), by: 0.075) }

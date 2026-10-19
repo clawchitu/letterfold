@@ -17,12 +17,25 @@
         "-.------",
         "-G------"
       ],
+      "tier": "teach",
+      "needs": [
+        "needsFold"
+      ],
       "expect": {
         "solvable": true,
         "changes": 1,
         "needsFold": true,
         "needsPop": false,
-        "stepped15": true
+        "stepped15": true,
+        "difficulty": {
+          "score": 2,
+          "tier": "teach",
+          "dead": 0,
+          "forks": 1,
+          "walk": 4,
+          "window": 7,
+          "combo": 1
+        }
       }
     },
     {
@@ -33,12 +46,25 @@
         "--x--.--",
         "S.---.--"
       ],
+      "tier": "teach",
+      "needs": [
+        "needsFold"
+      ],
       "expect": {
         "solvable": true,
         "changes": 2,
         "needsFold": true,
         "needsPop": false,
-        "stepped15": true
+        "stepped15": true,
+        "difficulty": {
+          "score": 2,
+          "tier": "teach",
+          "dead": 0,
+          "forks": 3,
+          "walk": 7,
+          "window": 7,
+          "combo": 1
+        }
       }
     },
     {
@@ -50,12 +76,25 @@
         "-.----.-",
         "-G------"
       ],
+      "tier": "easy",
+      "needs": [
+        "needsFold"
+      ],
       "expect": {
         "solvable": true,
         "changes": 3,
         "needsFold": true,
         "needsPop": false,
-        "stepped15": true
+        "stepped15": true,
+        "difficulty": {
+          "score": 3,
+          "tier": "easy",
+          "dead": 0,
+          "forks": 3,
+          "walk": 7,
+          "window": 7,
+          "combo": 1
+        }
       }
     },
     {
@@ -67,22 +106,40 @@
         "-.------",
         "-G------"
       ],
+      "tier": "teach",
+      "needs": [
+        "needsFold",
+        "needsKey"
+      ],
       "expect": {
         "solvable": true,
         "changes": 1,
         "needsFold": true,
         "needsPop": false,
         "needsKey": true,
-        "stepped15": true
+        "stepped15": true,
+        "difficulty": {
+          "score": 2,
+          "tier": "teach",
+          "dead": 0,
+          "forks": 1,
+          "walk": 4,
+          "window": 7,
+          "combo": 2
+        }
       }
     },
     {
       "id": "ink",
       "map": [
-        "--------",
-        "----G---",
-        "-xix.-..",
-        "-------S"
+        "xS----.G",
+        "-.----.-",
+        "-.i-.-.-"
+      ],
+      "tier": "easy",
+      "needs": [
+        "needsFold",
+        "needsInk"
       ],
       "expect": {
         "solvable": true,
@@ -90,7 +147,16 @@
         "needsFold": true,
         "needsPop": false,
         "needsInk": true,
-        "stepped15": true
+        "stepped15": true,
+        "difficulty": {
+          "score": 3,
+          "tier": "easy",
+          "dead": 0,
+          "forks": 3,
+          "walk": 9,
+          "window": 7,
+          "combo": 2
+        }
       }
     },
     {
@@ -101,12 +167,25 @@
         "S..pp.--",
         "--------"
       ],
+      "tier": "teach",
+      "needs": [
+        "needsPop"
+      ],
       "expect": {
         "solvable": true,
         "changes": 1,
         "needsFold": false,
         "needsPop": true,
-        "stepped15": true
+        "stepped15": true,
+        "difficulty": {
+          "score": 2,
+          "tier": "teach",
+          "dead": 0,
+          "forks": 2,
+          "walk": 9,
+          "window": 7,
+          "combo": 1
+        }
       }
     },
     {
@@ -117,12 +196,25 @@
         "------.-",
         "G..pp..-"
       ],
+      "tier": "teach",
+      "needs": [
+        "needsPop"
+      ],
       "expect": {
         "solvable": true,
         "changes": 1,
         "needsFold": false,
         "needsPop": true,
-        "stepped15": true
+        "stepped15": true,
+        "difficulty": {
+          "score": 2,
+          "tier": "teach",
+          "dead": 0,
+          "forks": 2,
+          "walk": 15,
+          "window": 7,
+          "combo": 1
+        }
       }
     },
     {
@@ -133,12 +225,26 @@
         "-----.--",
         "--G--.--"
       ],
+      "tier": "easy",
+      "needs": [
+        "needsFold",
+        "needsPop"
+      ],
       "expect": {
         "solvable": true,
         "changes": 2,
         "needsFold": true,
         "needsPop": true,
-        "stepped15": true
+        "stepped15": true,
+        "difficulty": {
+          "score": 3,
+          "tier": "easy",
+          "dead": 0,
+          "forks": 2,
+          "walk": 8,
+          "window": 7,
+          "combo": 2
+        }
       }
     },
     {
@@ -149,13 +255,28 @@
         "------.G",
         "--------"
       ],
+      "tier": "easy",
+      "needs": [
+        "needsFold",
+        "needsPop",
+        "needsKey"
+      ],
       "expect": {
         "solvable": true,
         "changes": 2,
         "needsFold": true,
         "needsPop": true,
         "needsKey": true,
-        "stepped15": true
+        "stepped15": true,
+        "difficulty": {
+          "score": 4,
+          "tier": "easy",
+          "dead": 0,
+          "forks": 2,
+          "walk": 9,
+          "window": 7,
+          "combo": 3
+        }
       }
     },
     {
@@ -166,13 +287,60 @@
         "--x--G--",
         "--------"
       ],
+      "tier": "easy",
+      "needs": [
+        "needsFold",
+        "needsPop",
+        "needsInk"
+      ],
       "expect": {
         "solvable": true,
         "changes": 2,
         "needsFold": true,
         "needsPop": true,
         "needsInk": true,
-        "stepped15": true
+        "stepped15": true,
+        "difficulty": {
+          "score": 3,
+          "tier": "easy",
+          "dead": 0,
+          "forks": 2,
+          "walk": 5,
+          "window": 7,
+          "combo": 3
+        }
+      }
+    },
+    {
+      "id": "inkTwice",
+      "map": [
+        "S..pp.--",
+        "--i-----",
+        "--x--.--",
+        "--G--.--"
+      ],
+      "tier": "mid",
+      "needs": [
+        "needsFold",
+        "needsPop",
+        "needsInk"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 3,
+        "needsFold": true,
+        "needsPop": true,
+        "needsInk": true,
+        "stepped15": true,
+        "difficulty": {
+          "score": 5,
+          "tier": "mid",
+          "dead": 0,
+          "forks": 2,
+          "walk": 8,
+          "window": 7,
+          "combo": 3
+        }
       }
     },
     {
@@ -184,6 +352,13 @@
         "---..---",
         "--Spp---"
       ],
+      "tier": "mid",
+      "needs": [
+        "needsFold",
+        "needsPop",
+        "needsKey",
+        "needsInk"
+      ],
       "expect": {
         "solvable": true,
         "changes": 3,
@@ -191,7 +366,50 @@
         "needsPop": true,
         "needsKey": true,
         "needsInk": true,
-        "stepped15": true
+        "stepped15": true,
+        "difficulty": {
+          "score": 5,
+          "tier": "mid",
+          "dead": 0,
+          "forks": 2,
+          "walk": 9,
+          "window": 7,
+          "combo": 4
+        }
+      }
+    },
+    {
+      "id": "rightBank",
+      "map": [
+        "S.------",
+        "-k.pp.D-",
+        "-i------",
+        "-xG--..-"
+      ],
+      "tier": "mid",
+      "needs": [
+        "needsFold",
+        "needsPop",
+        "needsKey",
+        "needsInk"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 3,
+        "needsFold": true,
+        "needsPop": true,
+        "needsKey": true,
+        "needsInk": true,
+        "stepped15": true,
+        "difficulty": {
+          "score": 5,
+          "tier": "mid",
+          "dead": 0,
+          "forks": 2,
+          "walk": 10,
+          "window": 7,
+          "combo": 4
+        }
       }
     },
     {
@@ -203,23 +421,9 @@
         "-.------",
         "-G------"
       ],
-      "expect": {
-        "solvable": true,
-        "changes": 1,
-        "needsFold": false,
-        "needsPop": false,
-        "needsShade": true,
-        "needsRide": false,
-        "stepped15": true
-      }
-    },
-    {
-      "id": "press",
-      "map": [
-        "--------",
-        "-.-S-.x-",
-        "-.------",
-        "-G------"
+      "tier": "teach",
+      "needs": [
+        "needsShade"
       ],
       "expect": {
         "solvable": true,
@@ -228,7 +432,48 @@
         "needsPop": false,
         "needsShade": true,
         "needsRide": false,
-        "stepped15": true
+        "stepped15": true,
+        "difficulty": {
+          "score": 2,
+          "tier": "teach",
+          "dead": 0,
+          "forks": 1,
+          "walk": 4,
+          "window": 3,
+          "combo": 1
+        }
+      }
+    },
+    {
+      "id": "press",
+      "map": [
+        "--.S----",
+        "-.---.x-",
+        "..------",
+        ".-------",
+        ".G------"
+      ],
+      "tier": "easy",
+      "needs": [
+        "needsShade"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 1,
+        "needsFold": false,
+        "needsPop": false,
+        "needsShade": true,
+        "needsRide": false,
+        "stepped15": true,
+        "difficulty": {
+          "score": 4,
+          "tier": "easy",
+          "dead": 0,
+          "forks": 1,
+          "walk": 8,
+          "window": 3,
+          "combo": 1
+        }
       }
     },
     {
@@ -240,6 +485,10 @@
         "-.------",
         "-G------"
       ],
+      "tier": "easy",
+      "needs": [
+        "needsShade"
+      ],
       "expect": {
         "solvable": true,
         "changes": 1,
@@ -247,7 +496,16 @@
         "needsPop": false,
         "needsShade": true,
         "needsRide": false,
-        "stepped15": true
+        "stepped15": true,
+        "difficulty": {
+          "score": 3,
+          "tier": "easy",
+          "dead": 0,
+          "forks": 1,
+          "walk": 4,
+          "window": 1,
+          "combo": 1
+        }
       }
     },
     {
@@ -258,6 +516,11 @@
         "---S---x",
         "--------"
       ],
+      "tier": "easy",
+      "needs": [
+        "needsShade",
+        "needsRide"
+      ],
       "expect": {
         "solvable": true,
         "changes": 2,
@@ -265,16 +528,30 @@
         "needsPop": false,
         "needsShade": true,
         "needsRide": true,
-        "stepped15": true
+        "stepped15": true,
+        "difficulty": {
+          "score": 4,
+          "tier": "easy",
+          "dead": 0,
+          "forks": 1,
+          "walk": 4,
+          "window": 0,
+          "combo": 2
+        }
       }
     },
     {
       "id": "rideBack",
       "map": [
-        "--------",
-        "S--.--x-",
+        "S-------",
+        ".--.--x-",
         "---.----",
-        "---G----"
+        "---.----",
+        "G...----"
+      ],
+      "tier": "mid",
+      "needs": [
+        "needsShade"
       ],
       "expect": {
         "solvable": true,
@@ -283,17 +560,32 @@
         "needsPop": false,
         "needsShade": true,
         "needsRide": false,
-        "stepped15": true
+        "stepped15": true,
+        "difficulty": {
+          "score": 5,
+          "tier": "mid",
+          "dead": 0,
+          "forks": 1,
+          "walk": 8,
+          "window": 1,
+          "combo": 1
+        }
       }
     },
     {
       "id": "lamp",
       "map": [
         "--------",
-        "---S---x",
+        "---Sx--x",
         "------x-",
         "-.------",
         "------G-"
+      ],
+      "tier": "hard",
+      "needs": [
+        "needsFold",
+        "needsShade",
+        "needsRide"
       ],
       "expect": {
         "solvable": true,
@@ -302,7 +594,224 @@
         "needsPop": false,
         "needsShade": true,
         "needsRide": true,
-        "stepped15": true
+        "stepped15": true,
+        "difficulty": {
+          "score": 7,
+          "tier": "hard",
+          "dead": 0,
+          "forks": 1,
+          "walk": 3,
+          "window": 0,
+          "combo": 3
+        }
+      }
+    },
+    {
+      "id": "twoShades",
+      "map": [
+        "--.Sx---",
+        "-------x",
+        "-.------",
+        "------x-",
+        "--.G----"
+      ],
+      "tier": "mid",
+      "needs": [
+        "needsShade",
+        "needsRide"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 3,
+        "needsFold": false,
+        "needsPop": false,
+        "needsShade": true,
+        "needsRide": true,
+        "stepped15": true,
+        "difficulty": {
+          "score": 6,
+          "tier": "mid",
+          "dead": 0,
+          "forks": 1,
+          "walk": 4,
+          "window": 0,
+          "combo": 2
+        }
+      }
+    },
+    {
+      "id": "bridgeShade",
+      "map": [
+        "-k-pp.DS",
+        "-------x",
+        "---.x---",
+        "--G.----"
+      ],
+      "tier": "hard",
+      "needs": [
+        "needsFold",
+        "needsPop",
+        "needsShade",
+        "needsKey"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 2,
+        "needsFold": true,
+        "needsPop": true,
+        "needsShade": true,
+        "needsRide": false,
+        "needsKey": true,
+        "stepped15": true,
+        "difficulty": {
+          "score": 7,
+          "tier": "hard",
+          "dead": 0,
+          "forks": 1,
+          "walk": 8,
+          "window": 2,
+          "combo": 4
+        }
+      }
+    },
+    {
+      "id": "inkShore",
+      "map": [
+        "-S--G---",
+        "-.--.-x-",
+        "-.--i--x",
+        "--------"
+      ],
+      "tier": "hard",
+      "needs": [
+        "needsFold",
+        "needsShade",
+        "needsInk"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 3,
+        "needsFold": true,
+        "needsPop": false,
+        "needsShade": true,
+        "needsRide": false,
+        "needsInk": true,
+        "stepped15": true,
+        "difficulty": {
+          "score": 7,
+          "tier": "hard",
+          "dead": 0,
+          "forks": 1,
+          "walk": 6,
+          "window": 2,
+          "combo": 3
+        }
+      }
+    },
+    {
+      "id": "stoneRain",
+      "map": [
+        "-S----x-",
+        "-.----x-",
+        "-.----x-",
+        "-.--i---",
+        "---G----"
+      ],
+      "tier": "hard",
+      "needs": [
+        "needsFold",
+        "needsShade",
+        "needsRide",
+        "needsInk"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 3,
+        "needsFold": true,
+        "needsPop": true,
+        "needsShade": true,
+        "needsRide": true,
+        "needsInk": true,
+        "stepped15": true,
+        "difficulty": {
+          "score": 7,
+          "tier": "hard",
+          "dead": 0,
+          "forks": 1,
+          "walk": 7,
+          "window": 0,
+          "combo": 5
+        }
+      }
+    },
+    {
+      "id": "shadeDoor",
+      "map": [
+        "S...----",
+        "---.----",
+        ".D----kx",
+        "G--.----",
+        "-.----x-"
+      ],
+      "tier": "hard",
+      "needs": [
+        "needsFold",
+        "needsShade",
+        "needsKey"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 3,
+        "needsFold": true,
+        "needsPop": true,
+        "needsShade": true,
+        "needsRide": false,
+        "needsKey": true,
+        "stepped15": true,
+        "difficulty": {
+          "score": 8,
+          "tier": "hard",
+          "dead": 0,
+          "forks": 1,
+          "walk": 8,
+          "window": 0,
+          "combo": 4
+        }
+      }
+    },
+    {
+      "id": "twoFigures",
+      "map": [
+        "S.------",
+        "-.--G---",
+        "-.--.-x-",
+        "-.-Dk---",
+        "---.--x-"
+      ],
+      "tier": "final",
+      "needs": [
+        "needsFold",
+        "needsShade",
+        "needsKey"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 3,
+        "needsFold": true,
+        "needsPop": false,
+        "needsShade": true,
+        "needsRide": false,
+        "needsKey": true,
+        "stepped15": true,
+        "difficulty": {
+          "score": 8,
+          "tier": "hard",
+          "dead": 0,
+          "forks": 1,
+          "walk": 8,
+          "window": 1,
+          "combo": 3
+        }
       }
     }
   ]

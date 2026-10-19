@@ -15,27 +15,35 @@ final class Chapter3UITests: XCTestCase {
         XCTAssertTrue(f.fold.waitForExistence(timeout: 8))
         Thread.sleep(forTimeInterval: 1)
     }
+    func shot(_ name: String) {
+        let a = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); a.name = name; a.lifetime = .keepAlways; add(a)
+        if let dir = ProcessInfo.processInfo.environment["LF_SHOTS"], !dir.isEmpty {
+            try? XCUIScreen.main.screenshot().pngRepresentation.write(to: URL(fileURLWithPath: dir).appendingPathComponent("c3-\(name).png"))
+        }
+    }
     func tile(_ c: Int, _ r: Int) -> XCUIElement { app.descendants(matching: .any)["tile-\(c)-\(r)"] }
     func isHere(_ c: Int, _ r: Int) -> Bool { tile(c, r).label.contains("你在这里") }
     func walk(_ c: Int, _ r: Int, wait: TimeInterval = 1.6) {
         XCTAssertTrue(tile(c, r).waitForExistence(timeout: 3)); tile(c, r).tap(); Thread.sleep(forTimeInterval: wait)
     }
 
-    /// 3-2 压: cross on the stone's own shadow, stand on (1,1) — the stone's mirror square — and close: crushed, start again.
+    /// 3-2 压 (retuned): cross on the stone's own shadow, stand on (1,1) — the stone's mirror square, on the long way
+    /// round — and close: crushed, start again at (3,0).
     func testPressStandingUnderTheStoneIsCrushed() {
-        launch(13)
+        launch(15)
         f.lean(to: 46, tol: 6)
-        walk(1, 1)
+        walk(1, 1, wait: 2.2)
         XCTAssertTrue(isHere(1, 1), tile(1, 1).label)
-        f.drag(0.30, 0.90)
-        Thread.sleep(forTimeInterval: 1)
+        f.point(0.30).press(forDuration: 0.08, thenDragTo: f.point(0.90), withVelocity: XCUIGestureVelocity(400), thenHoldForDuration: 0.05)
+        shot("3-2-crush")
+        Thread.sleep(forTimeInterval: 1.7)
         XCTAssertEqual(f.phys(), 0, "the book stays shut")
-        XCTAssertTrue(isHere(3, 1), "back at the start: \(tile(3, 1).label)")
+        XCTAssertTrue(isHere(3, 0), "back at the start: \(tile(3, 0).label)")
     }
 
     /// 3-3 远近: let go anywhere in the 5° window (29°–33°) and the page settles on 31° — the lock's soft stop.
     func testLockSoftStop() {
-        launch(14)
+        launch(16)
         let a = f.lean(to: 31, tol: 2)
         XCTAssertEqual(a, 31, "settled on the window's middle")
         f.pull(-0.012)                                    // open it a little out of the window …
@@ -44,7 +52,7 @@ final class Chapter3UITests: XCTestCase {
 
     /// 3-4 乘影: stand on the shadow at ~60° on (2,2), close past 51°: the shadow carries the figure to (1,2).
     func testRideTheShadow() {
-        launch(15)
+        launch(17)
         f.lean(to: 60, tol: 5)
         walk(2, 2)
         XCTAssertTrue(isHere(2, 2), tile(2, 2).label)
@@ -56,7 +64,7 @@ final class Chapter3UITests: XCTestCase {
     /// stay there: 90°'s detent does not swallow 75°, and 3-3's lock (29°–33°) does not pull 30° onto 31°. Both ways.
     func testFifteenDegreeStepsStopInTheLean() {
         app = XCUIApplication()
-        app.launchArguments = ["-resetProgress", "YES", "-noOpener", "YES", "-startLevel", "14", "-buttonControl", "YES",
+        app.launchArguments = ["-resetProgress", "YES", "-noOpener", "YES", "-startLevel", "16", "-buttonControl", "YES",
                                "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
         app.launch()
         f = FoldDriver(app: app)

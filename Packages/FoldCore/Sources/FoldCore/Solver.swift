@@ -12,12 +12,17 @@ public struct Solver: Sendable {
     public init(_ config: FoldConfig = .standard) { rules = Rules(config) }
 
     public struct Step: Sendable, Equatable { public var posture: Posture; public var angle: Double; public var cell: Cell }
-    public struct Solution: Sendable { public var cost: Int; public var steps: [Step] }
+    public struct Solution: Sendable {
+        public var cost: Int
+        public var steps: [Step]
+        /// Cells walked (state transitions that were not hinge moves), as check.js counts `walk`.
+        public var walk: Int { steps.count - 1 - cost }
+    }
 
     private struct State: Hashable { var c: Int; var r: Int; var a: Double; var st: Int }
 
     /// The character cell after turning the hinge from a0 to a1, or nil if it falls.
-    func turn(_ b: Board, _ from: Cell, _ a0: Double, _ a1: Double) -> Cell? {
+    public func turn(_ b: Board, _ from: Cell, _ a0: Double, _ a1: Double) -> Cell? {
         var cur = from
         var src: Int?
         let step = a1 > a0 ? 5.0 : -5.0
@@ -75,7 +80,7 @@ public struct Solver: Sendable {
     }
 
     /// Everything check.js reports about a level, in the same shape as levels.json `expect`.
-    public func report(_ level: Level) -> Expectation {
+    public func report(_ level: Level, withDifficulty: Bool = true) -> Expectation {
         let cfg = rules.config
         let shade = Solver.angles.filter { $0 >= cfg.shadeMin && $0 < cfg.foldMin }
         let full = solve(level)
@@ -99,6 +104,7 @@ public struct Solver: Sendable {
         }
         if all.contains("k") { e.needsKey = without("k") == nil }
         if all.contains("i") { e.needsInk = without("i") == nil }
+        if withDifficulty, full != nil { e.difficulty = Difficulty(self).analyse(level)?.summary }
         return e
     }
 }

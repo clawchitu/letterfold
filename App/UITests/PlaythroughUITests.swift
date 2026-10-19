@@ -1,6 +1,6 @@
 import XCTest
 
-/// A first-time player's run through chapters 1 and 2 in Chinese: cover → 1-1 … 1-5 → letter → map → 2-1 … 2-6 → letter.
+/// A first-time player's run through the whole of book one in Chinese, all 25 levels: cover → 1-1 … 4-6 → letters → map.
 /// Every fold is a real one-finger drag on the page; every walk is a tap on a square.
 /// Set TEST_RUNNER_LF_SHOTS=/some/dir to also write the key moments there as PNGs (QA passes).
 final class PlaythroughUITests: XCTestCase {
@@ -49,7 +49,7 @@ final class PlaythroughUITests: XCTestCase {
         Thread.sleep(forTimeInterval: 1.0)
     }
 
-    func testPlaythroughChapters1To3() {
+    func testPlaythroughBookOne() {
         app = XCUIApplication()
         app.launchArguments = ["-resetProgress", "YES", "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
         app.launch()
@@ -110,17 +110,16 @@ final class PlaythroughUITests: XCTestCase {
         walk(1, 4, wait: 1.4)
         win("1-4")
 
-        // 1-5 墨
+        // 1-5 墨 (retuned): close, cross the stack to the top page's (4,2), open, walk the printed ink to the letter
         shot("1-5-start")
-        walk(6, 2, wait: 1.0)
         close()
         Thread.sleep(forTimeInterval: 0.6)
         shot("1-5-closed-ink")
-        walk(2, 2)
+        walk(3, 2, wait: 1.8)                        // the stack (3,2): you land on the top page's (4,2)
         open()
         Thread.sleep(forTimeInterval: 0.7)
         shot("1-5-ink-printed")
-        walk(4, 1, wait: 1.0)
+        walk(7, 0, wait: 2.0)
         Thread.sleep(forTimeInterval: 0.45)
         shot("1-5-aha-mid")
         let read = app.buttons["win.next"]
@@ -135,9 +134,9 @@ final class PlaythroughUITests: XCTestCase {
         back.tap()
         Thread.sleep(forTimeInterval: 0.8)
         shot("map-done")
-        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS '5'")).firstMatch.exists)
+        XCTAssertEqual(app.descendants(matching: .any)["map.count"].label.filter(\.isNumber), "525")
 
-        // ---- chapter 2 「立」 ----
+        // ---- chapter 2 「立」, 8 levels ----
         app.buttons["map.continue"].tap()
         let opener = app.descendants(matching: .any)["chapter.opener"]
         if opener.waitForExistence(timeout: 3) {
@@ -158,7 +157,6 @@ final class PlaythroughUITests: XCTestCase {
         if !taught { stand(fromClosed: true) }
         walk(4, 2, wait: 1.8)                        // over the bridge: the figure on the ramp, the thread across
         shot("2-1-on-bridge")
-        print("VO standing: fold=\(fold.value as? String ?? "") tile-4-2=\(tile(4, 2).label) tile-3-2=\(tile(3, 2).label)")
         walk(7, 0, wait: 1.2)
         win("2-1")
 
@@ -186,29 +184,46 @@ final class PlaythroughUITests: XCTestCase {
         walk(5, 2, wait: 1.6)
         win("2-5")
 
-        // 2-6 折痕: close (key + ink), stand, cross to the door, close, walk home
+        // 2-6 两次合 (new): close (the ink prints onto the wall), stand and walk it, close onto the goal
+        walk(3, 0); close()
+        stand(fromClosed: true)
+        walk(5, 3, wait: 2.2)
+        shot("2-6-on-the-printed-wall")
+        drag(0.30, 0.86)
+        win("2-6")
+
+        // 2-7 折痕: close (key + ink), stand, cross to the door, close, walk home
         walk(3, 4); close()
         stand(fromClosed: true)
         walk(6, 1, wait: 2.6)
-        shot("2-6-standing-at-door")
+        shot("2-7-standing-at-door")
         close()
-        shot("2-6-closed")
         walk(0, 0, wait: 1.6)
+        win("2-7")
+
+        // 2-8 右岸 (new, chapter end): close (key opens the door, ink prints), stand, cross through the door, close
+        walk(3, 1, wait: 1.8); close()
+        shot("2-8-closed")
+        stand(fromClosed: true)
+        walk(5, 3, wait: 2.6)
+        shot("2-8-standing")
+        drag(0.30, 0.86)
         Thread.sleep(forTimeInterval: 0.45)
-        shot("2-6-aha-mid")
+        shot("2-8-aha-mid")
         let read2 = app.buttons["win.next"]
         XCTAssertTrue(read2.waitForExistence(timeout: 6))
-        shot("2-6-won")
+        shot("2-8-won")
         read2.tap()
         let back2 = app.buttons["letter.next"]
         XCTAssertTrue(back2.waitForExistence(timeout: 5))
         Thread.sleep(forTimeInterval: 1.8)
         shot("letter-2")
-        XCTAssertFalse(app.descendants(matching: .any)["preview.end"].exists, "chapter 3 follows now")
+        XCTAssertTrue(app.descendants(matching: .any)["letter.end"].exists, "the third fold: the chapter's end line")
         back2.tap()
         Thread.sleep(forTimeInterval: 0.8)
         shot("map-ch2-done")
         playChapter3()
+        playChapter4()
     }
 
     /// Chapter 3 「影」: every lean is a real drag; the page stays where it is let go (or on a lock's middle).
@@ -231,16 +246,15 @@ final class PlaythroughUITests: XCTestCase {
         open()
         f.lean(to: 40, tol: 8)
         shot("3-1-leaning")
-        print("VO 3-1 lean: fold=\(fold.value as? String ?? "") tile-1-2=\(tile(1, 2).label)")
         walk(1, 4, wait: 2.2)
         win("3-1")
 
-        // 3-2 压: lean only, never shut; the stone's own shadow is the bridge
+        // 3-2 压 (retuned): lean only; the stone's own shadow is the bridge, then the long way round
         f.lean(to: 46, tol: 8)
-        walk(1, 3, wait: 2.4)
+        walk(1, 4, wait: 3.4)
         win("3-2")
 
-        // 3-3 远近: both shadows line up only at 29°–33°; the lock holds the page on 31°
+        // 3-3 远近: both shadows join the path only near 31°; the lock holds the page there
         XCTAssertEqual(f.lean(to: 31, tol: 2), 31)
         shot("3-3-locked")
         walk(1, 4, wait: 2.2)
@@ -250,26 +264,27 @@ final class PlaythroughUITests: XCTestCase {
         f.lean(to: 60, tol: 5)
         walk(2, 2, wait: 1.2)
         shot("3-4-on-shadow")
-        f.lean(to: 42, tol: 6)
+        f.creep(to: 44, tol: 5)
         shot("3-4-ridden")
         walk(0, 0, wait: 1.6)
         win("3-4")
 
-        // 3-5 回程: the shadow reaches you only near shut; step on, then open all the way
+        // 3-5 回程 (retuned): the shadow reaches you only near shut; step on, open all the way, the long far shore
         f.lean(to: 30, tol: 3)
         walk(1, 1, wait: 0.9)
         shot("3-5-on-shadow")
         open()
         shot("3-5-carried-back")
-        walk(3, 3, wait: 1.4)
+        walk(0, 4, wait: 2.6)
         win("3-5")
 
-        // 3-6 灯下: on the shadow at ~60°, down to 31° where both line up, step off onto paper, then close
-        f.lean(to: 60, tol: 5)
-        walk(2, 1, wait: 0.9)
-        f.lean(to: 31, tol: 2)
+        // 3-6 灯下 (retuned): a stone hangs over the start; lean to ~75°, step onto the shadow, ride it down to 30°,
+        // step off onto paper, then close
+        f.lean(to: 74, tol: 5)
+        walk(3, 2, wait: 0.9)
+        f.creep(to: 31, tol: 3)
         shot("3-6-lined-up")
-        walk(1, 3, wait: 1.4)
+        walk(1, 3, wait: 1.2)
         close()
         shot("3-6-closed")
         walk(1, 4, wait: 1.6)
@@ -282,11 +297,106 @@ final class PlaythroughUITests: XCTestCase {
         XCTAssertTrue(back3.waitForExistence(timeout: 5))
         Thread.sleep(forTimeInterval: 1.8)
         shot("letter-3")
-        XCTAssertTrue(app.descendants(matching: .any)["preview.end"].exists)
+        XCTAssertTrue(app.descendants(matching: .any)["letter.end"].exists)
         back3.tap()
         Thread.sleep(forTimeInterval: 0.8)
         shot("map-ch3-done")
-        XCTAssertEqual(app.descendants(matching: .any)["map.count"].label.filter(\.isNumber), "1717")
+        XCTAssertEqual(app.descendants(matching: .any)["map.count"].label.filter(\.isNumber), "1925")
+    }
+
+    /// Chapter 4 「岸」: no new rule; every level needs two or three of the earlier ones at once.
+    func playChapter4() {
+        let f = FoldDriver(app: app)
+        app.buttons["map.continue"].tap()
+        let opener = app.descendants(matching: .any)["chapter.opener"]
+        XCTAssertTrue(opener.waitForExistence(timeout: 4), "四 · 岸 opens once")
+        Thread.sleep(forTimeInterval: 0.8)
+        shot("4-0-opener")
+        Thread.sleep(forTimeInterval: 2.6)
+        if opener.exists { opener.tap() }
+        Thread.sleep(forTimeInterval: 0.6)
+        XCTAssertTrue(app.descendants(matching: .any)["level.name"].label.contains("4-1"))
+        shot("4-1-start")
+
+        // 4-1 两道影: never close first (a stone hangs over the start). 75°: onto the far shadow; ride it to 30°;
+        // step across to the near shadow; open to 75°: it carries you back to (3,3); the goal is below
+        f.lean(to: 75, tol: 5)
+        walk(3, 1, wait: 1.2)
+        shot("4-1-a-far-shadow")
+        f.creep(to: 31, tol: 3)
+        XCTAssertTrue(f.isHere(1, 1), f.tile(1, 1).label)
+        walk(1, 3, wait: 1.4)
+        shot("4-1-b-both-in-column-1")
+        f.creep(to: 72, tol: 6)
+        XCTAssertTrue(f.isHere(3, 3), "the near shadow brought you back: \(f.tile(3, 3).label)")
+        shot("4-1-c-carried-back")
+        walk(3, 4, wait: 1.2)
+        win("4-1")
+
+        // 4-2 桥下影: close (the key opens the door), cross the stack to the tab, stand to 75°: bridge and shadow
+        close()
+        walk(3, 0, wait: 1.6)
+        XCTAssertEqual(f.lean(to: 75, tol: 4), 75, "the lock holds the bridge's 75°")
+        Thread.sleep(forTimeInterval: 0.6)
+        shot("4-2-bridge-and-shadow")
+        walk(2, 3, wait: 3.2)
+        win("4-2")
+
+        // 4-3 墨岸: close (the ink prints the shore), open to 55°, walk over the shadows onto the ink, close, go up
+        close()
+        open()
+        f.lean(to: 55, tol: 5)
+        walk(3, 2, wait: 2.4)
+        shot("4-3-on-the-ink")
+        close()
+        walk(3, 0, wait: 1.8)
+        win("4-3")
+
+        // 4-4 石雨: only (1,3) is safe to close from; then 55°, onto the middle stone's shadow, open to ~72°: ride
+        walk(1, 3, wait: 1.6)
+        close()
+        f.lean(to: 50, tol: 3)   // the middle shadow reaches (2,2) at 45–55° only
+        walk(2, 2, wait: 1.2)
+        shot("4-4-on-shadow")
+        f.creep(to: 71, tol: 6)
+        XCTAssertTrue(f.isHere(3, 2), f.tile(3, 2).label)
+        walk(3, 4, wait: 1.4)
+        win("4-4")
+
+        // 4-5 门下影: close for the key; 75°, onto the shadow; down to 60°: it carries you through the open door
+        walk(3, 1, wait: 2.4)
+        close()
+        f.lean(to: 75, tol: 5)
+        walk(3, 2, wait: 1.0)
+        f.creep(to: 60, tol: 5)
+        XCTAssertTrue(f.isHere(2, 2) || f.isHere(1, 2), "riding towards the door")
+        shot("4-5-through-the-door")
+        walk(0, 3, wait: 2.0)
+        win("4-5")
+
+        // 4-6 两人: down to (1,3), 30°, onto the shadow, open: it brings you back to the shore; close: she is there
+        shot("4-6-a-open")
+        walk(1, 3, wait: 2.0)
+        f.lean(to: 30, tol: 3)
+        walk(1, 4, wait: 1.0)
+        shot("4-6-b-on-shadow-30")
+        open()
+        XCTAssertTrue(f.isHere(3, 4), "carried back to the shore: \(f.tile(3, 4).label)")
+        close()
+        walk(3, 1, wait: 1.4)
+        Thread.sleep(forTimeInterval: 0.4)
+        shot("4-6-c-meet-seal")
+        Thread.sleep(forTimeInterval: 0.9)
+        shot("4-6-c-meet-caption")
+        let back4 = app.buttons["letter.next"]
+        XCTAssertTrue(back4.waitForExistence(timeout: 6), "the fourth letter opens by itself")
+        Thread.sleep(forTimeInterval: 1.8)
+        shot("letter-4")
+        XCTAssertTrue(app.descendants(matching: .any)["letter.end"].exists)
+        back4.tap()
+        Thread.sleep(forTimeInterval: 0.8)
+        shot("map-ch4-done")
+        XCTAssertEqual(app.descendants(matching: .any)["map.count"].label.filter(\.isNumber), "2525")
     }
 
     /// Stand the page at 90° with one realistic drag; if the hand missed the window, finish with the fold control's
