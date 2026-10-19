@@ -117,6 +117,11 @@ const NATIVE = {
   'hint.portrait.doorBridge': ['先合上，让钥匙开门；再立起到一半，从纸片桥上走过去。', 'Close so the key opens the door; then stand the page halfway and cross on the tabs.', '閉じて鍵で扉を開け、半分立てて紙片の橋を渡る。', '닫아서 열쇠로 문을 열고, 반쯤 세워 종이 다리를 건너요.'],
   'hint.portrait.inkBridge': ['只合上一次，让墨印到上页；再立起到一半过桥。', 'Close only once so the ink prints onto the top page; then stand it halfway and cross.', '一度だけ閉じて墨を上のページに写し、半分立てて渡る。', '한 번만 닫아 먹을 위 페이지에 찍고, 반쯤 세워 건너요.'],
   'hint.portrait.crease': ['先合上一次，钥匙和墨都印过去；再立起过桥、走到门边，最后合上。', 'Close once so the key and the ink carry across; stand the page, cross, walk to the door, then close.', 'まず一度閉じて鍵と墨を写す。立てて橋を渡り、扉まで歩いて、最後に閉じる。', '먼저 한 번 닫아 열쇠와 먹을 찍어요. 세워서 다리를 건너 문까지 걷고, 마지막에 닫아요.'],
+  // 0.1 (9): chapter 4 「岸」, the end of book one (design-review-ch4)
+  'map.nextPage': ['下一页', 'Next page', '次の頁', '다음 페이지'],
+  'map.book2': ['卷二', 'Book Two', '第二巻', '제2권'],
+  'closed.arrived': ['信，到了。', 'The letter is here.', '手紙が、届いた。', '편지가 닿았다.'],
+  'letter.2.end': ['第二章完。\n下一封信，还在路上。', 'End of Chapter Two.\nThe next letter is still on its way.', '第二章 了。\n次の手紙は、まだ途中。', '제2장 끝.\n다음 편지는 아직 오는 길.'],
   'closeAllLabel': ['合上书', 'Close the book', '本を閉じる', '책 덮기'],
   'openAllLabel': ['打开书', 'Open the book', '本を開く', '책 펴기'],
 };

@@ -1171,6 +1171,36 @@
         }
       }
     },
+    "closed.arrived": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "信，到了。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The letter is here."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "手紙が、届いた。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "편지가 닿았다."
+          }
+        }
+      }
+    },
     "closed.caption": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -4051,6 +4081,36 @@
         }
       }
     },
+    "letter.2.end": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第二章完。\n下一封信，还在路上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of Chapter Two.\nThe next letter is still on its way."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第二章 了。\n次の手紙は、まだ途中。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제2장 끝.\n다음 편지는 아직 오는 길."
+          }
+        }
+      }
+    },
     "letter.2.sign": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -4831,6 +4891,36 @@
         }
       }
     },
+    "map.book2": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷二"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Book Two"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第二巻"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제2권"
+          }
+        }
+      }
+    },
     "map.continue": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -4857,6 +4947,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "이어서 {n}"
+          }
+        }
+      }
+    },
+    "map.nextPage": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下一页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次の頁"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음 페이지"
           }
         }
       }

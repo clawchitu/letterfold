@@ -82,7 +82,9 @@ public final class FoldGame {
             if let to = rules.ride(board, char, rideSrc, a) {
                 if to.c != char.c { char = to; trail.append(to); events.append(.slid(to: to)) }
             } else {
-                events.append(.fell(crushed: a >= config.foldMin))
+                // crushed only where the stone really comes down: on the figure's own square (design-review-ch4 §3.1:
+                // a shadow giving way under you at the shut is a fall, and only a crush gets the dent)
+                events.append(.fell(crushed: rules.crushed(board, char, a)))
                 char = board.start; trail = [board.start]; rideSrc = nil
             }
         } else { rideSrc = nil }

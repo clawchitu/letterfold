@@ -75,6 +75,14 @@ struct TableBackground: View {
 }
 
 private struct HighContrastKey: EnvironmentKey { static let defaultValue = false }
+private struct GoalIsFigureKey: EnvironmentKey { static let defaultValue = false }
+extension EnvironmentValues {
+    /// 4-6 两人: the goal square holds the other figure, not a flag (design-ch4 §1, spec §8).
+    var goalIsFigure: Bool {
+        get { self[GoalIsFigureKey.self] }
+        set { self[GoalIsFigureKey.self] = newValue }
+    }
+}
 extension EnvironmentValues {
     var highContrast: Bool {
         get { self[HighContrastKey.self] }
@@ -96,7 +104,10 @@ struct TileFace: View {
     /// Only what sits on the square (flag, key, door, ink, tab stripes), not the square itself: the closed stack
     /// draws its own squares (design-review-3 §closed).
     var bare = false
+    /// The recipient steps aside (in points) when the sender stands in her square, so both silhouettes show.
+    var figureShift: Double = 0
     @Environment(\.highContrast) private var hc
+    @Environment(\.goalIsFigure) private var goalIsFigure
 
     var body: some View {
         switch tile {
@@ -110,7 +121,11 @@ struct TileFace: View {
         case .goal:
             ZStack {
                 if !bare { PathTile(size: size, paper: paper, doubleFrame: hc) }
-                Flag(size: size)
+                if goalIsFigure {
+                    Recipient().frame(width: size * 0.62, height: size * 0.84).offset(x: figureShift, y: -size * 0.12)
+                } else {
+                    Flag(size: size)
+                }
             }
         case .stone: PaperStone(size: size)
         case .key: KeyGlyph().frame(width: size * 0.62, height: size * 0.3).shadowed(hc)
@@ -504,6 +519,75 @@ nonisolated struct PuppetCane: Shape {
     }
 }
 
+/// The recipient (收信人, design-spec §8, design-ch4 §4): a shadow puppet with her hair in a bun, a long robe and a
+/// lamp on a short pole, standing still, facing the sender's bank. Her lamp is the one behind the page in chapter 3's
+/// letter (「灯在你那岸」). High contrast: black with a white outline, the lamp an outline.
+struct Recipient: View {
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        ZStack {
+            RecipientShape().fill(Tok.figure, style: FillStyle(eoFill: true))
+            if hc { RecipientShape().stroke(.white, lineWidth: 1.2) }
+            RecipientPole().stroke(Tok.figure, style: StrokeStyle(lineWidth: 2, lineCap: .round))
+            GeometryReader { g in
+                let w = g.size.width, h = g.size.height
+                let lamp = RoundedRectangle(cornerRadius: w * 0.04)
+                ZStack {
+                    if !hc { Circle().fill(Tok.lamp.opacity(0.55)).frame(width: w * 0.42, height: w * 0.42).blur(radius: 3) }
+                    lamp.fill(hc ? Color.white : Tok.lamp)
+                    lamp.stroke(hc ? Color.black : Tok.figure, lineWidth: hc ? 2 : 1.2)
+                    Rectangle().fill(hc ? Color.black : Tok.figure).frame(width: w * 0.16, height: 1.2).offset(y: -h * 0.045)
+                }
+                .frame(width: w * 0.17, height: h * 0.12)
+                .position(x: w * 0.12, y: h * 0.47)
+            }
+        }
+        .shadow(color: .black.opacity(hc ? 0 : 0.2), radius: 1, y: 1)
+        .accessibilityHidden(true)
+    }
+}
+
+nonisolated struct RecipientShape: Shape {
+    func path(in r: CGRect) -> Path {
+        func pt(_ x: Double, _ y: Double) -> CGPoint { CGPoint(x: r.minX + x * r.width, y: r.minY + y * r.height) }
+        var p = Path()
+        // the bun, high on the back of the head, with a hairpin
+        p.addEllipse(in: CGRect(origin: pt(0.50, 0.02), size: CGSize(width: r.width * 0.18, height: r.height * 0.09)))
+        p.addRect(CGRect(origin: pt(0.47, 0.055), size: CGSize(width: r.width * 0.28, height: r.height * 0.012)))
+        // head, side-on, the face to the left
+        p.move(to: pt(0.58, 0.10))
+        p.addCurve(to: pt(0.43, 0.15), control1: pt(0.56, 0.09), control2: pt(0.45, 0.10))
+        p.addLine(to: pt(0.40, 0.17)); p.addLine(to: pt(0.43, 0.185))
+        p.addCurve(to: pt(0.53, 0.24), control1: pt(0.43, 0.22), control2: pt(0.47, 0.24))
+        p.addCurve(to: pt(0.58, 0.10), control1: pt(0.60, 0.23), control2: pt(0.61, 0.14))
+        // robe: narrow shoulders, the sleeve reaching for the pole, a long skirt to the floor
+        p.move(to: pt(0.60, 0.26))
+        p.addCurve(to: pt(0.42, 0.27), control1: pt(0.55, 0.24), control2: pt(0.46, 0.24))
+        p.addLine(to: pt(0.26, 0.40))
+        p.addLine(to: pt(0.30, 0.44))
+        p.addLine(to: pt(0.41, 0.40))
+        p.addCurve(to: pt(0.30, 0.97), control1: pt(0.38, 0.6), control2: pt(0.32, 0.8))
+        p.addLine(to: pt(0.72, 0.97))
+        p.addCurve(to: pt(0.60, 0.26), control1: pt(0.68, 0.75), control2: pt(0.64, 0.4))
+        // a sash and two cut-out flowers
+        p.addRect(CGRect(origin: pt(0.40, 0.47), size: CGSize(width: r.width * 0.24, height: r.height * 0.02)))
+        for (cx, cy) in [(0.50, 0.62), (0.56, 0.80)] {
+            let d = 0.026
+            p.move(to: pt(cx, cy - d * 1.3)); p.addLine(to: pt(cx + d, cy)); p.addLine(to: pt(cx, cy + d * 1.3)); p.addLine(to: pt(cx - d, cy)); p.closeSubpath()
+        }
+        return p
+    }
+}
+nonisolated struct RecipientPole: Shape {
+    func path(in r: CGRect) -> Path {
+        var p = Path()
+        p.move(to: CGPoint(x: r.minX + 0.28 * r.width, y: r.minY + 0.42 * r.height))
+        p.addLine(to: CGPoint(x: r.minX + 0.12 * r.width, y: r.minY + 0.36 * r.height))
+        p.addLine(to: CGPoint(x: r.minX + 0.12 * r.width, y: r.minY + 0.41 * r.height))
+        return p
+    }
+}
+
 // MARK: - the vermilion thread
 
 /// One drawn piece of the walked thread, in a page's own coordinates. A step between pages becomes two half
@@ -612,11 +696,18 @@ struct Seal: View {
     let glyph: String
     var size: CGFloat = 28
     var color: Color = Tok.sealMuted
+    /// High contrast for 「成」 (design-ch4 §5): a 3 pt frame and the glyph, no fill, so it never relies on red.
+    var outlined = false
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 2.5).fill(color)
-            RoundedRectangle(cornerRadius: 1.5).stroke(Tok.paperNew.opacity(0.8), lineWidth: 0.8).padding(2)
-            Text(glyph).font(FontBook.shared.songti(.bold, size * 0.62)).foregroundStyle(Tok.paperNew)
+            if outlined {
+                RoundedRectangle(cornerRadius: 2.5).fill(.white)
+                RoundedRectangle(cornerRadius: 2.5).strokeBorder(.black, lineWidth: 3)
+            } else {
+                RoundedRectangle(cornerRadius: 2.5).fill(color)
+                RoundedRectangle(cornerRadius: 1.5).stroke(Tok.paperNew.opacity(0.8), lineWidth: 0.8).padding(2)
+            }
+            Text(glyph).font(FontBook.shared.songti(.bold, size * 0.62)).foregroundStyle(outlined ? Color.black : Tok.paperNew)
                 .environment(\.locale, Locale(identifier: "zh-Hans"))
                 .minimumScaleFactor(0.5)
         }

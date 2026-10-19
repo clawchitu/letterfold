@@ -109,6 +109,7 @@ struct BookView: View {
                     .accessibilityValue(String(format: "%.1f %.1f", model.probeRise, model.probeAngle))
             }
         }
+        .environment(\.goalIsFigure, model.goalIsFigure)
         .onChange(of: orientation, initial: true) { _, o in model.orientation = o }
         .onChange(of: model.index) { _, _ in scrollY = 0 }
         .accessibilityElement(children: .contain)
@@ -363,10 +364,13 @@ private struct BookBody: View {
             .offset(x: page.width, y: showBack ? pressed : 0)
             .shadow(color: .black.opacity(hc ? 0 : 0.10 * sin(a) + (showBack ? 0.06 : 0)), radius: 8 * sin(a / 2) + 2, x: 0, y: 3)
             // the crease: a bright line and a dark line (design-spec §4), lit up when the pages touch
-            Crease(horizontal: false, length: page.height, glow: model.glow)
+            Crease(horizontal: false, length: page.height, glow: model.glow, white: model.paper.creaseWhite)
                 .offset(x: page.width - 1, y: 0)
                 .allowsHitTesting(false)
             // the small seal 「通」 lands on the river where the thread crossed (frame final-10 ③)
+            if model.finaleSeal, let g = model.goalStackSlot {
+                FinaleSeal(model: model).position(x: page.width, y: geo.center(x: 0, y: g.y).y)
+            }
             if model.sealShown {
                 Seal(glyph: "通", size: 26)
                     .scaleEffect(model.sealSettled ? 1 : 1.02)
@@ -414,12 +418,23 @@ private struct Crease: View {
     let horizontal: Bool
     let length: Double
     let glow: Double
+    var white: Double = 0
     @Environment(\.highContrast) private var hc
     var body: some View {
         ZStack(alignment: .topLeading) {
             if hc {
                 Rectangle().fill(.black).frame(width: horizontal ? length : 2, height: horizontal ? 2 : length)
+                if white > 0 {
+                    // high contrast: the whitened crease is a 1 pt dashed line beside it (white is invisible on white)
+                    Path { p in p.move(to: .zero); p.addLine(to: horizontal ? CGPoint(x: length, y: 0) : CGPoint(x: 0, y: length)) }
+                        .stroke(.black, style: StrokeStyle(lineWidth: 1, dash: [4, 3])).offset(x: horizontal ? 0 : 4, y: horizontal ? 4 : 0)
+                }
             } else {
+                if white > 0 {
+                    // the crease gone white with folding (design-ch4 §4): a band of bare fibres either side of the fold
+                    Rectangle().fill(.white.opacity(0.75 * white)).frame(width: horizontal ? length : 6, height: horizontal ? 6 : length)
+                        .blur(radius: 1.6).offset(x: horizontal ? 0 : -2, y: horizontal ? -2 : 0)
+                }
                 Rectangle().fill(Tok.ink900.opacity(0.30)).frame(width: horizontal ? length : 0.8, height: horizontal ? 0.8 : length)
                 Rectangle().fill(.white.opacity(0.95)).frame(width: horizontal ? length : 1.1, height: horizontal ? 1.1 : length)
                     .offset(x: horizontal ? 0 : 2.0, y: horizontal ? 2.0 : 0)
@@ -477,7 +492,7 @@ private struct TileItem: View {
         let t = model.board[c]
         let shaded = model.shade[c] != nil && !t.isFloor
         let face = TileFace(tile: t, size: geo.tile, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
-                            mirrorAxisVertical: geo.horizontal, printedAt: model.inkPrintedAt[c])
+                            mirrorAxisVertical: geo.horizontal, printedAt: model.inkPrintedAt[c], figureShift: model.meetShift(c, geo.tile))
         let r = RoundedRectangle(cornerRadius: 3, style: .continuous)
         ZStack {
             face
@@ -608,7 +623,8 @@ private struct PuppetLayer: View {
         .frame(width: geo.tile * 0.62, height: geo.tile * 0.84)
         // crushed: flattened under the stone in 260 ms, feet on the paper (design-review-ch3 §2)
         .scaleEffect(x: 1 + 0.5 * model.squash, y: 1 - 0.86 * model.squash, anchor: .bottom)
-        .position(x: at.x, y: at.y - geo.tile * 0.12)
+        // in her square (4-6) the two stand side by side: his cane and her bun both show (design-ch4 §4)
+        .position(x: at.x - model.meetShift(model.figureCell, geo.tile), y: at.y - geo.tile * 0.12)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
     }
@@ -738,7 +754,8 @@ private struct FrontFace: View {
             if !model.puppetOnRamp && s.page(of: model.figureCell.c) == .folding { PuppetLayer(model: model, geo: geo, at: geo.center(model.figureCell)) }
             // chapter 3: the paper lights up as it leans past 89°, before the first shadow (design-review-ch3 §6.3)
             if model.paper.backlit && !hc && !AppSettings.shared.transparencyReduced && angle > 90 {
-                RadialGradient(colors: [Tok.lamp.opacity(0.5 * model.lamp(angle)), .clear], center: .center, startRadius: 0, endRadius: page.width * 0.75)
+                RadialGradient(colors: [Tok.lamp.opacity(0.5 * model.paper.lampScale * model.lamp(angle)), .clear], center: model.lampCenter(geo, page: .folding),
+                               startRadius: 0, endRadius: page.width * 0.75)
                     .allowsHitTesting(false)
             }
             // turning away from the light
@@ -782,11 +799,12 @@ private struct BackFace: View {
             else if backlit {
                 // chapter 3: the top page held up to the lamp (design-ch3 §4): warm, translucent, fibres showing; the
                 // lamp is on the viewer's side above the book, never under the canopy (design-review-ch3 §5.1)
-                PaperSurface(color: model.paper.color, back: true).opacity(rt ? 1 : 0.86 + 0.14 * max(0, min(1, (angle - 154) / 6)))
+                // old paper is thicker and lets less through (design-ch4 §4: backlight 0.45 against 0.60)
+                PaperSurface(color: model.paper.color, back: true).opacity(rt ? 1 : 1 - 0.14 * model.paper.lampScale * (1 - max(0, min(1, (angle - 154) / 6))))
                 if rt { Rectangle().strokeBorder(Tok.edgeLower, lineWidth: 1.5) }
                 else {
-                    RadialGradient(colors: [Tok.lamp.opacity(0.62 * lit), Tok.lamp.opacity(0.22 * lit), .clear], center: UnitPoint(x: 0.5, y: 0.55),
-                                   startRadius: 0, endRadius: page.width * 0.75)
+                    RadialGradient(colors: [Tok.lamp.opacity(0.62 * lit * model.paper.lampScale), Tok.lamp.opacity(0.22 * lit * model.paper.lampScale), .clear],
+                                   center: model.lampCenter(geo, page: .fixed), startRadius: 0, endRadius: page.width * 0.75)
                         .allowsHitTesting(false)
                     Color.black.opacity(0.05 * (1 - lit)).allowsHitTesting(false)
                 }
@@ -805,8 +823,9 @@ private struct BackFace: View {
             if closed {
                 // chapter 3 shut: the lamp goes out over 350 ms from the moment the book closed (design-review-ch3 §6.7)
                 if model.paper.backlit && !hc && !rt && model.lampLevel > 0.001 {
-                    RadialGradient(colors: [Tok.lamp.opacity(0.62 * model.lampLevel), Tok.lamp.opacity(0.22 * model.lampLevel), .clear],
-                                   center: UnitPoint(x: 0.5, y: 0.55), startRadius: 0, endRadius: page.width * 0.75)
+                    let l = model.lampLevel * model.paper.lampScale
+                    RadialGradient(colors: [Tok.lamp.opacity(0.62 * l), Tok.lamp.opacity(0.22 * l), .clear],
+                                   center: model.lampCenter(geo, page: .fixed), startRadius: 0, endRadius: page.width * 0.75)
                         .allowsHitTesting(false)
                 }
                 // fades in over the last 12° of the close, not all at once at 160°
@@ -911,7 +930,7 @@ private struct StackTile: View {
     @ViewBuilder private func glyph(_ t: Tile, cell c: Cell) -> some View {
         if t != .empty && t != .stone && t != .paper {
             TileFace(tile: t, size: size, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
-                     mirrorAxisVertical: flipVertical, printedAt: model.inkPrintedAt[c], bare: true)
+                     mirrorAxisVertical: flipVertical, printedAt: model.inkPrintedAt[c], bare: true, figureShift: model.meetShift(c, size))
                 .frame(width: size, height: size)
         }
     }
@@ -1035,7 +1054,44 @@ struct BookCamera {
     }
 }
 
+/// 「成」 (design-review-ch4 §2 ②, §4.7): 24 pt, cinnabar, the one full-cinnabar mark in the game; high contrast a
+/// 3 pt frame and the glyph. seal.drop: lands from 160% (180 ms ease-out), settles from 102% (90 ms); reduce motion:
+/// it is simply there.
+private struct FinaleSeal: View {
+    let model: GameModel
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        Seal(glyph: "成", size: 24, color: Tok.cinnabar, outlined: hc)
+            .scaleEffect(model.finaleSettled ? 1 : 1.02)
+            .transition(AppSettings.shared.motionReduced ? .identity : .asymmetric(insertion: .scale(scale: 1.6).combined(with: .opacity), removal: .opacity))
+            .allowsHitTesting(false)
+            .accessibilityElement()
+            .accessibilityHidden(true)
+            .accessibilityIdentifier("seal.cheng")
+    }
+}
+
 extension GameModel {
+    /// The goal's slot on the shut book (4-6: where the seal lands).
+    var goalStackSlot: (x: Int, y: Int)? { goal.map { spread.stackSlot($0) } }
+
+    /// 4-6: where the two stand in one square (shut, or opened again on her bank), each steps a little aside so his
+    /// cane and her bun both show: she to the right, he to the left. Elsewhere 0.
+    func meetShift(_ c: Cell, _ tile: Double) -> Double {
+        guard goalIsFigure, let g = goal else { return 0 }
+        let together = posture == .closed ? Cell(rules.proj(char.c), char.r) == Cell(rules.proj(g.c), g.r) : char == g
+        let here = posture == .closed ? Cell(rules.proj(c.c), c.r) == Cell(rules.proj(g.c), g.r) : c == g
+        return together && here ? tile * 0.17 : 0
+    }
+
+    /// The lamp's glow: centred on the page, or at the finale on her lamp (design-ch4 §4: the lamp is hers).
+    func lampCenter(_ geo: BookGeometry, page: Spread.Page) -> UnitPoint {
+        guard goalIsFigure, let g = goal else { return page == .fixed ? UnitPoint(x: 0.5, y: 0.55) : .center }
+        let cell = page == .fixed ? Cell(rules.mirror(g.c), g.r) : g
+        let p = geo.center(cell), sz = geo.pageSize
+        return UnitPoint(x: Double(p.x) / Double(sz.width), y: Double(p.y) / Double(sz.height))
+    }
+
     /// Standing on a tab of a locked bridge: the figure is drawn on the ramp, not on its page.
     var puppetOnRamp: Bool {
         guard orientation == .horizontalCrease, posture == .standing, board[char] == .tab else { return false }
@@ -1101,7 +1157,7 @@ private struct CameraBook: View {
                     }
                 }
             }
-            CreaseLine(a: cam.project(edge0), b: cam.project(SIMD3(W / 2, 0, 0)), glow: model.glow)
+            CreaseLine(a: cam.project(edge0), b: cam.project(SIMD3(W / 2, 0, 0)), glow: model.glow, white: model.paper.creaseWhite)
             if rise > 0 { ramps(cam, fold: fold, rise: rise, W: W, H: H) }
             if model.puppetOnRamp {
                 let p = cam.project(rampPoint(model.char, fold: fold, rise: rise, W: W))
@@ -1109,6 +1165,10 @@ private struct CameraBook: View {
                     .frame(width: geo.tile * 0.62 * cam.k, height: geo.tile * 0.84 * cam.k)
                     .position(x: p.x, y: p.y - geo.tile * 0.40 * cam.k)
                     .allowsHitTesting(false).accessibilityHidden(true)
+            }
+            // 「成」 on the folded edge of the shut book, over the square where the two meet (design-review-ch4 §2 ②)
+            if model.finaleSeal, let g = model.goalStackSlot {
+                FinaleSeal(model: model).position(cam.project(SIMD3(Double(geo.center(x: g.x, y: 0).x) - W / 2, 0, 0)))
             }
             if model.sealShown {
                 let x = model.crossingSlotX.map { Double(geo.center(x: $0, y: 0).x) } ?? W / 2
@@ -1216,12 +1276,17 @@ private struct RampFlap: View {
 private struct CreaseLine: View {
     let a: CGPoint, b: CGPoint
     let glow: Double
+    var white: Double = 0
     @Environment(\.highContrast) private var hc
     var body: some View {
         let line = Path { p in p.move(to: a); p.addLine(to: b) }
         ZStack {
-            if hc { line.stroke(.black, lineWidth: 2) }
-            else {
+            if hc {
+                line.stroke(.black, lineWidth: 2)
+                // the whitened crease (design-review-ch4 §3.5): a 1 pt dashed line in high contrast
+                if white > 0 { line.offsetBy(dx: 0, dy: 4).stroke(.black, style: StrokeStyle(lineWidth: 1, dash: [4, 3])) }
+            } else {
+                if white > 0 { line.stroke(.white.opacity(0.8 * white), lineWidth: 6).blur(radius: 1.6) }
                 line.stroke(Tok.ink900.opacity(0.30), lineWidth: 0.8)
                 line.offsetBy(dx: 0, dy: 1.6).stroke(.white.opacity(0.95), lineWidth: 1.1)
             }

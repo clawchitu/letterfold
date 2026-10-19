@@ -18,7 +18,9 @@ final class SoundBoard {
 
     static let scale: [Double] = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25]
 
-    enum Timbre: String { case wood, paper }
+    enum Timbre: String { case wood, paper, bell }
+    /// 4-6 两人: the goal is the other figure, with her own motif (a music box, design-ch4 §5 声音模式).
+    var figureMotif = false
 
     func start() {
         guard !started else { return }
@@ -78,6 +80,10 @@ final class SoundBoard {
                 let noise = Double(Int32(bitPattern: seed)) / Double(Int32.max)
                 let env = exp(-t * 5.5) * min(1, t * 120)
                 out[i] = Float(env * (0.55 * sin(2 * .pi * f * t) + 0.15 * sin(4 * .pi * f * t)) + noise * 0.12 * exp(-t * 45))
+            case .bell:
+                // a music box's tine an octave up: bright attack, the inharmonic 5.4x partial dying first
+                let env = exp(-t * 6.5) * min(1, t * 900)
+                out[i] = Float(env * (0.5 * sin(4 * .pi * f * t) + 0.16 * sin(2 * .pi * f * 5.4 * t) * exp(-t * 22)))
             }
         }
         return out
@@ -149,11 +155,18 @@ final class SoundBoard {
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(3))
                 guard let self, !Task.isCancelled, AppSettings.shared.soundMode, let w = `where`() else { continue }
-                for (i, row) in [3, 4, 5].enumerated() {
-                    self.note(row: row, timbre: .wood, pan: w.pan, volume: w.volume * 0.55, delay: Double(i) * 0.16)
+                // the goal's motif; her lamp's (4-6) is a music box, falling where the goal's rises
+                let fig = self.figureMotif
+                for (i, row) in (fig ? [5, 3, 4] : [3, 4, 5]).enumerated() {
+                    self.note(row: row, timbre: fig ? .bell : .wood, pan: w.pan, volume: w.volume * 0.55, delay: Double(i) * (fig ? 0.2 : 0.16))
                 }
             }
         }
+    }
+    /// 4-6: the two motifs at once when the two figures meet in the shut book.
+    func meet() {
+        for (i, row) in [3, 4, 5].enumerated() { note(row: row, timbre: .wood, pan: -0.2, volume: 0.5, delay: Double(i) * 0.16) }
+        for (i, row) in [5, 3, 4].enumerated() { note(row: row, timbre: .bell, pan: 0.2, volume: 0.45, delay: Double(i) * 0.16) }
     }
     func stopMotif() { motifTask?.cancel(); motifTask = nil }
 }

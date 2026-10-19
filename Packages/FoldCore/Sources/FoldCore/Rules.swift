@@ -1,5 +1,15 @@
 import Foundation
 
+/// A stretch of the leaning window where the shadows lock onto gaps (fold degrees, inclusive).
+public struct LockWindow: Sendable, Equatable {
+    public var lo, hi: Double
+    public let cells: [Cell]
+    public init(lo: Double, hi: Double, cells: [Cell]) { self.lo = lo; self.hi = hi; self.cells = cells }
+    /// Where a page let go inside the window comes to rest (a whole degree, so the reading is steady).
+    public var mid: Double { ((lo + hi) / 2).rounded() }
+    public func contains(_ a: Double) -> Bool { a >= lo && a <= hi }
+}
+
 /// The pure rules: a 1:1 port of fold-proto/logic.js (same names where possible).
 /// The sheet is W = 2N columns wide; the hinge sits between column N-1 and N.
 /// Folding the right half onto the left maps column c -> mirror(c) = W-1-c.
@@ -167,6 +177,39 @@ public struct Rules: Sendable {
             }
         }
         return events
+    }
+
+    // MARK: the shadow lock (design-review-ch3 §3, judged as rewritten in design-review-ch4 §2 / design-spec §5)
+
+    /// The shadows that lie on gaps (bare squares of the bottom page) at fold angle `a`. Shadows on paper or on a
+    /// stone do not count.
+    public func gapShadows(_ b: Board, _ a: Double) -> [Cell] {
+        shadows(b, a).keys.filter { !isRight($0.c) && b[$0] == .empty }.sorted { ($0.r, $0.c) < ($1.r, $1.c) }
+    }
+
+    /// Locked = at least one shadow lies on a gap, and every such shadow is connected to what the figure standing at
+    /// `from` can reach right now (the shadow joins the path). Returns the locked gaps, or nil.
+    public func lockCells(_ b: Board, from: Cell, _ a: Double) -> [Cell]? {
+        guard a >= config.shadeMin && a < config.foldMin else { return nil }
+        let gaps = gapShadows(b, a)
+        guard !gaps.isEmpty else { return nil }
+        let r = reachable(b, from: from, posture(a), shadows(b, a))
+        return gaps.allSatisfy(r.contains) ? gaps : nil
+    }
+
+    /// Every stretch of the leaning window (fold shadeMin..<foldMin, sampled every `step`°) where the shadows lock,
+    /// for a figure standing at `from`. Consecutive samples with the same gaps merge into one window.
+    public func lockWindows(_ b: Board, from: Cell, step: Double = 0.25) -> [LockWindow] {
+        var out: [LockWindow] = []
+        var a = config.shadeMin
+        while a < config.foldMin {
+            if let cells = lockCells(b, from: from, a) {
+                if let last = out.last, last.cells == cells, abs(last.hi - (a - step)) < 1e-6 { out[out.count - 1].hi = a }
+                else { out.append(LockWindow(lo: a, hi: a, cells: cells)) }
+            }
+            a += step
+        }
+        return out
     }
 
     public func isWin(_ b: Board, _ ch: Cell, _ p: Posture) -> Bool {

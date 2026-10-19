@@ -37,7 +37,7 @@ struct LevelScreen: View {
                 // opens again, so it never covers a square
                 if model.caption {
                     GeometryReader { g in
-                        Text(L10n.tight(L10n.t("closed.caption"), size: 26))
+                        Text(L10n.tight(L10n.t(model.captionKey), size: 26))
                             .font(FontBook.shared.songti(.bold, 26, relativeTo: .title))
                             .tracking(L10n.lang.hasPrefix("en") ? 0.5 : 4)
                             .foregroundStyle(Tok.ink900)
@@ -93,6 +93,8 @@ struct LevelScreen: View {
             }
         }
         .onAppear { fadeName(); checkOpener() }
+        // the finale: 1.5 s after 「信，到了。」 the fourth letter opens (design-review-ch4 §4.5)
+        .onChange(of: model.finaleLetter) { _, go in if go { router.go(.letter) } }
         .onChange(of: model.index) { _, _ in fadeName(); checkOpener() }
         .onDisappear { model.stopGhost() }        // no teaching moves behind the map's back
         .accessibilityAction(.escape) { router.go(.map) }
@@ -101,7 +103,7 @@ struct LevelScreen: View {
     /// 二 · 立: the first time chapter 2 opens, its opener plays once (frame 6-A). -noOpener YES skips it.
     private func checkOpener() {
         let d = UserDefaults.standard
-        let key = ["stand": "opener.2", "shadow": "opener.3"][model.level.id]
+        let key = ["stand": "opener.2", "shadow": "opener.3", "twoShades": "opener.4"][model.level.id]
         guard let key, !d.bool(forKey: key), !d.bool(forKey: "noOpener") else { return }
         d.set(true, forKey: key)
         opener = true
@@ -346,7 +348,7 @@ private struct ChapterOpener: View {
         let cjk = L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("ja")
         ZStack {
             PaperSurface(color: Tok.paperNew).ignoresSafeArea()
-            PaperSurface(color: chapter.id >= 3 ? PaperState.chapter3.color : PaperState.chapter2.color).ignoresSafeArea()
+            PaperSurface(color: chapter.id >= 4 ? PaperState.chapter4.color : chapter.id == 3 ? PaperState.chapter3.color : PaperState.chapter2.color).ignoresSafeArea()
                 .mask(WipeShape(progress: wipe).ignoresSafeArea())
             VStack(spacing: 18) {
                 Text(chapter.numeral).font(FontBook.shared.songti(.bold, 30, relativeTo: .title)).foregroundStyle(Tok.ink900)
@@ -355,6 +357,7 @@ private struct ChapterOpener: View {
                 Text(L10n.tight(L10n.t("ch.\(chapter.id).line"), size: 19)).font(FontBook.shared.songti(.regular, 19, relativeTo: .title3))
                     .foregroundStyle(Tok.ink700).multilineTextAlignment(.center)
                 if chapter.id == 3 { LampBook().frame(width: 150, height: 120).padding(.top, 22).accessibilityHidden(true) }
+                if chapter.id == 4 { WornBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
             }
             .padding(.horizontal, 24)
         }
@@ -402,6 +405,27 @@ private struct LampBook: View {
                         .stroke(hc ? Color.black : Tok.edgeLower.opacity(0.5), lineWidth: hc ? 1.5 : 0.75))
                 StoneSilhouette(size: t).position(x: w * 0.5, y: h * 0.30)
             }
+        }
+    }
+}
+
+/// 四 · 岸's small book (frame ch4-opener): lying flat, old paper, the crease gone white with folding.
+private struct WornBook: View {
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        GeometryReader { g in
+            let w = g.size.width, h = g.size.height
+            VStack(spacing: 0) {
+                Rectangle().fill(hc ? Color.white : PaperState.chapter4.color.mix(with: .white, by: 0.08))
+                Rectangle().fill(hc ? Color.white : PaperState.chapter4.color.mix(with: Color(hex: 0x8A7A62), by: 0.05))
+            }
+            .overlay(Rectangle().strokeBorder(hc ? Color.black : Tok.edgeLower.opacity(0.35), lineWidth: hc ? 1.5 : 0.75))
+            .overlay {
+                if hc { Rectangle().stroke(.black, style: StrokeStyle(lineWidth: 1, dash: [4, 3])).frame(height: 1) }
+                else { Rectangle().fill(.white.opacity(0.95)).frame(height: 3).blur(radius: 0.8) }
+            }
+            .frame(width: w, height: h)
+            .shadow(color: .black.opacity(hc ? 0 : 0.14), radius: 6, y: 4)
         }
     }
 }

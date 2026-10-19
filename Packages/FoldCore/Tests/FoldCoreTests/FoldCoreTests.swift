@@ -196,13 +196,22 @@ final class GameTests: XCTestCase {
         XCTAssertEqual(g.walk(to: Cell(0, 0))?.last, .won)
     }
 
-    func testRidingIntoTheFoldIsCrushed() throws {
+    /// Riding all the way into the fold: carried onto the stone's mirror square, the stone comes down on you (a drag
+    /// moves the hinge a degree at a time). Jumping the last 5° at once leaves you a square short: the shadow gives
+    /// way under you, a fall, not a crush (design-review-ch4 §3.1).
+    func testRidingIntoTheFold() throws {
         let g = try FoldGame(level: level("ride"))
         g.setAngle(120)
         g.walk(to: Cell(2, 2))
-        let events = g.setAngle(180)
-        XCTAssertTrue(events.contains(.fell(crushed: true)))
+        var events: [GameEvent] = []
+        for a in stride(from: 121.0, through: 180, by: 1) { events += g.setAngle(a) }
+        XCTAssertTrue(events.contains(.fell(crushed: true)), "\(events)")
         XCTAssertEqual(g.char, g.board.start)
+        let h = try FoldGame(level: level("ride"))
+        h.setAngle(120); h.walk(to: Cell(2, 2)); h.setAngle(150)
+        XCTAssertEqual(h.char, Cell(1, 2))
+        XCTAssertTrue(h.setAngle(165).contains(.fell(crushed: false)))
+        XCTAssertEqual(h.char, h.board.start)
     }
 
     /// design-review-ch3 §2: standing on paper under a right-page stone and closing the book crushes (3-2 「压」).
@@ -270,6 +279,137 @@ final class GameTests: XCTestCase {
         g.setAngle(90)
         XCTAssertEqual(g.posture, .standing)
         XCTAssertEqual(g.walk(to: Cell(7, 0))?.last, .won)
+    }
+}
+
+/// The shadow lock as rewritten in design-review-ch4 §2: every shadow on a gap joins the figure's path, at least one.
+final class LockTests: XCTestCase {
+    func level(_ id: String) throws -> Level { try XCTUnwrap(LevelPack.bundled().levels.first { $0.id == id }) }
+    let rules = Rules(.standard)
+
+    /// 3-3 远近: only where both shadows meet column 1 (fold 147–151) is there a lock; 140 is not one any more.
+    func testFarAndNearLockOnlyWhenBothJoin() throws {
+        let b = try Board(level: level("lock"))
+        XCTAssertEqual(rules.lockCells(b, from: b.start, 150), [Cell(1, 1), Cell(1, 2)])
+        XCTAssertNil(rules.lockCells(b, from: b.start, 140))
+        let w = rules.lockWindows(b, from: b.start)
+        XCTAssertEqual(w.count, 1)
+        XCTAssertEqual(w[0].lo, 146.5); XCTAssertEqual(w[0].hi, 151); XCTAssertEqual(w[0].mid, 149, "31° physical, as before")
+    }
+
+    /// 3-1: locks the moment the shadow drops into the gap.
+    func testShadowLocksInTheGap() throws {
+        let b = try Board(level: level("shadow"))
+        XCTAssertNil(rules.lockCells(b, from: b.start, 128))
+        XCTAssertEqual(rules.lockCells(b, from: b.start, 129), [Cell(1, 2)])
+    }
+
+    /// 4-1 两道影: standing on the far shadow at 150, both shadows lie in column 1 and join: a two-note lock; the shadow
+    /// on the start square (paper) does not count.
+    func testTwoShadowsLockTogether() throws {
+        let b = try Board(level: level("twoShades"))
+        XCTAssertNotNil(rules.shadows(b, 150)[Cell(3, 0)], "a shadow lies on the start square")
+        XCTAssertEqual(rules.lockCells(b, from: Cell(1, 1), 150), [Cell(1, 1), Cell(1, 3)])
+    }
+
+    /// 3-6 灯下 and 4-1: the start square's shadow is paper's, so it never blocks a lock.
+    func testShadowOnPaperDoesNotCount() throws {
+        let b = try Board(level: level("lamp"))
+        XCTAssertEqual(rules.lockCells(b, from: Cell(2, 1), 150), [Cell(1, 1), Cell(1, 2)])
+    }
+
+    /// 4-2 桥下影: with the door open, at 75° (fold 105) the far stone's shadow fills the gap at the bridge's foot.
+    func testBridgeShadeLocksAt105() throws {
+        var b = try Board(level: level("bridgeShade"))
+        XCTAssertNil(rules.lockCells(b, from: b.start, 105), "the door is still locked: the bridge is out of reach")
+        rules.stamp(&b)
+        XCTAssertEqual(rules.posture(105), .standing)
+        XCTAssertEqual(rules.lockCells(b, from: b.start, 105), [Cell(3, 1)])
+        XCTAssertNil(rules.lockCells(b, from: b.start, 90), "standing straight up there is no shadow yet")
+    }
+
+    /// Chapters 1–2 never lock (no stones on the top page cast onto gaps you can use).
+    func testNoLockWithoutShadows() throws {
+        for id in ["bridge", "stand", "crease", "rightBank"] {
+            let b = try Board(level: level(id))
+            XCTAssertTrue(rules.lockWindows(b, from: b.start).isEmpty, id)
+        }
+    }
+}
+
+/// Chapter 4 「岸」 (design-review-ch4 §4.16): the interactions, played through FoldGame.
+final class ChapterFourTests: XCTestCase {
+    func level(_ id: String) throws -> Level { try XCTUnwrap(LevelPack.bundled().levels.first { $0.id == id }) }
+    func play(_ g: FoldGame, to a: Double) -> [GameEvent] {
+        var ev: [GameEvent] = []
+        let step = a > g.angle ? 1.0 : -1.0
+        while abs(g.angle - a) > 0.01 { ev += g.setAngle(abs(a - g.angle) < 1 ? a : g.angle + step) }
+        return ev
+    }
+
+    /// 4-4 石雨: closing anywhere on (1,0)–(1,2) brings a stone down on you; (1,3) is the one safe square.
+    func testStoneRain() throws {
+        for r in 0..<3 {
+            let g = try FoldGame(level: level("stoneRain"))
+            XCTAssertNotNil(g.walk(to: Cell(1, r)))
+            XCTAssertTrue(play(g, to: 180).contains(.fell(crushed: true)), "row \(r)")
+            XCTAssertEqual(g.char, g.board.start)
+        }
+        let g = try FoldGame(level: level("stoneRain"))
+        g.walk(to: Cell(1, 3))
+        XCTAssertFalse(play(g, to: 180).contains { if case .fell = $0 { return true } else { return false } })
+        XCTAssertEqual(g.char, Cell(1, 3))
+        XCTAssertEqual(g.board[3, 3], .ink, "the ink printed onto the gap")
+    }
+
+    /// 4-5 门下影: with the door locked the shadow runs into it and drops you; once the key has opened it, the same lean
+    /// carries you through to the far side.
+    func testShadeDoor() throws {
+        let g = try FoldGame(level: level("shadeDoor"))
+        play(g, to: 105)
+        XCTAssertNotNil(g.walk(to: Cell(3, 2)))
+        XCTAssertTrue(play(g, to: 135).contains(.fell(crushed: false)))
+        XCTAssertEqual(g.char, g.board.start)
+        let h = try FoldGame(level: level("shadeDoor"))
+        h.walk(to: Cell(3, 1)); play(h, to: 180)
+        XCTAssertEqual(h.board[1, 2], .openDoor)
+        play(h, to: 105)
+        XCTAssertNotNil(h.walk(to: Cell(3, 2)))
+        let ev = play(h, to: 135)
+        XCTAssertFalse(ev.contains { if case .fell = $0 { return true } else { return false } }, "\(ev)")
+        XCTAssertEqual(h.char, Cell(1, 2), "carried through the open door")
+        XCTAssertEqual(h.walk(to: Cell(0, 3))?.last, .won)
+    }
+
+    /// 4-6 两人: ride back to the shore at (3,4), close: the door opens, the banks touch, you stand in her square.
+    /// Opened again, she is still on her bank.
+    func testTwoFiguresMeetOnlyShut() throws {
+        let g = try FoldGame(level: level("twoFigures"))
+        XCTAssertEqual(g.goal, Cell(4, 1))
+        XCTAssertNotNil(g.walk(to: Cell(1, 3)))
+        play(g, to: 150)
+        XCTAssertNotNil(g.walk(to: Cell(1, 4)))
+        play(g, to: 105)
+        XCTAssertEqual(g.char, Cell(3, 4), "the shadow brought you back to the shore")
+        play(g, to: 180)
+        XCTAssertEqual(g.walk(to: Cell(4, 1))?.last, .won)
+        XCTAssertEqual(g.board[4, 1], .goal, "she never moves")
+    }
+
+    /// 4-3 墨岸: the shadow at (2,1) slides onto (1,1), right under the stone (6,1): closing there crushes you. The ink
+    /// printed onto (3,2) is the shore to close from.
+    func testInkShore() throws {
+        let g = try FoldGame(level: level("inkShore"))
+        g.walk(to: Cell(1, 0)); play(g, to: 180); play(g, to: 0)
+        XCTAssertEqual(g.board[3, 2], .ink)
+        play(g, to: 125)
+        XCTAssertNotNil(g.walk(to: Cell(2, 1)))
+        XCTAssertTrue(play(g, to: 180).contains(.fell(crushed: true)))
+        XCTAssertEqual(g.char, g.board.start)
+        play(g, to: 120)
+        XCTAssertNotNil(g.walk(to: Cell(3, 2)))
+        play(g, to: 180)
+        XCTAssertEqual(g.walk(to: Cell(4, 0))?.last, .won)
     }
 }
 
