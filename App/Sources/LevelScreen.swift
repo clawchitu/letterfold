@@ -109,7 +109,7 @@ struct LevelScreen: View {
     /// 二 · 立: the first time chapter 2 opens, its opener plays once (frame 6-A). -noOpener YES skips it.
     private func checkOpener() {
         let d = UserDefaults.standard
-        let key = ["stand": "opener.2", "shadow": "opener.3", "twoShades": "opener.4"][model.level.id]
+        let key = ["stand": "opener.2", "shadow": "opener.3", "twoShades": "opener.4", "glue": "opener.5"][model.level.id]
         guard let key, !d.bool(forKey: key), !d.bool(forKey: "noOpener") else { return }
         d.set(true, forKey: key)
         opener = true
@@ -344,26 +344,43 @@ struct NextKnot: View {
 }
 
 /// Frame 6-A: the chapter numeral, its one-glyph name and its line; the new paper wipes in from the top-left corner
-/// (600 ms ease-in-out). Tap to skip; it leaves by itself after 2.6 s.
+/// (600 ms ease-in-out). Tap to skip; it leaves by itself after 2.6 s. Vol. 2 (frame v2c1-opener, review-v2c1 ①):
+/// the volume's name 「翻页」 small above 「五」, book one's old paper wiped by letter paper, the line fading in 400 ms
+/// after the wipe; reduce motion: a 200 ms cross-fade instead of the wipe.
 private struct ChapterOpener: View {
     let chapter: Chapter
     let done: () -> Void
     @State private var wipe = 0.0
+    @State private var lineShown = false
     var body: some View {
         let rm = AppSettings.shared.motionReduced
         let cjk = L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("ja")
+        let book2 = chapter.volume == 2
         ZStack {
-            PaperSurface(color: Tok.paperNew).ignoresSafeArea()
-            PaperSurface(color: chapter.id >= 4 ? PaperState.chapter4.color : chapter.id == 3 ? PaperState.chapter3.color : PaperState.chapter2.color).ignoresSafeArea()
-                .mask(WipeShape(progress: wipe).ignoresSafeArea())
+            PaperSurface(color: book2 ? PaperState.aged.color : Tok.paperNew).ignoresSafeArea()
+            if book2 && rm {
+                PaperSurface(color: Tok.paperLetter).ignoresSafeArea().opacity(wipe)
+            } else {
+                PaperSurface(color: book2 ? Tok.paperLetter : chapter.id >= 4 ? PaperState.chapter4.color : chapter.id == 3 ? PaperState.chapter3.color : PaperState.chapter2.color).ignoresSafeArea()
+                    .mask(WipeShape(progress: wipe).ignoresSafeArea())
+            }
             VStack(spacing: 18) {
+                if book2 {
+                    HStack(spacing: 10) {
+                        Rectangle().fill(Tok.ink600.opacity(0.6)).frame(width: 22, height: 1)
+                        Text(L10n.t("vol.2")).font(FontBook.shared.songti(.regular, 15, relativeTo: .subheadline)).foregroundStyle(Tok.ink700).tracking(cjk ? 4 : 0.5)
+                        Rectangle().fill(Tok.ink600.opacity(0.6)).frame(width: 22, height: 1)
+                    }
+                }
                 Text(chapter.numeral).font(FontBook.shared.songti(.bold, 30, relativeTo: .title)).foregroundStyle(Tok.ink900)
                 Text(chapter.name).font(cjk ? FontBook.shared.songti(.black, 150, relativeTo: .largeTitle) : FontBook.shared.songti(.bold, 52, relativeTo: .largeTitle))
                     .foregroundStyle(Tok.ink900).lineLimit(1).minimumScaleFactor(0.4)
                 Text(L10n.tight(L10n.t("ch.\(chapter.id).line"), size: 19)).font(FontBook.shared.songti(.regular, 19, relativeTo: .title3))
                     .foregroundStyle(Tok.ink700).multilineTextAlignment(.center)
+                    .opacity(book2 && !lineShown ? 0 : 1)
                 if chapter.id == 3 { LampBook().frame(width: 150, height: 120).padding(.top, 22).accessibilityHidden(true) }
                 if chapter.id == 4 { WornBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
+                if book2 { LetterBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
             }
             .padding(.horizontal, 24)
         }
@@ -376,6 +393,7 @@ private struct ChapterOpener: View {
         .accessibilityIdentifier("chapter.opener")
         .onAppear {
             withAnimation(rm ? .linear(duration: 0.2) : .easeInOut(duration: 0.6)) { wipe = 1 }
+            withAnimation(.easeOut(duration: 0.4).delay(rm ? 0.2 : 1.0)) { lineShown = true }
             UIAccessibility.post(notification: .screenChanged, argument: nil)
             // VoiceOver users dismiss it themselves (activate), so it is never missed
             if !UIAccessibility.isVoiceOverRunning { DispatchQueue.main.asyncAfter(deadline: .now() + 2.6) { done() } }
@@ -430,6 +448,34 @@ private struct WornBook: View {
                 if hc { Rectangle().stroke(.black, style: StrokeStyle(lineWidth: 1, dash: [4, 3])).frame(height: 1) }
                 else { Rectangle().fill(.white.opacity(0.95)).frame(height: 3).blur(radius: 0.8) }
             }
+            .frame(width: w, height: h)
+            .shadow(color: .black.opacity(hc ? 0 : 0.14), radius: 6, y: 4)
+        }
+    }
+}
+
+/// 五 · 胶's small book (frame v2c1-opener): lying flat, letter paper with its printed grid, one drop of glue
+/// in the bottom-right square.
+private struct LetterBook: View {
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        GeometryReader { g in
+            let w = g.size.width, h = g.size.height, cols = 8, rows = 3
+            let t = (w - 12) / Double(cols)
+            VStack(spacing: 0) {
+                ForEach(0..<2, id: \.self) { half in
+                    ZStack(alignment: .topLeading) {
+                        Rectangle().fill(hc ? Color.white : Tok.paperLetter.mix(with: half == 0 ? .white : Color(hex: 0x8A7A62), by: half == 0 ? 0.3 : 0.04))
+                        if !hc { RuledGrid(tile: t - 2, gap: 2, pad: 6, across: cols, down: rows, opacity: 0.22) }
+                        if half == 1 {
+                            GlueMark(size: t * 1.05).position(x: 6 + (Double(cols) - 0.5) * t, y: 6 + (Double(rows) - 0.5) * t)
+                        }
+                    }
+                    .frame(height: h / 2)
+                }
+            }
+            .overlay(Rectangle().strokeBorder(hc ? Color.black : Tok.edgeLower.opacity(0.35), lineWidth: hc ? 1.5 : 0.75))
+            .overlay { Rectangle().fill(hc ? Color.black : Tok.ink900.opacity(0.18)).frame(height: hc ? 1.5 : 0.8) }
             .frame(width: w, height: h)
             .shadow(color: .black.opacity(hc ? 0 : 0.14), radius: 6, y: 4)
         }

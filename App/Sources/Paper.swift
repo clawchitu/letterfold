@@ -143,6 +143,11 @@ struct TileFace: View {
                 Stripes(spacing: size * 0.12).stroke(Tok.ink900.opacity(hc ? 1 : 0.18), lineWidth: hc ? 2 : 1)
                     .clipShape(RoundedRectangle(cornerRadius: 3)).padding(2)
             }
+        case .glue:
+            ZStack {
+                if !bare { PathTile(size: size, paper: paper) }
+                GlueMark(size: size)
+            }
         }
     }
 }
@@ -167,6 +172,12 @@ struct PathTile: View {
                 r.strokeBorder(.black, lineWidth: doubleFrame ? 2 : 3)
                 if doubleFrame { r.inset(by: 8).stroke(.black, lineWidth: 2) }
             }
+        } else if paper.ruled {
+            // letter paper (design-v2c1 §2): the squares are printed, not embossed — a flat card face with a printed edge
+            r.fill(paper.tileFace)
+                .overlay(PaperSurface(color: .clear).clipShape(r).opacity(0.45))
+                .overlay(r.strokeBorder(Tok.ruleLetter.opacity(0.42), lineWidth: 1))
+                .shadow(color: Color(hex: 0x3A3F52).opacity(0.10), radius: 1.2, x: 0, y: 0.8)
         } else {
             r.fill(paper.tileFace)
                 .overlay(PaperSurface(color: .clear).clipShape(r).opacity(0.6))
@@ -175,6 +186,78 @@ struct PathTile: View {
                 .shadow(color: Color(hex: 0x5A4A36).opacity(0.28), radius: 0, x: 0, y: 1)
                 .shadow(color: Color(hex: 0x5A4A36).opacity(0.10), radius: 2.5, x: 0, y: 1.5)
         }
+    }
+}
+
+/// Glue (design-v2c1 §2, design-review-v2c1 §3): an amber wet smear on the card — #E8B848 at 62 %, an ellipse 58 % ×
+/// 48 % of the square sitting a little low, its edge feathering out to 22 %, an inset shade along its lower edge and one
+/// highlight — with a drop drawn in `glue.line` (#8A5A14, 5.3:1, not filled): the line carries the meaning, the amber is
+/// decoration. High contrast: the whole square is a 9 pt grid of 2.5 pt black dots (inset 3 pt) under a black drop, so
+/// once the glue is used the square turning to a hatched stone reads as "covered". Spent glue is never drawn.
+struct GlueMark: View {
+    let size: Double
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        let w = size * 0.58, h = size * 0.48
+        ZStack {
+            if hc {
+                Dots(spacing: 9, radius: 1.25).fill(.black)
+                    .clipShape(RoundedRectangle(cornerRadius: 2)).padding(3)
+                GlueDrop().fill(.white).frame(width: size * 0.30, height: size * 0.36)
+                GlueDrop().stroke(.black, style: StrokeStyle(lineWidth: 2.4, lineJoin: .round)).frame(width: size * 0.30, height: size * 0.36)
+            } else {
+                // the smear, feathered: a soft halo to 22 %, the body at 62 %
+                Ellipse().fill(Tok.glue.opacity(0.22)).frame(width: w * 1.16, height: h * 1.16).blur(radius: size * 0.035)
+                Ellipse().fill(Tok.glue.opacity(0.62)).frame(width: w, height: h)
+                    // thickness: an inset shade along the lower edge
+                    .overlay(Ellipse().strokeBorder(LinearGradient(colors: [.clear, Tok.glueLine.opacity(0.32)], startPoint: .center, endPoint: .bottom), lineWidth: 2)
+                        .blur(radius: 0.6))
+                    .overlay(alignment: .topLeading) {
+                        Ellipse().fill(.white.opacity(0.55)).frame(width: w * 0.22, height: h * 0.13).offset(x: w * 0.2, y: h * 0.16).blur(radius: 0.8)
+                    }
+                GlueDrop().stroke(Tok.glueLine, style: StrokeStyle(lineWidth: max(1.3, size * 0.024), lineJoin: .round))
+                    .frame(width: size * 0.17, height: size * 0.23)
+            }
+        }
+        .frame(width: size, height: size)
+        .offset(y: hc ? 0 : size * 0.04)
+    }
+}
+
+/// The drop, a line drawing (the prototype's glyph: a teardrop with a small curl inside).
+nonisolated struct GlueDrop: Shape {
+    func path(in r: CGRect) -> Path {
+        func pt(_ x: Double, _ y: Double) -> CGPoint { CGPoint(x: r.minX + x * r.width, y: r.minY + y * r.height) }
+        var p = Path()
+        p.move(to: pt(0.5, 0))
+        p.addCurve(to: pt(1, 0.66), control1: pt(0.68, 0.24), control2: pt(1, 0.42))
+        p.addCurve(to: pt(0, 0.66), control1: pt(1, 1.1), control2: pt(0, 1.1))
+        p.addCurve(to: pt(0.5, 0), control1: pt(0, 0.42), control2: pt(0.32, 0.24))
+        p.closeSubpath()
+        p.move(to: pt(0.30, 0.66)); p.addQuadCurve(to: pt(0.46, 0.86), control: pt(0.30, 0.82))
+        return p
+    }
+}
+
+/// The printed grid of letter paper (design-v2c1 §2): every slot of the page, empty ones too, in `rule.letter` at
+/// 16 % (decoration; off in high contrast).
+struct RuledGrid: View {
+    let tile: Double
+    let gap: Double
+    let pad: Double
+    let across: Int
+    let down: Int
+    var opacity = 0.16
+    var body: some View {
+        Path { p in
+            for x in 0..<across { for y in 0..<down {
+                p.addRoundedRect(in: CGRect(x: pad + Double(x) * (tile + gap) + 0.5, y: pad + Double(y) * (tile + gap) + 0.5, width: tile - 1, height: tile - 1),
+                                 cornerSize: CGSize(width: 3, height: 3))
+            } }
+        }
+        .stroke(Tok.ruleLetter.opacity(opacity), lineWidth: 1)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 }
 
@@ -746,10 +829,15 @@ nonisolated struct Stripes: Shape {
 }
 nonisolated struct Dots: Shape {
     let spacing: Double
+    var radius: Double = 1
     func path(in rect: CGRect) -> Path {
         var p = Path()
         var y = spacing / 2
-        while y < rect.height { var x = spacing / 2; while x < rect.width { p.addEllipse(in: CGRect(x: x - 1, y: y - 1, width: 2, height: 2)); x += spacing }; y += spacing }
+        while y < rect.height {
+            var x = spacing / 2
+            while x < rect.width { p.addEllipse(in: CGRect(x: rect.minX + x - radius, y: rect.minY + y - radius, width: 2 * radius, height: 2 * radius)); x += spacing }
+            y += spacing
+        }
         return p
     }
 }

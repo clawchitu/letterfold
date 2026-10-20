@@ -4,15 +4,28 @@ import QuartzCore
 import AVFoundation
 import FoldCore
 
-/// A chapter of the book. M1 ships chapter 1 only; the others show on the map as sealed (plan §6).
+/// A chapter of the book. Chapters are numbered through the book (5 = vol. 2's first, its levels are 5-1 … 5-7); on
+/// the map each volume counts its own (vol. 2: 一 胶, 二 翻页).
 struct Chapter: Identifiable {
     let id: Int
     let levelIDs: [String]
     let unlocked: Bool
     let soon: Bool
-    /// 一 … 五 in Chinese and Japanese; the reader's own digits elsewhere (one language on screen at a time).
-    var numeral: String { L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("ja") ? ["一", "二", "三", "四", "五"][id - 1] : "\(id)" }
+    /// 卷一《两岸》 = chapters 1–4, 卷二《翻页》 = 5 on (roadmap §1).
+    var volume: Int { id <= 4 ? 1 : 2 }
+    /// The chapter's number inside its volume (the map cards).
+    var inVolume: Int { volume == 1 ? id : id - 4 }
+    static func numeral(_ n: Int) -> String {
+        L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("ja") ? ["一", "二", "三", "四", "五", "六", "七", "八"][n - 1] : "\(n)"
+    }
+    /// 一 … 五 through the book in Chinese and Japanese; the reader's own digits elsewhere (one language on screen at a time).
+    var numeral: String { Self.numeral(id) }
+    /// 一, 二 … inside the volume (the map's cards).
+    var volumeNumeral: String { Self.numeral(inVolume) }
     var name: String { L10n.t("ch.\(id)") }
+    /// The chapter's seal on its map card and (vol. 2) on the finale: 达 · 通 · 影 · 成 · 胶 (design-v2c1 §2 章印).
+    var sealGlyph: String { ["达", "通", "影", "成", "胶", "页"][min(5, id - 1)] }
+    static func volumeChapters(_ v: Int) -> [Chapter] { all.filter { $0.volume == v } }
 
     static let all: [Chapter] = [
         Chapter(id: 1, levelIDs: ["bridge", "facing", "back", "key", "ink"], unlocked: true, soon: false),
@@ -23,8 +36,10 @@ struct Chapter: Identifiable {
         Chapter(id: 3, levelIDs: ["shadow", "press", "lock", "ride", "rideBack", "lamp"], unlocked: true, soon: false),
         // chapter 4 「岸」 ends book one, 《两岸》 (design-ch4.md)
         Chapter(id: 4, levelIDs: ["twoShades", "bridgeShade", "inkShore", "stoneRain", "shadeDoor", "twoFigures"], unlocked: true, soon: false),
-        // the book goes on (roadmap.md §1): a dashed 「下一页 · 卷二」 card, never a sealed chapter that looks openable
-        Chapter(id: 5, levelIDs: [], unlocked: false, soon: true),
+        // vol. 2 《翻页》, chapter 1 「胶」 (design-v2c1): opens once chapter 4 is all delivered (the strict rule)
+        Chapter(id: 5, levelIDs: ["glue", "lend", "bridgeGlue", "shadowFirst", "oneClose", "rideFirst", "stuckPage"], unlocked: true, soon: false),
+        // vol. 2 chapter 2 「翻页」 is not written yet: a dashed card, never a sealed chapter that looks openable
+        Chapter(id: 6, levelIDs: [], unlocked: false, soon: true),
     ]
 }
 
@@ -141,7 +156,20 @@ final class GameModel {
     @ObservationIgnored private var doneIDs: Set<String>
     private(set) var hingeKind: HingeKind = .simulated
     private(set) var hintAvailable = false
+    /// The 「?」 ladder (design-review-v2c1 §2): a level with a first hint (5-4's old line) shows it on the first press.
+    @ObservationIgnored private var hintRung = 0
     private(set) var inkPrintedAt: [Cell: Date] = [:]
+    /// glue.pull (design-review-v2c1 §3): stones flying across the crease to the glue that took them, the faint mark
+    /// each leaves where it was, and the glue square's flash. Times are CACurrentMediaTime().
+    struct GluePull: Equatable { var from: Cell; var to: Cell; var start: Double }
+    private(set) var gluePulls: [GluePull] = []
+    /// Glue squares a stone is still flying to: they keep drawing the glue until it lands.
+    private(set) var inFlight: Set<Cell> = []
+    /// A vol. 2 dead end: the goal is out of reach until undo or restart (FoldGame.stuck).
+    private(set) var stuck = false
+    @ObservationIgnored private var glueTask: Task<Void, Never>?
+    /// -gluePullFreeze <0…1> (screenshots): hold every pull at that point of its flight.
+    static var glueFreeze: Double? { UserDefaults.standard.object(forKey: "gluePullFreeze") != nil ? UserDefaults.standard.double(forKey: "gluePullFreeze") : nil }
 
     let haptics = Haptics()
     let sound = SoundBoard()
@@ -201,7 +229,7 @@ final class GameModel {
     @ObservationIgnored private var hingeTarget = 0.0
     @ObservationIgnored private var hingeIdle: Task<Void, Never>?
 
-    private struct Pending { var mode = false, connected = false, lost = false, shade = false, hadShade = false, lit = false; var stamps: [Rules.Stamp] = [] }
+    private struct Pending { var mode = false, connected = false, lost = false, shade = false, hadShade = false, lit = false, dead = false; var stamps: [Rules.Stamp] = [] }
 
     static let step = 15.0
     static let snapPoints: [Double] = [0, 90, 130, 180]
@@ -240,10 +268,12 @@ final class GameModel {
     /// -cameraPitch <deg> (screenshots), -probe YES (UI tests: the drag's edge probe).
     static func launch() -> GameModel {
         let d = UserDefaults.standard
-        if d.bool(forKey: "resetProgress") { SavedProgress.reset(d); for k in 2...4 { d.removeObject(forKey: "opener.\(k)") } }
+        if d.bool(forKey: "resetProgress") { SavedProgress.reset(d); for k in 2...5 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
         let m = GameModel(pack: try! LevelPack.bundled())
         let start = d.integer(forKey: "startLevel")
         if start > 0 { m.go(start - 1) }
+        // -closeFirst YES (screenshots): shut the book once and open it, so keys, ink and glue have acted
+        if d.bool(forKey: "closeFirst") { m.setAngle(180); m.setAngle(0); m.clearGlue(); m.pending = Pending() }
         // a leaning start angle comes first, so -walkTo can step onto its shadows
         if d.object(forKey: "startAngle") != nil && d.double(forKey: "startAngle") > 90 && d.double(forKey: "startAngle") < 155 {
             m.setAngle(d.double(forKey: "startAngle")); m.pending = Pending()
@@ -275,9 +305,12 @@ final class GameModel {
     var leansNotStands: Bool { paper.backlit && angle > 90 && isLeaning && !hasTabs }
     /// The level has pop-up tabs (纸片).
     var hasTabs: Bool { board.grid.contains { $0.contains(.tab) } }
-    /// 4-6 两人: the goal square is the other figure (design-ch4 §1).
-    var goalIsFigure: Bool { level.id == "twoFigures" }
+    /// 4-6 两人 and 5-7 粘住的页: the goal square is the other figure (design-ch4 §1, design-v2c1 §5 ⑨).
+    var goalIsFigure: Bool { level.id == "twoFigures" || level.id == "stuckPage" }
+    /// The two meet in the shut book, a seal drops, 「信，到了。」, then the letter comes by itself.
     var isFinale: Bool { goalIsFigure }
+    /// 4-6 ends book one with 「成」 across the crease; 5-7 drops the chapter's seal 「胶」 on her square (design-review-v2c1 ③④).
+    var finaleGlyph: String { level.id == "twoFigures" ? "成" : chapter.sealGlyph }
     /// The goal square (in 4-6, her square).
     var goal: Cell? { game.goal }
     var chapter: Chapter { Chapter.all.first { $0.levelIDs.contains(level.id) } ?? Chapter.all[0] }
@@ -288,6 +321,7 @@ final class GameModel {
     }
     var paper: PaperState {
         guard chapter.id >= 4 else { return [PaperState.chapter1, .chapter2, .chapter3][min(2, max(0, chapter.id - 1))] }
+        if chapter.volume == 2 { return .letter }
         if isFinale { return .aged }
         // design-ch4 §4: the crease whitens level by level, 0 → 100% (4-6 whitest)
         var p = PaperState.chapter4
@@ -331,7 +365,8 @@ final class GameModel {
         letterTask?.cancel(); letterTask = nil
         quiet = false; dragging = false; angleHint = false; walking = false
         threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]
-        pending = Pending(); saidAngle = 0; nopes = 0; hintAvailable = false; toast = nil
+        pending = Pending(); saidAngle = 0; nopes = 0; hintAvailable = false; toast = nil; hintRung = 0
+        clearGlue()
         angle = 0
         cameraTask?.cancel(); cameraTask = nil; cameraPitch = Self.handPitch
         setLamp(1, now: true)
@@ -388,6 +423,8 @@ final class GameModel {
 
     /// The web's hints talk about the right and left pages; on a portrait phone those are the top and bottom pages.
     func hint() {
+        defer { hintRung += 1 }
+        if hintRung == 0, let first = L10n.levelHint1(level.id) { show(first); return }
         let key = "hint.portrait.\(level.id)", portrait = L10n.t(key)
         show(orientation == .horizontalCrease && portrait != key ? portrait : levelText.hint)
     }
@@ -857,6 +894,7 @@ final class GameModel {
         angleHint = false
         stopMotion()
         if game.undo() {
+            clearGlue()
             withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .easeOut(duration: 0.16)) {
                 angle = game.angle; rubber = 0; sync()
             }
@@ -955,6 +993,7 @@ final class GameModel {
         if won { return }
         stopAll()
         guard game.undo() else { announce(L10n.t("nothingToUndo")); haptics.nope(); return }
+        clearGlue()
         haptics.undo()
         sound.rub(volume: 0.3)
         withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .easeInOut(duration: 0.25)) {
@@ -973,12 +1012,15 @@ final class GameModel {
 
     private func sync() {
         board = game.board; char = game.char; trail = game.trail; posture = game.posture; shade = game.shade; canUndo = game.canUndo
+        if stuck != game.stuck { stuck = game.stuck }
         refreshLock()
     }
 
     /// `at`: where the figure stood before these events (a crush is drawn there; FoldCore has already moved it home).
     private func handle(_ events: [GameEvent], from: Posture, at figure: Cell? = nil) {
         var here = figure ?? char
+        var pulled: [(Cell, Cell)] = []
+        defer { if !pulled.isEmpty { startGlue(pulled) } }
         for e in events {
             switch e {
             case .postureChanged(_, let to):
@@ -995,6 +1037,7 @@ final class GameModel {
             case .stamped(let s):
                 pending.stamps.append(s)
                 if s.kind == .ink, let to = s.cells.last { inkPrintedAt[to] = .now }
+                if s.kind == .glue, s.cells.count == 2 { pulled.append((s.cells[0], s.cells[1])) }
             case .connected:
                 pending.connected = true; pending.lost = false
                 haptics.connect()
@@ -1013,8 +1056,15 @@ final class GameModel {
                 stopWalk(); stopRideFeel()
                 if crushed { beginCrush(at: here) } else { stopMotion(); haptics.fall() }
                 show(L10n.t(crushed ? "crushed" : "fell"))
-            case .stepped, .blocked:
+            case .stepped(let to):
+                // glue underfoot: a soft give (design-review-v2c1 §3 触觉 / 声音)
+                if board[to] == .glue { haptics.soft(); sound.glueTick(pan: pan(of: to)) }
+            case .blocked:
                 break
+            case .deadEnd:
+                // a vol. 2 dead end: 「有的路断了」, the falling two-note, a warning tap; undo and restart still work
+                pending.dead = true
+                sound.lost(); haptics.warning()
             case .won:
                 win()
             }
@@ -1169,7 +1219,7 @@ final class GameModel {
         let a = Int(angle.rounded())
         let p = pending
         pending = Pending(hadShade: !shade.isEmpty)
-        if a == saidAngle && !p.mode && !p.connected && !p.shade && !p.lit && p.stamps.isEmpty { return }
+        if a == saidAngle && !p.mode && !p.connected && !p.shade && !p.lit && !p.dead && p.stamps.isEmpty { return }
         saidAngle = a
         var parts: [String] = []
         switch posture {
@@ -1184,8 +1234,10 @@ final class GameModel {
             else { parts.append(L10n.t(isLeaning ? "book.lean" : "book.open", ["a": 180 - a])) }
         }
         if p.lit { parts.append(L10n.t("paper.lit")) }
-        if p.connected { parts.append(L10n.t("connected")) } else if p.lost { parts.append(L10n.t("lost")) }
-        for s in p.stamps { parts.append(L10n.t(s.kind == .door ? "doorOpened" : "inkPrinted")) }
+        if p.connected { parts.append(L10n.t("connected")) } else if p.lost || p.dead { parts.append(L10n.t("lost")) }
+        // the shut: 「胶把石头粘到了对页」 once however many stones moved, then the door (design-review-v2c1 §3)
+        if p.stamps.contains(where: { $0.kind == .glue }) { parts.append(L10n.t("glued")) }
+        for s in p.stamps where s.kind != .glue { parts.append(L10n.t(s.kind == .door ? "doorOpened" : "inkPrinted")) }
         if p.shade {
             let gaps = shade.keys.filter(isGap).sorted { ($0.r, $0.c) < ($1.r, $1.c) }
             if !gaps.isEmpty {
@@ -1205,6 +1257,74 @@ final class GameModel {
             try? await Task.sleep(for: .milliseconds(350))
             if !Task.isCancelled { self?.settle() }
         }
+    }
+
+    // MARK: glue.pull (design-review-v2c1 §3)
+
+    /// Stones the first close glued across: lift 2 pt, cross the crease by 110 ms (a 6 % mark left behind, fading over
+    /// 1 s), land at 220 ms ease-out, then the glue square flashes (220–520 ms). Several stones leave 60 ms apart, by
+    /// their bottom-page column. Each lands with a rigid tap, its sound sliding from its old page's ear to the new one.
+    /// Reduce motion: no lift, no mark, no stagger — the stone is simply there, and the square flashes.
+    private func startGlue(_ pulls: [(Cell, Cell)]) {
+        let rm = settings.motionReduced
+        let order = pulls.sorted { rules.proj($0.0.c) < rules.proj($1.0.c) }
+        let t0 = CACurrentMediaTime()
+        gluePulls = order.enumerated().map { i, p in GluePull(from: p.0, to: p.1, start: t0 + (rm ? 0 : Double(i) * 0.06)) }
+        haptics.glue(count: order.count, stagger: rm ? 0 : 0.06)
+        for (i, p) in order.enumerated() {
+            sound.stoneSlide(from: pan(of: p.0), to: pan(of: p.1), delay: rm ? 0 : Double(i) * 0.06)
+        }
+        inFlight = rm ? [] : Set(order.map(\.1))
+        glueTask?.cancel()
+        guard Self.glueFreeze == nil else { return }
+        let pulls = gluePulls
+        glueTask = Task { [weak self] in
+            for p in pulls {
+                let wait = p.start + 0.22 - CACurrentMediaTime()
+                if wait > 0 { try? await Task.sleep(for: .seconds(wait)) }
+                guard !Task.isCancelled, let self else { return }
+                self.inFlight.remove(p.to)
+            }
+            try? await Task.sleep(for: .milliseconds(1000))
+            guard !Task.isCancelled, let self else { return }
+            self.gluePulls = []
+        }
+    }
+
+    func clearGlue() {
+        glueTask?.cancel(); glueTask = nil
+        if !gluePulls.isEmpty { gluePulls = [] }
+        if !inFlight.isEmpty { inFlight = [] }
+    }
+
+    /// 0…1 along the flight of the stone landing on `c`, or nil if none is flying there now.
+    func flight(to c: Cell, at now: Double) -> Double? {
+        guard let p = gluePulls.first(where: { $0.to == c }) else { return nil }
+        if let f = Self.glueFreeze { return f }
+        if settings.motionReduced { return nil }
+        let u = (now - p.start) / 0.22
+        return u < 1 ? max(0, u) : nil
+    }
+    /// A stone is still on its way to `c`: the square does not draw it yet.
+    func stoneInFlight(_ c: Cell) -> Bool { inFlight.contains(c) }
+    /// What a square shows: a glue square keeps its glue until the stone it pulls lands on it.
+    func shownTile(_ c: Cell) -> Tile { inFlight.contains(c) ? .glue : board[c] }
+
+    /// 5-7's seal 「胶」 on her square (design-review-v2c1 ④): 24 pt, its centre 6 pt in from the square's top-right
+    /// corner; 12 pt in (flush) when a square up or to the right of it on screen holds anything, so it covers nothing.
+    func goalSealOffset(tile: Double) -> CGSize {
+        guard let g = goal else { return .zero }
+        let sp = spread, slot = posture == .closed ? sp.stackSlot(g) : sp.slot(g)
+        let page: Spread.Page = posture == .closed ? .fixed : sp.page(of: g.c)
+        var busy = false
+        for (dx, dy) in [(1, 0), (0, -1), (1, -1)] {
+            let x = slot.x + dx, y = slot.y + dy
+            guard x >= 0, x < sp.slotsAcross, y >= 0, y < sp.slotsDown else { continue }
+            let c = sp.cell(page: page, x: x, y: y)
+            for t in [board[c], posture == .closed ? board[Cell(rules.mirror(c.c), c.r)] : .empty] where t != .empty && t != .paper { busy = true }
+        }
+        let k = tile / 2 - (busy ? 12 : 6)
+        return CGSize(width: k, height: -k)
     }
 
     // MARK: ink
@@ -1258,12 +1378,16 @@ final class GameModel {
         if !rules.isRight(c) {
             if tl == .empty && (M.isFloor || M == .stone) { extra = L10n.t("fallsHere", ["noun": noun(M)]) }
             else if tl == .door && M == .key { extra = L10n.t("doorKey") }
+            else if tl == .glue && M == .stone { extra = L10n.t("glueTakes") }
+            else if tl == .stone && M == .glue { extra = L10n.t("stoneGlued", ["col": L10n.t("col", ["c": m + 1])]) }
             else if tl.isFloor && M == .stone { extra = L10n.t("crushedHere") }
             else if tl == .ink && M == .empty { extra = L10n.t("inkPrints") }
             else if tl == .tab && c == n - 1 && M == .tab { extra = L10n.t("tabBridge") }
         } else {
             let col = L10n.t("col", ["c": m + 1])
-            if tl == .stone { extra = L10n.t("stoneShadow", ["col": col]) }
+            if tl == .stone && M == .glue { extra = L10n.t("stoneGlued", ["col": col]) }
+            else if tl == .stone { extra = L10n.t("stoneShadow", ["col": col]) }
+            else if tl == .glue && M == .stone { extra = L10n.t("glueTakes") }
             else if tl == .key && M == .door { extra = L10n.t("keyOpens", ["col": col]) }
             else if tl == .ink && M == .empty { extra = L10n.t("inkTo", ["col": col]) }
             else if tl == .tab && c == n && M == .tab { extra = L10n.t("tabBridge") }

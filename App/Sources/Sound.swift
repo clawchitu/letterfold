@@ -136,6 +136,42 @@ final class SoundBoard {
         }
     }
 
+    // MARK: vol. 2 glue (design-review-v2c1 §3)
+
+    /// Glue underfoot: a short low tick, duller than a tab's flick.
+    func glueTick(pan: Double) {
+        play("glueTick", pan: pan, volume: 0.45) {
+            let n = Int(0.06 * Self.rate)
+            return (0..<n).map { i in
+                let t = Double(i) / Self.rate
+                return Float(exp(-t * 70) * 0.7 * sin(2 * .pi * 150 * t) * min(1, t * 2000))
+            }
+        }
+    }
+    /// A stone pulled across the crease: a dull stone knock that slides from one ear to the other over 220 ms
+    /// (four short grains stepping the pan), landing on the far page.
+    func stoneSlide(from a: Double, to b: Double, delay: Double = 0) {
+        for k in 0..<4 {
+            let u = Double(k) / 3
+            play("stoneGrain", pan: a + (b - a) * u, volume: k == 3 ? 0.75 : 0.32, delay: delay + 0.22 * u) {
+                let n = Int(0.07 * Self.rate)
+                var seed: UInt32 = 4242
+                return (0..<n).map { i in
+                    let t = Double(i) / Self.rate
+                    seed = seed &* 1_103_515_245 &+ 12345
+                    let noise = Double(Int32(bitPattern: seed)) / Double(Int32.max)
+                    return Float(exp(-t * 55) * (0.6 * sin(2 * .pi * 210 * t) + 0.25 * noise * exp(-t * 90)))
+                }
+            }
+        }
+    }
+    /// Some way is gone for good (a dead end): the prototype's falling two-note in wood (329.6 → 293.7 Hz).
+    func lost() {
+        for (i, f) in [329.6, 293.7].enumerated() {
+            play("lost\(i)", volume: 0.55, delay: Double(i) * 0.14) { Self.tone(f, .wood, 0.36) }
+        }
+    }
+
     // MARK: sound mode
 
     func note(row: Int, timbre: Timbre, pan: Double, volume: Double = 0.8, delay: Double = 0) {

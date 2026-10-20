@@ -117,6 +117,16 @@ final class Haptics {
         try? p.stop(atTime: CHHapticTimeImmediate)
     }
 
+    /// Stepping onto glue: a soft give (design-review-v2c1 §3).
+    func soft() { if !play([tap(0, 0.45, 0.1)]) { impactSoft.impactOccurred(intensity: 0.45 * scale) } }
+    /// glue.pull: one rigid tap per stone that changes page, `stagger` apart (design-review-v2c1 §3).
+    func glue(count: Int, stagger: Double) {
+        guard count > 0 else { return }
+        if !play((0..<count).map { tap(Double($0) * stagger, 0.85, 0.75) }) { impactRigid.impactOccurred(intensity: 0.85 * scale) }
+    }
+    /// A dead end (vol. 2): the system's warning pattern.
+    func warning() { guard scale > 0 else { return }; notice.notificationOccurred(.warning) }
+
     /// Falling off a shadow.
     func fall() { if !play([tap(0, 1.0, 0.2), hum(0.02, 0.2, 0.4, 0.05)]) { impactSoft.impactOccurred(intensity: scale) } }
 }

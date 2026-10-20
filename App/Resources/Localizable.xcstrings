@@ -878,25 +878,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "翻页"
+            "value": "胶"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Turn the Page"
+            "value": "Glue"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ページをめくる"
+            "value": "糊"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "책장 넘기기"
+            "value": "풀"
           }
         }
       }
@@ -927,6 +927,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "붙은 것은 따라간다."
+          }
+        }
+      }
+    },
+    "ch.6": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "翻页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn the Page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ページをめくる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책장 넘기기"
           }
         }
       }
@@ -1137,6 +1167,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "곧 공개"
+          }
+        }
+      }
+    },
+    "ch.unwritten": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "尚未写"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not yet written"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだ書かれていない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직 쓰이지 않음"
           }
         }
       }
@@ -5281,6 +5341,96 @@
         }
       }
     },
+    "map.toBook2": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下一页：卷二《翻页》"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next page: Book Two, Turn the Page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次の頁：第二巻『ページをめくる』"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음 페이지: 제2권 《책장 넘기기》"
+          }
+        }
+      }
+    },
+    "map.vol1Back": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷一《两岸》"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Book One: Both Banks"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第一巻『両岸』"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제1권 《양안》"
+          }
+        }
+      }
+    },
+    "map.vol1BackLabel": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回到卷一《两岸》，已送达 {n} / {total}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back to Book One, Both Banks: {n} of {total} delivered"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第一巻『両岸』へ戻る、{n} / {total} 通 届いた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제1권 《양안》으로, {total}통 중 {n}통 도착"
+          }
+        }
+      }
+    },
     "mode.fold": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -8607,6 +8757,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "위"
+          }
+        }
+      }
+    },
+    "vol.2": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "翻页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn the Page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ページをめくる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책장 넘기기"
           }
         }
       }

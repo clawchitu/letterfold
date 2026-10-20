@@ -33,6 +33,13 @@ enum Tok {
     static let edgeLower = Color(hex: 0x7D7163)       // 4.04:1
     static let edgeUpper = Color(hex: 0x5F6873)       // 4.81:1
     static let tileMirror = Color(hex: 0xF1ECE3).mix(with: Color(hex: 0x8C96A0), by: 0.12)
+    // vol. 2 「翻页」 (design-v2c1 §2): letter paper, its printed grid, the glue
+    static let paperLetter = Color(hex: 0xF6F3EC)
+    /// rule.letter: the printed grid, 16 % (decoration, ~1.4:1; off in high contrast)
+    static let ruleLetter = Color(hex: 0x545C76)
+    /// glue: the amber wet smear, drawn at 62 % (decoration); the information is the drop's line (`glueLine`, 5.3:1)
+    static let glue = Color(hex: 0xE8B848)
+    static let glueLine = Color(hex: 0x8A5A14)
 }
 
 /// The only per-chapter variables (design-spec §0.1, §3): paper colour, translucency, ink saturation, backlight.
@@ -46,6 +53,8 @@ struct PaperState: Equatable {
     var backlight: Double = 0.60
     /// The crease gone white with folding (design-spec §4, design-ch4 §4): 0 … 1, chapter 4 only.
     var creaseWhite: Double = 0
+    /// Vol. 2 letter paper: the grid is printed (`rule.letter`), every slot, the empty ones too.
+    var ruled = false
 
     static let chapter1 = PaperState(color: Tok.paperNew, translucency: 0.05, inkSaturation: 0.82, backlit: false, thread: Tok.thread)
     static let chapter2 = PaperState(color: Color(hex: 0xF3EDE2), translucency: 0.15, inkSaturation: 0.78, backlit: false, thread: Tok.thread)
@@ -54,6 +63,10 @@ struct PaperState: Equatable {
     static let chapter4 = PaperState(color: Color(hex: 0xEFE6D2), translucency: 0.10, inkSaturation: 0.88, backlit: true, thread: Tok.threadAged, backlight: 0.45)
     /// paper.aged, the finale 4-6
     static let aged = PaperState(color: Color(hex: 0xEBE0C7), translucency: 0.10, inkSaturation: 0.95, backlit: true, thread: Tok.threadAged, backlight: 0.45, creaseWhite: 1)
+    /// paper.letter, vol. 2 「翻页」 (design-v2c1 §2): cooler and whiter, a printed grid; translucency 0.14, ink 100 %,
+    /// lit only while it leans (0.45, as chapter 4)
+    static let letter = PaperState(color: Tok.paperLetter, translucency: 0.14, inkSaturation: 0.86, backlit: true, thread: Tok.threadAged,
+                                   backlight: 0.45, ruled: true)
     /// The lamp's strength relative to chapter 3's rice paper.
     var lampScale: Double { backlight / 0.60 }
 
