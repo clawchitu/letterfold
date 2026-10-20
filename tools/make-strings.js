@@ -154,10 +154,13 @@ fs.writeFileSync(path.join(outDir, 'Localizable.xcstrings'), catalog(ui));
 
 const lv = {};
 for (const id of Object.keys(src.levelTexts.en)) {
-  ['name', 'line', 'hint'].forEach((part, i) => {
+  // an optional 4th entry: the first rung of the 「?」 ladder (design-review-v2c1 §2), shown before the hint
+  ['name', 'line', 'hint', 'hint1'].forEach((part, i) => {
+    if (i === 3 && !(src.levelTexts.en[id] || [])[3]) return;
     const values = {};
-    for (const l of Object.keys(LANG)) values[l] = (src.levelTexts[l][id] || src.levelTexts.en[id])[i];
-    lv[`${id}.${part}`] = { comment: `Level "${id}": ${part === 'name' ? 'title' : part === 'line' ? 'one-line teaser' : 'hint'}. From fold-proto i18n.js.`, values };
+    for (const l of Object.keys(LANG)) values[l] = (src.levelTexts[l][id] || src.levelTexts.en[id])[i] ?? src.levelTexts.en[id][i];
+    const what = { name: 'title', line: 'one-line teaser', hint: 'hint', hint1: 'first hint (the 「?」 ladder, before the hint)' }[part];
+    lv[`${id}.${part}`] = { comment: `Level "${id}": ${what}. From fold-proto i18n.js.`, values };
   });
 }
 fs.writeFileSync(path.join(outDir, 'Levels.xcstrings'), catalog(lv));

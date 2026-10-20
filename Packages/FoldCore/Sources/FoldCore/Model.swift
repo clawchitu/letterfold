@@ -12,9 +12,11 @@ public struct Cell: Hashable, Sendable, Codable, CustomStringConvertible {
 public enum Tile: Character, Sendable, Codable, CaseIterable {
     case empty = "-", paper = ".", start = "S", goal = "G", stone = "x", key = "k"
     case door = "D", openDoor = "o", ink = "i", tab = "p"
+    /// Glue (vol. 2, design-v2c1 §1): paper you can stand on; the first close pulls the stone facing it onto itself.
+    case glue = "g"
 
     /// Something you can stand on.
-    public var isFloor: Bool { [.paper, .start, .goal, .key, .ink, .openDoor, .tab].contains(self) }
+    public var isFloor: Bool { [.paper, .start, .goal, .key, .ink, .openDoor, .tab, .glue].contains(self) }
     /// Something that blocks the stacked cell when the book is closed.
     public var isBlock: Bool { self == .stone || self == .door }
     /// Stones block the light; paper and ink let it through.
@@ -59,6 +61,10 @@ public struct Expectation: Sendable, Codable, Equatable {
     public var needsRide: Bool?
     public var needsKey: Bool?
     public var needsInk: Bool?
+    /// Vol. 2: unsolvable with the glue wiped off (glue as a tool).
+    public var needsGlue: Bool?
+    /// Vol. 2: closing really moves a stone across (glue as a trap).
+    public var glueFires: Bool?
     public var stepped15: Bool
     /// tools/check.js `analyse()` (design-difficulty.md §2); the Swift `Difficulty` port must agree.
     public var difficulty: Difficulty.Summary?
@@ -72,6 +78,8 @@ public struct Expectation: Sendable, Codable, Equatable {
         case "needsRide": return needsRide
         case "needsKey": return needsKey
         case "needsInk": return needsInk
+        case "needsGlue": return needsGlue
+        case "glueFires": return glueFires
         default: return nil
         }
     }
