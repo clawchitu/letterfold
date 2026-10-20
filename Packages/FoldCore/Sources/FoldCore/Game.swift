@@ -146,6 +146,13 @@ public final class FoldGame {
         if undoStack.count > 200 { undoStack.removeFirst() }
     }
 
+    /// The game moved on since the last pushUndo (a key used, ink printed, a stone glued, a step, a fall), even if the
+    /// hinge came back to where it was: the snapshot must stay (Codex review 11).
+    public var changedSinceUndo: Bool {
+        guard let s = undoStack.last else { return false }
+        return s.board != board || s.char != char || s.trail != trail || s.closedOnce != closedOnce || s.stuck != stuck
+    }
+
     /// Forget the last pushUndo (a drag that ended where it started).
     public func dropUndo() { _ = undoStack.popLast() }
 

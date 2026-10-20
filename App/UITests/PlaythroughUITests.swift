@@ -435,7 +435,7 @@ final class PlaythroughUITests: XCTestCase {
 
         // 5-3 桥与胶: close, cross the stack to the tab, 75° (the lock): bridge up and the borrowed shadow at its foot
         close()
-        walk(4, 0, wait: 1.8)
+        walk(3, 0, wait: 1.8)                        // the stack (3,0): you land on the top page's tab (4,0)
         XCTAssertEqual(f.lean(to: 75, tol: 4), 75, "the lock holds the bridge's 75°")
         Thread.sleep(forTimeInterval: 0.6)
         shot("5-3-bridge")

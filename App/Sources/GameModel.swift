@@ -877,7 +877,7 @@ final class GameModel {
         let still = angleSamples.last.map { CACurrentMediaTime() - $0.t > 0.06 } ?? true
         let projected = angle + (chapter.id >= 3 && still ? 0 : velocity) * 0.12
         let target = restTarget(projected)
-        if abs(target - dragFrom) < 0.5 && abs(angle - dragFrom) < 0.5 { game.dropUndo(); canUndo = game.canUndo }
+        if abs(target - dragFrom) < 0.5 && abs(angle - dragFrom) < 0.5 && !game.changedSinceUndo { game.dropUndo(); canUndo = game.canUndo }
         hintFadeTask = Task { [weak self] in
             try? await Task.sleep(for: .milliseconds(1))
             withAnimation(.easeOut(duration: 0.6)) { self?.angleHint = false }
@@ -1234,7 +1234,8 @@ final class GameModel {
             else { parts.append(L10n.t(isLeaning ? "book.lean" : "book.open", ["a": 180 - a])) }
         }
         if p.lit { parts.append(L10n.t("paper.lit")) }
-        if p.connected { parts.append(L10n.t("connected")) } else if p.lost || p.dead { parts.append(L10n.t("lost")) }
+        // a dead end outranks a passing connection (Codex review 11): it is said once, so it must not be swallowed
+        if p.dead { parts.append(L10n.t("lost")) } else if p.connected { parts.append(L10n.t("connected")) } else if p.lost { parts.append(L10n.t("lost")) }
         // the shut: 「胶把石头粘到了对页」 once however many stones moved, then the door (design-review-v2c1 §3)
         if p.stamps.contains(where: { $0.kind == .glue }) { parts.append(L10n.t("glued")) }
         for s in p.stamps where s.kind != .glue { parts.append(L10n.t(s.kind == .door ? "doorOpened" : "inkPrinted")) }
@@ -1274,7 +1275,8 @@ final class GameModel {
         for (i, p) in order.enumerated() {
             sound.stoneSlide(from: pan(of: p.0), to: pan(of: p.1), delay: rm ? 0 : Double(i) * 0.06)
         }
-        inFlight = rm ? [] : Set(order.map(\.1))
+        // the flight is drawn by the camera book (portrait); the side-on layouts show the stone landed at once
+        inFlight = rm || orientation != .horizontalCrease ? [] : Set(order.map(\.1))
         glueTask?.cancel()
         guard Self.glueFreeze == nil else { return }
         let pulls = gluePulls
