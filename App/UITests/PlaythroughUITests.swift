@@ -1,6 +1,6 @@
 import XCTest
 
-/// A first-time player's run through the whole of book one in Chinese, all 25 levels: cover → 1-1 … 4-6 → letters → map.
+/// A first-time player's run through the whole book in Chinese, all 32 levels: cover → 1-1 … 4-6 → 5-1 … 5-7 → letters → map.
 /// Every fold is a real one-finger drag on the page; every walk is a tap on a square.
 /// Set TEST_RUNNER_LF_SHOTS=/some/dir to also write the key moments there as PNGs (QA passes).
 final class PlaythroughUITests: XCTestCase {
@@ -396,7 +396,99 @@ final class PlaythroughUITests: XCTestCase {
         back4.tap()
         Thread.sleep(forTimeInterval: 0.8)
         shot("map-ch4-done")
-        XCTAssertEqual(app.descendants(matching: .any)["map.count"].label.filter(\.isNumber), "2525")
+        // 0.1 (13): book one done, the map opens on vol. 2's page, book one folded into 「‹ 卷一《两岸》25 / 25」
+        let vol1 = app.descendants(matching: .any)["map.vol1"]
+        XCTAssertTrue(vol1.waitForExistence(timeout: 4), "the map opens on vol. 2's page")
+        XCTAssertTrue(vol1.label.contains("25 / 25"), vol1.label)
+        playChapter5()
+    }
+
+    /// Vol. 2 chapter 1 「胶」 (design-v2c1 §3): the first close rearranges the board; every fold a real drag.
+    func playChapter5() {
+        let f = FoldDriver(app: app)
+        shot("map-vol2")
+        app.buttons["map.continue"].tap()
+        let opener = app.descendants(matching: .any)["chapter.opener"]
+        XCTAssertTrue(opener.waitForExistence(timeout: 4), "五 · 胶 opens once")
+        Thread.sleep(forTimeInterval: 1.2)
+        shot("5-0-opener")
+        Thread.sleep(forTimeInterval: 2.2)
+        if opener.exists { opener.tap() }
+        Thread.sleep(forTimeInterval: 0.6)
+        XCTAssertTrue(app.descendants(matching: .any)["level.name"].label.contains("5-1"))
+        shot("5-1-start")
+
+        // 5-1 胶: one close and the glue across takes the stone off your road
+        close()
+        shot("5-1-closed")
+        open()
+        shot("5-1-opened")
+        walk(6, 4, wait: 2.0)
+        win("5-1")
+
+        // 5-2 借石: close (the stone goes to the top page), lean to ~40°: its shadow fills the gap
+        close(); open()
+        f.lean(to: 40, tol: 8)
+        shot("5-2-borrowed-shadow")
+        walk(1, 4, wait: 2.4)
+        win("5-2")
+
+        // 5-3 桥与胶: close, cross the stack to the tab, 75° (the lock): bridge up and the borrowed shadow at its foot
+        close()
+        walk(3, 0, wait: 1.8)                        // the stack (3,0): you land on the top page's tab (4,0)
+        XCTAssertEqual(f.lean(to: 75, tol: 4), 75, "the lock holds the bridge's 75°")
+        Thread.sleep(forTimeInterval: 0.6)
+        shot("5-3-bridge")
+        walk(1, 2, wait: 3.0)
+        win("5-3")
+
+        // 5-4 影先: lean first, cross the only shadow, then close
+        f.lean(to: 40, tol: 8)
+        walk(1, 3, wait: 2.0)
+        shot("5-4-crossed")
+        close()
+        walk(1, 4, wait: 1.6)
+        win("5-4")
+
+        // 5-5 一合: below the glue, one close, across the stack
+        walk(1, 3, wait: 2.0)
+        close()
+        shot("5-5-closed")
+        walk(2, 2, wait: 2.0)
+        win("5-5")
+
+        // 5-6 先乘影: 60°, onto the shadow, ride it to ~42°, step down, close (glue + key at once)
+        f.lean(to: 60, tol: 5)
+        walk(2, 0, wait: 1.2)
+        f.creep(to: 42, tol: 5)
+        XCTAssertTrue(f.isHere(1, 0), "the shadow carried you: \(f.tile(1, 0).label)")
+        walk(1, 1, wait: 1.2)
+        close()
+        walk(1, 3, wait: 2.0)
+        win("5-6")
+
+        // 5-7 粘住的页: below the glue, close (two glues, the key), 60° (the lock), through the door, close: she is there
+        walk(1, 3, wait: 2.6)
+        close()
+        shot("5-7-first-close")
+        XCTAssertEqual(f.lean(to: 60, tol: 4), 60, "the lock holds 60°")
+        shot("5-7-60")
+        walk(3, 3, wait: 2.0)
+        close()
+        walk(3, 2, wait: 1.4)
+        Thread.sleep(forTimeInterval: 0.4)
+        shot("5-7-meet-seal")
+        Thread.sleep(forTimeInterval: 0.9)
+        shot("5-7-meet-caption")
+        let back5 = app.buttons["letter.next"]
+        XCTAssertTrue(back5.waitForExistence(timeout: 8), "the fifth letter opens by itself")
+        Thread.sleep(forTimeInterval: 2.0)
+        shot("letter-5")
+        XCTAssertTrue(app.descendants(matching: .any)["letter.end"].exists, "letter.5.end above 「回到章节」")
+        back5.tap()
+        Thread.sleep(forTimeInterval: 0.8)
+        shot("map-ch5-done")
+        XCTAssertTrue(app.descendants(matching: .any)["map.vol1"].exists)
     }
 
     /// Stand the page at 90° with one realistic drag; if the hand missed the window, finish with the fold control's

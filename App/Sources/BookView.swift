@@ -110,7 +110,7 @@ struct BookView: View {
                 // UI tests: the shadow lock, the camera's pose and the finale's seal (design-review-ch4 §4.3–4.5)
                 Color.clear.frame(width: 2, height: 2)
                     .accessibilityElement().accessibilityIdentifier("probe.state")
-                    .accessibilityValue("lock=\(model.lockedCells.map { "\($0.c),\($0.r)" }.joined(separator: " "));cam=\(Int(model.cameraPitch.rounded()));seal=\(model.finaleSeal ? 1 : 0);split=\(model.finaleSealSplit ? 1 : 0);aha=\(model.aha ? 1 : 0);me=\(model.figureCell.c),\(model.figureCell.r)")
+                    .accessibilityValue("lock=\(model.lockedCells.map { "\($0.c),\($0.r)" }.joined(separator: " "));cam=\(Int(model.cameraPitch.rounded()));seal=\(model.finaleSeal ? 1 : 0);split=\(model.finaleSealSplit ? 1 : 0);aha=\(model.aha ? 1 : 0);me=\(model.figureCell.c),\(model.figureCell.r);stuck=\(model.stuck ? 1 : 0);glued=\(model.gluePulls.count)")
             }
         }
         .environment(\.goalIsFigure, model.goalIsFigure)
@@ -126,7 +126,7 @@ struct BookView: View {
             ForEach(rotorCells { $0 == .empty }, id: \.self) { c in AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace) }
         }
         .accessibilityRotor(Text(L10n.t("rotor.object"))) {
-            ForEach(rotorCells { [.stone, .key, .door, .openDoor, .ink, .goal, .tab].contains($0) }, id: \.self) { c in
+            ForEach(rotorCells { [.stone, .key, .door, .openDoor, .ink, .goal, .tab, .glue].contains($0) }, id: \.self) { c in
                 AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace)
             }
         }
@@ -378,7 +378,7 @@ private struct BookBody: View {
                 .offset(x: page.width - 1, y: 0)
                 .allowsHitTesting(false)
             // the small seal 「通」 lands on the river where the thread crossed (frame final-10 ③)
-            if model.finaleSeal && !model.finaleSealSplit, let g = model.goalStackSlot {
+            if model.finaleSeal && model.finaleGlyph == "成" && !model.finaleSealSplit, let g = model.goalStackSlot {
                 FinaleSeal(model: model).position(x: page.width, y: geo.center(x: 0, y: g.y).y)
             }
             if model.sealShown {
@@ -499,7 +499,7 @@ private struct TileItem: View {
 
     var body: some View {
         let c = cell
-        let t = model.board[c]
+        let t = model.shownTile(c)
         let shaded = model.shade[c] != nil && !t.isFloor
         let face = TileFace(tile: t, size: geo.tile, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
                             mirrorAxisVertical: geo.horizontal, printedAt: model.inkPrintedAt[c], figureShift: model.meetShift(c, geo.tile))
@@ -719,6 +719,7 @@ private struct FixedPage: View {
                 if part == .squares { TileEdges(model: model, geo: geo, cells: cells) }
             } else {
             PageSheet(horizontal: geo.horizontal, isFixed: true, color: model.paper.color)
+            if model.paper.ruled && !hc { RuledGrid(tile: geo.tile, gap: geo.gap, pad: geo.pad, across: s.slotsAcross, down: s.slotsDown) }
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: !covered && targets)
             // kept in the tree while the book is closed (hidden, not removed): re-inserting it mid-aha lost the
             // thread's redraw and left this page without its thread after the book reopened
@@ -757,11 +758,15 @@ private struct FrontFace: View {
             (cell: s.cell(page: .folding, x: x, y: y), slot: geo.center(x: x, y: y)) } }
         ZStack(alignment: .topLeading) {
             PageSheet(horizontal: geo.horizontal, isFixed: false, color: model.paper.color)
+            if model.paper.ruled && !hc { RuledGrid(tile: geo.tile, gap: geo.gap, pad: geo.pad, across: s.slotsAcross, down: s.slotsDown) }
             // the top page stays tappable (and in VoiceOver) while it lies flat or stands: 2-1's goal is up there
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: targets && (angle < 20 || model.posture == .standing))
             ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .folding),
                         end: model.trail.last.flatMap { s.page(of: $0.c) == .folding ? geo.center($0) : nil })
             if !model.puppetOnRamp && s.page(of: model.figureCell.c) == .folding { PuppetLayer(model: model, geo: geo, at: geo.center(model.figureCell)) }
+            if model.finaleSeal && model.finaleGlyph != "成", let g = model.goal, s.page(of: g.c) == .folding {
+                GoalSeal(model: model).position(geo.center(g)).offset(model.goalSealOffset(tile: geo.tile))
+            }
             // chapter 3: the paper lights up as it leans past 89°, before the first shadow (design-review-ch3 §6.3)
             if model.paper.backlit && !hc && !AppSettings.shared.transparencyReduced && angle > 90 {
                 RadialGradient(colors: [Tok.lamp.opacity(0.5 * model.paper.lampScale * model.lamp(angle)), .clear], center: model.lampCenter(geo, page: .folding),
@@ -829,6 +834,7 @@ private struct BackFace: View {
                                endPoint: UnitPoint(x: geo.horizontal ? 0.5 : 0.9, y: geo.horizontal ? 0.12 : 0.5))
                     .allowsHitTesting(false)
             }
+            if model.paper.ruled && !hc && !closed { RuledGrid(tile: geo.tile, gap: geo.gap, pad: geo.pad, across: s.slotsAcross, down: s.slotsDown, opacity: 0.07) }
             if backlit && lit > 0 && stones { CanopyStones(model: model, geo: geo, lit: lit) }
             if closed {
                 // chapter 3 shut: the lamp goes out over 350 ms from the moment the book closed (design-review-ch3 §6.7)
@@ -852,6 +858,9 @@ private struct BackFace: View {
                 if targets { StackTargets(model: model, geo: geo, rotorSpace: rotorSpace, cells: under) }
                 ThreadLayer(model: model, pieces: stackPieces(model, geo), end: model.trail.last.map(geo.stackCenter))
                 PuppetLayer(model: model, geo: geo, at: geo.stackCenter(model.figureCell))
+                if model.finaleSeal && model.finaleGlyph != "成", let g = model.goal {
+                    GoalSeal(model: model).position(geo.stackCenter(g)).offset(model.goalSealOffset(tile: geo.tile))
+                }
             }
         }
         .frame(width: page.width, height: page.height, alignment: .topLeading)
@@ -869,8 +878,16 @@ private struct CanopyStones: View {
     @Environment(\.highContrast) private var hc
     var body: some View {
         let n = model.config.columnsPerPage, rules = model.rules
-        let stones = (0..<model.board.h).flatMap { r in (n..<2 * n).map { Cell($0, r) } }.filter { model.board[$0].isOpaque }
+        let stones = (0..<model.board.h).flatMap { r in (n..<2 * n).map { Cell($0, r) } }.filter { model.shownTile($0).isOpaque }
+        let glue = rim ? [] : (0..<model.board.h).flatMap { r in (n..<2 * n).map { Cell($0, r) } }.filter { model.shownTile($0) == .glue }
         ZStack(alignment: .topLeading) {
+            // top-page glue shows through the lit paper (frame v2c1-lend ①: 「透纸可见」), fainter than a stone
+            ForEach(glue, id: \.self) { gc in
+                GlueMark(size: geo.tile)
+                    .scaleEffect(x: geo.horizontal ? 1 : -1, y: geo.horizontal ? -1 : 1)
+                    .position(geo.center(Cell(rules.mirror(gc.c), gc.r)))
+                    .opacity(hc ? 1 : 0.75 * lit)
+            }
             ForEach(stones, id: \.self) { st in
                 StoneSilhouette(size: geo.tile, reduced: AppSettings.shared.transparencyReduced, rim: rim)
                     .position(geo.center(Cell(rules.mirror(st.c), st.r)))
@@ -894,7 +911,7 @@ private struct StackTile: View {
     @Environment(\.highContrast) private var hc
 
     var body: some View {
-        let L = model.board[lower], U = model.board[upper]
+        let L = model.shownTile(lower), U = model.shownTile(upper)
         let lowSquare = L.isFloor || L == .door, upSquare = U.isFloor || U == .door
         let r = RoundedRectangle(cornerRadius: 3, style: .continuous)
         ZStack {
@@ -1108,7 +1125,7 @@ extension GameModel {
     /// The goal's slot on the shut book (4-6: where the seal lands).
     var goalStackSlot: (x: Int, y: Int)? { goal.map { spread.stackSlot($0) } }
     /// 「成」 opened again: half on each page (design-review-ch4 §2 ②, Codex review 7 #4); whole only while shut.
-    var finaleSealSplit: Bool { finaleSeal && angle + rubber < 179.5 }
+    var finaleSealSplit: Bool { finaleSeal && finaleGlyph == "成" && angle + rubber < 179.5 }
 
     /// 4-6: where the two stand in one square (shut, or opened again on her bank), each steps a little aside so his
     /// cane and her bun both show: she to the right, he to the left. Elsewhere 0.
@@ -1209,9 +1226,10 @@ private struct CameraBook: View {
                     .allowsHitTesting(false).accessibilityHidden(true)
             }
             // 「成」 on the folded edge of the shut book, over the square where the two meet (design-review-ch4 §2 ②)
-            if model.finaleSeal && !model.finaleSealSplit, let g = model.goalStackSlot {
+            if model.finaleSeal && model.finaleGlyph == "成" && !model.finaleSealSplit, let g = model.goalStackSlot {
                 FinaleSeal(model: model).position(cam.project(SIMD3(Double(geo.center(x: g.x, y: 0).x) - W / 2, 0, 0)))
             }
+            if !model.gluePulls.isEmpty { GluePullLayer(model: model, geo: geo, cam: cam, fold: fold) }
             if model.sealShown {
                 let x = model.crossingSlotX.map { Double(geo.center(x: $0, y: 0).x) } ?? W / 2
                 Seal(glyph: "通", size: 26)
@@ -1385,6 +1403,86 @@ private struct ProjectedTargets: View {
                 .accessibilitySortPriority(5000 - Double(t.rect.midY) - Double(t.rect.midX) / 1000)
                 .position(x: t.rect.midX, y: t.rect.midY)
         }
+    }
+}
+
+/// 5-7's chapter seal 「胶」 (design-review-v2c1 ④): seal.muted, 24 pt, on her square; it drops like 「成」 (160 % →
+/// 102 % → 100 %), reduce motion: it is simply there. High contrast: the outlined seal.
+private struct GoalSeal: View {
+    let model: GameModel
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        Seal(glyph: model.finaleGlyph, size: 24, color: Tok.sealMuted, outlined: hc)
+            .scaleEffect(model.finaleSettled ? 1 : 1.02)
+            .transition(AppSettings.shared.motionReduced ? .identity : .asymmetric(insertion: .scale(scale: 1.6).combined(with: .opacity), removal: .opacity))
+            .allowsHitTesting(false)
+            .accessibilityElement()
+            .accessibilityHidden(true)
+            .accessibilityIdentifier("seal.chapter")
+    }
+}
+
+/// glue.pull in the camera book (design-review-v2c1 §3, frame v2c1-pull): each stone lifts 2 pt off its square and
+/// flies to the glue in 220 ms (ease-out), across the gap between the pages, at whatever angle the page is now; its old
+/// square keeps a 6 % mark from 110 ms, fading over 1 s; the glue square flashes amber 220–520 ms. Reduce motion:
+/// only the flash.
+private struct GluePullLayer: View {
+    let model: GameModel
+    let geo: BookGeometry
+    let cam: BookCamera
+    let fold: SIMD3<Double>
+    @Environment(\.highContrast) private var hc
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1.0 / 60, paused: model.gluePulls.isEmpty)) { _ in
+            let now = CACurrentMediaTime(), freeze = GameModel.glueFreeze, rm = AppSettings.shared.motionReduced
+            ZStack(alignment: .topLeading) {
+                ForEach(Array(model.gluePulls.enumerated()), id: \.offset) { _, p in
+                    let t = freeze.map { $0 * 0.22 } ?? (now - p.start)
+                    // the mark it leaves (from 110 ms, fading over 1 s)
+                    if !rm && t >= 0.11 && t < 1.11 {
+                        QuadShape(points: quad(p.from)).fill(Color.black.opacity(0.06 * (1 - (t - 0.11))))
+                        QuadShape(points: quad(p.from)).stroke(Color.black.opacity(0.10 * (1 - (t - 0.11))), style: StrokeStyle(lineWidth: 0.8, dash: [3, 3]))
+                    }
+                    // the stone on its way
+                    if !rm && t >= 0 && t < 0.22 {
+                        let u = t / 0.22, e = 1 - (1 - u) * (1 - u)
+                        let a = center3D(p.from), b = center3D(p.to)
+                        let lift = 2 + geo.tile * 0.18 * sin(.pi * e)
+                        let at = cam.project(a + (b - a) * e + SIMD3(0, 0, lift))
+                        PaperStone(size: geo.tile * cam.k)
+                            .shadow(color: .black.opacity(hc ? 0 : 0.25), radius: 3, y: 2)
+                            .position(at)
+                    }
+                    // the glue square lights up as the stone lands
+                    let f = rm ? (t < 0.3 ? 1 - t / 0.3 : 0) : (t >= 0.22 && t < 0.52 ? sin(.pi * (t - 0.22) / 0.3) : 0)
+                    if f > 0 {
+                        QuadShape(points: quad(p.to)).stroke(hc ? Color.black : Tok.glue, lineWidth: hc ? 3 : 2.5)
+                            .shadow(color: hc ? .clear : Tok.glue, radius: 5)
+                            .opacity(f)
+                    }
+                }
+            }
+            .frame(width: geo.bookSize.width, height: geo.bookSize.height, alignment: .topLeading)
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+
+    private var closed: Bool { model.angle + model.rubber >= 160 }
+    private var W: Double { Double(geo.pageSize.width) }
+    private var H: Double { Double(geo.pageSize.height) }
+    /// A square's centre in book space: on the table (bottom page) or on the turning page.
+    private func center3D(_ c: Cell) -> SIMD3<Double> { point(c, 0, 0) }
+    private func point(_ c: Cell, _ du: Double, _ dv: Double) -> SIMD3<Double> {
+        let p = geo.center(c), u = Double(p.x) + du - W / 2, v = Double(p.y) + dv
+        if geo.spread.page(of: c.c) == .fixed { return SIMD3(u, v, 0) }
+        return SIMD3(u, 0, 0) + (H - v) * fold
+    }
+    /// The square as drawn on screen (both cells of a stack coincide once shut).
+    private func quad(_ c: Cell) -> [CGPoint] {
+        let h = geo.tile / 2
+        return [(-h, -h), (h, -h), (h, h), (-h, h)].map { cam.project(point(c, $0.0, $0.1)) }
     }
 }
 

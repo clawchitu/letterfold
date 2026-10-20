@@ -86,9 +86,10 @@ public struct Rules: Sendable {
 
     /// Closing drops the right page's stones onto their mirror cells: a character on the left page under one
     /// is crushed (design-review-ch3 §2). A ridden shadow ends in that same cell, so the two readings agree.
-    /// Stones on the left page never move, so standing on the right page above one only blocks, never crushes.
+    /// Stones on the left page never move, so standing on the right page above one only blocks, never crushes —
+    /// unless you stand on glue: then the stone below is pulled up onto your square (design-v2c1.md §1).
     public func crushed(_ b: Board, _ from: Cell, _ a: Double) -> Bool {
-        a >= config.foldMin && !isRight(from.c) && b[mirror(from.c), from.r].isOpaque
+        a >= config.foldMin && b[mirror(from.c), from.r].isOpaque && (!isRight(from.c) || b[from] == .glue)
     }
 
     /// Standing on nothing but a shadow? The shadow carries the character. nil means it falls (or is crushed).
@@ -152,12 +153,14 @@ public struct Rules: Sendable {
     // MARK: pressing the pages together
 
     public struct Stamp: Sendable, Equatable {
-        public enum Kind: String, Sendable { case door, ink }
+        public enum Kind: String, Sendable { case door, ink, glue }
         public var kind: Kind
+        /// door / ink: [source, target]. glue: [the stone's old cell, the glue cell it lands on].
         public var cells: [Cell]
     }
 
-    /// Keys open the door they touch; wet ink prints onto bare paper. Mutates the board.
+    /// Keys open the door they touch; wet ink prints onto bare paper; glue pulls the stone it touches onto itself (the
+    /// stone changes page, its old square becomes paper, the glue is used up). Mutates the board.
     @discardableResult
     public func stamp(_ b: inout Board) -> [Stamp] {
         var events: [Stamp] = []
@@ -172,6 +175,9 @@ public struct Rules: Sendable {
                     } else if A == .ink && B == .empty {
                         b.grid[r][c] = .ink
                         events.append(Stamp(kind: .ink, cells: [Cell(a, r), Cell(c, r)]))
+                    } else if A == .glue && B == .stone {
+                        b.grid[r][a] = .stone; b.grid[r][c] = .paper
+                        events.append(Stamp(kind: .glue, cells: [Cell(c, r), Cell(a, r)]))
                     }
                 }
             }

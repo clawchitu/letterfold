@@ -878,6 +878,66 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
+            "value": "胶"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glue"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "糊"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "풀"
+          }
+        }
+      }
+    },
+    "ch.5.line": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "粘住的，跟着走。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What sticks goes along."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "貼りついたものは、ついてくる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "붙은 것은 따라간다."
+          }
+        }
+      }
+    },
+    "ch.6": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
             "value": "翻页"
           }
         },
@@ -1107,6 +1167,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "곧 공개"
+          }
+        }
+      }
+    },
+    "ch.unwritten": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "尚未写"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not yet written"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだ書かれていない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직 쓰이지 않음"
           }
         }
       }
@@ -2307,6 +2397,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "더 접기"
+          }
+        }
+      }
+    },
+    "glueTakes": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上时会把对面的石头粘过来；站在这里会被压住"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "closing pulls the stone opposite onto this square; stand here and it lands on you"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じると向かいの石がここに貼りつく。ここに立っていれば押しつぶされる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫으면 맞은편 돌이 여기에 붙어요. 여기 서 있으면 눌려요"
+          }
+        }
+      }
+    },
+    "glued": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "胶把石头粘到了对页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the glue pulled a stone across"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "糊が石を向かいのページへ引き寄せた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "풀이 돌을 맞은편 페이지로 붙여 갔어요"
           }
         }
       }
@@ -3601,6 +3751,36 @@
         }
       }
     },
+    "kind.g": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "胶"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "glue"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "糊"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "풀"
+          }
+        }
+      }
+    },
     "kind.i": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -4411,6 +4591,126 @@
         }
       }
     },
+    "letter.5.body": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我想跟着你翻过去，可是页角粘住了。\n粘住的东西会跟着走——\n那就让石头先替我过河，\n影子跟着它，我跟着影子。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I meant to follow you over, but the corner of the page is stuck.\nWhat is stuck goes where the page goes —\nso let the stone cross the river for me first;\nits shadow follows it, and I follow the shadow."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "きみのあとから頁をめくろうとしたのに、頁の角が貼りついていた。\n貼りついたものは、頁と一緒に動く——\nなら、石に先に川を渡らせよう。\n影は石について、わたしは影について。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "너를 따라 페이지를 넘기려 했는데, 페이지 모서리가 붙어 버렸다.\n붙은 것은 페이지와 함께 움직인다.\n그러니 돌을 먼저 강 건너로 보내자.\n그림자는 돌을 따르고, 나는 그림자를 따른다."
+          }
+        }
+      }
+    },
+    "letter.5.end": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷二《翻页》第一章完。\n页角还粘着。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of Book Two, chapter one.\nThe corner is still stuck."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第二巻『頁をめくる』第一章 了。\n頁の角は、まだ貼りついている。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제2권 《페이지를 넘기다》 제1장 끝.\n모서리는 아직 붙어 있다."
+          }
+        }
+      }
+    },
+    "letter.5.sign": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——左岸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— the Left Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——左岸より"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— 왼쪽 강가에서"
+          }
+        }
+      }
+    },
+    "letter.5.title": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左岸来信"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A Letter from the Left Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左岸からの手紙"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "왼쪽 강가에서 온 편지"
+          }
+        }
+      }
+    },
     "letter.next": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -5041,6 +5341,96 @@
         }
       }
     },
+    "map.toBook2": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下一页：卷二《翻页》"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next page: Book Two, Turn the Page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次の頁：第二巻『ページをめくる』"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음 페이지: 제2권 《책장 넘기기》"
+          }
+        }
+      }
+    },
+    "map.vol1Back": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷一《两岸》"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Book One: Both Banks"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第一巻『両岸』"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제1권 《양안》"
+          }
+        }
+      }
+    },
+    "map.vol1BackLabel": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回到卷一《两岸》，已送达 {n} / {total}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back to Book One, Both Banks: {n} of {total} delivered"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第一巻『両岸』へ戻る、{n} / {total} 通 届いた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제1권 《양안》으로, {total}통 중 {n}통 도착"
+          }
+        }
+      }
+    },
     "mode.fold": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -5607,6 +5997,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "도착점"
+          }
+        }
+      }
+    },
+    "noun.g": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "胶"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "glue"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "糊"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "풀"
           }
         }
       }
@@ -6297,6 +6717,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "오래된 종이, 접는 선이 하얗게 바랬어요."
+          }
+        }
+      }
+    },
+    "paper.ch5": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "信笺，淡格线，有一处胶。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Letter paper, a faint ruled grid, a smear of glue."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "便箋。薄い罫線、糊が一か所。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "편지지, 연한 격자 선, 풀이 한 곳."
+          }
+        }
+      }
+    },
+    "paper.letter": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这页是信笺，格线是印好的"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This page is letter paper; the grid is printed on"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このページは便箋。枡は印刷されている"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 페이지는 편지지, 격자가 인쇄되어 있어요"
           }
         }
       }
@@ -7711,6 +8191,36 @@
         }
       }
     },
+    "stoneGlued": {
+      "comment": "UI. From fold-proto i18n.js. Placeholders: {col}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上时会被胶粘到对页{col}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "closing, the glue pulls it across to {col}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じると糊に引かれて向かいの{col}へ移る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫으면 풀에 붙어 맞은편 {col:으로} 옮겨 가요"
+          }
+        }
+      }
+    },
     "stoneShadow": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {col}",
       "extractionState": "manual",
@@ -8247,6 +8757,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "위"
+          }
+        }
+      }
+    },
+    "vol.2": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "翻页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn the Page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ページをめくる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책장 넘기기"
           }
         }
       }

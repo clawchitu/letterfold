@@ -33,7 +33,14 @@ const NATIVE = {
   'ch.2': ['立', 'Stand', '立つ', '일어서다'],
   'ch.3': ['影', 'Shade', '影', '그림자'],
   'ch.4': ['岸', 'Shore', '岸', '강가'],
-  'ch.5': ['翻页', 'Turn the Page', 'ページをめくる', '책장 넘기기'],
+  'ch.5': ['胶', 'Glue', '糊', '풀'],
+  'ch.6': ['翻页', 'Turn the Page', 'ページをめくる', '책장 넘기기'],
+  // 0.1 (13): vol. 2 《翻页》 (design-review-v2c1 §3 地图)
+  'vol.2': ['翻页', 'Turn the Page', 'ページをめくる', '책장 넘기기'],
+  'map.vol1Back': ['卷一《两岸》', 'Book One: Both Banks', '第一巻『両岸』', '제1권 《양안》'],
+  'map.vol1BackLabel': ['回到卷一《两岸》，已送达 {n} / {total}', 'Back to Book One, Both Banks: {n} of {total} delivered', '第一巻『両岸』へ戻る、{n} / {total} 通 届いた', '제1권 《양안》으로, {total}통 중 {n}통 도착'],
+  'map.toBook2': ['下一页：卷二《翻页》', 'Next page: Book Two, Turn the Page', '次の頁：第二巻『ページをめくる』', '다음 페이지: 제2권 《책장 넘기기》'],
+  'ch.unwritten': ['尚未写', 'Not yet written', 'まだ書かれていない', '아직 쓰이지 않음'],
   'ch.label': ['第{n}章，{name}', 'Chapter {n}, {name}', '第{n}章、{name}', '{n}장, {name}'],
   'ch.delivered': ['已送达', 'Delivered', '届いた', '도착함'],
   'ch.inProgress': ['进行中', 'In progress', '進行中', '진행 중'],
@@ -154,10 +161,13 @@ fs.writeFileSync(path.join(outDir, 'Localizable.xcstrings'), catalog(ui));
 
 const lv = {};
 for (const id of Object.keys(src.levelTexts.en)) {
-  ['name', 'line', 'hint'].forEach((part, i) => {
+  // an optional 4th entry: the first rung of the 「?」 ladder (design-review-v2c1 §2), shown before the hint
+  ['name', 'line', 'hint', 'hint1'].forEach((part, i) => {
+    if (i === 3 && !(src.levelTexts.en[id] || [])[3]) return;
     const values = {};
-    for (const l of Object.keys(LANG)) values[l] = (src.levelTexts[l][id] || src.levelTexts.en[id])[i];
-    lv[`${id}.${part}`] = { comment: `Level "${id}": ${part === 'name' ? 'title' : part === 'line' ? 'one-line teaser' : 'hint'}. From fold-proto i18n.js.`, values };
+    for (const l of Object.keys(LANG)) values[l] = (src.levelTexts[l][id] || src.levelTexts.en[id])[i] ?? src.levelTexts.en[id][i];
+    const what = { name: 'title', line: 'one-line teaser', hint: 'hint', hint1: 'first hint (the 「?」 ladder, before the hint)' }[part];
+    lv[`${id}.${part}`] = { comment: `Level "${id}": ${what}. From fold-proto i18n.js.`, values };
   });
 }
 fs.writeFileSync(path.join(outDir, 'Levels.xcstrings'), catalog(lv));

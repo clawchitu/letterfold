@@ -8,7 +8,7 @@ final class SolverTests: XCTestCase {
     override func setUpWithError() throws { pack = try LevelPack.bundled() }
 
     func testPackDecodes() throws {
-        XCTAssertEqual(pack.levels.count, 25)
+        XCTAssertEqual(pack.levels.count, 32)
         XCTAssertEqual(pack.config, .standard)
         for lv in pack.levels { XCTAssertNoThrow(try Board(level: lv), lv.id) }
     }
@@ -44,8 +44,8 @@ final class SolverTests: XCTestCase {
     }
 }
 
-/// design-difficulty.md §2 in CI: the Swift port of check.js `analyse()` gives the same numbers as the JS one, and
-/// every level scores inside the tier its designer declared.
+/// design-difficulty.md §2 and §7 (metric v2) in CI: the Swift port of check.js `analyse()` gives the same numbers as
+/// the JS one, and every level scores inside the tier its designer declared.
 final class DifficultyTests: XCTestCase {
     /// analyse() explores every state; run it once for the whole suite.
     static let shared: (pack: LevelPack, reports: [String: Difficulty.Report]) = {
@@ -64,8 +64,35 @@ final class DifficultyTests: XCTestCase {
             let range = try XCTUnwrap(Difficulty.range(of: tier), "\(lv.id): unknown tier \(tier)")
             let r = try XCTUnwrap(d.analyse(lv), lv.id)
             XCTAssertTrue(range.contains(r.score), "\(lv.id) scored \(r.score) (\(r.tier)), declared \(tier) = \(range)")
-            XCTAssertEqual(r.dead, 0, "\(lv.id): dead ends appeared (design-difficulty.md §2)")
+            XCTAssertEqual(r.tier, tier, "\(lv.id): the tier ranges do not overlap, so the score names exactly one")
         }
+    }
+
+    /// Vol. 1 has no dead ends by design (design-difficulty.md §1, check.js `i < 25`); from vol. 2 on they are a tool,
+    /// at most one per level (design-v2c1 §1), and the game has undo.
+    func testDeadEndsOnlyInVolumeTwo() throws {
+        let d = Cached(reports: Self.shared.reports)
+        for (i, lv) in pack.levels.enumerated() {
+            let r = try XCTUnwrap(d.analyse(lv), lv.id)
+            if i < 25 { XCTAssertEqual(r.dead, 0, "\(lv.id): dead ends in a vol. 1 level"); XCTAssertEqual(r.deadEnds, 0, lv.id) }
+            else { XCTAssertLessThanOrEqual(r.deadEnds, 1, "\(lv.id): one kind of dead end at most") }
+        }
+    }
+
+    /// The owner on 0.1 (11): vol. 1 「还是有点简单」. Under v2 every vol. 1 level is mid or below; vol. 2 chapter 1
+    /// climbs teach → mid → mid → hard → hard → hard → final (design-v2c1 §3).
+    func testVolumesAndTheGlueCurve() throws {
+        let d = Cached(reports: Self.shared.reports)
+        for lv in pack.levels.prefix(25) { XCTAssertLessThanOrEqual(try XCTUnwrap(d.analyse(lv)).score, 7, "\(lv.id) above mid") }
+        XCTAssertEqual(pack.levels.suffix(7).map { d.analyse($0)?.tier ?? "?" }, ["teach", "mid", "mid", "hard", "hard", "hard", "final"])
+        XCTAssertEqual(pack.levels.suffix(7).map { $0.tier ?? "?" }, ["teach", "mid", "mid", "hard", "hard", "hard", "final"])
+        // the four that punish an early close are the ones where it is a trap: before + misdirect
+        for lv in pack.levels.suffix(4) {
+            let r = try XCTUnwrap(d.analyse(lv), lv.id)
+            XCTAssertTrue(r.before && r.misdirect && r.deadEnds == 1, lv.id)
+        }
+        // 5-1 – 5-3 never punish closing
+        for lv in pack.levels.suffix(7).prefix(3) { XCTAssertEqual(d.analyse(lv)?.dead, 0, lv.id) }
     }
 
     func testMatchesJavaScriptMetric() throws {
@@ -76,20 +103,24 @@ final class DifficultyTests: XCTestCase {
         }
     }
 
-    /// The curve of design-difficulty.md §3: 一 2 2 3 2 3 · 二 2 2 3 4 3 5 5 5 · 三 2 4 3 4 5 7 · 四 6 7 7 7 8 8.
+    /// The v2 curve (design-difficulty.md §7, 32-level table): 一 1 1 2 1 3 · 二 1 3 4 3 3 6 6 6 · 三 1 2 2 2 3 6 ·
+    /// 四 5 4 5 5 7 6 · 五 2 5 6 8 8 9 14.
     func testTheCurve() {
         let d = Cached(reports: Self.shared.reports)
         XCTAssertEqual(pack.levels.map { d.analyse($0)?.score ?? -1 },
-                       [2, 2, 3, 2, 3, 2, 2, 3, 4, 3, 5, 5, 5, 2, 4, 3, 4, 5, 7, 6, 7, 7, 7, 8, 8])
+                       [1, 1, 2, 1, 3, 1, 3, 4, 3, 3, 6, 6, 6, 1, 2, 2, 2, 3, 6, 5, 4, 5, 5, 7, 6, 2, 5, 6, 8, 8, 9, 14])
     }
 
-    /// Every chapter ends on its hardest level, and starts again from teach (except chapter 4, all interaction).
+    /// Every chapter ends in its highest tier and starts again from teach (chapter 4, all interaction, starts at mid).
     func testChaptersEndOnTheirHardest() {
         let d = Cached(reports: Self.shared.reports)
-        let scores = pack.levels.map { d.analyse($0)?.score ?? -1 }
-        for range in [0..<5, 5..<13, 13..<19, 19..<25] {
-            XCTAssertEqual(scores[range].last, scores[range].max(), "chapter \(range)")
+        let rank = Dictionary(uniqueKeysWithValues: Difficulty.tiers.enumerated().map { ($1.name, $0) })
+        let tiers = pack.levels.map { rank[d.analyse($0)?.tier ?? "?"] ?? -1 }
+        for range in [0..<5, 5..<13, 13..<19, 19..<25, 25..<32] {
+            XCTAssertEqual(tiers[range].last, tiers[range].max(), "chapter \(range)")
+            if range.lowerBound != 19 { XCTAssertEqual(tiers[range].first, 0, "chapter \(range) starts at teach") }
         }
+        XCTAssertEqual(d.analyse(pack.levels[31])?.score, 14, "5-7 is the hardest level in the book")
     }
 }
 

@@ -33,6 +33,12 @@ enum L10n {
         return (get("name"), get("line"), get("hint"))
     }
 
+    /// A level's first hint (the 「?」 ladder's first rung), if it has one.
+    static func levelHint1(_ id: String) -> String? {
+        let v = bundle.localizedString(forKey: "\(id).hint1", value: "", table: "Levels")
+        return v.isEmpty || v == "\(id).hint1" ? nil : v
+    }
+
     private static let placeholder = try! NSRegularExpression(pattern: #"\{(\w+)(?::([^}]+))?\}"#)
 
     static func fill(_ template: String, _ params: [String: any CustomStringConvertible]) -> String {

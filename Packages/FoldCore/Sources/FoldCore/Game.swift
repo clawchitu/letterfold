@@ -14,6 +14,9 @@ public enum GameEvent: Sendable, Equatable {
     case stepped(to: Cell)
     case blocked
     case won
+    /// The goal can no longer be reached from here without undo or restart (vol. 2 dead ends, design-review-v2c1 §3):
+    /// checked as the book shuts and as it opens again; sent once, on the move that made it so.
+    case deadEnd
 }
 
 /// A level being played: the stateful half of main.js (angle, riding shadows, stamping, undo).
@@ -26,12 +29,16 @@ public final class FoldGame {
     public private(set) var posture: Posture = .open
     public private(set) var shade: [Cell: Int] = [:]
     public private(set) var won = false
+    /// The book has been shut at least once: keys, ink and glue have acted (the solver's `st`).
+    public private(set) var closedOnce = false
+    /// The goal is out of reach for good (a dead end); undo or restart.
+    public private(set) var stuck = false
     /// The cells walked so far, in order, starting at the start cell: the vermilion thread (design-spec §0.3).
     /// A fall starts it again; undo restores it.
     public private(set) var trail: [Cell]
     private var rideSrc: Int?
 
-    private struct Snapshot { var board: Board; var char: Cell; var angle: Double; var trail: [Cell] }
+    private struct Snapshot { var board: Board; var char: Cell; var angle: Double; var trail: [Cell]; var closedOnce: Bool; var stuck: Bool }
     private var undoStack: [Snapshot] = []
     public var canUndo: Bool { !undoStack.isEmpty }
 
@@ -59,7 +66,7 @@ public final class FoldGame {
     public func setAngle(_ target: Double) -> [GameEvent] {
         let target = min(180, max(0, target))
         var events: [GameEvent] = []
-        let before = reachable
+        let before = reachable, wasPosture = posture
         while angle != target {
             let next = target > angle ? min(target, angle + Self.subStep) : max(target, angle - Self.subStep)
             apply(next, &events)
@@ -68,6 +75,13 @@ public final class FoldGame {
             let now = reachable
             if !now.subtracting(before).isEmpty { events.append(.connected) }
             else if now.count < before.count { events.append(.lost) }
+            // the shut and the opening are where a vol. 2 dead end begins: a stone glued away, a road blocked
+            if !stuck && posture != wasPosture && (posture == .closed || wasPosture == .closed) && level.map.joined().contains("g") {
+                let solver = Solver(config)
+                if !solver.canStillWin(level, from: char, angle: posture == .closed ? 180 : angle, closedOnce: closedOnce) {
+                    stuck = true; events.append(.deadEnd)
+                }
+            }
         }
         return events
     }
@@ -77,7 +91,8 @@ public final class FoldGame {
         // shadows move; a character standing on nothing but shadow goes with them
         let previous = shade
         shade = rules.shadows(board, a)
-        if !rules.isRight(char.c) && (!board[char].isFloor || rules.crushed(board, char, a)) {
+        // on nothing but a shadow, or (closing) under a stone: on the bottom page, or on top-page glue facing one
+        if (!rules.isRight(char.c) && !board[char].isFloor) || rules.crushed(board, char, a) {
             if rideSrc == nil { rideSrc = previous[char] ?? shade[char] }
             if let to = rules.ride(board, char, rideSrc, a) {
                 if to.c != char.c { char = to; trail.append(to); events.append(.slid(to: to)) }
@@ -94,7 +109,7 @@ public final class FoldGame {
             let prev = posture
             posture = next
             events.append(.postureChanged(from: prev, to: next))
-            if next == .closed { rules.stamp(&board).forEach { events.append(.stamped($0)) } }
+            if next == .closed { rules.stamp(&board).forEach { events.append(.stamped($0)) }; closedOnce = true }
             checkWin(&events)
         }
     }
@@ -127,8 +142,15 @@ public final class FoldGame {
     // MARK: undo
 
     public func pushUndo() {
-        undoStack.append(Snapshot(board: board, char: char, angle: angle, trail: trail))
+        undoStack.append(Snapshot(board: board, char: char, angle: angle, trail: trail, closedOnce: closedOnce, stuck: stuck))
         if undoStack.count > 200 { undoStack.removeFirst() }
+    }
+
+    /// The game moved on since the last pushUndo (a key used, ink printed, a stone glued, a step, a fall), even if the
+    /// hinge came back to where it was: the snapshot must stay (Codex review 11).
+    public var changedSinceUndo: Bool {
+        guard let s = undoStack.last else { return false }
+        return s.board != board || s.char != char || s.trail != trail || s.closedOnce != closedOnce || s.stuck != stuck
     }
 
     /// Forget the last pushUndo (a drag that ended where it started).
@@ -137,7 +159,7 @@ public final class FoldGame {
     @discardableResult
     public func undo() -> Bool {
         guard let s = undoStack.popLast() else { return false }
-        board = s.board; char = s.char; angle = s.angle; trail = s.trail
+        board = s.board; char = s.char; angle = s.angle; trail = s.trail; closedOnce = s.closedOnce; stuck = s.stuck
         posture = rules.posture(angle); shade = rules.shadows(board, angle); rideSrc = nil; won = false
         return true
     }
@@ -145,5 +167,6 @@ public final class FoldGame {
     public func reset() {
         board = try! Board(level: level, columnsPerPage: config.columnsPerPage)
         char = board.start; trail = [board.start]; angle = 0; posture = .open; shade = [:]; rideSrc = nil; won = false; undoStack = []
+        closedOnce = false; stuck = false
     }
 }

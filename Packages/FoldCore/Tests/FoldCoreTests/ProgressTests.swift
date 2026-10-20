@@ -62,4 +62,22 @@ final class ProgressTests: XCTestCase {
         XCTAssertTrue(SavedProgress.chapterOpen(previous: ch2, done: done))
         XCTAssertFalse(SavedProgress.chapterOpen(previous: [], done: done))
     }
+
+    /// Vol. 2 (design-review-v2c1 §3 存档): the seven new levels save under their IDs, so nothing earlier moves, and the
+    /// strict rule holds across the volume boundary: chapter 5 opens only once all of chapter 4 is delivered.
+    func testVolumeTwoOpensOnlyAfterAllOfChapterFour() throws {
+        let ch4 = ["twoShades", "bridgeShade", "inkShore", "stoneRain", "shadeDoor", "twoFigures"]
+        let pack = try LevelPack.bundled()
+        var done = Set(pack.levels.prefix(24).map(\.id))
+        XCTAssertFalse(SavedProgress.chapterOpen(previous: ch4, done: done), "4-6 is still to deliver")
+        done.insert("twoFigures")
+        XCTAssertTrue(SavedProgress.chapterOpen(previous: ch4, done: done))
+        // a save from 0.1 (12) (25 IDs) reads back unchanged with the 32-level pack
+        SavedProgress.save(done, d)
+        XCTAssertEqual(SavedProgress.load(d), done)
+        for id in ["glue", "lend", "bridgeGlue", "shadowFirst", "oneClose", "rideFirst", "stuckPage"] {
+            XCTAssertNotNil(pack.levels.firstIndex { $0.id == id }, id)
+            XCTAssertFalse(SavedProgress.load(d).contains(id))
+        }
+    }
 }
