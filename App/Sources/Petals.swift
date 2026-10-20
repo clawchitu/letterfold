@@ -90,6 +90,9 @@ struct RestingPetal {
     var cycle: Int = 0
     var leaveFrom: CGPoint = .zero, leaveRho = 0.0
     var leaveCos = 1.0                // shaken off the page: how foreshortened / turned over it was at that moment
+    /// Shaken off the page: its whole local shape there (the page's projection × its turn and size), so it leaves
+    /// with exactly the silhouette it had on the page and only then eases into the airborne one (codex-review-9).
+    var leaveShape: CGAffineTransform? = nil
 }
 
 /// The cover page folding about its crease (design-cover §5), seen by one still camera (design-review-3 §3: the
@@ -210,6 +213,11 @@ final class PetalEngine {
     @ObservationIgnored private let motion = CMMotionManager()
     @ObservationIgnored private var tilt = CGVector.zero
     @ObservationIgnored private var tiltRaw = CGVector.zero
+    // the tag's "down" (§4.1): the screen-plane angle of gravity in degrees (+ = true down toward the screen's right),
+    // low-passed at 2 Hz like the tilt; nil while the motion manager is off
+    @ObservationIgnored private var gravityRaw: Double? = nil
+    @ObservationIgnored private var gravityLP: Double? = nil
+    var screenTilt: Double? { gravityLP }
     @ObservationIgnored private(set) var resting: [RestingPetal] = []
     @ObservationIgnored private var restingInit = false
     @ObservationIgnored private var slots: [Slot] = []
@@ -309,7 +317,7 @@ final class PetalEngine {
         }
         return (env, i)
     }
-    private static func smooth(_ x: Double) -> Double { let x = max(0, min(1, x)); return x * x * (3 - 2 * x) }
+    static func smooth(_ x: Double) -> Double { let x = max(0, min(1, x)); return x * x * (3 - 2 * x) }
     private static func envelope(_ s: Double) -> Double { s < gustEdge ? smooth(s / gustEdge) : s > gustLen - gustEdge ? smooth((gustLen - s) / gustEdge) : 1 }
     /// ∫₀ˢ envelope; ∫₀ˣ smoothstep = x³ − x⁴/2.
     private static func integralOne(_ s: Double) -> Double {
@@ -326,6 +334,10 @@ final class PetalEngine {
         var x: Double, y: Double, rho: Double, cosPhi: Double, len: Double, alpha: Double, layer: Int, variant: Int, crease: Bool
         /// On the folding page: (x, y) are page coordinates, drawn through the page's projection.
         var page = false
+        /// A full local shape (unit petal → screen, about (x, y)) instead of ρ / cos φ / len; `alpha` is final
+        /// (no back-face or under-the-page dimming on top).
+        var shape: CGAffineTransform? = nil
+        var showCrease = true
     }
 
     private func cycle(_ i: Int, at t: Double) -> (n: Int, tau: Double) {
@@ -441,6 +453,7 @@ final class PetalEngine {
         // tilt: low-pass at ~2 Hz
         let a = 1 - exp(-dt * 2 * .pi * 2)
         tilt.dx += (tiltRaw.dx - tilt.dx) * a; tilt.dy += (tiltRaw.dy - tilt.dy) * a
+        if let g = gravityRaw { gravityLP = (gravityLP ?? g) + (g - (gravityLP ?? g)) * a } else { gravityLP = nil }
         return dt * speed
     }
 
@@ -451,9 +464,11 @@ final class PetalEngine {
             guard let self, let m else { return }
             let clamp = { (deg: Double) in max(-1, min(1, deg / 25)) }
             self.tiltRaw = CGVector(dx: clamp(m.attitude.roll * 180 / .pi), dy: clamp(m.attitude.pitch * 180 / .pi - 35))
+            // gravity's direction in the screen plane; meaningless lying flat (then it holds the last value)
+            if hypot(m.gravity.x, m.gravity.y) > 0.3 { self.gravityRaw = atan2(m.gravity.x, -m.gravity.y) * 180 / .pi }
         }
     }
-    private func stopMotion() { if motion.isDeviceMotionActive { motion.stopDeviceMotionUpdates() }; tiltRaw = .zero }
+    private func stopMotion() { if motion.isDeviceMotionActive { motion.stopDeviceMotionUpdates() }; tiltRaw = .zero; gravityRaw = nil; gravityLP = nil }
 
     private func initResting() {
         guard marks.ready, !restingInit else { return }
@@ -496,6 +511,10 @@ final class PetalEngine {
                     let f = pageFold, at = CGPoint(x: sp[r.spot].p.x, y: sp[r.spot].p.y + slide(theta)), j = f.jacobian(at, theta)
                     r.phase = .falling; r.t0 = te; r.leaveFrom = CGPoint(x: j.tx, y: j.ty); r.leaveRho = sp[r.spot].rho
                     r.leaveCos = max(-1, min(1, (j.a * j.d - j.b * j.c) / max(0.01, hypot(j.a, j.b))))
+                    // exactly as `place` + `petal` drew it on the page: scale(len) → rotate(ρ) → the projection
+                    r.leaveShape = CGAffineTransform(scaleX: r.len, y: r.len)
+                        .concatenating(CGAffineTransform(rotationAngle: r.leaveRho * .pi / 180))
+                        .concatenating(CGAffineTransform(a: j.a, b: j.b, c: j.c, d: j.d, tx: 0, ty: 0))
                 }
             case .leaving, .falling: break
             }
@@ -524,9 +543,18 @@ final class PetalEngine {
         if shaken {
             // from under the turned page: it starts as turned over as the page was, and comes out from behind the
             // tracing paper over 150 ms (no pop at the moment it lets go)
-            let phi0 = acos(r.leaveCos), out = min(1, u / 0.15)
-            return Pose(x: x, y: y, rho: rho, cosPhi: cos(phi0 + omega * fall), len: r.len,
-                        alpha: PetalInk.rest * (0.35 + 0.65 * out), layer: 0, variant: r.variant, crease: true)
+            let phi0 = acos(r.leaveCos), out = min(1, u / 0.15), cphi = cos(phi0 + omega * fall)
+            // its shape: the one it had on the page, easing into the tumbling one over 350 ms (no one-frame change
+            // of silhouette at the moment it lets go); its colour: the faint under-the-page one, coming out
+            let k = Self.smooth(u / 0.35), back = cphi < 0
+            let air = CGAffineTransform(scaleX: r.len * (back ? -1 : 1) * max(0.08, abs(cphi)), y: r.len)
+                .concatenating(CGAffineTransform(rotationAngle: rho))
+            let from = r.leaveShape ?? air
+            let shape = CGAffineTransform(a: from.a + (air.a - from.a) * k, b: from.b + (air.b - from.b) * k,
+                                          c: from.c + (air.c - from.c) * k, d: from.d + (air.d - from.d) * k, tx: 0, ty: 0)
+            let alpha = PetalInk.rest * (0.35 + 0.65 * out) * (back ? 1 - 0.45 * k : 1)
+            return Pose(x: x, y: y, rho: rho, cosPhi: cphi, len: r.len, alpha: alpha, layer: 0, variant: r.variant, crease: true,
+                        shape: shape, showCrease: k > 0.5)
         }
         return Pose(x: x, y: y, rho: rho, cosPhi: cos(omega * fall), len: r.len, alpha: PetalInk.rest, layer: 0, variant: r.variant, crease: true)
     }
@@ -627,6 +655,14 @@ final class PetalEngine {
         guard at.x > -m, at.x < marks.size.width + m, at.y > -m, at.y < marks.size.height + m else { return }
         let cphi = p.cosPhi, back = cphi < 0
         var c = ctx
+        if let shape = p.shape {
+            c.translateBy(x: p.x, y: p.y); c.concatenate(shape)
+            c.fill(PetalShape.paths[p.variant], with: .color(PetalInk.color(foldShade(p.x, p.y, p.alpha))))
+            if p.crease && p.showCrease && !back && abs(cphi) > 0.25 {
+                c.stroke(PetalShape.crease, with: .color(PetalInk.creaseInk), lineWidth: 0.5 / m)
+            }
+            return
+        }
         place(&c, p)
         c.rotate(by: .radians(p.rho))
         c.scaleBy(x: m * (back ? -1 : 1) * max(0.08, abs(cphi)), y: m)
@@ -724,5 +760,125 @@ struct TagPetal: View {
         .opacity(gone ? 0 : 1)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
+    }
+}
+
+// MARK: - 纸签摇曳: the 开始 tag hanging like a wind chime (design-cover §4.1)
+
+/// The tag and its straight 40 pt of thread are one rigid pendulum about the stitch where the thread leaves the paper;
+/// the tag also turns about its own hole by 0.35 × that angle, 120 ms late (the chime's give). One damped oscillator
+/// — the only stateful thing on the cover — stepped semi-implicitly once a frame. Degrees; + = the tag's bottom to
+/// the right (the wind's way). Period 2.2 s (the whole 0.7 H thread), damping ratio 0.08.
+///
+/// Drive (tuned so the result is the spec's: ±1.5–3° ambient, +6–9° at a gust's peak, never over 10°): 1D smooth
+/// noise at 0.3 Hz, small seeded kicks every 3–7 s, the §3 gust as a rightward torque, and the phone's tilt (the
+/// "down" the tag hangs toward, half of it, ±6° at most, plus a kick from turning the phone). In the hand it is
+/// eased upright (critically damped, 250 ms); let go short, it gets a 3–5° push the way the finger was moving.
+@Observable
+final class TagSway {
+    /// Observed: the tag's timeline stops when the cover idles to a stop (or the angle is frozen on a completed pull).
+    private(set) var paused = false
+
+    @ObservationIgnored weak var engine: PetalEngine?
+    @ObservationIgnored private(set) var theta = 0.0
+    @ObservationIgnored private var omega = 0.0
+    @ObservationIgnored private var wall: Double? = nil
+    @ObservationIgnored private var clock = 0.0
+    @ObservationIgnored private var speed = 1.0            // idle (§7): 1 → 0 in 2 s, back in 1 s
+    @ObservationIgnored private var lastTouch = Date().timeIntervalSinceReferenceDate
+    @ObservationIgnored private var kick = 0
+    @ObservationIgnored private var nextKick = 1.5
+    @ObservationIgnored private var held = false
+    @ObservationIgnored private var frozen = false
+    @ObservationIgnored private var lastTilt: Double? = nil
+    @ObservationIgnored private var history: [(t: Double, a: Double)] = []
+    @ObservationIgnored private var lastEnv = 0.0
+    @ObservationIgnored private var pushes = 0
+    /// S3 slides 0.5 pt down the tag at each gust's push, 1.5 pt at most (friction, §4.1).
+    @ObservationIgnored private(set) var petalSlid = 0.0
+
+    static let omega0 = 2 * Double.pi / 2.2, zeta = 0.08
+    static let noiseGain = 6.0, gustGain = 4.2, kickGain = 1.5
+
+    /// The angle drawn: the pendulum's, brought to rest over 2 s when the cover idles.
+    var angle: Double { theta * speed }
+    /// The tag's own turn about its hole: 0.35 × the pendulum's angle 120 ms ago.
+    func tagTurn(at now: Double) -> Double {
+        let t = now - 0.12
+        guard let last = history.last else { return 0 }
+        if t >= last.t { return 0.35 * last.a }
+        guard let i = history.lastIndex(where: { $0.t <= t }) else { return 0.35 * (history.first?.a ?? 0) }
+        let a = history[i], b = history[min(i + 1, history.count - 1)]
+        let f = b.t > a.t ? (t - a.t) / (b.t - a.t) : 0
+        return 0.35 * (a.a + (b.a - a.a) * f)
+    }
+
+    func reset() {
+        held = false; frozen = false; theta = 0; omega = 0; wall = nil; clock = 0; kick = 0; nextKick = 1.5
+        history = []; pushes = 0; petalSlid = 0; lastEnv = 0; speed = 1; lastTouch = Date().timeIntervalSinceReferenceDate
+        if paused { paused = false }
+    }
+    func touch() {
+        lastTouch = Date().timeIntervalSinceReferenceDate
+        if paused && !frozen { paused = false; wall = nil }
+    }
+    /// A finger on the tag: from this frame it is eased upright, from exactly where it was.
+    func grab() { touch(); held = true }
+    /// Let go short of the threshold: a 3–5° push the way the finger was moving, then back to the wind.
+    func release(vx: Double) {
+        held = false
+        let amp = 3 + 2 * petalHash(0x7A9, UInt64(pushes), UInt64(kick))
+        omega += (vx < 0 ? -1 : 1) * amp * Self.omega0
+    }
+    /// The pull completed: the tag stops where it is and goes with the page.
+    func freeze() { frozen = true; held = false }
+
+    private static func noise(_ t: Double) -> Double {
+        let u = t * 0.3, i = u.rounded(.down), f = u - i
+        let a = petalHash(0x91, UInt64(bitPattern: Int64(i))), b = petalHash(0x91, UInt64(bitPattern: Int64(i) + 1))
+        return (a + (b - a) * PetalEngine.smooth(f)) * 2 - 1
+    }
+
+    /// One frame. Idempotent for a repeated `now` (a view body may be evaluated twice).
+    func step(_ now: Double) {
+        guard let w = wall else { wall = now; history = [(now, angle)]; return }
+        guard now > w else { return }
+        let dt = min(0.05, now - w); wall = now
+        guard !frozen else { return }
+        let idle = now - lastTouch > 90 && !held
+        speed = idle ? max(0, speed - dt / 2) : min(1, speed + dt / 1)
+        if idle && speed == 0 { Task { @MainActor in if !self.paused { self.paused = true } }; return }
+        clock += dt
+        let w0 = Self.omega0
+        var a: Double
+        if held {
+            let wn = 16.0   // ζ = 1: upright in ~250 ms, no overshoot
+            a = -wn * wn * theta - 2 * wn * omega
+        } else {
+            // the gust (§3) on the same clock as the petals; none while they are still (Low Power)
+            var env = 0.0
+            if let e = engine, !e.reduced { env = PetalEngine.gust(e.te).env }
+            if env > 0.05 && lastEnv <= 0.05 && pushes < 3 { pushes += 1 }
+            lastEnv = env
+            var eq = Self.gustGain * env
+            if let e = engine, let tilt = e.screenTilt {
+                eq += max(-6, min(6, 0.5 * tilt))
+                if let lt = lastTilt { omega += 0.4 * (tilt - lt) * w0 }
+                lastTilt = tilt
+            } else { lastTilt = nil }
+            a = -w0 * w0 * (theta - eq) - 2 * Self.zeta * w0 * omega + Self.noiseGain * Self.noise(clock)
+            while clock >= nextKick {
+                let k = UInt64(kick)
+                let amp = (0.5 + 1.5 * petalHash(0x93, k, 1)) * (petalHash(0x93, k, 2) < 0.5 ? -1 : 1) * Self.kickGain
+                omega += amp * w0
+                nextKick += 3 + 4 * petalHash(0x93, k)
+                kick += 1
+            }
+        }
+        omega += a * dt
+        theta += omega * dt
+        petalSlid = min(0.5 * Double(pushes), petalSlid + dt * 0.5 / 0.6)
+        history.append((now, angle))
+        while history.count > 2, now - history[0].t > 0.4 { history.removeFirst() }
     }
 }

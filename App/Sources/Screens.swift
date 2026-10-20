@@ -14,6 +14,9 @@ struct CoverView: View {
     @Environment(\.highContrast) private var hc
     /// 落樱 (design-cover.md): the falling petals, the lamp they fade with, where the tag sits, S3 leaving the tag.
     @State private var petals = PetalEngine()
+    /// 纸签摇曳 (§4.1): the tag's pendulum.
+    @State private var sway = TagSway()
+    @ScaledMetric(relativeTo: .title3) private var gearSize = 20.0
     @State private var lampOn = true
     @State private var tagSlot: CGRect = .zero
     @State private var tagPetalGone = false
@@ -85,7 +88,8 @@ struct CoverView: View {
 
                 ZStack(alignment: .topLeading) {
                     Color.clear.allowsHitTesting(false)
-                    PullTag(pull: $pull, petalGone: tagPetalGone, onDrag: { dragged($0) }, onSpringBack: { springBack() }) { begin() }
+                    PullTag(pull: $pull, sway: sway, petalGone: tagPetalGone, onGrab: { grabbed() }, onDrag: { dragged($0) },
+                            onSpringBack: { springBack() }) { begin() }
                         .offset(x: tagSlot.minX, y: tagSlot.minY + 4)
                         .opacity(tagSlot == .zero ? 0 : 1)
                         .allowsHitTesting(!closing)
@@ -103,9 +107,10 @@ struct CoverView: View {
             }
         }
         // any touch wakes petals that idled to a stop (§7)
-        .simultaneousGesture(DragGesture(minimumDistance: 0).onChanged { _ in petals.touch() })
+        .simultaneousGesture(DragGesture(minimumDistance: 0).onChanged { _ in petals.touch(); sway.touch() })
         .onAppear {
             tagPetalGone = false; closing = false
+            sway.reset(); sway.engine = petals
             petals.fold = .hold(0)
             // screenshots: -coverPull <pt> holds the tag pulled that far; -coverFold <deg> holds the page at an angle
             let d = UserDefaults.standard
@@ -119,12 +124,13 @@ struct CoverView: View {
             }
         }
         .overlay(alignment: .topTrailing) {
-            // settings: a 44pt folded-corner icon, top right, in every language (design-review-2 §4.4)
+            // settings (design-cover §6.1): a hairline gear, SF gearshape light 20 pt (grows with Dynamic Type, the
+            // 44 pt hit area does not), ink; 60 % while pressed, no scale. Only the cover has it.
             Button { router.go(.settings) } label: {
-                Image(systemName: "doc").font(.system(size: 19, weight: .regular)).foregroundStyle(Tok.ink900)
+                Image(systemName: "gearshape").font(.system(size: gearSize, weight: .light)).foregroundStyle(hc ? Tok.hcLine : Tok.ink900)
                     .frame(width: 44, height: 44).contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(PressFade())
             .accessibilityLabel(L10n.t("cover.settings"))
             .accessibilityIdentifier("cover.settings")
             .padding(.trailing, 12)
@@ -147,6 +153,15 @@ struct CoverView: View {
         // a picture, not the map: keep its buttons out of the accessibility tree (VoiceOver, UI tests)
         .accessibilityElement(children: .ignore)
         .accessibilityHidden(true)
+    }
+
+    /// A finger came down on the tag: the page is wherever it is now — mid spring-back too — so stop the spring there
+    /// and hand the tag the pull that angle stands for (θ · 64/90): the drag carries on from it, never from 0.
+    private func grabbed() -> CGFloat {
+        guard !closing else { return pull }
+        let theta = petals.foldAngle(at: Date().timeIntervalSinceReferenceDate)
+        petals.fold = .hold(theta)
+        return CGFloat(theta * 64 / 90)
     }
 
     /// The tag moved under the finger: the page follows it 1:1 (θ = pull · 90/64, 90° at the 64 pt threshold).
@@ -310,25 +325,73 @@ nonisolated struct HalfPlane: Shape {
 }
 
 /// 7-1 「拉线」 (design-review-2 §4.4): a 48 × 72 vermilion paper tag on the end of the thread, 「开始」 set vertically in
-/// Songti Semibold 19. Pull it ≥ 64pt or tap it; short of that it springs back without a haptic. 1.5 s after the cover
-/// appears it sways once (±4°, 600 ms); with reduce motion it stays still and a static arrow shows instead.
+/// Songti Semibold 19. Pull it ≥ 64pt or tap it; short of that it springs back without a haptic. It hangs like a wind
+/// chime (design-cover §4.1, `TagSway`); with reduce motion it stays still and a static arrow shows instead.
 struct PullTag: View {
     @Binding var pull: CGFloat
+    /// The pendulum it hangs on (§4.1); nil: a still tag.
+    var sway: TagSway? = nil
     /// S3 has slid off (a completed pull).
     var petalGone = false
+    /// A finger came down: returns the pull the page stands at right now (mid spring-back too).
+    var onGrab: () -> CGFloat = { 0 }
     var onDrag: (CGFloat) -> Void = { _ in }
     var onSpringBack: () -> Void = {}
     let action: () -> Void
-    @State private var sway = 0.0
-    /// S3 slips 1.5 pt down the tag when it sways, and stays there (friction).
-    @State private var petalSlid = 0.0
+    /// This drag's starting point, in raw finger travel (before the 0.35 drag past 64 pt).
+    @State private var grabFrom: CGFloat? = nil
     @Environment(\.highContrast) private var hc
+
+    /// Finger travel → pull: 1:1 to 64 pt, then × 0.35; and back.
+    private static func pull(_ y: CGFloat) -> CGFloat { y < 64 ? y : 64 + (y - 64) * 0.35 }
+    private static func travel(_ p: CGFloat) -> CGFloat { p < 64 ? p : 64 + (p - 64) / 0.35 }
 
     var body: some View {
         let rm = AppSettings.shared.motionReduced
+        TimelineView(.animation(minimumInterval: 1.0 / 60, paused: rm || sway == nil || sway?.paused == true)) { tl in
+            let now = tl.date.timeIntervalSinceReferenceDate
+            let _ = rm ? () : sway?.step(now)
+            let swing = rm ? 0 : sway?.angle ?? 0, turn = rm ? 0 : sway?.tagTurn(at: now) ?? 0
+            hanging(rm: rm, turn: turn, slid: sway?.petalSlid ?? 0)
+                // + = the tag's bottom to the right: counter-clockwise on screen, about the stitch
+                .rotationEffect(.degrees(-swing), anchor: .top)
+        }
+        .frame(width: 88)
+        .contentShape(Rectangle())
+        .gesture(DragGesture(minimumDistance: 0)
+            .onChanged { v in
+                // the frame the finger lands: read the page where it is (and stop its spring there), so the pull
+                // carries on from it — a grab mid spring-back never snaps the page flat
+                let from = grabFrom ?? Self.travel(onGrab())
+                if grabFrom == nil { grabFrom = from; sway?.grab() }
+                let p = Self.pull(max(0, from + v.translation.height))
+                var t = Transaction(); t.disablesAnimations = true
+                withTransaction(t) { pull = p }
+                onDrag(p)
+            }
+            .onEnded { v in
+                let y = max(0, (grabFrom ?? 0) + v.translation.height)
+                grabFrom = nil
+                // past the threshold or a tap: the cover takes it from here (it shuts the page, then lets the tag go)
+                if y >= 64 || (abs(v.translation.height) < 8 && abs(v.translation.width) < 8) { sway?.freeze(); action() }
+                else {
+                    sway?.release(vx: v.velocity.width)
+                    onSpringBack()
+                    if rm { pull = 0 } else { withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { pull = 0 } }
+                }
+            })
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(L10n.t("cover.beginLabel"))
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction { sway?.freeze(); action() }
+        .accessibilityIdentifier("cover.begin")
+    }
+
+    /// The thread's free 40 pt (straight: a tag's weight pulls it taut) and the tag, exactly as drawn before the sway.
+    private func hanging(rm: Bool, turn: Double, slid: Double) -> some View {
         let red = hc ? Tok.hcLine : Tok.thread
         let word = L10n.t("cover.begin")
-        VStack(spacing: 0) {
+        return VStack(spacing: 0) {
             Rectangle().fill(red).frame(width: 3, height: 40 + pull * 0.85)
             ZStack(alignment: .top) {
                 TagShape().fill(red).shadow(color: .black.opacity(hc ? 0 : 0.2), radius: 2, y: 1.5)
@@ -349,44 +412,20 @@ struct PullTag: View {
             .frame(minWidth: 48, minHeight: 72)
             .fixedSize()
             // S3 rides on the tag's left shoulder (design-cover §4): it turns with the sway and comes down with the pull
-            .overlay(alignment: .topLeading) { TagPetal(slid: petalSlid, gone: petalGone) }
+            .overlay(alignment: .topLeading) { TagPetal(slid: slid, gone: petalGone) }
+            // the chime's give: the tag turns a little about its hole (5 pt hole, 7 pt from the top), a beat late
+            .rotationEffect(.degrees(-turn), anchor: UnitPoint(x: 0.5, y: 9.5 / 72))
             .dynamicTypeSize(...DynamicTypeSize.accessibility2)
             if rm { Image(systemName: "chevron.compact.down").font(.title3).foregroundStyle(Tok.ink600).padding(.top, 6) }
         }
-        .rotationEffect(.degrees(sway), anchor: .top)
-        .frame(width: 88)
-        .contentShape(Rectangle())
-        .gesture(DragGesture(minimumDistance: 0)
-            .onChanged { v in
-                let y = max(0, v.translation.height)
-                pull = y < 64 ? y : 64 + (y - 64) * 0.35
-                onDrag(pull)
-            }
-            .onEnded { v in
-                let y = v.translation.height
-                // past the threshold or a tap: the cover takes it from here (it shuts the page, then lets the tag go)
-                if y >= 64 || (abs(y) < 8 && abs(v.translation.width) < 8) { action() }
-                else { onSpringBack(); if rm { pull = 0 } else { withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { pull = 0 } } }
-            })
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(L10n.t("cover.beginLabel"))
-        .accessibilityAddTraits(.isButton)
-        .accessibilityAction { action() }
-        .accessibilityIdentifier("cover.begin")
-        .onAppear {
-            guard !rm else { return }
-            Task { @MainActor in
-                try? await Task.sleep(for: .seconds(1.5))
-                withAnimation(.easeInOut(duration: 0.15)) { sway = 4 }
-                withAnimation(.easeOut(duration: 0.6)) { petalSlid = 1.5 }
-                try? await Task.sleep(for: .milliseconds(150))
-                withAnimation(.easeInOut(duration: 0.3)) { sway = -4 }
-                try? await Task.sleep(for: .milliseconds(300))
-                withAnimation(.easeInOut(duration: 0.15)) { sway = 0 }
-            }
-        }
     }
 }
+
+/// Settings' press: 60 % while held, no scale (design-cover §6.1).
+struct PressFade: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View { configuration.label.opacity(configuration.isPressed ? 0.6 : 1) }
+}
+
 
 nonisolated struct TagShape: Shape {
     func path(in r: CGRect) -> Path {
