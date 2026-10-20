@@ -798,12 +798,16 @@ final class TagSway {
     @ObservationIgnored private(set) var petalSlid = 0.0
 
     static let omega0 = 2 * Double.pi / 2.2, zeta = 0.08
+    // the spec's literal 0.6°/s² noise and 12° gust torque give ±0.1° ambient and 20° gust peaks; these give its
+    // stated result (±1.5–3°, +6–9° at a gust, ≤ 10°), measured over 60 s of the same seeds
     static let noiseGain = 6.0, gustGain = 4.2, kickGain = 1.5
 
     /// The angle drawn: the pendulum's, brought to rest over 2 s when the cover idles.
     var angle: Double { theta * speed }
-    /// The tag's own turn about its hole: 0.35 × the pendulum's angle 120 ms ago.
+    @ObservationIgnored private var frozenTurn: Double? = nil
+    /// The tag's own turn about its hole: 0.35 × the pendulum's angle 120 ms ago (fixed once frozen).
     func tagTurn(at now: Double) -> Double {
+        if let f = frozenTurn { return f }
         let t = now - 0.12
         guard let last = history.last else { return 0 }
         if t >= last.t { return 0.35 * last.a }
@@ -814,7 +818,7 @@ final class TagSway {
     }
 
     func reset() {
-        held = false; frozen = false; theta = 0; omega = 0; wall = nil; clock = 0; kick = 0; nextKick = 1.5
+        held = false; frozen = false; frozenTurn = nil; theta = 0; omega = 0; wall = nil; clock = 0; kick = 0; nextKick = 1.5
         history = []; pushes = 0; petalSlid = 0; lastEnv = 0; speed = 1; lastTouch = Date().timeIntervalSinceReferenceDate
         if paused { paused = false }
     }
@@ -831,7 +835,11 @@ final class TagSway {
         omega += (vx < 0 ? -1 : 1) * amp * Self.omega0
     }
     /// The pull completed: the tag stops where it is and goes with the page.
-    func freeze() { frozen = true; held = false }
+    func freeze() {
+        frozenTurn = tagTurn(at: Date().timeIntervalSinceReferenceDate); frozen = true; held = false
+    }
+    /// Back from the background: no integration across the gap, and not "idle" for having been away.
+    func resume() { wall = nil; touch() }
 
     private static func noise(_ t: Double) -> Double {
         let u = t * 0.3, i = u.rounded(.down), f = u - i
@@ -863,13 +871,15 @@ final class TagSway {
             var eq = Self.gustGain * env
             if let e = engine, let tilt = e.screenTilt {
                 eq += max(-6, min(6, 0.5 * tilt))
-                if let lt = lastTilt { omega += 0.4 * (tilt - lt) * w0 }
+                if let lt = lastTilt { omega += 0.4 * (tilt - lt) }
                 lastTilt = tilt
             } else { lastTilt = nil }
             a = -w0 * w0 * (theta - eq) - 2 * Self.zeta * w0 * omega + Self.noiseGain * Self.noise(clock)
             while clock >= nextKick {
                 let k = UInt64(kick)
-                let amp = (0.5 + 1.5 * petalHash(0x93, k, 1)) * (petalHash(0x93, k, 2) < 0.5 ? -1 : 1) * Self.kickGain
+                // the first is the cover's scripted entry gust (§4: +4° at 1.5 s, S3 slips with it); then seeded kicks
+                let amp = kick == 0 ? 4 : (0.5 + 1.5 * petalHash(0x93, k, 1)) * (petalHash(0x93, k, 2) < 0.5 ? -1 : 1) * Self.kickGain
+                if kick == 0 && pushes < 3 { pushes += 1 }
                 omega += amp * w0
                 nextKick += 3 + 4 * petalHash(0x93, k)
                 kick += 1
@@ -877,6 +887,8 @@ final class TagSway {
         }
         omega += a * dt
         theta += omega * dt
+        // never past 10° (§4.1 ③), whatever the wind, the phone and the finger add up to
+        if abs(theta) > 10 { theta = theta > 0 ? 10 : -10; if theta * omega > 0 { omega = 0 } }
         petalSlid = min(0.5 * Double(pushes), petalSlid + dt * 0.5 / 0.6)
         history.append((now, angle))
         while history.count > 2, now - history[0].t > 0.4 { history.removeFirst() }

@@ -341,6 +341,7 @@ struct PullTag: View {
     /// This drag's starting point, in raw finger travel (before the 0.35 drag past 64 pt).
     @State private var grabFrom: CGFloat? = nil
     @Environment(\.highContrast) private var hc
+    @Environment(\.scenePhase) private var phase
 
     /// Finger travel → pull: 1:1 to 64 pt, then × 0.35; and back.
     private static func pull(_ y: CGFloat) -> CGFloat { y < 64 ? y : 64 + (y - 64) * 0.35 }
@@ -348,7 +349,7 @@ struct PullTag: View {
 
     var body: some View {
         let rm = AppSettings.shared.motionReduced
-        TimelineView(.animation(minimumInterval: 1.0 / 60, paused: rm || sway == nil || sway?.paused == true)) { tl in
+        TimelineView(.animation(minimumInterval: 1.0 / 60, paused: rm || sway == nil || sway?.paused == true || phase != .active)) { tl in
             let now = tl.date.timeIntervalSinceReferenceDate
             let _ = rm ? () : sway?.step(now)
             let swing = rm ? 0 : sway?.angle ?? 0, turn = rm ? 0 : sway?.tagTurn(at: now) ?? 0
@@ -385,6 +386,7 @@ struct PullTag: View {
         .accessibilityAddTraits(.isButton)
         .accessibilityAction { sway?.freeze(); action() }
         .accessibilityIdentifier("cover.begin")
+        .onChange(of: phase) { _, p in if p == .active { sway?.resume() } }
     }
 
     /// The thread's free 40 pt (straight: a tag's weight pulls it taut) and the tag, exactly as drawn before the sway.
