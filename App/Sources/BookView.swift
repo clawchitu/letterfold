@@ -36,7 +36,8 @@ struct BookGeometry {
         var tile = horizontal ? (rows >= 5 ? 63.0 : 80.0) : 76.0
         if large {
             tile = rows >= 5 ? max(64, min(92, fitW)) : 92
-            tile = max(64, min(tile, fitW))
+            // never wider than the page: a 6-row board (5-7, the 暗信) gets the widest tile that still fits across
+            tile = max(min(64, fitW), min(tile, fitW))
         } else {
             tile = max(30, min(tile, fitW, fitH))
         }
