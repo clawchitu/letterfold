@@ -3811,6 +3811,36 @@
         }
       }
     },
+    "intro.dark": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name}。{line}你在{you}，终点在{goal}。书是打开的。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name}. {line} You are at {you}; the goal is at {goal}. The book is open."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name}。{line}あなたは{you}、ゴールは{goal}。本は開いています。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name}. {line} 지금 {you}에 있고, 도착점은 {goal}에 있어요. 책은 펼쳐져 있어요."
+          }
+        }
+      }
+    },
     "keyOpens": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {col}",
       "extractionState": "manual",

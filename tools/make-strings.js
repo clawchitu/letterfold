@@ -98,6 +98,7 @@ const NATIVE = {
   'dark.note': ['三封，可不读', 'three, optional', '三通、読まなくてもいい', '세 통, 안 읽어도 돼요'],
   'dark.label': ['暗信，三封可以不读的难信', 'Hidden letters: three hard letters you may leave unread', '隠された手紙、読まなくてもいい難しい三通', '숨은 편지, 안 읽어도 되는 어려운 편지 세 통'],
   'dark.lockedToast': ['暗信要等「胶」的信送到，才拆得开。', 'The hidden letters open once the Glue letter is delivered.', '隠された手紙は「糊」の手紙が届いてから開く。', '숨은 편지는 「풀」의 편지가 도착한 뒤에 열려요.'],
+  'intro.dark': ['{name}。{line}你在{you}，终点在{goal}。书是打开的。', '{name}. {line} You are at {you}; the goal is at {goal}. The book is open.', '{name}。{line}あなたは{you}、ゴールは{goal}。本は開いています。', '{name}. {line} 지금 {you}에 있고, 도착점은 {goal}에 있어요. 책은 펼쳐져 있어요.'],
   'dark.back': ['回到章节', 'Back to the chapters', '章の一覧へ', '장 목록으로'],
   'hereOnPage': ['你在这里，{page}', 'you are here, on the {page}', 'あなたはここ、{page}', '여기 있어요, {page}'],
   'stack.blocked': ['这一叠里有石头，走不过去', 'a stone in this stack: no way through', 'この重なりに石、通れない', '이 겹에 돌이 있어 지나갈 수 없어요'],

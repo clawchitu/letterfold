@@ -25,7 +25,7 @@ xcodebuild test -project Letterfold.xcodeproj -scheme Letterfold -destination "i
 cd Packages/FoldCore && swift test
 ```
 
-启动参数（截图和调试用）：`-screen cover|map|level|letter|settings`、`-startLevel 5`（从 1 开始）、`-startAngle 130`、`-walkTo 6,2`（先走到某格，必要时先合上）、`-aha YES`（直接播「啊哈」）、`-autoplay YES`、`-resetProgress YES`、`-hinge simulated|device`、`-buttonControl YES`、`-highContrast YES`、`-largeGrid YES`、`-reduceMotion YES`、`-soundMode YES`、`-AppleLanguages "(ja)"`。
+启动参数（截图和调试用）：`-screen cover|map|level|letter|settings`、`-startLevel 5`（从 1 开始）、`-startAngle 130`、`-walkTo 6,2`（先走到某格，必要时先合上）、`-aha YES`（直接播「啊哈」）、`-autoplay YES`、`-resetProgress YES`、`-hinge simulated|device`、`-buttonControl YES`、`-highContrast YES`、`-largeGrid YES`、`-reduceMotion YES`、`-soundMode YES`、`-levelMap "行|行|…"`（UI 测试：把 -startLevel 那关换成别的棋盘，规则回归测试用 0.1 (13) 的旧图，见 `App/UITests/Boards13.swift`）、`-AppleLanguages "(ja)"`。
 
 图标：`swift tools/make-icon.swift App/Resources/Assets.xcassets/AppIcon.appiconset`（按 final-11 方案 A 用 CoreGraphics 画，生成全部旧尺寸 + 深色 / 着色 1024）。
 
@@ -57,7 +57,7 @@ App/UITests/                XCUITest：书封 → 地图 → 关卡；真拖页�
 tools/                      sync-from-proto.sh、make-strings.js（原生专用文案在 NATIVE 表里）、make-icon.swift
 ```
 
-**单一来源**：关卡和文案只在网页原型里改。改完跑 `tools/sync-from-proto.sh`（调用 fold-proto 的 `tools/export.js`），会更新 `levels.json` 和三个 `.xcstrings`；原生专用的文案（书封、地图、设置、读屏）写在 `tools/make-strings.js` 的 `NATIVE` 表里，同一个脚本生成。
+**单一来源**：关卡和文案只在网页原型里改。同步时 `tools/level-extras.js` 给 `levels.json` 补上 `optional`（暗信）、`len`（最短解长）和原型求解器的最短解 `solution`；`UIPlanTests` 把最短解变成 XCUITest 通关计划 `App/UITests/PlaythroughPlan.swift`（改了关卡后 `LF_WRITE_PLAN=1 swift test --filter UIPlanTests` 重新生成）。改完跑 `tools/sync-from-proto.sh`（调用 fold-proto 的 `tools/export.js`），会更新 `levels.json` 和三个 `.xcstrings`；原生专用的文案（书封、地图、设置、读屏）写在 `tools/make-strings.js` 的 `NATIVE` 表里，同一个脚本生成。
 
 ## M1 做了什么
 

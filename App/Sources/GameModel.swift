@@ -439,7 +439,7 @@ final class GameModel {
 
     var intro: String {
         let t = levelText, g = game.goal
-        return L10n.t("intro", ["n": code, "name": t.name, "line": t.line, "you": pos(game.char),
+        return L10n.t(isDark ? "intro.dark" : "intro", ["n": code, "name": t.name, "line": t.line, "you": pos(game.char),
                                 "goal": g.map(pos) ?? L10n.t("elsewhere")]) + " " + L10n.t("paper.ch\(chapter.id)")
     }
 
