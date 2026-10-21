@@ -631,6 +631,36 @@
         }
       }
     },
+    "cantReachWhy": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {why} {pos}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "走不到那里：{pos}{why}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Can’t get there: {why} at {pos}."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "そこへは行けない：{pos}は{why}"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "거기로 갈 수 없어요: {pos}에 {why}"
+          }
+        }
+      }
+    },
     "caption.label": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -1201,6 +1231,186 @@
         }
       }
     },
+    "chHead.1": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一 · 折"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chapter 1 · Fold"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一 · 折"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1장 · 접기"
+          }
+        }
+      }
+    },
+    "chHead.2": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二 · 立"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chapter 2 · Stand"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二 · 立"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2장 · 세우기"
+          }
+        }
+      }
+    },
+    "chHead.3": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三 · 影"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chapter 3 · Shadow"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三 · 影"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3장 · 그림자"
+          }
+        }
+      }
+    },
+    "chHead.4": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "四 · 岸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chapter 4 · Banks"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "四 · 岸"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "4장 · 강가"
+          }
+        }
+      }
+    },
+    "chHead.5": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "五 · 胶"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chapter 5 · Glue"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "五 · 糊"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5장 · 풀"
+          }
+        }
+      }
+    },
+    "chHead.dark": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暗信"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hidden letters"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隠された手紙"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "숨은 편지"
+          }
+        }
+      }
+    },
     "closeAll": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -1568,25 +1778,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "石头压下来了，重新开始"
+            "value": "对页的石头合下来压住了你，回到起点"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The stone came down. Starting over."
+            "value": "A stone on the closing page came down on you. Back to the start."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "石が落ちてきた。最初から"
+            "value": "閉じる頁の石が落ちてきて、つぶされた。最初から"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "돌이 내려왔어요. 처음부터 다시"
+            "value": "닫히는 페이지의 돌에 눌렸어요. 처음부터 다시"
+          }
+        }
+      }
+    },
+    "crushedGlue": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你站在胶上：合上时胶把对面的石头粘到你这格，压住了你。回到起点"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You stood on the glue: closing pulled the stone opposite onto your square and crushed you. Back to the start."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "糊の上に立っていた。閉じると糊が向かいの石をこの枡に引き寄せ、つぶされた。最初から"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "풀 위에 서 있었어요. 닫자 풀이 맞은편 돌을 이 칸으로 끌어와 눌렸어요. 처음부터 다시"
           }
         }
       }
@@ -2607,6 +2847,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "더 접기"
+          }
+        }
+      }
+    },
+    "foldedCols": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按叠起的四列读"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "read as four stacked columns"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重なった4列で読みます"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "겹친 4열로 읽어요"
           }
         }
       }
@@ -6001,6 +6271,36 @@
         }
       }
     },
+    "no.card": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这张纸压在石头上，走不过去"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a page lies on a stone there: blocked"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石の上に紙が重なっていて進めない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌 위에 종이가 겹쳐 있어 갈 수 없어요"
+          }
+        }
+      }
+    },
     "no.crease": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -6567,6 +6867,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "켬"
+          }
+        }
+      }
+    },
+    "onTop": {
+      "comment": "UI. From fold-proto i18n.js. Placeholders: {top} {under}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{top}压在{under}上"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{top} on {under}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{under}の上に{top}"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{under} 위에 {top}"
           }
         }
       }
@@ -7231,6 +7561,66 @@
         }
       }
     },
+    "pre.lean": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "斜起"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lean"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "傾ける"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기울이기"
+          }
+        }
+      }
+    },
+    "pre.leanLabel": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "斜起到 45°"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lean the page to 45°"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "45°まで傾ける"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "45°로 기울이기"
+          }
+        }
+      }
+    },
     "pre.open": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -7707,6 +8097,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "그림자"
+          }
+        }
+      }
+    },
+    "rowEmpty": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全是缺口"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "all gaps"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すべてすき間"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "모두 틈"
+          }
+        }
+      }
+    },
+    "rowWords": {
+      "comment": "UI. From fold-proto i18n.js. Placeholders: {r} {cells}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第{r}行：{cells}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "row {r}: {cells}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{r}行目：{cells}"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{r}행: {cells}"
           }
         }
       }
@@ -9211,6 +9661,36 @@
         }
       }
     },
+    "vol.1": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷一"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Book One"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第一巻"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제1권"
+          }
+        }
+      }
+    },
     "vol.2": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -9417,6 +9897,186 @@
           "stringUnit": {
             "state": "translated",
             "value": "지금 {pos}, {page}. 갈 수 있는 쪽: {ways}. 책 {a}°. {goal}."
+          }
+        }
+      }
+    },
+    "why.card": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "的纸压在石头上，挡住了"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a page lying on a stone blocks the way"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石の上に紙が重なってふさがっている"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌 위에 겹친 종이가 막고 있어요"
+          }
+        }
+      }
+    },
+    "why.crease": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隔着折痕（合上，或立起纸片，两页才连通）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the crease (the pages only join when closed, or on standing tabs)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折り目の向こう（閉じるか、紙片を立てないとつながらない）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "접는 선이 있어요(닫거나 종이 조각을 세워야 이어져요)"
+          }
+        }
+      }
+    },
+    "why.door": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "的门锁着"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a locked door"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扉に鍵がかかっている"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "잠긴 문이 있어요"
+          }
+        }
+      }
+    },
+    "why.edge": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "是书边"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the edge of the book"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本の端"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책 끝이 있어요"
+          }
+        }
+      }
+    },
+    "why.gap": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "是缺口"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a gap"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すき間"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "틈이 있어요"
+          }
+        }
+      }
+    },
+    "why.stone": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "有石头挡着"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a stone blocks the way"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石でふさがっている"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌이 막고 있어요"
           }
         }
       }

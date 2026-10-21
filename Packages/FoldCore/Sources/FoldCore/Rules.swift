@@ -92,6 +92,76 @@ public struct Rules: Sendable {
         a >= config.foldMin && b[mirror(from.c), from.r].isOpaque && (!isRight(from.c) || b[from] == .glue)
     }
 
+    /// Why the book crushed the figure at `from` (fold-proto e613f80 `crushCause`): `.glue` when it stood on top-page
+    /// glue and the glue pulled the stone below up onto its square, `.stone` when a top-page stone came down on it.
+    public enum CrushCause: String, Sendable { case glue, stone }
+    public func crushCause(_ b: Board, _ from: Cell, _ a: Double) -> CrushCause? {
+        guard crushed(b, from, a) else { return nil }
+        return isRight(from.c) ? .glue : .stone
+    }
+
+    /// Why a square cannot be entered or a step is refused (fold-proto e613f80 `cellBlock` / `stepBlock` / `pathBlock`).
+    /// `card`: shut, a page lies on a stone. `crease`: open, the pages only join when shut or on standing tabs.
+    public enum Block: String, Sendable { case edge, stone, card, door, gap, crease }
+    /// A blocker and where it is: `c` is the actual column open, the bottom-page (stack) column shut.
+    public struct Blocker: Sendable, Equatable {
+        public let why: Block; public let c: Int; public let r: Int
+        public init(_ why: Block, _ c: Int, _ r: Int) { self.why = why; self.c = c; self.r = r }
+    }
+
+    /// Why the square (c, r) cannot be entered in posture p (shut: its stack), or nil if it can.
+    public func cellBlock(_ b: Board, _ c: Int, _ r: Int, _ p: Posture, _ sh: [Cell: Int]) -> Block? {
+        if r < 0 || r >= b.h || c < 0 || c >= b.w { return .edge }
+        if p == .closed {
+            let q = proj(c), L = b[q, r], R = b[mirror(q), r]
+            if foldOpen(b, q, r) { return nil }
+            if R == .stone || (L == .stone && !R.isFloor) { return .stone }
+            if L == .stone { return .card }
+            if L == .door || R == .door { return .door }
+            return .gap
+        }
+        let t = b[c, r]
+        if t == .stone { return .stone }
+        if t == .door { return .door }
+        if t.isFloor || sh[Cell(c, r)] != nil { return nil }
+        return .gap
+    }
+
+    /// Why one step (dc, dr) from `from` is refused, or nil if it is allowed. Shut, dc moves along the stacks.
+    public func stepBlock(_ b: Board, _ from: Cell, _ dc: Int, _ dr: Int, _ p: Posture, _ sh: [Cell: Int]) -> Blocker? {
+        func col(_ x: Cell) -> Int { p == .closed ? proj(x.c) : x.c }
+        if neighbours(b, from, p, sh).contains(where: { col($0) == col(from) + dc && $0.r == from.r + dr }) { return nil }
+        let c = col(from) + dc, r = from.r + dr
+        if r < 0 || r >= b.h || c < 0 || c >= (p == .closed ? n : b.w) { return Blocker(.edge, c, r) }
+        if p != .closed && ((from.c == n - 1 && dc == 1) || (from.c == n && dc == -1)) { return Blocker(.crease, c, r) }
+        return Blocker(cellBlock(b, c, r, p, sh) ?? .gap, c, r)
+    }
+
+    /// Why the figure at `from` cannot walk to `target`: the target itself, or else the blocker on the edge of what it
+    /// can reach that lies closest to the target (doors, cards and stones before the crease and gaps on a tie).
+    /// nil if a path exists.
+    public func pathBlock(_ b: Board, from: Cell, to target: Cell, _ p: Posture, _ sh: [Cell: Int]) -> Blocker? {
+        if findPath(b, from: from, to: target, p, sh) != nil { return nil }
+        func col(_ c: Int) -> Int { p == .closed ? proj(c) : c }
+        if let own = cellBlock(b, target.c, target.r, p, sh) { return Blocker(own, col(target.c), target.r) }
+        func key(_ x: Cell) -> Cell { Cell(col(x.c), x.r) }
+        var seen: Set<Cell> = [key(from)], queue = [from], head = 0
+        var cands: [Blocker] = []
+        while head < queue.count {
+            let cur = queue[head]; head += 1
+            for nb in neighbours(b, cur, p, sh) where seen.insert(key(nb)).inserted { queue.append(nb) }
+            for (dc, dr) in Rules.dirs {
+                if let x = stepBlock(b, cur, dc, dr, p, sh), x.why != .edge { cands.append(x) }
+            }
+        }
+        let rank: [Block: Int] = [.door: 0, .card: 1, .stone: 2, .crease: 3, .gap: 4]
+        func dist(_ x: Blocker) -> Int { abs(x.c - col(target.c)) + abs(x.r - target.r) }
+        let best = cands.enumerated().min { l, m in
+            (dist(l.element), rank[l.element.why]!, l.offset) < (dist(m.element), rank[m.element.why]!, m.offset)
+        }
+        return best?.element ?? Blocker(.gap, col(target.c), target.r)
+    }
+
     /// Standing on nothing but a shadow? The shadow carries the character. nil means it falls (or is crushed).
     public func ride(_ b: Board, _ from: Cell, _ src: Int?, _ a: Double) -> Cell? {
         if crushed(b, from, a) { return nil }

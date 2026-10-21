@@ -418,6 +418,7 @@ private struct FoldControl: View {
                 @unknown default: break
                 }
             }
+            .accessibilityActions { if model.canLean { Button(L10n.t("pre.leanLabel")) { model.lean() } } }
             .accessibilityAction(named: L10n.t("closeAllLabel")) { model.foldTo(180) }
             .accessibilityAction(named: L10n.t("openAllLabel")) { model.foldTo(0) }
             .accessibilityAction(named: L10n.t("undo")) { model.undo() }
@@ -581,6 +582,7 @@ private struct TileAccessibility: ViewModifier {
             .accessibilityAction(named: L10n.t("walkHere")) { model.tap(c) }
             .accessibilityAction(named: L10n.t("foldMoreLabel")) { model.foldBy(1) }
             .accessibilityAction(named: L10n.t("foldLessLabel")) { model.foldBy(-1) }
+            .accessibilityActions { if model.canLean { Button(L10n.t("pre.leanLabel")) { model.lean() } } }
             .accessibilityAction(named: L10n.t("closeAllLabel")) { model.foldTo(180) }
             .accessibilityAction(named: L10n.t("openAllLabel")) { model.foldTo(0) }
             .accessibilityAction(named: L10n.t("undo")) { model.undo() }

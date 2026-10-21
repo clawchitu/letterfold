@@ -235,7 +235,9 @@ final class GameModel {
     @ObservationIgnored private var hingeTarget = 0.0
     @ObservationIgnored private var hingeIdle: Task<Void, Never>?
 
-    private struct Pending { var mode = false, connected = false, goal = false, lost = false, shade = false, hadShade = false, lit = false, dead = false; var stamps: [Rules.Stamp] = [] }
+    private struct Pending { var mode = false, connected = false, goal = false, lost = false, shade = false, hadShade = false, lit = false, dead = false; var stamps: [Rules.Stamp] = []
+        /// Crushed or fallen: the reason, said last in the fold announcement so 「路接通了」 cannot drown it (fold-proto e613f80).
+        var fell = "" }
 
     static let step = 15.0
     static let snapPoints: [Double] = [0, 90, 130, 180]
@@ -311,8 +313,16 @@ final class GameModel {
 
     var level: Level { pack.levels[index] }
     var levelText: (name: String, line: String, hint: String) { L10n.level(level.id) }
-    /// The heading: 「2-3 · 墙角」; a 暗信's name already says what it is (「暗信 · 背」).
-    var titleText: String { isDark ? levelText.name : L10n.t("level.title", ["code": code, "name": levelText.name]) }
+    /// The heading: 「2-3 · 墙角」, or 「暗信 1 · 背」 (the 暗信 names come without the prefix since fold-proto e613f80).
+    var titleText: String { isDark ? darkName : L10n.t("level.title", ["code": code, "name": levelText.name]) }
+    /// 「暗信 1 · 背」: the 暗信's number in its chapter and its name.
+    var darkName: String { L10n.t("darkHead", ["n": (levelDarkIndices.firstIndex(of: index) ?? 0) + 1, "name": levelText.name]) }
+    /// From chapter 3 the lamp is lit: a 「斜起」 preset (fold 135°, physical 45°) lands where the shadows show, so
+    /// 3-1's shadow needs no fine stepping (fold-proto e613f80's Lean preset; buttons and VoiceOver only — a finger
+    /// already leans freely).
+    var canLean: Bool { chapter.id >= 3 }
+    static let leanAngle = 135.0
+    func lean() { foldTo(Self.leanAngle) }
     var isLeaning: Bool { config.isLeaning(angle) }
     /// Chapter 3 between 89° and 60° (physical): leaning, not standing (the 15° stops at 75° and 60°, review-ch3 §6.4).
     /// A page with tabs standing (4-2) is standing first: the bridge is up, the shadow is the news.
@@ -439,7 +449,7 @@ final class GameModel {
 
     var intro: String {
         let t = levelText, g = game.goal
-        return L10n.t(isDark ? "intro.dark" : "intro", ["n": code, "name": t.name, "line": t.line, "you": pos(game.char),
+        return L10n.t(isDark ? "intro.dark" : "intro", ["n": code, "name": isDark ? darkName : t.name, "line": t.line, "you": pos(game.char),
                                 "goal": g.map(pos) ?? L10n.t("elsewhere")]) + " " + L10n.t("paper.ch\(chapter.id)")
     }
 
@@ -956,7 +966,11 @@ final class GameModel {
             // the first time a shut stack refuses you because paper lies on a stone, say the rule once (playtest 10/20)
             if posture == .closed, rules.facts(board, cell, posture: .closed, shade: shade, figure: char).note == .stackBlocked,
                teachRule(Self.ruleBlockedKey, "rule.blocked") {}
-            else { announce(L10n.t("cantReach")) }
+            else {
+                // say why (fold-proto e613f80): the blocker nearest the square, and where it is
+                let b = rules.pathBlock(board, from: char, to: cell, posture, shade) ?? Rules.Blocker(.gap, cell.c, cell.r)
+                show(L10n.t("cantReachWhy", ["why": L10n.t("why.\(b.why.rawValue)"), "pos": pos(b.c, b.r)]))
+            }
             nopes += 1
             if nopes >= 2 { hintAvailable = true }
             startGhost(after: 0.4)   // 1-1: tapping the far flag first is the classic first move; show the page instead
@@ -1000,7 +1014,8 @@ final class GameModel {
         let match = game.neighbours.first { n in posture == .closed ? Cell(rules.proj(n.c), n.r) == want : n == want }
         guard let n = match else {
             haptics.nope()
-            announce(L10n.t("no.step"))
+            let why = rules.stepBlock(board, char, dc, dr, posture, shade)?.why.rawValue ?? "step"
+            show(L10n.t("no.\(why)"))
             return
         }
         pushUndo()
@@ -1106,7 +1121,12 @@ final class GameModel {
                 // crushed: the closing goes on to the slap (stopping it left the book at ~155°, Codex review 5)
                 stopWalk(); stopRideFeel()
                 if crushed { beginCrush(at: here) } else { stopMotion(); haptics.fall() }
-                show(L10n.t(crushed ? "crushed" : "fell"))
+                // say why (fold-proto e613f80): the glue pulled the stone below onto you, a stone came down on you, or
+                // the shadow you stood on slid away. On screen now; spoken at the end of the fold's announcement.
+                let text = L10n.t(crushed ? (rules.isRight(here.c) ? "crushedGlue" : "crushed") : "fell")
+                show(text, speak: false)
+                pending.fell = text; pending.connected = false; pending.goal = false
+                if motionTarget == nil && !dragging && !hingeActive { settleSoon() }
             case .stepped(let to):
                 // glue underfoot: a soft give (design-review-v2c1 §3 触觉 / 声音)
                 if board[to] == .glue { haptics.soft(); sound.glueTick(pan: pan(of: to)) }
@@ -1270,7 +1290,7 @@ final class GameModel {
         let a = Int(angle.rounded())
         let p = pending
         pending = Pending(hadShade: !shade.isEmpty)
-        if a == saidAngle && !p.mode && !p.connected && !p.shade && !p.lit && !p.dead && p.stamps.isEmpty { return }
+        if a == saidAngle && !p.mode && !p.connected && !p.shade && !p.lit && !p.dead && p.stamps.isEmpty && p.fell.isEmpty { return }
         saidAngle = a
         var parts: [String] = []
         switch posture {
@@ -1285,6 +1305,14 @@ final class GameModel {
             else { parts.append(L10n.t(isLeaning ? "book.lean" : "book.open", ["a": 180 - a])) }
         }
         if p.lit { parts.append(L10n.t("paper.lit")) }
+        if !p.fell.isEmpty {
+            // crushed / fell: what the shut did, then the reason, last (nothing about paths: you are back at the start)
+            if p.stamps.contains(where: { $0.kind == .glue }) { parts.append(L10n.t("glued")) }
+            for s in p.stamps where s.kind != .glue { parts.append(L10n.t(s.kind == .door ? "doorOpened" : "inkPrinted")) }
+            parts.append(p.fell)
+            announce(parts.joined(separator: L10n.t("sep")))
+            return
+        }
         // a dead end outranks a passing connection (Codex review 11): it is said once, so it must not be swallowed
         // 「路接通了」 only when the letter can be walked to (playtest 10/20: at half fold it was said with the goal out of
         // reach); new squares alone say so, and that the letter is not yet in reach
@@ -1483,9 +1511,9 @@ final class GameModel {
 
     // MARK: messages
 
-    func show(_ text: String) {
+    func show(_ text: String, speak: Bool = true) {
         withAnimation(.easeOut(duration: 0.2)) { toast = text }
-        announce(text)
+        if speak { announce(text) }
         toastTask?.cancel()
         toastTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(4.2))

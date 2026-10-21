@@ -18,6 +18,7 @@ const NATIVE = {
   'hinge.unavailable': ['这台设备没有铰链，继续用滑块', 'No hinge on this device; using the slider', 'この端末にはヒンジがありません。スライダーを使います', '이 기기에는 힌지가 없어요. 슬라이더를 사용해요'],
   'hinge.tiltSoon': ['体感还没做好，继续用滑块', 'Tilt is not ready yet; using the slider', '傾きはまだ準備中です。スライダーを使います', '기울기는 아직 준비 중이에요. 슬라이더를 사용해요'],
   'pre.stand': ['立起', 'Stand', '立てる', '세우기'],
+  'pre.leanLabel': ['斜起到 45°', 'Lean the page to 45°', '45°まで傾ける', '45°로 기울이기'],
   levelDoneMark: ['已完成', 'Solved', 'クリア', '완료'],
   // M1 (design-spec v1): cover, chapter map, letter, settings, button control, VoiceOver, sound mode
   'cover.tagline': ['一本合上才能读懂的书', 'A puzzle book you solve by closing it', '閉じてはじめて読める本', '덮어야 읽히는 책'],

@@ -638,25 +638,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "暗信 · 背"
+            "value": "背"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hidden Letter · Back"
+            "value": "Back"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "隠された手紙 · 背"
+            "value": "背"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "숨은 편지 · 등"
+            "value": "등"
           }
         }
       }
@@ -758,25 +758,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "暗信 · 门"
+            "value": "门"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hidden Letter · Door"
+            "value": "Door"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "隠された手紙 · 扉"
+            "value": "扉"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "숨은 편지 · 문"
+            "value": "문"
           }
         }
       }
@@ -878,25 +878,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "暗信 · 墨"
+            "value": "墨"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hidden Letter · Ink"
+            "value": "Ink"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "隠された手紙 · 墨"
+            "value": "墨"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "숨은 편지 · 먹"
+            "value": "먹"
           }
         }
       }
@@ -2318,25 +2318,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "石头走了，它原来的位置呢？"
+            "value": "胶把石头粘走以后，它原来那一格就成了纸。信的旁边，哪一格原来是石头？"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The stone left. What about where it stood?"
+            "value": "When the glue pulls a stone away, the square it stood on turns to paper. Which square next to the letter was a stone?"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "石は去った。いた場所は？"
+            "value": "糊が石を引き取ると、石のいた枡は紙になる。手紙のとなりで、石だったのはどの枡？"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "돌은 떠났다. 있던 자리는?"
+            "value": "풀이 돌을 가져가면 돌이 있던 칸은 종이가 돼요. 편지 옆에서 원래 돌이었던 칸은 어디일까요?"
           }
         }
       }

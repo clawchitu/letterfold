@@ -178,6 +178,9 @@ private struct FooterButtons: View {
         HStack(spacing: 4) {
             FooterButton(glyph: "−", title: L10n.t("foldMore"), label: L10n.t("foldMoreLabel"), id: "fold.more") { model.foldBy(1) }
             FooterButton(glyph: "+", title: L10n.t("foldLess"), label: L10n.t("foldLessLabel"), id: "fold.less") { model.foldBy(-1) }
+            if model.canLean {
+                FooterButton(glyph: "⟋", title: L10n.t("pre.lean"), label: L10n.t("pre.leanLabel"), id: "fold.lean") { model.lean() }
+            }
             FooterButton(glyph: "⊓", title: L10n.t("closeAll"), label: L10n.t("closeAllLabel"), id: "fold.close") { model.foldTo(180) }
             FooterButton(glyph: "⊔", title: L10n.t("openAll"), label: L10n.t("openAllLabel"), id: "fold.open") { model.foldTo(0) }
             FooterButton(glyph: "↺", title: L10n.t("undo"), label: L10n.t("undo"), id: "undo") { model.undo() }
