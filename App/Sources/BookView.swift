@@ -1379,7 +1379,7 @@ private struct ProjectedTargets: View {
         }
         func target(_ cell: Cell, _ q: (CGRect, [CGPoint])) -> Target { Target(cell: cell, rect: q.0, quad: q.1) }
         let closed = th >= 160, showFolding = th < 20 || model.posture == .standing
-        var out: [Target] = []
+        var out: [Target] = [], upper: [Target] = []
         for x in 0..<s.slotsAcross { for y in 0..<s.slotsDown {
             let c = geo.center(x: x, y: y), fc = s.cell(page: .fixed, x: x, y: y)
             if closed {
@@ -1387,11 +1387,13 @@ private struct ProjectedTargets: View {
             } else {
                 out.append(target(fc, quad(c) { u, v in SIMD3(u - W / 2, v, 0) }))
                 if showFolding {
-                    out.append(target(s.cell(page: .folding, x: x, y: y), quad(c) { u, v in SIMD3(u - W / 2, 0, 0) + (H - v) * fold }))
+                    upper.append(target(s.cell(page: .folding, x: x, y: y), quad(c) { u, v in SIMD3(u - W / 2, 0, 0) + (H - v) * fold }))
                 }
             }
         } }
-        return out
+        // the standing page leans over the bottom one past 90°: its squares are drawn on top, so they take the touch
+        // there (0.1 (14): at 62° a top-page square's middle fell on a bottom-page target that came later in the stack)
+        return out + upper
     }
 
     var body: some View {

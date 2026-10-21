@@ -5,7 +5,7 @@ import XCTest
 /// every walk a tap on a square. The moves come from PlaythroughPlan.swift, generated from the proto solver's shortest
 /// solutions and checked in FoldCore (UIPlanTests): angles the page can rest at, with tolerances a drag can hit.
 /// Set TEST_RUNNER_LF_SHOTS=/some/dir to also write each level's start and end as PNGs (QA passes).
-final class PlaythroughUITests: XCTestCase {
+class PlaythroughUITests: XCTestCase {
     var app: XCUIApplication!
     var f: FoldDriver!
     var shotIndex = 0
@@ -51,8 +51,8 @@ final class PlaythroughUITests: XCTestCase {
     }
 
     /// One level of the plan. `last`: the final act wins (no posture check after a winning close).
-    func play(_ id: String, _ acts: [PlanAct]) {
-        shut = false
+    func play(_ id: String, _ acts: [PlanAct], keepShut: Bool = false) {
+        if !keepShut { shut = false }
         for (k, act) in acts.enumerated() {
             let last = k == acts.count - 1
             switch act {

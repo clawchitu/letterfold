@@ -16,6 +16,7 @@
 		34363C4C6EA532C07D98704B /* Boards13.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49EBF627B593BF5091E2F46E /* Boards13.swift */; };
 		34A798E0D5924075ECEA5944 /* FoldCore in Frameworks */ = {isa = PBXBuildFile; productRef = 88BED3A0FF644679AC1747FE /* FoldCore */; };
 		3C0775AFD33349CA0C055368 /* Paper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23DC96729D3FCEAF07A7743F /* Paper.swift */; };
+		41C9101008DFEE17CF0C3A91 /* PlanLevelUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011869BA3DC1C9873A1049D7 /* PlanLevelUITests.swift */; };
 		4808A9C05E1935D6FFE4F8B2 /* PlaythroughUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661C1BE741FF0CB5D1E9EE51 /* PlaythroughUITests.swift */; };
 		4E042B49889CAFAFFA62FB4A /* Levels.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 93CA716983C6FD7D2F2CB18E /* Levels.xcstrings */; };
 		632B7BC5D43A1FE091458D59 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */; };
@@ -47,6 +48,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		011869BA3DC1C9873A1049D7 /* PlanLevelUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanLevelUITests.swift; sourceTree = "<group>"; };
 		23DC96729D3FCEAF07A7743F /* Paper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paper.swift; sourceTree = "<group>"; };
 		2991315D14E1D1169059EEE2 /* Hinge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hinge.swift; sourceTree = "<group>"; };
 		33328FA03A6FDAE3C9019CD5 /* Chapter3UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter3UITests.swift; sourceTree = "<group>"; };
@@ -99,6 +101,7 @@
 				59688079C7688C54335A73BD /* Chapter5UITests.swift */,
 				76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */,
 				B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */,
+				011869BA3DC1C9873A1049D7 /* PlanLevelUITests.swift */,
 				AD2ACD110F34C4648B09D796 /* PlaythroughPlan.swift */,
 				661C1BE741FF0CB5D1E9EE51 /* PlaythroughUITests.swift */,
 			);
@@ -306,6 +309,7 @@
 				A14167539C197C23C60606DD /* Chapter5UITests.swift in Sources */,
 				ACE672D75211636A787E4B4A /* FoldDriver.swift in Sources */,
 				325A01DF0182BD81C710BC54 /* LetterfoldUITests.swift in Sources */,
+				41C9101008DFEE17CF0C3A91 /* PlanLevelUITests.swift in Sources */,
 				C8A342F843413DC1FB323FDC /* PlaythroughPlan.swift in Sources */,
 				4808A9C05E1935D6FFE4F8B2 /* PlaythroughUITests.swift in Sources */,
 			);
