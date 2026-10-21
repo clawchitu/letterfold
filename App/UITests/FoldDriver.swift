@@ -33,7 +33,8 @@ struct FoldDriver {
             else { want = delta * 0.85 }
             let moved = pull(want * k)
             let landed = phys()
-            if [0, 90, 180].contains(landed) { continue }   // a detent says nothing about the gain
+            // a detent says nothing about the gain, except that a drag that left the page where it was (shut) was too short
+            if [0, 90, 180].contains(landed) { if moved == 0 { k = min(0.012, k * 1.5) }; continue }
             if moved != 0 && (moved > 0) == (want > 0) {
                 let learnt = k * want / Double(moved)
                 k = min(0.012, max(0.0008, low ? min(k, learnt) : learnt))

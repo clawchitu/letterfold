@@ -42,6 +42,12 @@ final class UIPlanTests: XCTestCase {
         return x < 45 ? 0 : 90
     }
 
+    /// The app lets you tap the top page's squares only while it lies flat (< 20°) or stands (BookView
+    /// ProjectedTargets / FrontFace): leaning over, it shows its back. Shut, every square is a stack target.
+    func tappable(_ cell: Cell, _ g: FoldGame) -> Bool {
+        !g.rules.isRight(cell.c) || g.posture == .closed || g.angle < 20 || g.posture == .standing
+    }
+
     /// Turn the hinge a degree at a time (a drag), as the app feeds it.
     @discardableResult func turn(_ g: FoldGame, to a: Double) -> [GameEvent] {
         var ev: [GameEvent] = []
@@ -57,7 +63,7 @@ final class UIPlanTests: XCTestCase {
             if g.won { return g }
             switch act {
             case let .walk(c, r, _):
-                guard let p = g.path(to: Cell(c, r)), !p.isEmpty else { return nil }
+                guard tappable(Cell(c, r), g), let p = g.path(to: Cell(c, r)), !p.isEmpty else { return nil }
                 for s in p { if g.step(to: s) == [.blocked] { return nil } }
             case .close, .open, .stand, .lean, .creep:
                 var phys: Double
@@ -105,13 +111,16 @@ final class UIPlanTests: XCTestCase {
             // a hinge move: find the angles the page can rest at that land the figure where the solver says and let
             // the next walk start
             let a = sol[k].a, want = sol[k].cell
-            let next: Cell? = k + 1 < sol.count && sol[k + 1].a == a ? sol[k + 1].cell : nil
+            var nextEnd = k + 1
+            while nextEnd + 1 < sol.count && sol[nextEnd + 1].a == a { nextEnd += 1 }
+            // the tap that follows goes to the end of the next walk (shut: its first stack)
+            let next: Cell? = k + 1 < sol.count && sol[k + 1].a == a ? (a >= 180 ? sol[k + 1].cell : sol[nextEnd].cell) : nil
             let riding = !g.rules.isRight(g.char.c) && !g.board[g.char].isFloor
             func ok(_ phys: Int) -> Bool {
                 guard let h = run(lv, acts + [riding ? .creep(phys: phys, tol: 0) : .lean(phys: phys, tol: 0)], detents: d) else { return false }
                 if h.won { return true }
                 guard h.char == want else { return false }
-                if let n = next { return h.path(to: n) != nil }
+                if let n = next { return tappable(n, h) && h.path(to: n) != nil }
                 return true
             }
             if a >= 180 { acts.append(.close); k += 1; continue }
