@@ -115,4 +115,19 @@ final class PlaytestTests: XCTestCase {
         XCTAssertEqual(r.facts(g.board, Cell(4, 1), posture: g.posture, shade: g.shade, figure: g.char).here, .you(onTop: nil))
         XCTAssertNil(r.facts(g.board, Cell(3, 1), posture: g.posture, shade: g.shade, figure: g.char).here)
     }
+
+    /// Codex review 12: a level won leaning (5-7 两盏灯, under the stone across from her door) is shut by the finale;
+    /// the won figure must stay where it won.
+    func testWonFigureStaysWhenTheFinaleShutsTheBook() throws {
+        for lv in pack.levels {
+            let sol = try XCTUnwrap(lv.solution), g = try FoldGame(level: lv, config: pack.config)
+            for s in sol.dropFirst() { if Double(s[2]) != g.angle { g.setAngle(Double(s[2])) } else { g.step(to: Cell(s[0], s[1])) } }
+            XCTAssertTrue(g.won, lv.id)
+            let at = g.char
+            for a in stride(from: g.angle, through: 180, by: 1) { g.setAngle(a) }
+            XCTAssertEqual(g.char, at, "\(lv.id): the finale's close moved the winner")
+            g.setAngle(0)
+            XCTAssertEqual(g.char, at, lv.id)
+        }
+    }
 }

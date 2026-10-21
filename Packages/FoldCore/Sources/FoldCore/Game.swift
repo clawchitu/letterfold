@@ -94,6 +94,9 @@ public final class FoldGame {
 
     private func apply(_ a: Double, _ events: inout [GameEvent]) {
         angle = a
+        // won: the aha / finale shuts the book on the winning square; nothing moves, falls or is crushed any more
+        // (Codex review 12: 5-7 is won leaning at (0,0) under the stone at (7,0), and the finale's close sent her home)
+        if won { shade = rules.shadows(board, a); posture = rules.posture(a); return }
         // shadows move; a character standing on nothing but shadow goes with them
         let previous = shade
         shade = rules.shadows(board, a)

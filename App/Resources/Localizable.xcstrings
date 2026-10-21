@@ -3338,25 +3338,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "沿上页靠折痕那一行往右走到最右一格，合上。合着往下走到底，再往左一格，打开：你在上页最上面一行。再往左一格，合上——这一叠一直通到左下角的信。"
+            "value": "先往上一格，往右两格，回到折痕边，再沿折痕往右走到最右一格，合上。合着往下走到底，再往左一格，打开：你在上页最上面一行。再往左一格，合上——这一叠一直通到左下角的信。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Walk the top page’s row by the crease all the way right and close. Closed, walk down to the end, one step left, and open: you are on the top row of the top page. One more step left, close again — this stack runs all the way to the letter in the bottom-left corner."
+            "value": "One step up, two right, back down to the crease, then along it right to the last square, and close. Closed, walk down to the end, one step left, and open: you are on the top row of the top page. One more step left, close again — this stack runs all the way to the letter in the bottom-left corner."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "上の頁の折り目沿いの行を右端まで歩いて閉じる。閉じたまま下の端まで、左へ一枡、開く。きみは上の頁のいちばん上の行にいる。もう一枡左へ、また閉じる。この重なりは左下の手紙まで通じている。"
+            "value": "上へ一枡、右へ二枡、折り目へ戻り、折り目沿いに右端まで歩いて閉じる。閉じたまま下の端まで、左へ一枡、開く。きみは上の頁のいちばん上の行にいる。もう一枡左へ、また閉じる。この重なりは左下の手紙まで通じている。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "위 페이지의 접는 선 옆 줄을 따라 오른쪽 끝까지 가서 닫아요. 닫은 채 아래 끝까지, 왼쪽으로 한 칸 가서 펼쳐요. 위 페이지 맨 윗줄이에요. 왼쪽으로 한 칸 더 가서 다시 닫아요. 이 겹은 왼쪽 아래의 편지까지 이어져요."
+            "value": "위로 한 칸, 오른쪽으로 두 칸, 다시 접는 선으로 내려와 선을 따라 오른쪽 끝까지 가서 닫아요. 닫은 채 아래 끝까지, 왼쪽으로 한 칸 가서 펼쳐요. 위 페이지 맨 윗줄이에요. 왼쪽으로 한 칸 더 가서 다시 닫아요. 이 겹은 왼쪽 아래의 편지까지 이어져요."
           }
         }
       }
@@ -3548,25 +3548,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "只有下页那扇门有钥匙。先在上页往右走到底、再往上，到最上面一行的第 4 列，合上：门开了，这一叠下面是石头。合着往左两格，往上一格进到开着的门里，打开，再往上一格，合上：往左一格就是信。上页那扇门没有钥匙，它只是墙。"
+            "value": "只有下页那扇门有钥匙。先在上页往右走到底、再往上，到最上面一行的第 4 列，合上：门开了，这一叠下面是石头。合着往左两格，往上一格进到开着的门里，打开，再往上一格，合上：往左一格、再往上一格就是信。上页那扇门没有钥匙，它只是墙。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Only the door on the bottom page has a key. On the top page walk right to the end, then up, to column 4 of the top row, and close: the door opens, and this stack sits on a stone. Closed, two steps left and one up into the open door; open, one more step up, and close again: one step left is the letter. The door on the top page has no key; it is only a wall."
+            "value": "Only the door on the bottom page has a key. On the top page walk right to the end, then up, to column 4 of the top row, and close: the door opens, and this stack sits on a stone. Closed, two steps left and one up into the open door; open, one more step up, and close again: one step left and one up is the letter. The door on the top page has no key; it is only a wall."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "鍵があるのは下の頁の扉だけ。上の頁を右端まで、それから上へ、いちばん上の行の4列目で閉じる。扉が開き、この重なりの下は石。閉じたまま左へ二枡、上へ一枡で開いた扉の中へ。開いて、さらに上へ一枡、また閉じる。左へ一枡で手紙。上の頁の扉に鍵はない、ただの壁。"
+            "value": "鍵があるのは下の頁の扉だけ。上の頁を右端まで、それから上へ、いちばん上の行の4列目で閉じる。扉が開き、この重なりの下は石。閉じたまま左へ二枡、上へ一枡で開いた扉の中へ。開いて、さらに上へ一枡、また閉じる。左へ一枡、上へ一枡で手紙。上の頁の扉に鍵はない、ただの壁。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "열쇠가 있는 문은 아래 페이지의 문뿐이에요. 위 페이지에서 오른쪽 끝까지, 그다음 위로 가서 맨 윗줄 4열에서 닫아요. 문이 열리고, 이 겹 아래는 돌이에요. 닫은 채 왼쪽으로 두 칸, 위로 한 칸 가서 열린 문 안으로. 펼치고 위로 한 칸 더, 다시 닫아요. 왼쪽으로 한 칸이면 편지예요. 위 페이지의 문에는 열쇠가 없어요. 그냥 벽이에요."
+            "value": "열쇠가 있는 문은 아래 페이지의 문뿐이에요. 위 페이지에서 오른쪽 끝까지, 그다음 위로 가서 맨 윗줄 4열에서 닫아요. 문이 열리고, 이 겹 아래는 돌이에요. 닫은 채 왼쪽으로 두 칸, 위로 한 칸 가서 열린 문 안으로. 펼치고 위로 한 칸 더, 다시 닫아요. 왼쪽으로 한 칸, 위로 한 칸이면 편지예요. 위 페이지의 문에는 열쇠가 없어요. 그냥 벽이에요."
           }
         }
       }
