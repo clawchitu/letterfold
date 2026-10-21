@@ -940,6 +940,9 @@ final class GameModel {
 
     // MARK: walking
 
+    /// The figure can walk to this square right now (taps where two pages overlap on screen).
+    func canReach(_ cell: Cell) -> Bool { game.path(to: cell).map { !$0.isEmpty } ?? false }
+
     func tap(_ cell: Cell) {
         if aha { finishAhaNow(); return }
         if won { return }

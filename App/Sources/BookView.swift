@@ -1391,17 +1391,29 @@ private struct ProjectedTargets: View {
                 }
             }
         } }
-        // the standing page leans over the bottom one past 90°: its squares are drawn on top, so they take the touch
-        // there (0.1 (14): at 62° a top-page square's middle fell on a bottom-page target that came later in the stack)
+        // the standing page leans over the bottom one past 90°: its squares are drawn on top, so they come last (and
+        // `pick` sends a touch where both overlap to the square you can walk to)
         return out + upper
     }
 
+    /// Where the two pages overlap on screen (the top page leaning over the bottom one) one touch can land on two
+    /// squares: the one you can walk to wins, else the one drawn on top (0.1 (14)).
+    func pick(_ t: Target, at p: CGPoint, in all: [Target]) -> Cell {
+        let under = all.filter { o in
+            Path { q in q.addLines(o.quad.map { CGPoint(x: o.rect.minX + $0.x, y: o.rect.minY + $0.y) }); q.closeSubpath() }.contains(p)
+        }
+        return under.reversed().first { model.canReach($0.cell) }?.cell ?? t.cell
+    }
+
     var body: some View {
-        ForEach(targets()) { t in
+        let all = targets()
+        ForEach(all) { t in
             Color.clear
                 .frame(width: max(1, t.rect.width), height: max(1, t.rect.height))
                 .contentShape(QuadShape(points: t.quad))   // touch = the square as drawn; VoiceOver frame = its bounds
-                .onTapGesture { model.tap(t.cell) }
+                .gesture(SpatialTapGesture().onEnded { v in
+                    model.tap(pick(t, at: CGPoint(x: t.rect.minX + v.location.x, y: t.rect.minY + v.location.y), in: all))
+                })
                 .modifier(TileAccessibility(model: model, cell: t.cell, hidden: false, rotorSpace: rotorSpace))
                 .accessibilitySortPriority(5000 - Double(t.rect.midY) - Double(t.rect.midX) / 1000)
                 .position(x: t.rect.midX, y: t.rect.midY)
