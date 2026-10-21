@@ -4,7 +4,7 @@ import XCTest
 /// Vol. 2 chapter 1 「胶」 (design-v2c1 §1, design-review-v2c1 §3): glue is paper; the first close pulls the stone facing
 /// it onto itself, all glue at once with keys and ink; a stone that changes page takes its shadow and weight along.
 final class GlueTests: XCTestCase {
-    func level(_ id: String) throws -> Level { try XCTUnwrap(LevelPack.bundled().levels.first { $0.id == id }) }
+    func level(_ id: String) throws -> Level { try Fixture.level13(id) }
     let rules = Rules(.standard)
     func play(_ g: FoldGame, to a: Double) -> [GameEvent] {
         var ev: [GameEvent] = []

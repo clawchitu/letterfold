@@ -93,6 +93,13 @@ public struct Level: Sendable, Codable, Identifiable, Equatable {
     public var tier: String?
     /// Solver flags that must stay true (levels.js `needs`), so an edit cannot quietly remove the level's mechanic.
     public var needs: [String]?
+    /// 「暗信」 (difficulty-postmortem.md §4): an optional side letter, outside the strict chapter unlock and the chapter count.
+    public var optional: Bool?
+    /// The declared minimal solution length (posture changes + steps, gen.js `len`), checked against `Solver.shortest`.
+    public var len: Int?
+    /// The proto solver's shortest solution (gen.js bestPath) as [c, r, fold angle, stamped] states (tools/level-extras.js).
+    public var solution: [[Int]]?
+    public var isOptional: Bool { optional == true }
     public init(id: String, map: [String], expect: Expectation? = nil, tier: String? = nil, needs: [String]? = nil) {
         self.id = id; self.map = map; self.expect = expect; self.tier = tier; self.needs = needs
     }

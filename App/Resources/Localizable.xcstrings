@@ -1621,6 +1621,216 @@
         }
       }
     },
+    "dark.back": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回到章节"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back to the chapters"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "章の一覧へ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "장 목록으로"
+          }
+        }
+      }
+    },
+    "dark.label": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暗信，三封可以不读的难信"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hidden letters: three hard letters you may leave unread"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隠された手紙、読まなくてもいい難しい三通"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "숨은 편지, 안 읽어도 되는 어려운 편지 세 통"
+          }
+        }
+      }
+    },
+    "dark.lockedToast": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暗信要等「胶」的信送到，才拆得开。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The hidden letters open once the Glue letter is delivered."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隠された手紙は「糊」の手紙が届いてから開く。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "숨은 편지는 「풀」의 편지가 도착한 뒤에 열려요."
+          }
+        }
+      }
+    },
+    "dark.note": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三封，可不读"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "three, optional"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三通、読まなくてもいい"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "세 통, 안 읽어도 돼요"
+          }
+        }
+      }
+    },
+    "dark.title": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暗信"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hidden letters"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隠された手紙"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "숨은 편지"
+          }
+        }
+      }
+    },
+    "darkHead": {
+      "comment": "UI. From fold-proto i18n.js. Placeholders: {n} {name}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暗信 {n} · {name}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hidden letter {n} · {name}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隠された手紙 {n} · {name}"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "숨은 편지 {n} · {name}"
+          }
+        }
+      }
+    },
+    "darkTag": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暗"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hidden"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隠"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "숨"
+          }
+        }
+      }
+    },
     "desc.audio": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -2821,6 +3031,36 @@
         }
       }
     },
+    "hereOnPage": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你在这里，{page}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "you are here, on the {page}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "あなたはここ、{page}"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "여기 있어요, {page}"
+          }
+        }
+      }
+    },
     "hereStack": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -3098,25 +3338,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "合上过去，展开走一段，再合上回到下页。"
+            "value": "先往上一格，往右两格，回到折痕边，再沿折痕往右走到最右一格，合上。合着往下走到底，再往左一格，打开：你在上页最上面一行。再往左一格，合上——这一叠一直通到左下角的信。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close to cross, open to walk a while, then close again to come back to the bottom page."
+            "value": "One step up, two right, back down to the crease, then along it right to the last square, and close. Closed, walk down to the end, one step left, and open: you are on the top row of the top page. One more step left, close again — this stack runs all the way to the letter in the bottom-left corner."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じて渡り、開いて少し歩き、また閉じて下のページへ戻る。"
+            "value": "上へ一枡、右へ二枡、折り目へ戻り、折り目沿いに右端まで歩いて閉じる。閉じたまま下の端まで、左へ一枡、開く。きみは上の頁のいちばん上の行にいる。もう一枡左へ、また閉じる。この重なりは左下の手紙まで通じている。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫아서 건너고, 펼쳐서 조금 걷고, 다시 닫아 아래 페이지로 돌아와요."
+            "value": "위로 한 칸, 오른쪽으로 두 칸, 다시 접는 선으로 내려와 선을 따라 오른쪽 끝까지 가서 닫아요. 닫은 채 아래 끝까지, 왼쪽으로 한 칸 가서 펼쳐요. 위 페이지 맨 윗줄이에요. 왼쪽으로 한 칸 더 가서 다시 닫아요. 이 겹은 왼쪽 아래의 편지까지 이어져요."
           }
         }
       }
@@ -3158,25 +3398,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "先合上一次，钥匙和墨都印过去；再立起过桥、走到门边，最后合上。"
+            "value": "走到折痕边，沿折痕往右走到桥头，立起来过桥，往上一格，合上：钥匙开门、墨印过去，这一叠下面是石头。合着往下、往左、再往下，然后往上一格、往左两格，到门那一格，打开，往上一格到上页顶上，再合上——这一叠下面又是一块石头，往左一步就是信。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close once so the key and the ink carry across; stand the page, cross, walk to the door, then close."
+            "value": "Walk to the crease and along it right to the bridge; stand and cross, one step up, and close: the key opens the door, the ink prints across, and this stack sits on a stone. Closed: down, left, down again, then one up and two left to the door square; open, one step up to the top of the top page, and close again — this stack sits on another stone, and one step left is the letter."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "まず一度閉じて鍵と墨を写す。立てて橋を渡り、扉まで歩いて、最後に閉じる。"
+            "value": "折り目まで歩き、折り目沿いに右へ橋のたもとまで。立てて渡り、上へ一枡、閉じる。鍵が扉を開け、墨が写り、この重なりの下は石。閉じたまま下・左・また下、それから上へ一枡、左へ二枡で扉の枡。開いて、上へ一枡で上の頁のいちばん上、また閉じる。この重なりの下もまた石、左へ一歩で手紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먼저 한 번 닫아 열쇠와 먹을 찍어요. 세워서 다리를 건너 문까지 걷고, 마지막에 닫아요."
+            "value": "접는 선까지 가서 선을 따라 오른쪽으로 다리 앞까지. 세워서 건너고 위로 한 칸 가서 닫아요. 열쇠가 문을 열고 먹이 찍히고, 이 겹 아래는 돌이에요. 닫은 채 아래, 왼쪽, 다시 아래, 그다음 위로 한 칸, 왼쪽으로 두 칸 가면 문 칸. 펼치고 위로 한 칸 가서 위 페이지 맨 위에서 다시 닫아요. 이 겹 아래도 돌, 왼쪽으로 한 걸음이 편지예요."
           }
         }
       }
@@ -3188,25 +3428,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "先合上，让钥匙开门；再立起到一半，从纸片桥上走过去。"
+            "value": "往左再往上，走到纸片那格，合上：门开了。立起来过桥、穿门，沿上页往上走到顶，再往右走到底，合上——这一叠下面是石头，你站在它背上。合着往上一格，纸把你换到下页，再往上一格就是信。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close so the key opens the door; then stand the page halfway and cross on the tabs."
+            "value": "Go left and up to the tab and close: the door opens. Stand the page, cross, go through the door and up the top page to its top, then right to the end, and close again — this stack sits on a stone; you stand on its back. Closed, one step up hands you to the bottom page; one more step up is the letter."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じて鍵で扉を開け、半分立てて紙片の橋を渡る。"
+            "value": "左へ、上へ、紙片の枡まで歩いて閉じる。扉が開く。頁を立てて橋を渡り、扉を抜け、上の頁をいちばん上まで、右端まで歩いて、また閉じる。この重なりの下は石、きみはその背に。閉じたまま上へ一枡で下の頁へ、もう一枡上で手紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫아서 열쇠로 문을 열고, 반쯤 세워 종이 다리를 건너요."
+            "value": "왼쪽으로, 위로 종이 조각 칸까지 가서 닫아요. 문이 열려요. 페이지를 세워 다리를 건너고 문을 지나 위 페이지 맨 위까지, 오른쪽 끝까지 가서 다시 닫아요. 이 겹 아래는 돌, 당신은 그 등 위에. 닫은 채 위로 한 칸 가면 아래 페이지로, 한 칸 더 위가 편지예요."
           }
         }
       }
@@ -3218,25 +3458,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "合上，走到上页的路上；石头挡住了，就展开继续走。"
+            "value": "直着往下的那一叠被石头堵住了。在上页走到靠折痕那一行的第 2 列，在那里合上：这一叠下面是石头，你站在它背上。合着往右一格，纸把你换到下页；再往下、往右，换回上页。打开，信就在旁边。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close, and step onto the top page’s path; when a stone blocks you, open and walk on."
+            "value": "The straight stack is walled by a stone. On the top page, walk to the row by the crease, second column, and close there: there is a stone under this stack; you stand on its back. Closed, one step right — the paper hands you to the bottom page; down and right again, and you are back on the top page. Open: the letter is beside you."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じて上のページの道へ。石にふさがれたら、開いて先へ。"
+            "value": "まっすぐ下る重なりは石でふさがれている。上の頁を折り目沿いの行の2列目まで歩いて閉じる。この重なりの下は石、きみはその背に立つ。閉じたまま右へ一枡で下の頁へ、さらに下・右で上の頁に戻る。開けば手紙はとなり。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫고 위 페이지의 길로 건너가요. 돌이 막으면 펼쳐서 계속 걸어요."
+            "value": "곧장 내려가는 겹은 돌에 막혀 있어요. 위 페이지에서 접는 선 옆 줄의 두 번째 칸까지 가서 닫아요. 이 겹 아래는 돌, 당신은 그 등 위에 서 있어요. 닫은 채 오른쪽으로 한 칸 가면 아래 페이지로, 다시 아래·오른쪽으로 가면 위 페이지로 돌아와요. 펼치면 편지가 옆에."
           }
         }
       }
@@ -3248,25 +3488,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "合上一次，墨会印到上页的缺口上；展开后它还在。"
+            "value": "一开始就合上：墨印到了上页。合着往左走到底，再往上走到折痕边，往右一格，打开；再往右一格（第 3 列），合上：这一叠经过印过去的墨往右，通到最右一列。往下一格，打开，往上一格就是信。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close once: the ink prints onto the gap on the top page, and stays when you open."
+            "value": "Close at once: the ink prints onto the top page. Closed, walk left to the end, then up to the crease, one step right, and open; one more step right (column 3), and close again: this stack runs right through the printed ink to the last column. One step down, open, and one step up is the letter."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "一度閉じると、墨が上のページのすき間に写る。開いても残る。"
+            "value": "すぐに閉じる。墨が上の頁に写る。閉じたまま左端まで、上へ折り目まで、右へ一枡、開く。もう一枡右（3列目）で、また閉じる。この重なりは写った墨を通って右端の列へ。下へ一枡、開けば、上へ一枡で手紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "한 번 닫으면 먹이 위 페이지 틈에 찍혀요. 펼쳐도 남아 있어요."
+            "value": "바로 닫아요. 먹이 위 페이지에 찍혀요. 닫은 채 왼쪽 끝까지, 위로 접는 선까지, 오른쪽으로 한 칸 가서 펼쳐요. 오른쪽으로 한 칸 더(3열) 가서 다시 닫아요. 이 겹은 찍힌 먹을 지나 맨 오른쪽 열까지 이어져요. 아래로 한 칸, 펼치면 위로 한 칸이 편지예요."
           }
         }
       }
@@ -3278,25 +3518,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "只合上一次，让墨印到上页；再立起到一半过桥。"
+            "value": "踩过墨往下、再往左绕到桥头，合上：墨印到了上页。立起来过桥，沿上页往上走两格，往右走过印过去的墨，往下一格、往右一格，再合上——这一叠下面是石头。合着往上一格就是信。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close only once so the ink prints onto the top page; then stand it halfway and cross."
+            "value": "Step over the ink, down and left round to the bridge, and close: the ink prints onto the top page. Stand the page, cross, two steps up the top page, then right over the printed ink, one down, one right, and close again — this stack sits on a stone. Closed, one step up is the letter."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "一度だけ閉じて墨を上のページに写し、半分立てて渡る。"
+            "value": "墨を踏んで下へ、左へ回って橋のたもとへ、閉じる。墨が上の頁に写る。頁を立てて渡り、上の頁を上へ二枡、写った墨を通って右へ、下へ一枡、右へ一枡、また閉じる。この重なりの下は石。閉じたまま上へ一枡で手紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "한 번만 닫아 먹을 위 페이지에 찍고, 반쯤 세워 건너요."
+            "value": "먹을 밟고 아래로, 왼쪽으로 돌아 다리 앞까지 가서 닫아요. 먹이 위 페이지에 찍혀요. 페이지를 세워 건너고, 위 페이지를 위로 두 칸, 찍힌 먹을 지나 오른쪽으로, 아래로 한 칸, 오른쪽으로 한 칸 가서 다시 닫아요. 이 겹 아래는 돌이에요. 닫은 채 위로 한 칸이 편지예요."
           }
         }
       }
@@ -3308,25 +3548,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "钥匙和门隔着折痕上下对称。合上，它们就碰到了。"
+            "value": "只有下页那扇门有钥匙。先在上页往右走到底、再往上，到最上面一行的第 4 列，合上：门开了，这一叠下面是石头。合着往左两格，往上一格进到开着的门里，打开，再往上一格，合上：往左一格、再往上一格就是信。上页那扇门没有钥匙，它只是墙。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Key and door mirror each other across the fold. Close, and they meet."
+            "value": "Only the door on the bottom page has a key. On the top page walk right to the end, then up, to column 4 of the top row, and close: the door opens, and this stack sits on a stone. Closed, two steps left and one up into the open door; open, one more step up, and close again: one step left and one up is the letter. The door on the top page has no key; it is only a wall."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "鍵と扉は折り目をはさんで向かい合う。閉じれば、ふれあう。"
+            "value": "鍵があるのは下の頁の扉だけ。上の頁を右端まで、それから上へ、いちばん上の行の4列目で閉じる。扉が開き、この重なりの下は石。閉じたまま左へ二枡、上へ一枡で開いた扉の中へ。開いて、さらに上へ一枡、また閉じる。左へ一枡、上へ一枡で手紙。上の頁の扉に鍵はない、ただの壁。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "열쇠와 문은 접는 선을 사이에 두고 마주 보고 있어요. 닫으면 서로 닿아요."
+            "value": "열쇠가 있는 문은 아래 페이지의 문뿐이에요. 위 페이지에서 오른쪽 끝까지, 그다음 위로 가서 맨 윗줄 4열에서 닫아요. 문이 열리고, 이 겹 아래는 돌이에요. 닫은 채 왼쪽으로 두 칸, 위로 한 칸 가서 열린 문 안으로. 펼치고 위로 한 칸 더, 다시 닫아요. 왼쪽으로 한 칸, 위로 한 칸이면 편지예요. 위 페이지의 문에는 열쇠가 없어요. 그냥 벽이에요."
+          }
+        }
+      }
+    },
+    "hint.portrait.rightBank": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在最右一列的桥上立起来，过到上页，往左走到另一座桥（最左一列），回到下页，往下走到左下角，合上。合着往右一格，你在上页。立起来，再往右一格，合上——这一叠下面是石头，你站在它背上。合着往右一格就是信。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stand the page at the bridge in the right-most column and cross to the top page; walk left to the other bridge (left-most column), back onto the bottom page, and down to its bottom-left corner; close. Closed, one step right: you are on the top page. Stand the page, one more step right, and close — this stack sits on a stone; you stand on its back. Closed, one step right is the letter."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一番右の列の橋で頁を立てて上の頁へ。左へ、もう一つの橋（一番左の列）まで歩いて下の頁に戻り、左下の角まで下りて閉じる。閉じたまま右へ一枡、きみは上の頁。立てて、さらに右へ一枡、閉じる。この重なりの下は石、きみはその背に。閉じたまま右へ一枡で手紙。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "맨 오른쪽 열의 다리에서 페이지를 세워 위 페이지로 건너요. 왼쪽으로 다른 다리(맨 왼쪽 열)까지 가서 아래 페이지로 돌아와 왼쪽 아래 모서리까지 내려가 닫아요. 닫은 채 오른쪽으로 한 칸, 위 페이지예요. 세우고 오른쪽으로 한 칸 더 가서 닫아요. 이 겹 아래는 돌, 당신은 그 등 위에. 닫은 채 오른쪽으로 한 칸이 편지예요."
           }
         }
       }
@@ -3398,25 +3668,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "先立起来过桥，在上页走到头，再合上：终点就在脚下。"
+            "value": "往左再往上走到桥头，立起来过桥，沿立起的上页往上走到顶，再往右两格，合上。合着往上一格、往右一格、再往上一格，打开：你在上页，信就在左边一格。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Stand the page and cross, walk to the end of the top page, then close: the goal is right under you."
+            "value": "Go left and up to the bridge, stand the page and cross, walk the standing top page up to its top, then two steps right, and close. Closed: one step up, one right, one up again, then open: you are on the top page with the letter one square to the left."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "立てて橋を渡り、上のページを端まで歩いてから閉じる。ゴールは足もと。"
+            "value": "左へ、上へ歩いて橋のたもとへ。頁を立てて渡り、立った上の頁をいちばん上まで、右へ二枡、閉じる。閉じたまま上へ一枡、右へ一枡、また上へ一枡、開く。きみは上の頁、手紙は左へ一枡。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "세워서 다리를 건너 위 페이지 끝까지 걷고 닫아요. 도착점이 발밑이에요."
+            "value": "왼쪽으로, 위로 걸어 다리 앞까지. 페이지를 세워 건너고, 선 위 페이지를 맨 위까지, 오른쪽으로 두 칸 가서 닫아요. 닫은 채 위로 한 칸, 오른쪽으로 한 칸, 다시 위로 한 칸 가서 펼쳐요. 위 페이지이고, 편지는 왼쪽으로 한 칸이에요."
           }
         }
       }
@@ -3567,6 +3837,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "{n}단계, {name}. {line} 지금 {you}에 있고, 도착점은 {goal}에 있어요. 책은 펼쳐져 있어요."
+          }
+        }
+      }
+    },
+    "intro.dark": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name}。{line}你在{you}，终点在{goal}。书是打开的。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name}. {line} You are at {you}; the goal is at {goal}. The book is open."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name}。{line}あなたは{you}、ゴールは{goal}。本は開いています。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name}. {line} 지금 {you}에 있고, 도착점은 {goal}에 있어요. 책은 펼쳐져 있어요."
           }
         }
       }
@@ -7171,6 +7471,36 @@
         }
       }
     },
+    "reach.more": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "多了几格能走，信还走不到"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "more squares are within reach; the letter is not yet"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "歩ける枡が増えた。手紙にはまだ届かない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "걸을 수 있는 칸이 늘었어요. 편지에는 아직 못 가요"
+          }
+        }
+      }
+    },
     "reset": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -7377,6 +7707,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "그림자"
+          }
+        }
+      }
+    },
+    "rule.blocked": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一叠里只要有石头，纸也托不住你。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A stack with a stone in it won’t hold you, paper or not."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重なりに石があれば、紙でも通れない。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "겹 안에 돌이 있으면 종이라도 지나갈 수 없어요."
+          }
+        }
+      }
+    },
+    "rule.under": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合着时，上页的空处底下，是下页的纸。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shut, through a hole in the top page you stand on the page below."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じているとき、上の頁の穴の下は下の頁の紙。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫혀 있을 때, 위 페이지의 빈 곳 아래는 아래 페이지의 종이예요."
           }
         }
       }
@@ -8067,6 +8457,66 @@
           "stringUnit": {
             "state": "translated",
             "value": " (오른쪽 페이지, {c}열 위)"
+          }
+        }
+      }
+    },
+    "stack.blocked": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这一叠里有石头，走不过去"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a stone in this stack: no way through"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この重なりに石、通れない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 겹에 돌이 있어 지나갈 수 없어요"
+          }
+        }
+      }
+    },
+    "stack.under": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上页是空处，站上去在下页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a hole in the top page: you would stand on the bottom page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上の頁は穴、立てば下の頁"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "위 페이지는 빈 곳, 서면 아래 페이지"
           }
         }
       }

@@ -15,10 +15,17 @@ public enum SavedProgress {
         "shadow", "press", "lock", "ride", "rideBack", "lamp",
     ]
 
-    /// The delivered level IDs from what is saved: the ID list if there is one, else the old positions mapped
-    /// through `legacyLayout` (positions outside it are dropped).
+    /// 0.1 (14) redrew chapter 5's last four levels under new IDs (fold-proto difficulty-postmortem.md §4). A letter
+    /// delivered in 0.1 (13) stays delivered: each old ID counts for the level now in its slot. (Vol. 1's 21 redrawn
+    /// levels kept their IDs, so their saves need nothing.)
+    public static let renamed: [String: String] = [
+        "shadowFirst": "oldHome", "oneClose": "ferry", "rideFirst": "twiceClosed", "stuckPage": "twoLamps",
+    ]
+
+    /// The delivered level IDs from what is saved: the ID list if there is one (renamed IDs carried to their
+    /// successors), else the old positions mapped through `legacyLayout` (positions outside it are dropped).
     public static func migrate(ids: [String]?, legacyIndices: [Int]?) -> Set<String> {
-        if let ids { return Set(ids) }
+        if let ids { return Set(ids).union(ids.compactMap { renamed[$0] }) }
         return Set((legacyIndices ?? []).compactMap { legacyLayout.indices.contains($0) ? legacyLayout[$0] : nil })
     }
 
@@ -27,7 +34,7 @@ public enum SavedProgress {
     public static func load(_ d: UserDefaults = .standard) -> Set<String> {
         let ids = d.stringArray(forKey: idsKey)
         let set = migrate(ids: ids, legacyIndices: d.array(forKey: legacyKey) as? [Int])
-        if ids == nil { save(set, d) }
+        if ids == nil || Set(ids!) != set { save(set, d) }
         return set
     }
 

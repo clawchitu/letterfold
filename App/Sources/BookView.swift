@@ -36,7 +36,8 @@ struct BookGeometry {
         var tile = horizontal ? (rows >= 5 ? 63.0 : 80.0) : 76.0
         if large {
             tile = rows >= 5 ? max(64, min(92, fitW)) : 92
-            tile = max(64, min(tile, fitW))
+            // never wider than the page: a 6-row board (5-7, the 暗信) gets the widest tile that still fits across
+            tile = max(min(64, fitW), min(tile, fitW))
         } else {
             tile = max(30, min(tile, fitW, fitH))
         }
@@ -1378,7 +1379,7 @@ private struct ProjectedTargets: View {
         }
         func target(_ cell: Cell, _ q: (CGRect, [CGPoint])) -> Target { Target(cell: cell, rect: q.0, quad: q.1) }
         let closed = th >= 160, showFolding = th < 20 || model.posture == .standing
-        var out: [Target] = []
+        var out: [Target] = [], upper: [Target] = []
         for x in 0..<s.slotsAcross { for y in 0..<s.slotsDown {
             let c = geo.center(x: x, y: y), fc = s.cell(page: .fixed, x: x, y: y)
             if closed {
@@ -1386,19 +1387,33 @@ private struct ProjectedTargets: View {
             } else {
                 out.append(target(fc, quad(c) { u, v in SIMD3(u - W / 2, v, 0) }))
                 if showFolding {
-                    out.append(target(s.cell(page: .folding, x: x, y: y), quad(c) { u, v in SIMD3(u - W / 2, 0, 0) + (H - v) * fold }))
+                    upper.append(target(s.cell(page: .folding, x: x, y: y), quad(c) { u, v in SIMD3(u - W / 2, 0, 0) + (H - v) * fold }))
                 }
             }
         } }
-        return out
+        // the standing page leans over the bottom one past 90°: its squares are drawn on top, so they come last (and
+        // `pick` sends a touch where both overlap to the square you can walk to)
+        return out + upper
+    }
+
+    /// Where the two pages overlap on screen (the top page leaning over the bottom one) one touch can land on two
+    /// squares: the one you can walk to wins, else the one drawn on top (0.1 (14)).
+    func pick(_ t: Target, at p: CGPoint, in all: [Target]) -> Cell {
+        let under = all.filter { o in
+            Path { q in q.addLines(o.quad.map { CGPoint(x: o.rect.minX + $0.x, y: o.rect.minY + $0.y) }); q.closeSubpath() }.contains(p)
+        }
+        return under.reversed().first { model.canReach($0.cell) }?.cell ?? t.cell
     }
 
     var body: some View {
-        ForEach(targets()) { t in
+        let all = targets()
+        ForEach(all) { t in
             Color.clear
                 .frame(width: max(1, t.rect.width), height: max(1, t.rect.height))
                 .contentShape(QuadShape(points: t.quad))   // touch = the square as drawn; VoiceOver frame = its bounds
-                .onTapGesture { model.tap(t.cell) }
+                .gesture(SpatialTapGesture().onEnded { v in
+                    model.tap(pick(t, at: CGPoint(x: t.rect.minX + v.location.x, y: t.rect.minY + v.location.y), in: all))
+                })
                 .modifier(TileAccessibility(model: model, cell: t.cell, hidden: false, rotorSpace: rotorSpace))
                 .accessibilitySortPriority(5000 - Double(t.rect.midY) - Double(t.rect.midX) / 1000)
                 .position(x: t.rect.midX, y: t.rect.midY)

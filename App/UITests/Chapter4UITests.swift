@@ -9,7 +9,7 @@ final class Chapter4UITests: XCTestCase {
     func launch(_ level: Int, _ extra: [String] = []) {
         app = XCUIApplication()
         app.launchArguments = ["-resetProgress", "YES", "-noOpener", "YES", "-probe", "YES", "-startLevel", "\(level)",
-                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"] + extra
+                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"] + Boards13.args(level) + extra
         app.launch()
         f = FoldDriver(app: app)
         XCTAssertTrue(f.fold.waitForExistence(timeout: 8))

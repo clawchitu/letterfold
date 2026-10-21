@@ -8,7 +8,8 @@ final class SolverTests: XCTestCase {
     override func setUpWithError() throws { pack = try LevelPack.bundled() }
 
     func testPackDecodes() throws {
-        XCTAssertEqual(pack.levels.count, 32)
+        XCTAssertEqual(pack.levels.count, 35)
+        XCTAssertEqual(pack.levels.filter(\.isOptional).map(\.id), ["darkBack", "darkDoor", "darkInk"])
         XCTAssertEqual(pack.config, .standard)
         for lv in pack.levels { XCTAssertNoThrow(try Board(level: lv), lv.id) }
     }
@@ -27,8 +28,9 @@ final class SolverTests: XCTestCase {
     func testMatchesJavaScriptSolver() throws {
         let solver = Solver(pack.config)
         for lv in pack.levels {
-            let expect = try XCTUnwrap(lv.expect, lv.id)
-            XCTAssertEqual(solver.report(lv), expect, lv.id)
+            var expect = try XCTUnwrap(lv.expect, lv.id)
+            expect.difficulty = nil   // the metric is compared once, in DifficultyTests (analyse is the slow part)
+            XCTAssertEqual(solver.report(lv, withDifficulty: false), expect, lv.id)
         }
     }
 
@@ -55,44 +57,35 @@ final class DifficultyTests: XCTestCase {
         return (pack, out)
     }()
     var pack: LevelPack { Self.shared.pack }
+    var main: [Level] { pack.levels.filter { !$0.isOptional } }
     struct Cached { let reports: [String: Difficulty.Report]; func analyse(_ lv: Level) -> Difficulty.Report? { reports[lv.id] } }
 
+    /// check.js since the 卷一 retune (difficulty-postmortem.md §1.6): the v2 score is a floor for every tier and a
+    /// ceiling only for teach–mid. 「暗信」 are gated by v3 alone.
     func testEveryLevelMeetsItsDeclaredTier() throws {
         let d = Cached(reports: Self.shared.reports)
-        for lv in pack.levels {
+        for lv in main {
             let tier = try XCTUnwrap(lv.tier, "\(lv.id) declares no tier")
             let range = try XCTUnwrap(Difficulty.range(of: tier), "\(lv.id): unknown tier \(tier)")
             let r = try XCTUnwrap(d.analyse(lv), lv.id)
-            XCTAssertTrue(range.contains(r.score), "\(lv.id) scored \(r.score) (\(r.tier)), declared \(tier) = \(range)")
-            XCTAssertEqual(r.tier, tier, "\(lv.id): the tier ranges do not overlap, so the score names exactly one")
+            XCTAssertGreaterThanOrEqual(r.score, range.lowerBound, "\(lv.id) scored \(r.score), declared \(tier) = \(range)")
+            if ["teach", "easy", "mid"].contains(tier) { XCTAssertLessThanOrEqual(r.score, range.upperBound, "\(lv.id) scored \(r.score), declared \(tier)") }
         }
     }
 
-    /// Vol. 1 has no dead ends by design (design-difficulty.md §1, check.js `i < 25`); from vol. 2 on they are a tool,
-    /// at most one per level (design-v2c1 §1), and the game has undo.
+    /// Vol. 1 has no dead ends by design (check.js DEAD_FREE_CHAPTERS = 4); from vol. 2 on they are a tool, the game has undo.
     func testDeadEndsOnlyInVolumeTwo() throws {
         let d = Cached(reports: Self.shared.reports)
-        for (i, lv) in pack.levels.enumerated() {
+        for lv in pack.levels.prefix(25) {
             let r = try XCTUnwrap(d.analyse(lv), lv.id)
-            if i < 25 { XCTAssertEqual(r.dead, 0, "\(lv.id): dead ends in a vol. 1 level"); XCTAssertEqual(r.deadEnds, 0, lv.id) }
-            else { XCTAssertLessThanOrEqual(r.deadEnds, 1, "\(lv.id): one kind of dead end at most") }
+            XCTAssertEqual(r.dead, 0, "\(lv.id): dead ends in a vol. 1 level"); XCTAssertEqual(r.deadEnds, 0, lv.id)
         }
-    }
-
-    /// The owner on 0.1 (11): vol. 1 「还是有点简单」. Under v2 every vol. 1 level is mid or below; vol. 2 chapter 1
-    /// climbs teach → mid → mid → hard → hard → hard → final (design-v2c1 §3).
-    func testVolumesAndTheGlueCurve() throws {
-        let d = Cached(reports: Self.shared.reports)
-        for lv in pack.levels.prefix(25) { XCTAssertLessThanOrEqual(try XCTUnwrap(d.analyse(lv)).score, 7, "\(lv.id) above mid") }
-        XCTAssertEqual(pack.levels.suffix(7).map { d.analyse($0)?.tier ?? "?" }, ["teach", "mid", "mid", "hard", "hard", "hard", "final"])
-        XCTAssertEqual(pack.levels.suffix(7).map { $0.tier ?? "?" }, ["teach", "mid", "mid", "hard", "hard", "hard", "final"])
-        // the four that punish an early close are the ones where it is a trap: before + misdirect
-        for lv in pack.levels.suffix(4) {
+        // 5-1 – 5-3 are the ramp and never punish closing; 5-4 … 5-7 and the 暗信 do, and their dead ends are deep
+        for lv in pack.levels[25..<28] { XCTAssertEqual(d.analyse(lv)?.dead, 0, lv.id) }
+        for lv in pack.levels.suffix(7) {
             let r = try XCTUnwrap(d.analyse(lv), lv.id)
-            XCTAssertTrue(r.before && r.misdirect && r.deadEnds == 1, lv.id)
+            XCTAssertTrue(r.before && r.misdirect && r.deadEnds >= 1, "\(lv.id): before \(r.before) misdirect \(r.misdirect) deadEnds \(r.deadEnds)")
         }
-        // 5-1 – 5-3 never punish closing
-        for lv in pack.levels.suffix(7).prefix(3) { XCTAssertEqual(d.analyse(lv)?.dead, 0, lv.id) }
     }
 
     func testMatchesJavaScriptMetric() throws {
@@ -103,24 +96,57 @@ final class DifficultyTests: XCTestCase {
         }
     }
 
-    /// The v2 curve (design-difficulty.md §7, 32-level table): 一 1 1 2 1 3 · 二 1 3 4 3 3 6 6 6 · 三 1 2 2 2 3 6 ·
-    /// 四 5 4 5 5 7 6 · 五 2 5 6 8 8 9 14.
-    func testTheCurve() {
-        let d = Cached(reports: Self.shared.reports)
-        XCTAssertEqual(pack.levels.map { d.analyse($0)?.score ?? -1 },
-                       [1, 1, 2, 1, 3, 1, 3, 4, 3, 3, 6, 6, 6, 1, 2, 2, 2, 3, 6, 5, 4, 5, 5, 7, 6, 2, 5, 6, 8, 8, 9, 14])
+    /// check.js v3 gates (difficulty-postmortem.md §6): the shortest solution (fewest postures, then fewest steps) is
+    /// at least the tier's floor (teach: at most 10), equals the length levels.js declares, and stays inside the
+    /// tier's posture and close budget. 「暗信」: len ≥ 18, par ≤ 6, closes ≤ 3.
+    func testSolutionLengthGates() throws {
+        let solver = Solver(pack.config)
+        for lv in pack.levels {
+            let s = try XCTUnwrap(solver.shortest(lv), "\(lv.id) unsolvable")
+            let len = s.par + s.steps, tier = lv.isOptional ? "dark" : try XCTUnwrap(lv.tier)
+            XCTAssertEqual(len, lv.len, "\(lv.id): measured len \(len), declared \(lv.len ?? -1)")
+            if let lo = Difficulty.lenMin[tier] { XCTAssertGreaterThanOrEqual(len, lo, "\(lv.id): too short for \(tier)") }
+            if let hi = Difficulty.lenMax[tier] { XCTAssertLessThanOrEqual(len, hi, "\(lv.id): too long for \(tier)") }
+            XCTAssertLessThanOrEqual(s.par, Difficulty.parMax[tier] ?? 3, "\(lv.id): over par for \(tier)")
+            let closes = s.path.indices.dropFirst().filter { s.path[$0].posture == .closed && s.path[$0 - 1].posture != .closed }.count
+            XCTAssertLessThanOrEqual(closes, lv.isOptional ? 3 : 2, "\(lv.id): too many full closes")
+            XCTAssertEqual(s.par, lv.expect?.changes, lv.id)
+        }
     }
 
-    /// Every chapter ends in its highest tier and starts again from teach (chapter 4, all interaction, starts at mid).
-    func testChaptersEndOnTheirHardest() {
-        let d = Cached(reports: Self.shared.reports)
-        let rank = Dictionary(uniqueKeysWithValues: Difficulty.tiers.enumerated().map { ($1.name, $0) })
-        let tiers = pack.levels.map { rank[d.analyse($0)?.tier ?? "?"] ?? -1 }
+    /// The retuned curve (postmortem §6 table): every chapter's first level is a short teach, vol. 1 averages ≥ 15,
+    /// and each chapter's main path stays inside the 24-change chapter budget.
+    func testTheCurve() throws {
+        XCTAssertEqual(pack.levels.map { $0.len ?? -1 },
+                       [5, 13, 16, 16, 17, 10, 16, 17, 17, 18, 18, 19, 20, 5, 13, 16, 17, 16, 18, 11, 12, 18, 19, 20, 19,
+                        6, 6, 10, 17, 17, 18, 20, 20, 19, 22])
+        let vol1 = pack.levels.prefix(25).compactMap(\.len)
+        XCTAssertGreaterThanOrEqual(Double(vol1.reduce(0, +)) / Double(vol1.count), 15)
         for range in [0..<5, 5..<13, 13..<19, 19..<25, 25..<32] {
-            XCTAssertEqual(tiers[range].last, tiers[range].max(), "chapter \(range)")
-            if range.lowerBound != 19 { XCTAssertEqual(tiers[range].first, 0, "chapter \(range) starts at teach") }
+            let ch = Array(pack.levels[range])
+            XCTAssertLessThanOrEqual(ch.compactMap { $0.expect?.changes }.reduce(0, +), 24, "chapter \(range): over the chapter budget")
+            if range.lowerBound != 19 { XCTAssertEqual(ch.first?.tier, "teach", "chapter \(range) starts at teach") }
+            let rank = ["teach": 0, "easy": 1, "mid": 2, "hard": 3, "final": 4]
+            XCTAssertEqual(rank[ch.last?.tier ?? ""], ch.map { rank[$0.tier ?? ""] ?? -1 }.max(), "chapter \(range) ends in its highest tier")
         }
-        XCTAssertEqual(d.analyse(pack.levels[31])?.score, 14, "5-7 is the hardest level in the book")
+    }
+
+    /// The proto solver's shortest solution (exported in levels.json, the XCUITest plays it) wins in FoldGame, one
+    /// state at a time: every hinge move lands where the proto says, every step is a legal step.
+    func testProtoSolutionsReplayInTheGame() throws {
+        for lv in pack.levels {
+            let sol = try XCTUnwrap(lv.solution, lv.id)
+            let g = try FoldGame(level: lv, config: pack.config)
+            XCTAssertEqual(Cell(sol[0][0], sol[0][1]), g.char, lv.id)
+            for (i, s) in sol.enumerated().dropFirst() {
+                let cell = Cell(s[0], s[1]), a = Double(s[2])
+                if a != g.angle { g.setAngle(a) } else { XCTAssertNotEqual(g.step(to: cell), [.blocked], "\(lv.id) step \(i) to \(cell)") }
+                XCTAssertEqual(g.char, cell, "\(lv.id) state \(i)")
+                XCTAssertEqual(g.closedOnce, s[3] == 1, "\(lv.id) state \(i) stamped")
+            }
+            XCTAssertTrue(g.won, "\(lv.id) is won by its proto solution")
+            XCTAssertEqual(sol.count - 1, lv.len, "\(lv.id): the exported solution is the shortest")
+        }
     }
 }
 
@@ -170,7 +196,8 @@ final class RulesTests: XCTestCase {
 }
 
 final class GameTests: XCTestCase {
-    func level(_ id: String) throws -> Level { try XCTUnwrap(LevelPack.bundled().levels.first { $0.id == id }) }
+    func level(_ id: String) throws -> Level { try Fixture.level13(id) }
+    func shipped(_ id: String) throws -> Level { try XCTUnwrap(LevelPack.bundled().levels.first { $0.id == id }) }
 
     func testPlayLevelOne() throws {
         let g = try FoldGame(level: level("bridge"))
@@ -269,7 +296,7 @@ final class GameTests: XCTestCase {
     /// crease shades the bottom page only while d·cos(physical) ≥ 0.5, on column n − round(d·cos).
     func testFifteenDegreeStopsInTheLean() throws {
         for id in ["shadow", "press", "lock", "ride", "rideBack", "lamp", "twoShades", "bridgeShade", "inkShore", "stoneRain", "shadeDoor", "twoFigures"] {
-            let g = try FoldGame(level: level(id)), n = g.rules.n
+            let g = try FoldGame(level: shipped(id)), n = g.rules.n
             for fold in [105.0, 120, 135, 150] {
                 g.setAngle(fold)
                 XCTAssertEqual(g.angle, fold, "\(id) \(fold)")
@@ -297,7 +324,7 @@ final class GameTests: XCTestCase {
     /// Chapters 1 and 2 keep their solutions: no reachable cell there is newly crushed.
     func testCrushLeavesEarlierChaptersAlone() throws {
         for id in ["bridge", "facing", "back", "key", "ink", "stand", "twoBridges", "standClose", "doorBridge", "inkBridge", "inkTwice", "crease", "rightBank"] {
-            let g = try FoldGame(level: level(id)), r = Rules()
+            let g = try FoldGame(level: shipped(id)), r = Rules()
             for c in r.reachable(g.board, from: g.board.start, .open, [:]) where !r.isRight(c.c) {
                 XCTAssertFalse(r.crushed(g.board, c, 180), "\(id) \(c)")
             }
@@ -315,7 +342,7 @@ final class GameTests: XCTestCase {
 
 /// The shadow lock as rewritten in design-review-ch4 §2: every shadow on a gap joins the figure's path, at least one.
 final class LockTests: XCTestCase {
-    func level(_ id: String) throws -> Level { try XCTUnwrap(LevelPack.bundled().levels.first { $0.id == id }) }
+    func level(_ id: String) throws -> Level { try Fixture.level13(id) }
     let rules = Rules(.standard)
 
     /// 3-3 远近: only where both shadows meet column 1 (fold 147–151) is there a lock; 140 is not one any more.
@@ -378,69 +405,63 @@ final class ChapterFourTests: XCTestCase {
         return ev
     }
 
-    /// 4-4 石雨: closing anywhere on (1,0)–(1,2) brings a stone down on you; (1,3) is the one safe square.
-    func testStoneRain() throws {
-        for r in 0..<3 {
-            let g = try FoldGame(level: level("stoneRain"))
-            XCTAssertNotNil(g.walk(to: Cell(1, r)))
-            XCTAssertTrue(play(g, to: 180).contains(.fell(crushed: true)), "row \(r)")
-            XCTAssertEqual(g.char, g.board.start)
+    /// Plays the level's proto solution (levels.json `solution`) up to `upTo` states.
+    func replay(_ id: String, upTo n: Int? = nil) throws -> (FoldGame, [[Int]]) {
+        let lv = try level(id), sol = try XCTUnwrap(lv.solution)
+        let g = try FoldGame(level: lv)
+        for s in sol.prefix(n ?? sol.count).dropFirst() {
+            if Double(s[2]) != g.angle { play(g, to: Double(s[2])) } else { g.step(to: Cell(s[0], s[1])) }
         }
-        let g = try FoldGame(level: level("stoneRain"))
-        g.walk(to: Cell(1, 3))
-        XCTAssertFalse(play(g, to: 180).contains { if case .fell = $0 { return true } else { return false } })
-        XCTAssertEqual(g.char, Cell(1, 3))
-        XCTAssertEqual(g.board[3, 3], .ink, "the ink printed onto the gap")
+        return (g, sol)
     }
 
-    /// 4-5 门下影: with the door locked the shadow runs into it and drops you; once the key has opened it, the same lean
-    /// carries you through to the far side.
+    /// 4-4 石雨 (retuned): stones hang over the stack; closing on a left-page square under one crushes you (the solver
+    /// knows it too), and the solution's last close is from the one safe square in the top row.
+    func testStoneRain() throws {
+        let lv = try level("stoneRain"), b = try Board(level: lv), r = Rules(), s = Solver()
+        var crushes = 0
+        for row in 0..<b.h { for c in 0..<4 where b[c, row].isFloor && b[7 - c, row] == .stone {
+            XCTAssertTrue(r.crushed(b, Cell(c, row), 180), "\(c),\(row)")
+            XCTAssertNil(s.turn(b, Cell(c, row), 100, 180), "\(c),\(row)")
+            crushes += 1
+        } }
+        XCTAssertGreaterThanOrEqual(crushes, 2, "stones hang over the stack")
+        let (w, sol) = try replay("stoneRain"); XCTAssertTrue(w.won)
+        let lastClose = try XCTUnwrap(sol.lastIndex { $0[2] != 180 }), from = Cell(sol[lastClose][0], sol[lastClose][1])
+        XCTAssertFalse(r.crushed(b, from, 180), "the last close is from a safe square")
+    }
+
+    /// 4-5 门下影 (retuned): the first close opens the door (the key faces it), and the solution's ride ends at it.
     func testShadeDoor() throws {
         let g = try FoldGame(level: level("shadeDoor"))
-        play(g, to: 105)
-        XCTAssertNotNil(g.walk(to: Cell(3, 2)))
-        XCTAssertTrue(play(g, to: 135).contains(.fell(crushed: false)))
-        XCTAssertEqual(g.char, g.board.start)
-        let h = try FoldGame(level: level("shadeDoor"))
-        h.walk(to: Cell(3, 1)); play(h, to: 180)
-        XCTAssertEqual(h.board[1, 2], .openDoor)
-        play(h, to: 105)
-        XCTAssertNotNil(h.walk(to: Cell(3, 2)))
-        let ev = play(h, to: 135)
-        XCTAssertFalse(ev.contains { if case .fell = $0 { return true } else { return false } }, "\(ev)")
-        XCTAssertEqual(h.char, Cell(1, 2), "carried through the open door")
-        XCTAssertEqual(h.walk(to: Cell(0, 3))?.last, .won)
-    }
-
-    /// 4-6 两人: ride back to the shore at (3,4), close: the door opens, the banks touch, you stand in her square.
-    /// Opened again, she is still on her bank.
-    func testTwoFiguresMeetOnlyShut() throws {
-        let g = try FoldGame(level: level("twoFigures"))
-        XCTAssertEqual(g.goal, Cell(4, 1))
-        XCTAssertNotNil(g.walk(to: Cell(1, 3)))
-        play(g, to: 150)
-        XCTAssertNotNil(g.walk(to: Cell(1, 4)))
-        play(g, to: 105)
-        XCTAssertEqual(g.char, Cell(3, 4), "the shadow brought you back to the shore")
+        let door = try XCTUnwrap(g.board.first(.door))
         play(g, to: 180)
-        XCTAssertEqual(g.walk(to: Cell(4, 1))?.last, .won)
-        XCTAssertEqual(g.board[4, 1], .goal, "she never moves")
+        XCTAssertEqual(g.board[door], .openDoor, "the key opened the door")
+        let (w, _) = try replay("shadeDoor"); XCTAssertTrue(w.won)
+        XCTAssertTrue(w.trail.contains(door), "the road goes through the door")
     }
 
-    /// 4-3 墨岸: the shadow at (2,1) slides onto (1,1), right under the stone (6,1): closing there crushes you. The ink
-    /// printed onto (3,2) is the shore to close from.
+    /// 4-6 两人: the goal is her square and she never moves; the win comes only with the book shut.
+    func testTwoFiguresMeetOnlyShut() throws {
+        let (g, sol) = try replay("twoFigures")
+        XCTAssertTrue(g.won)
+        XCTAssertEqual(g.posture, .closed, "they meet only in the shut book")
+        XCTAssertEqual(g.board[g.goal!], .goal, "she never moves")
+        XCTAssertEqual(g.goal, Cell(6, 1))
+        XCTAssertEqual(sol.last?[2], 180)
+        // one state before the end, the book is still open or the figure is elsewhere: not yet won
+        let (h, _) = try replay("twoFigures", upTo: sol.count - 1)
+        XCTAssertFalse(h.won)
+    }
+
+    /// 4-3 墨岸 (retuned): the close prints the ink shore, and the solution crosses it.
     func testInkShore() throws {
         let g = try FoldGame(level: level("inkShore"))
-        g.walk(to: Cell(1, 0)); play(g, to: 180); play(g, to: 0)
-        XCTAssertEqual(g.board[3, 2], .ink)
-        play(g, to: 125)
-        XCTAssertNotNil(g.walk(to: Cell(2, 1)))
-        XCTAssertTrue(play(g, to: 180).contains(.fell(crushed: true)))
-        XCTAssertEqual(g.char, g.board.start)
-        play(g, to: 120)
-        XCTAssertNotNil(g.walk(to: Cell(3, 2)))
+        let ink = try XCTUnwrap(g.board.first(.ink))
         play(g, to: 180)
-        XCTAssertEqual(g.walk(to: Cell(4, 0))?.last, .won)
+        XCTAssertEqual(g.board[7 - ink.c, ink.r], .ink, "the ink printed across")
+        let (w, _) = try replay("inkShore"); XCTAssertTrue(w.won)
+        XCTAssertTrue(w.trail.contains(Cell(7 - ink.c, ink.r)), "the road crosses the printed ink")
     }
 }
 
@@ -495,4 +516,15 @@ final class SpreadTests: XCTestCase {
         XCTAssertTrue(v.slot(Cell(5, 2)) == (1, 2))
         XCTAssertTrue(v.stackSlot(Cell(5, 2)) == (2, 2))
     }
+}
+
+/// The 0.1 (13) boards (32 levels, before the 卷一 retune and the 5-4 … 5-7 redesign), kept as rule fixtures: the
+/// rules did not change in 0.1 (14), so the tests that pin a rule to a particular board (a ride, a crush, a lock, a
+/// glue pull) keep their boards. Tests about the shipped levels use `LevelPack.bundled()`.
+enum Fixture {
+    static let pack13: LevelPack = {
+        let url = Bundle.module.url(forResource: "levels-0.1-13", withExtension: "json", subdirectory: "Fixtures")!
+        return try! LevelPack.decode(Data(contentsOf: url))
+    }()
+    static func level13(_ id: String) throws -> Level { try XCTUnwrap(pack13.levels.first { $0.id == id }, id) }
 }

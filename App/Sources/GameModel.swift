@@ -11,6 +11,10 @@ struct Chapter: Identifiable {
     let levelIDs: [String]
     let unlocked: Bool
     let soon: Bool
+    /// 「暗信」 (fold-proto difficulty-postmortem.md §4): optional side letters of this chapter. Not in `levelIDs`, so
+    /// they are outside the strict chapter unlock, the chapter's count and 「继续」; they open once the chapter is
+    /// delivered, from the sealed letter under its card on the map.
+    var darkIDs: [String] = []
     /// 卷一《两岸》 = chapters 1–4, 卷二《翻页》 = 5 on (roadmap §1).
     var volume: Int { id <= 4 ? 1 : 2 }
     /// The chapter's number inside its volume (the map cards).
@@ -37,7 +41,9 @@ struct Chapter: Identifiable {
         // chapter 4 「岸」 ends book one, 《两岸》 (design-ch4.md)
         Chapter(id: 4, levelIDs: ["twoShades", "bridgeShade", "inkShore", "stoneRain", "shadeDoor", "twoFigures"], unlocked: true, soon: false),
         // vol. 2 《翻页》, chapter 1 「胶」 (design-v2c1): opens once chapter 4 is all delivered (the strict rule)
-        Chapter(id: 5, levelIDs: ["glue", "lend", "bridgeGlue", "shadowFirst", "oneClose", "rideFirst", "stuckPage"], unlocked: true, soon: false),
+        // 0.1 (14): 5-4 … 5-7 redrawn under new IDs (SavedProgress.renamed carries 0.1 (13) saves), plus three 暗信
+        Chapter(id: 5, levelIDs: ["glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps"], unlocked: true, soon: false,
+                darkIDs: ["darkBack", "darkDoor", "darkInk"]),
         // vol. 2 chapter 2 「翻页」 is not written yet: a dashed card, never a sealed chapter that looks openable
         Chapter(id: 6, levelIDs: [], unlocked: false, soon: true),
     ]
@@ -229,7 +235,7 @@ final class GameModel {
     @ObservationIgnored private var hingeTarget = 0.0
     @ObservationIgnored private var hingeIdle: Task<Void, Never>?
 
-    private struct Pending { var mode = false, connected = false, lost = false, shade = false, hadShade = false, lit = false, dead = false; var stamps: [Rules.Stamp] = [] }
+    private struct Pending { var mode = false, connected = false, goal = false, lost = false, shade = false, hadShade = false, lit = false, dead = false; var stamps: [Rules.Stamp] = [] }
 
     static let step = 15.0
     static let snapPoints: [Double] = [0, 90, 130, 180]
@@ -268,9 +274,15 @@ final class GameModel {
     /// -cameraPitch <deg> (screenshots), -probe YES (UI tests: the drag's edge probe).
     static func launch() -> GameModel {
         let d = UserDefaults.standard
-        if d.bool(forKey: "resetProgress") { SavedProgress.reset(d); for k in 2...5 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
-        let m = GameModel(pack: try! LevelPack.bundled())
+        if d.bool(forKey: "resetProgress") { SavedProgress.reset(d); d.removeObject(forKey: ruleBlockedKey); d.removeObject(forKey: ruleUnderKey); for k in 2...5 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
+        var pack = try! LevelPack.bundled()
         let start = d.integer(forKey: "startLevel")
+        // -levelMap "row|row|…" (UI tests only; gaps written "_", as a value starting with "-" would read as a flag): play the -startLevel level on another board, so a rule's regression test
+        // keeps the board it was written on when the level is redrawn (0.1 (14): the 0.1 (13) boards, App/UITests/Boards13.swift)
+        if start > 0, start <= pack.levels.count, let rows = d.string(forKey: "levelMap")?.split(separator: "|").map({ $0.replacingOccurrences(of: "_", with: "-") }), !rows.isEmpty {
+            pack.levels[start - 1].map = rows; pack.levels[start - 1].solution = nil
+        }
+        let m = GameModel(pack: pack)
         if start > 0 { m.go(start - 1) }
         // -closeFirst YES (screenshots): shut the book once and open it, so keys, ink and glue have acted
         if d.bool(forKey: "closeFirst") { m.setAngle(180); m.setAngle(0); m.clearGlue(); m.pending = Pending() }
@@ -299,23 +311,31 @@ final class GameModel {
 
     var level: Level { pack.levels[index] }
     var levelText: (name: String, line: String, hint: String) { L10n.level(level.id) }
+    /// The heading: 「2-3 · 墙角」; a 暗信's name already says what it is (「暗信 · 背」).
+    var titleText: String { isDark ? levelText.name : L10n.t("level.title", ["code": code, "name": levelText.name]) }
     var isLeaning: Bool { config.isLeaning(angle) }
     /// Chapter 3 between 89° and 60° (physical): leaning, not standing (the 15° stops at 75° and 60°, review-ch3 §6.4).
     /// A page with tabs standing (4-2) is standing first: the bridge is up, the shadow is the news.
     var leansNotStands: Bool { paper.backlit && angle > 90 && isLeaning && !hasTabs }
     /// The level has pop-up tabs (纸片).
     var hasTabs: Bool { board.grid.contains { $0.contains(.tab) } }
-    /// 4-6 两人 and 5-7 粘住的页: the goal square is the other figure (design-ch4 §1, design-v2c1 §5 ⑨).
-    var goalIsFigure: Bool { level.id == "twoFigures" || level.id == "stuckPage" }
-    /// The two meet in the shut book, a seal drops, 「信，到了。」, then the letter comes by itself.
-    var isFinale: Bool { goalIsFigure }
+    /// 4-6 两人, 5-7 两盏灯 and the two 暗信 that end at 「她」: the goal square is the other figure (design-ch4 §1,
+    /// design-v2c1 §5 ⑨; the 0.1 (14) texts send you 「到她门口」/「她就在旁边」).
+    var goalIsFigure: Bool { ["twoFigures", "twoLamps", "darkDoor", "darkInk"].contains(level.id) }
+    /// The two meet in the shut book, a seal drops, 「信，到了。」, then the letter comes by itself (chapter ends only).
+    var isFinale: Bool { level.id == "twoFigures" || level.id == "twoLamps" }
+    /// A 「暗信」 side letter (levels.json `optional`).
+    var isDark: Bool { level.isOptional }
+    /// The 暗信 of this level's chapter, as pack indices.
+    var levelDarkIndices: [Int] { chapter.darkIDs.compactMap { id in pack.levels.firstIndex { $0.id == id } } }
     /// 4-6 ends book one with 「成」 across the crease; 5-7 drops the chapter's seal 「胶」 on her square (design-review-v2c1 ③④).
     var finaleGlyph: String { level.id == "twoFigures" ? "成" : chapter.sealGlyph }
     /// The goal square (in 4-6, her square).
     var goal: Cell? { game.goal }
-    var chapter: Chapter { Chapter.all.first { $0.levelIDs.contains(level.id) } ?? Chapter.all[0] }
+    var chapter: Chapter { Chapter.all.first { $0.levelIDs.contains(level.id) || $0.darkIDs.contains(level.id) } ?? Chapter.all[0] }
     var chapterLevelIndices: [Int] { chapter.levelIDs.compactMap { id in pack.levels.firstIndex { $0.id == id } } }
     var code: String {
+        if isDark { return L10n.t("dark.title") }
         let n = (chapter.levelIDs.firstIndex(of: level.id) ?? 0) + 1
         return L10n.t("level.code", ["ch": chapter.id, "n": n])
     }
@@ -329,7 +349,9 @@ final class GameModel {
         p.creaseWhite = Double(k) / Double(max(1, chapter.levelIDs.count - 1))
         return p
     }
-    var isLastInChapter: Bool { chapterLevelIndices.last == index }
+    var isLastInChapter: Bool { !isDark && chapterLevelIndices.last == index }
+    /// After a 暗信: the next one, or (after the last) back to the map.
+    var nextDark: Int? { levelDarkIndices.first { $0 > index } }
 
     // MARK: words
 
@@ -417,7 +439,7 @@ final class GameModel {
 
     var intro: String {
         let t = levelText, g = game.goal
-        return L10n.t("intro", ["n": code, "name": t.name, "line": t.line, "you": pos(game.char),
+        return L10n.t(isDark ? "intro.dark" : "intro", ["n": code, "name": t.name, "line": t.line, "you": pos(game.char),
                                 "goal": g.map(pos) ?? L10n.t("elsewhere")]) + " " + L10n.t("paper.ch\(chapter.id)")
     }
 
@@ -918,6 +940,9 @@ final class GameModel {
 
     // MARK: walking
 
+    /// The figure can walk to this square right now (taps where two pages overlap on screen).
+    func canReach(_ cell: Cell) -> Bool { game.path(to: cell).map { !$0.isEmpty } ?? false }
+
     func tap(_ cell: Cell) {
         if aha { finishAhaNow(); return }
         if won { return }
@@ -928,7 +953,10 @@ final class GameModel {
             haptics.nope()
             if settings.soundMode { sound.hollow(pan: pan(of: cell)) }
             shake[cell, default: 0] += 1
-            announce(L10n.t("cantReach"))
+            // the first time a shut stack refuses you because paper lies on a stone, say the rule once (playtest 10/20)
+            if posture == .closed, rules.facts(board, cell, posture: .closed, shade: shade, figure: char).note == .stackBlocked,
+               teachRule(Self.ruleBlockedKey, "rule.blocked") {}
+            else { announce(L10n.t("cantReach")) }
             nopes += 1
             if nopes >= 2 { hintAvailable = true }
             startGhost(after: 0.4)   // 1-1: tapping the far flag first is the classic first move; show the page instead
@@ -938,6 +966,26 @@ final class GameModel {
         if path.isEmpty { announce(L10n.t("already", ["pos": pos(game.char)])); return }
         pushUndo()
         walk(path)
+    }
+
+    /// The two rules of the shut book the playtest found nowhere on screen: a stone (or a locked door) on either page
+    /// shuts its stack, paper or not; and through a gap in the top page you stand on the page below. Each is said once
+    /// per player, in a line, where it first matters. Returns whether it was said now.
+    static let ruleBlockedKey = "rule.blocked.seen", ruleUnderKey = "rule.under.seen"
+    @discardableResult func teachRule(_ key: String, _ text: String) -> Bool {
+        let d = UserDefaults.standard
+        guard !d.bool(forKey: key) else { return false }
+        d.set(true, forKey: key)
+        show(L10n.t(text))
+        return true
+    }
+
+    /// The first close on a board with a gap over paper (from 1-2 on: 1-1's card is the lesson itself).
+    private func teachUnderOnClose() {
+        guard index > 0, !UserDefaults.standard.bool(forKey: Self.ruleUnderKey) else { return }
+        let n = config.columnsPerPage
+        let gap = (0..<board.h).contains { r in (0..<n).contains { q in rules.facts(board, Cell(q, r), posture: .closed, shade: [:], figure: char).note == .throughGap } }
+        if gap { teachRule(Self.ruleUnderKey, "rule.under") }
     }
 
     /// One step in a screen direction (the 「走」 bookmark, VoiceOver).
@@ -1025,6 +1073,7 @@ final class GameModel {
             switch e {
             case .postureChanged(_, let to):
                 pending.mode = true
+                if to == .closed && !game.won { teachUnderOnClose() }
                 // 90°: the two tabs lock into a bridge: Impact .medium, a paper-tongue click, crease.glow 400 ms.
                 // No 「通」 seal here: that is the chapter's seal, for the map card (design-review-2 §2.2)
                 if to == .standing && hasTabBridge {
@@ -1042,6 +1091,8 @@ final class GameModel {
                 pending.connected = true; pending.lost = false
                 haptics.connect()
                 if settings.soundMode { sound.chord() }
+            case .goalInReach:
+                pending.goal = true
             case .lost:
                 if !pending.connected { pending.lost = true }
             case .shadeChanged:
@@ -1235,7 +1286,12 @@ final class GameModel {
         }
         if p.lit { parts.append(L10n.t("paper.lit")) }
         // a dead end outranks a passing connection (Codex review 11): it is said once, so it must not be swallowed
-        if p.dead { parts.append(L10n.t("lost")) } else if p.connected { parts.append(L10n.t("connected")) } else if p.lost { parts.append(L10n.t("lost")) }
+        // 「路接通了」 only when the letter can be walked to (playtest 10/20: at half fold it was said with the goal out of
+        // reach); new squares alone say so, and that the letter is not yet in reach
+        if p.dead { parts.append(L10n.t("lost")) }
+        else if p.goal && game.goalInReach { parts.append(L10n.t("connected")) }
+        else if p.connected { parts.append(L10n.t(game.goalInReach ? "connected" : "reach.more")) }
+        else if p.lost { parts.append(L10n.t("lost")) }
         // the shut: 「胶把石头粘到了对页」 once however many stones moved, then the door (design-review-v2c1 §3)
         if p.stamps.contains(where: { $0.kind == .glue }) { parts.append(L10n.t("glued")) }
         for s in p.stamps where s.kind != .glue { parts.append(L10n.t(s.kind == .door ? "doorOpened" : "inkPrinted")) }
@@ -1364,36 +1420,34 @@ final class GameModel {
     // MARK: VoiceOver labels (port of a11y.js label())
 
     func label(_ c: Int, _ r: Int) -> String {
-        let n = config.columnsPerPage
-        let tl = board[c, r], m = rules.mirror(c), M = board[m, r]
+        let f = rules.facts(board, Cell(c, r), posture: posture, shade: shade, figure: figureCell)
         let figure = goalIsFigure
         func kind(_ t: Tile) -> String { t == .goal && figure ? L10n.t("kind.figure") : L10n.t("kind.\(t == .start ? "." : String(t.rawValue))") }
         func noun(_ t: Tile) -> String { L10n.t("noun.\(t == .start ? "." : String(t.rawValue))") }
-        var k = shade[Cell(c, r)] != nil && !tl.isFloor ? L10n.t("kindShadow") : kind(tl)
-        if tl == .tab && posture == .standing { k = L10n.t("kindTabUp") }
-        var parts = [pos(c, r), k]
-        // closed: the square on top of this stack can be the goal (the folding page lies on the fixed one)
-        if posture == .closed && !rules.isRight(c) && M == .goal && tl != .goal { parts.append(kind(.goal)) }
-        if figureCell == Cell(c, r) { parts.append(L10n.t("hereYou")) }
-        else if posture == .closed && char == Cell(m, r) { parts.append(L10n.t("hereStack")) }
-        var extra = ""
-        if !rules.isRight(c) {
-            if tl == .empty && (M.isFloor || M == .stone) { extra = L10n.t("fallsHere", ["noun": noun(M)]) }
-            else if tl == .door && M == .key { extra = L10n.t("doorKey") }
-            else if tl == .glue && M == .stone { extra = L10n.t("glueTakes") }
-            else if tl == .stone && M == .glue { extra = L10n.t("stoneGlued", ["col": L10n.t("col", ["c": m + 1])]) }
-            else if tl.isFloor && M == .stone { extra = L10n.t("crushedHere") }
-            else if tl == .ink && M == .empty { extra = L10n.t("inkPrints") }
-            else if tl == .tab && c == n - 1 && M == .tab { extra = L10n.t("tabBridge") }
-        } else {
-            let col = L10n.t("col", ["c": m + 1])
-            if tl == .stone && M == .glue { extra = L10n.t("stoneGlued", ["col": col]) }
-            else if tl == .stone { extra = L10n.t("stoneShadow", ["col": col]) }
-            else if tl == .glue && M == .stone { extra = L10n.t("glueTakes") }
-            else if tl == .key && M == .door { extra = L10n.t("keyOpens", ["col": col]) }
-            else if tl == .ink && M == .empty { extra = L10n.t("inkTo", ["col": col]) }
-            else if tl == .tab && c == n && M == .tab { extra = L10n.t("tabBridge") }
-            else if tl.isFloor && M == .empty { extra = L10n.t("covers", ["col": col]) }
+        func col(_ n: Int) -> String { L10n.t("col", ["c": n]) }
+        // shut: the stack is named by its bottom-page square (the one the stack sits on)
+        let at = posture == .closed ? Cell(rules.proj(c), r) : Cell(c, r)
+        var parts = [pos(at), f.shadow ? L10n.t("kindShadow") : f.tabUp ? L10n.t("kindTabUp") : kind(f.tile)]
+        if f.goalInStack { parts.append(kind(.goal)) }
+        if case .you(let onTop)? = f.here {
+            parts.append(onTop.map { L10n.t("hereOnPage", ["page": L10n.t($0 ? "page.folding" : "page.fixed")]) } ?? L10n.t("hereYou"))
+        }
+        let extra: String
+        switch f.note {
+        case .fallsHere(let t)?: extra = L10n.t("fallsHere", ["noun": noun(t)])
+        case .doorKey?: extra = L10n.t("doorKey")
+        case .glueTakes?: extra = L10n.t("glueTakes")
+        case .stoneGlued(let n)?: extra = L10n.t("stoneGlued", ["col": col(n)])
+        case .crushedHere?: extra = L10n.t("crushedHere")
+        case .inkPrints?: extra = L10n.t("inkPrints")
+        case .tabBridge?: extra = L10n.t("tabBridge")
+        case .stoneShadow(let n)?: extra = L10n.t("stoneShadow", ["col": col(n)])
+        case .keyOpens(let n)?: extra = L10n.t("keyOpens", ["col": col(n)])
+        case .inkTo(let n)?: extra = L10n.t("inkTo", ["col": col(n)])
+        case .covers(let n)?: extra = L10n.t("covers", ["col": col(n)])
+        case .stackBlocked?: extra = L10n.t("stack.blocked")
+        case .throughGap?: extra = L10n.t("stack.under")
+        case nil: extra = ""
         }
         return L10n.cap(parts.joined(separator: L10n.t("sep")) + (extra.isEmpty ? "" : L10n.t("semi") + extra))
     }
@@ -1408,7 +1462,9 @@ final class GameModel {
             sound.note(row: r, timbre: rules.isRight(c) ? .paper : .wood, pan: pan(of: cell), volume: 0.6, delay: i * 0.12)
             i += 1
         }
-        announce((0..<(2 * config.columnsPerPage)).map { label($0, r) }.joined(separator: L10n.t("semi")))
+        // shut, a row is four stacks, not eight squares (playtest 10/20: the shut book read as if open)
+        let cols = posture == .closed ? 0..<config.columnsPerPage : 0..<(2 * config.columnsPerPage)
+        announce(cols.map { label($0, r) }.joined(separator: L10n.t("semi")))
     }
 
     /// 「我在哪」

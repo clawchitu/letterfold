@@ -9,7 +9,7 @@ final class Chapter3UITests: XCTestCase {
     func launch(_ level: Int) {
         app = XCUIApplication()
         app.launchArguments = ["-resetProgress", "YES", "-noOpener", "YES", "-startLevel", "\(level)",
-                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
+                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"] + Boards13.args(level)
         app.launch()
         f = FoldDriver(app: app)
         XCTAssertTrue(f.fold.waitForExistence(timeout: 8))
@@ -24,7 +24,7 @@ final class Chapter3UITests: XCTestCase {
     func tile(_ c: Int, _ r: Int) -> XCUIElement { app.descendants(matching: .any)["tile-\(c)-\(r)"] }
     func isHere(_ c: Int, _ r: Int) -> Bool { tile(c, r).label.contains("你在这里") }
     func walk(_ c: Int, _ r: Int, wait: TimeInterval = 1.6) {
-        XCTAssertTrue(tile(c, r).waitForExistence(timeout: 3)); tile(c, r).tap(); Thread.sleep(forTimeInterval: wait)
+        XCTAssertTrue(tile(c, r).waitForExistence(timeout: 3)); tile(c, r).tapVisible(c); Thread.sleep(forTimeInterval: wait)
     }
 
     /// 3-2 压 (retuned): cross on the stone's own shadow, stand on (1,1) — the stone's mirror square, on the long way
@@ -65,7 +65,7 @@ final class Chapter3UITests: XCTestCase {
     func testFifteenDegreeStepsStopInTheLean() {
         app = XCUIApplication()
         app.launchArguments = ["-resetProgress", "YES", "-noOpener", "YES", "-startLevel", "16", "-buttonControl", "YES",
-                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
+                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"] + Boards13.args(16)
         app.launch()
         f = FoldDriver(app: app)
         let more = app.buttons["fold.more"], less = app.buttons["fold.less"]

@@ -1,0 +1,79 @@
+import Foundation
+
+/// What a square says to VoiceOver, as facts (the app turns them into words in four languages): a port of a11y.js
+/// `label()` for the open book, and — new in 0.1 (14), from the 10/20 blind playtest — the shut book described as it
+/// is: one stack per square, what lies on top, which page you are on, and why a stack cannot be entered. Open-book
+/// predictions ("closing lays the card here", "closing here crushes you") are never said about a shut book.
+public struct CellFacts: Sendable, Equatable {
+    public enum Note: Sendable, Equatable {
+        // open book (a11y.js): what closing will do here
+        case fallsHere(Tile), doorKey, glueTakes, stoneGlued(col: Int), crushedHere, inkPrints, tabBridge
+        case stoneShadow(col: Int), keyOpens(col: Int), inkTo(col: Int), covers(col: Int)
+        // shut book
+        /// Paper on one page, a stone (or a locked door) on the other: the stack cannot be entered.
+        case stackBlocked
+        /// Nothing on the top page here: you would stand on the bottom page, through the gap.
+        case throughGap
+    }
+    public enum Here: Sendable, Equatable {
+        /// The figure is on this square (shut: in this stack, on the top page when `onTop`).
+        case you(onTop: Bool?)
+    }
+    /// The tile to name: open, the square's own; shut, what shows on top of the stack (the top page unless it is a gap).
+    public var tile: Tile
+    /// Open: a gap with a shadow on it (walkable).
+    public var shadow = false
+    /// Standing tabs (the bridge is up).
+    public var tabUp = false
+    /// Shut: the goal lies in this stack under or over what is named.
+    public var goalInStack = false
+    public var here: Here?
+    public var note: Note?
+}
+
+extension Rules {
+    /// The facts about the square at `cell` (shut: the stack whose bottom-page cell this is; a top-page cell names the
+    /// same stack). `figure` is where the figure is drawn (the app may show it under a stone while being crushed).
+    public func facts(_ b: Board, _ cell: Cell, posture p: Posture, shade: [Cell: Int], figure: Cell) -> CellFacts {
+        if p == .closed { return stackFacts(b, Cell(proj(cell.c), cell.r), figure: figure) }
+        let c = cell.c, r = cell.r
+        let tl = b[cell], m = mirror(c), M = b[m, r]
+        var f = CellFacts(tile: tl)
+        f.shadow = shade[cell] != nil && !tl.isFloor
+        f.tabUp = tl == .tab && p == .standing
+        if figure == cell { f.here = .you(onTop: nil) }
+        if !isRight(c) {
+            if tl == .empty && (M.isFloor || M == .stone) { f.note = .fallsHere(M) }
+            else if tl == .door && M == .key { f.note = .doorKey }
+            else if tl == .glue && M == .stone { f.note = .glueTakes }
+            else if tl == .stone && M == .glue { f.note = .stoneGlued(col: m + 1) }
+            else if tl.isFloor && M == .stone { f.note = .crushedHere }
+            else if tl == .ink && M == .empty { f.note = .inkPrints }
+            else if tl == .tab && c == n - 1 && M == .tab { f.note = .tabBridge }
+        } else {
+            if tl == .stone && M == .glue { f.note = .stoneGlued(col: m + 1) }
+            else if tl == .stone { f.note = .stoneShadow(col: m + 1) }
+            else if tl == .glue && M == .stone { f.note = .glueTakes }
+            else if tl == .key && M == .door { f.note = .keyOpens(col: m + 1) }
+            else if tl == .ink && M == .empty { f.note = .inkTo(col: m + 1) }
+            else if tl == .tab && c == n && M == .tab { f.note = .tabBridge }
+            else if tl.isFloor && M == .empty { f.note = .covers(col: m + 1) }
+        }
+        return f
+    }
+
+    /// The shut book: the stack at bottom-page column q. The right page lies on top of the left.
+    func stackFacts(_ b: Board, _ q: Cell, figure: Cell) -> CellFacts {
+        let bottom = b[q], topCell = Cell(mirror(q.c), q.r), top = b[topCell]
+        var f = CellFacts(tile: top == .empty ? bottom : top)
+        f.goalInStack = (top == .goal || bottom == .goal) && f.tile != .goal
+        if figure == q { f.here = .you(onTop: false) } else if figure == topCell { f.here = .you(onTop: true) }
+        if !foldOpen(b, q.c, q.r) {
+            // a stone or a locked door on either page shuts the stack, paper or not (the rule the playtest never saw)
+            if (top.isFloor && bottom.isBlock) || (bottom.isFloor && top.isBlock) { f.note = .stackBlocked }
+        } else if top == .empty && bottom.isFloor {
+            f.note = .throughGap
+        }
+        return f
+    }
+}

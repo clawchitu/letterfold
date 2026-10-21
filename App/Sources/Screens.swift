@@ -604,7 +604,18 @@ struct ChapterMapView: View {
             ThreadDrop(from: 0, to: 46, color: hc ? Tok.hcLine : Tok.thread).frame(height: 48)
             Knot(color: hc ? Tok.hcLine : Tok.thread, small: true).offset(x: -6, y: 46 - 7)
             VStack(spacing: 18) {
-                ForEach(Chapter.volumeChapters(2)) { ch in card(ch, width) }
+                ForEach(Chapter.volumeChapters(2)) { ch in
+                    card(ch, width)
+                    // 「暗信」: a sealed letter tucked under the chapter's card (0.1 (14)); optional, outside the strict unlock
+                    if !ch.darkIDs.isEmpty {
+                        HStack {
+                            if ch.inVolume % 2 == 0 { Spacer() }
+                            DarkLetterCard(model: model, chapter: ch) { openDark(ch) }.frame(width: (width - 64) / 2 * 0.86)
+                            if ch.inVolume % 2 == 1 { Spacer() }
+                        }
+                        .padding(.top, -8)
+                    }
+                }
             }
             .padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 100)
         }
@@ -619,6 +630,13 @@ struct ChapterMapView: View {
         }
     }
 
+    private func openDark(_ ch: Chapter) {
+        let idx = model.darkIndices(ch)
+        guard model.isDarkOpen(ch), !idx.isEmpty else { model.show(L10n.t("dark.lockedToast")); return }
+        model.go(idx.first { !model.done.contains($0) } ?? idx[0])
+        router.go(.level)
+    }
+
     private func open(_ ch: Chapter) {
         guard model.isUnlocked(ch) else { model.show(L10n.t(ch.soon ? "ch.soon" : "ch.lockedToast")); return }
         let idx = model.chapterIndices(ch)
@@ -629,6 +647,12 @@ struct ChapterMapView: View {
 
 extension GameModel {
     func chapterIndices(_ ch: Chapter) -> [Int] { ch.levelIDs.compactMap { id in pack.levels.firstIndex { $0.id == id } } }
+    func darkIndices(_ ch: Chapter) -> [Int] { ch.darkIDs.compactMap { id in pack.levels.firstIndex { $0.id == id } } }
+    /// A chapter's 暗信 open once the chapter itself is delivered (its letter read or not): optional, never in the way.
+    func isDarkOpen(_ ch: Chapter) -> Bool {
+        let idx = chapterIndices(ch)
+        return isUnlocked(ch) && !idx.isEmpty && idx.allSatisfy(done.contains)
+    }
     /// Built chapters open in order: each once every level of the one before is delivered.
     func isUnlocked(_ ch: Chapter) -> Bool {
         guard ch.unlocked else { return false }
@@ -732,6 +756,50 @@ private struct ChapterCard: View {
             }
         }
         }
+    }
+}
+
+/// 「暗信」 (0.1 (14), fold-proto difficulty-postmortem.md §4): a small envelope under its chapter's card, sealed with
+/// 「暗」 until the chapter is delivered; then it opens on the first unread one. n / 3 like a chapter, but never part of
+/// a volume's count or of 「继续」.
+private struct DarkLetterCard: View {
+    let model: GameModel
+    let chapter: Chapter
+    let action: () -> Void
+    let fonts = FontBook.shared
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        let idx = model.darkIndices(chapter), n = idx.filter { model.done.contains($0) }.count
+        let open = model.isDarkOpen(chapter), all = open && n == idx.count
+        Button(action: action) {
+            HStack(spacing: 8) {
+                // the envelope's flap: a dark fold line, sealed with 「暗」 until the chapter is delivered
+                ZStack {
+                    RoundedRectangle(cornerRadius: 3).fill(Tok.ink900.opacity(open ? 0.78 : 0.62)).frame(width: 34, height: 24)
+                    Path { p in p.move(to: CGPoint(x: 0, y: 0)); p.addLine(to: CGPoint(x: 17, y: 12)); p.addLine(to: CGPoint(x: 34, y: 0)) }
+                        .stroke(Tok.paperNew.opacity(0.55), lineWidth: 1).frame(width: 34, height: 24)
+                    if !open || all { Seal(glyph: "暗", size: 15, color: all ? Tok.cinnabar : Tok.sealMuted, outlined: hc) }
+                }
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(L10n.t("dark.title")).font(fonts.songti(.semibold, 15, relativeTo: .subheadline)).foregroundStyle(Tok.ink900)
+                    Text(open ? L10n.t("ch.count", ["n": n, "total": idx.count]) : L10n.t("dark.note"))
+                        .font(.caption.monospacedDigit()).foregroundStyle(Tok.ink700).lineLimit(1).minimumScaleFactor(0.7)
+                }
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 10).padding(.vertical, 9)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(RoundedRectangle(cornerRadius: 5).fill(Tok.paperLetter.opacity(open ? 1 : 0.75)))
+            .overlay(RoundedRectangle(cornerRadius: 5).strokeBorder(hc ? Color.black : Tok.ink600.opacity(0.35), lineWidth: hc ? 2 : 0.8))
+            .shadow(color: .black.opacity(0.08), radius: 3, y: 1)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(L10n.t("dark.label"))
+        .accessibilityValue(open ? L10n.t("ch.count", ["n": n, "total": idx.count]) : L10n.t("ch.sealed"))
+        .accessibilityAddTraits(.isButton)
+        .accessibilityIdentifier("map.dark")
     }
 }
 

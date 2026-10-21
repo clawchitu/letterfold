@@ -21,7 +21,7 @@ struct LevelScreen: View {
             TopBar(model: model, router: router, nameFaded: nameFaded && !big && !settings.contrastHigh, inline: !big)
             if big {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(L10n.t("level.title", ["code": model.code, "name": model.levelText.name]))
+                    Text(model.titleText)
                         .font(FontBook.shared.songti(.semibold, 28, relativeTo: .title))
                     Text(L10n.tight(model.levelText.line, size: 24)).font(FontBook.shared.songti(.regular, 24, relativeTo: .title2))
                 }
@@ -76,10 +76,13 @@ struct LevelScreen: View {
                         .padding(.horizontal, 24)
                         .transition(.opacity)
                         .accessibilityHidden(true)   // already announced
+                        .allowsHitTesting(false)     // a rule line over the bottom row never eats a tap
                 }
                 if model.showNext {
-                    NextKnot(title: model.isLastInChapter ? L10n.t("letter.read") : L10n.t("next")) {
-                        if model.isLastInChapter { router.go(.letter) } else { model.go(model.index + 1); fadeName() }
+                    NextKnot(title: model.isLastInChapter ? L10n.t("letter.read") : model.isDark && model.nextDark == nil ? L10n.t("dark.back") : L10n.t("next")) {
+                        if model.isLastInChapter { router.go(.letter) }
+                        else if model.isDark { if let n = model.nextDark { model.go(n); fadeName() } else { router.go(.map) } }
+                        else { model.go(model.index + 1); fadeName() }
                     }
                     .transition(.opacity)
                 } else if settings.showButtons {
@@ -141,7 +144,7 @@ private struct TopBar: View {
             Spacer(minLength: 4)
             if inline {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Text(L10n.t("level.title", ["code": model.code, "name": model.levelText.name]))
+                    Text(model.titleText)
                         .font(FontBook.shared.songti(.semibold, 17, relativeTo: .headline))
                     Text(L10n.tight(model.levelText.line, size: 15)).font(FontBook.shared.songti(.regular, 15, relativeTo: .subheadline))
                 }

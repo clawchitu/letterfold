@@ -8,6 +8,6 @@ let package = Package(
     products: [.library(name: "FoldCore", targets: ["FoldCore"])],
     targets: [
         .target(name: "FoldCore", resources: [.copy("Resources/levels.json")]),
-        .testTarget(name: "FoldCoreTests", dependencies: ["FoldCore"]),
+        .testTarget(name: "FoldCoreTests", dependencies: ["FoldCore"], resources: [.copy("Fixtures")]),
     ]
 )
