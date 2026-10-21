@@ -2948,25 +2948,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "合上一次：门开了，墨也印过去了。立起来过桥、穿门、踩着墨走到头，最后合上。"
+            "value": "在下面那座桥立起来，过到右页，沿右页往上，再从上面那座桥回到左页，走到左上角，合上。合着往下一格，你在右页。立起来，再往下一格，合上——这一叠下面是石头，你站在它背上。合着往下一格就是信。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close once: the door opens and the ink prints across. Stand, cross, go through the door, walk the ink to the end, then close."
+            "value": "Stand the page at the lower bridge and cross to the right page, walk up it and back over the upper bridge to the left page’s top-left corner, and close. Closed, one step down: you are on the right page. Stand the page, one more step down, and close — this stack sits on a stone; you stand on its back. Closed, one step down is the letter."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "一度閉じる。扉が開き、墨も写る。立てて橋を渡り、扉を抜け、墨を踏んで端まで歩き、最後に閉じる。"
+            "value": "（TODO ja）下の橋で頁を立てて右頁へ渡り、右頁を上へ、上の橋から左頁へ戻って左上の角まで歩き、閉じる。閉じたまま下へ一枡、きみは右頁。立てて、さらに下へ一枡、閉じる。この重なりの下は石、きみはその背に。閉じたまま下へ一枡で手紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "한 번 닫아요. 문이 열리고 먹도 찍혀요. 세워서 다리를 건너 문을 지나고, 먹을 밟아 끝까지 걸은 뒤 마지막에 닫아요."
+            "value": "(TODO ko) 아래 다리에서 페이지를 세워 오른쪽 페이지로 건너고, 위로 올라가 위 다리로 왼쪽 페이지에 돌아와 왼쪽 위 모서리까지 가서 닫아요. 닫은 채 아래로 한 칸, 오른쪽 페이지예요. 세우고 아래로 한 칸 더 가서 닫아요. 이 겹 아래는 돌, 당신은 그 등 위에. 닫은 채 아래로 한 칸이 편지예요."
+          }
+        }
+      }
+    },
+    "rightBank.hint1": {
+      "comment": "Level \"rightBank\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两次合，两次换页。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two closes, two page changes."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二度閉じ、二度頁をまたぐ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 번 닫고, 두 번 페이지를 바꿔요."
           }
         }
       }
@@ -2978,25 +3008,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "信，在立起的那页上。"
+            "value": "两座桥，一扇没有钥匙的门。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The letter is on the standing page."
+            "value": "Two bridges, and a door with no key."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "手紙は、立った頁の上に。"
+            "value": "橋が二つ、鍵のない扉が一つ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "편지는 일어선 페이지 위에."
+            "value": "다리 둘, 열쇠 없는 문 하나."
           }
         }
       }
