@@ -24,7 +24,7 @@ final class Chapter3UITests: XCTestCase {
     func tile(_ c: Int, _ r: Int) -> XCUIElement { app.descendants(matching: .any)["tile-\(c)-\(r)"] }
     func isHere(_ c: Int, _ r: Int) -> Bool { tile(c, r).label.contains("你在这里") }
     func walk(_ c: Int, _ r: Int, wait: TimeInterval = 1.6) {
-        XCTAssertTrue(tile(c, r).waitForExistence(timeout: 3)); tile(c, r).tap(); Thread.sleep(forTimeInterval: wait)
+        XCTAssertTrue(tile(c, r).waitForExistence(timeout: 3)); tile(c, r).tapVisible(c); Thread.sleep(forTimeInterval: wait)
     }
 
     /// 3-2 压 (retuned): cross on the stone's own shadow, stand on (1,1) — the stone's mirror square, on the long way

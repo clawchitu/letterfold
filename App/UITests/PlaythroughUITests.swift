@@ -59,7 +59,9 @@ class PlaythroughUITests: XCTestCase {
             case let .walk(c, r, steps):
                 let t = tile(c, r)
                 XCTAssertTrue(t.waitForExistence(timeout: 3), "\(id): tile-\(c)-\(r)")
-                t.tap()
+                // a hand taps the part of a square it can see: with the top page leaning over, a bottom-page square by
+                // the crease is half under it (the top page takes that touch), so aim away from the crease
+                t.tapVisible(c)
                 Thread.sleep(forTimeInterval: 0.45 + 0.26 * Double(steps))
             case .close:
                 drag(0.30, 0.86)

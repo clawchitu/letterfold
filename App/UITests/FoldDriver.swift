@@ -64,7 +64,7 @@ struct FoldDriver {
     func isHere(_ c: Int, _ r: Int) -> Bool { tile(c, r).label.contains("你在这里") }
     func walk(_ c: Int, _ r: Int, wait: TimeInterval = 1.6) {
         XCTAssertTrue(tile(c, r).waitForExistence(timeout: 3), "tile-\(c)-\(r)")
-        tile(c, r).tap()
+        tile(c, r).tapVisible(c)
         Thread.sleep(forTimeInterval: wait)
     }
     /// The UI-test probe (-probe YES): the locked gaps, the camera pitch and the finale seal.
@@ -85,4 +85,11 @@ struct FoldDriver {
         for part in v.split(separator: ";") where part.hasPrefix(key + "=") { return String(part.dropFirst(key.count + 1)) }
         return ""
     }
+}
+
+extension XCUIElement {
+    /// Tap the part of a square a hand can see: with the top page leaning over, a bottom-page square by the crease is
+    /// partly under it (the drawn-on-top page takes that touch), so aim away from the crease (columns 0–3 are the
+    /// bottom page, lower on screen; 4–7 the top page, higher).
+    func tapVisible(_ c: Int) { coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: c < 4 ? 0.75 : 0.3)).tap() }
 }

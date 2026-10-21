@@ -277,9 +277,9 @@ final class GameModel {
         if d.bool(forKey: "resetProgress") { SavedProgress.reset(d); d.removeObject(forKey: ruleBlockedKey); d.removeObject(forKey: ruleUnderKey); for k in 2...5 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
         var pack = try! LevelPack.bundled()
         let start = d.integer(forKey: "startLevel")
-        // -levelMap "row|row|…" (UI tests only): play the -startLevel level on another board, so a rule's regression test
+        // -levelMap "row|row|…" (UI tests only; gaps written "_", as a value starting with "-" would read as a flag): play the -startLevel level on another board, so a rule's regression test
         // keeps the board it was written on when the level is redrawn (0.1 (14): the 0.1 (13) boards, App/UITests/Boards13.swift)
-        if start > 0, start <= pack.levels.count, let rows = d.string(forKey: "levelMap")?.split(separator: "|").map(String.init), !rows.isEmpty {
+        if start > 0, start <= pack.levels.count, let rows = d.string(forKey: "levelMap")?.split(separator: "|").map({ $0.replacingOccurrences(of: "_", with: "-") }), !rows.isEmpty {
             pack.levels[start - 1].map = rows; pack.levels[start - 1].solution = nil
         }
         let m = GameModel(pack: pack)

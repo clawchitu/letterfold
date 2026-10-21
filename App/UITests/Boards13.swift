@@ -37,5 +37,5 @@ enum Boards13 {
         32: ["S.------", "-.------", "-gx-G-x-", "x.-Dk--g"],   // stuckPage
     ]
     /// Launch arguments that put the 0.1 (13) board under -startLevel n.
-    static func args(_ n: Int) -> [String] { maps[n].map { ["-levelMap", $0.joined(separator: "|")] } ?? [] }
+    static func args(_ n: Int) -> [String] { maps[n].map { ["-levelMap", $0.joined(separator: "|").replacingOccurrences(of: "-", with: "_")] } ?? [] }
 }
