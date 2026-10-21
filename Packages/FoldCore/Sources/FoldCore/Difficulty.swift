@@ -7,9 +7,16 @@ import Foundation
 ///     + 2·[made] + [greedy ≥ 40] + [undo ≥ 1] + [away ≥ 3]
 ///   score = ⌈structure / 2⌉ + insight.
 public struct Difficulty: Sendable {
-    /// Score ranges per tier, lowest first (check.js TIERS, v2): vol. 1 ends at mid, vol. 2 starts at hard.
+    /// Score ranges per tier, lowest first (check.js TIERS since the 卷一 retune, difficulty-postmortem.md §1.6 / §6): the
+    /// v2 score is a ceiling for teach–mid and only a weak floor for hard / final; the tier name of a score is the lowest
+    /// range it fits. The gates that track time-to-solve are v3 (`gates`: solution length, wrong turns, decoys).
     public static let tiers: [(name: String, range: ClosedRange<Int>)] =
-        [("teach", 0...2), ("easy", 3...4), ("mid", 5...7), ("hard", 8...10), ("final", 11...99)]
+        [("teach", 0...2), ("easy", 0...6), ("mid", 0...99), ("hard", 5...99), ("final", 6...99)]
+    /// check.js GATES (v3): the minimal solution length (posture changes + steps) a tier must reach, or may not exceed.
+    public static let lenMin: [String: Int] = ["easy": 6, "mid": 11, "hard": 15, "final": 18, "dark": 18]
+    public static let lenMax: [String: Int] = ["teach": 10]
+    /// check.js PAR_MAX / CLOSES_MAX (postmortem §1.4): posture changes and full closes per tier; 「暗信」 = dark.
+    public static let parMax: [String: Int] = ["teach": 3, "easy": 3, "mid": 3, "hard": 4, "final": 4, "dark": 6]
     public static func range(of tier: String) -> ClosedRange<Int>? { tiers.first { $0.name == tier }?.range }
     /// The mechanics `combo` counts (check.js MECHANICS).
     static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue"]
@@ -157,7 +164,7 @@ public struct Difficulty: Sendable {
                 for n in nexts { rec(n, depth - 1, labels + [label(s.a, a)]) }
             }
         }
-        rec(start, best.cost, [])
+        rec(start, min(best.cost, 3), [])   // exponential in par: past 3 forks are reported as 1 (check.js, postmortem §6)
 
         let path = best.steps.map { State(c: $0.cell.c, r: $0.cell.r, a: $0.angle, st: $0.st) }
         let bestCells = Set(best.steps.map(\.cell))
@@ -169,7 +176,7 @@ public struct Difficulty: Sendable {
         }.count : shade.count
         let flags = solver.report(level, withDifficulty: false)
         let combo = Self.mechanics.filter { flags.flag($0) == true }.count
-        let forks = seqs.count, walk = best.walk
+        let forks = best.cost > 3 ? 1 : seqs.count, walk = best.walk
 
         // ---- v2: the naive player ----
         let naive = greedy(level, grids: grids, goal: goal)

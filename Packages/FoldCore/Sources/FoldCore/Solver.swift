@@ -93,6 +93,36 @@ public struct Solver: Sendable {
         return nil
     }
 
+    /// The shortest solution as tools/gen.js `bestPath` measures it: fewest posture changes, then fewest steps
+    /// (cost 1000 · hinge + 1 · step). `len` = par + steps is the v3 length the tiers gate (difficulty-postmortem.md §6).
+    public func shortest(_ level: Level, angles: [Double] = Solver.angles) -> (par: Int, steps: Int, path: [Step])? {
+        guard let grids = grids(level) else { return nil }
+        let base = grids[0]
+        let start = FoldState(c: base.start.c, r: base.start.r, a: 0, st: 0)
+        var dist: [FoldState: Int] = [start: 0], parent: [FoldState: FoldState] = [:], done: Set<FoldState> = []
+        var open: [FoldState: Int] = [start: 0]
+        while let (s, cost) = open.min(by: { $0.value < $1.value }) {
+            open[s] = nil
+            if !done.insert(s).inserted { continue }
+            let b = grids[s.st], here = Cell(s.c, s.r), p = rules.posture(s.a)
+            if rules.isWin(b, here, p) {
+                var chain = [s], k = s
+                while let up = parent[k] { chain.insert(up, at: 0); k = up }
+                return (cost / 1000, cost % 1000, chain.map { Step(posture: rules.posture($0.a), angle: $0.a, cell: Cell($0.c, $0.r), st: $0.st) })
+            }
+            var next: [(FoldState, Int)] = []
+            for a in angles where a != s.a {
+                if let to = turn(b, here, s.a, a) { next.append((FoldState(c: to.c, r: to.r, a: a, st: after(s, a)), 1000)) }
+            }
+            for nb in rules.neighbours(b, here, p, rules.shadows(b, s.a)) { next.append((FoldState(c: nb.c, r: nb.r, a: s.a, st: s.st), 1)) }
+            for (n, w) in next where !done.contains(n) {
+                if let d = dist[n], d <= cost + w { continue }
+                dist[n] = cost + w; parent[n] = s; open[n] = cost + w
+            }
+        }
+        return nil
+    }
+
     /// Can the goal still be reached from here (the game's dead-end check, design-review-v2c1 §3)? `closedOnce`: the
     /// first close has happened (the board in play is the stamped one).
     public func canStillWin(_ level: Level, from cell: Cell, angle: Double, closedOnce: Bool) -> Bool {

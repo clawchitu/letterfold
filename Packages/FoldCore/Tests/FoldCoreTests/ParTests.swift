@@ -1,18 +1,18 @@
 import XCTest
 @testable import FoldCore
 
-/// plan.md §12.3 in CI: every level's best solution needs ≤ 3 posture changes, of which ≤ 2 full closes
-/// (the same budget tools/check.js asserts in fold-proto). Also pins the physical-angle export (review-2 §4.3).
+/// plan.md §12.3 as tiered by difficulty-postmortem.md §1.4: teach–mid ≤ 3 posture changes, hard / final ≤ 4,
+/// 「暗信」 ≤ 6; full closes ≤ 2 on the main path, ≤ 3 in 「暗信」 (the budget tools/check.js asserts in fold-proto). Also pins the physical-angle export (review-2 §4.3).
 final class ParTests: XCTestCase {
     func testEveryLevelWithinPar() throws {
         let pack = try LevelPack.bundled()
         let solver = Solver(pack.config)
         for lv in pack.levels {
             let s = try XCTUnwrap(solver.solve(lv), lv.id)
-            XCTAssertLessThanOrEqual(s.cost, 3, lv.id)
+            XCTAssertLessThanOrEqual(s.cost, Difficulty.parMax[lv.isOptional ? "dark" : lv.tier ?? ""] ?? 3, lv.id)
             var closes = 0, prev: Posture? = nil
             for st in s.steps { if st.posture == .closed && prev != .closed { closes += 1 }; prev = st.posture }
-            XCTAssertLessThanOrEqual(closes, 2, lv.id)
+            XCTAssertLessThanOrEqual(closes, lv.isOptional ? 3 : 2, lv.id)
         }
     }
 
@@ -24,6 +24,7 @@ final class ParTests: XCTestCase {
         XCTAssertEqual(Array(ids[5...12]), ["stand", "twoBridges", "standClose", "doorBridge", "inkBridge", "inkTwice", "crease", "rightBank"])
         XCTAssertEqual(Array(ids[19..<25]), ["twoShades", "bridgeShade", "inkShore", "stoneRain", "shadeDoor", "twoFigures"])
         // vol. 2 chapter 1 「胶」: the save IDs are the level IDs (design-review-v2c1 §3 存档), never positions
-        XCTAssertEqual(Array(ids[25...]), ["glue", "lend", "bridgeGlue", "shadowFirst", "oneClose", "rideFirst", "stuckPage"])
+        XCTAssertEqual(Array(ids[25...]), ["glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps",
+                                       "darkBack", "darkDoor", "darkInk"])
     }
 }

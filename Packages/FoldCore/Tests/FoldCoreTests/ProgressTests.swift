@@ -75,9 +75,49 @@ final class ProgressTests: XCTestCase {
         // a save from 0.1 (12) (25 IDs) reads back unchanged with the 32-level pack
         SavedProgress.save(done, d)
         XCTAssertEqual(SavedProgress.load(d), done)
-        for id in ["glue", "lend", "bridgeGlue", "shadowFirst", "oneClose", "rideFirst", "stuckPage"] {
+        for id in ["glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps"] {
             XCTAssertNotNil(pack.levels.firstIndex { $0.id == id }, id)
             XCTAssertFalse(SavedProgress.load(d).contains(id))
         }
+    }
+
+    /// 0.1 (14): the 21 redrawn vol. 1 levels keep their IDs, in the same order, so a 0.1 (13) save reads back with
+    /// every level it delivered still delivered, although the boards changed.
+    static let build13: [String] = [
+        "bridge", "facing", "back", "key", "ink",
+        "stand", "twoBridges", "standClose", "doorBridge", "inkBridge", "inkTwice", "crease", "rightBank",
+        "shadow", "press", "lock", "ride", "rideBack", "lamp",
+        "twoShades", "bridgeShade", "inkShore", "stoneRain", "shadeDoor", "twoFigures",
+        "glue", "lend", "bridgeGlue", "shadowFirst", "oneClose", "rideFirst", "stuckPage",
+    ]
+
+    func testStableIDs() throws {
+        let ids = try LevelPack.bundled().levels.map(\.id)
+        XCTAssertEqual(Array(ids.prefix(28)), Array(Self.build13.prefix(28)), "vol. 1 and 5-1 … 5-3 keep their IDs and order")
+        XCTAssertEqual(Array(ids.suffix(7)), ["oldHome", "ferry", "twiceClosed", "twoLamps", "darkBack", "darkDoor", "darkInk"])
+        XCTAssertEqual(Set(ids).count, ids.count)
+    }
+
+    /// A 0.1 (13) player who had finished everything: every redrawn level stays solved, chapter 5's redesigned four
+    /// count through `renamed`, and the 暗信 side letters are still to read.
+    func testBuild13SaveStaysSolved() throws {
+        let pack = try LevelPack.bundled()
+        SavedProgress.save(Set(Self.build13), d)
+        let done = SavedProgress.load(d)
+        for lv in pack.levels where !lv.isOptional { XCTAssertTrue(done.contains(lv.id), "\(lv.id) stays solved") }
+        for lv in pack.levels where lv.isOptional { XCTAssertFalse(done.contains(lv.id), lv.id) }
+        XCTAssertEqual(Set(d.stringArray(forKey: SavedProgress.idsKey) ?? []), done, "migrated once, written back")
+        XCTAssertEqual(SavedProgress.load(d), done)
+        // a save that stopped at 5-5 (old 「一合」): 5-4 and 5-5 delivered, 5-6 not
+        SavedProgress.save(Set(Self.build13.prefix(30)), d)
+        let part = SavedProgress.load(d)
+        XCTAssertTrue(part.contains("oldHome") && part.contains("ferry"))
+        XCTAssertFalse(part.contains("twiceClosed"))
+        let ch5 = ["glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps"]
+        XCTAssertFalse(SavedProgress.chapterOpen(previous: ch5, done: part))
+        XCTAssertTrue(SavedProgress.chapterOpen(previous: ch5, done: done))
+        // a board that changed does not reset its level: the IDs are the save, not the maps
+        XCTAssertTrue(done.contains("facing"))
+        XCTAssertNotEqual(pack.levels[1].map, ["-----..G", "-----.--", "--x--.--", "S.---.--"], "1-2 was redrawn (its 0.1 (13) board)")
     }
 }
