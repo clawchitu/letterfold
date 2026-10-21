@@ -117,21 +117,22 @@ public struct Rules: Sendable {
 
     /// BFS from `from` to `target`. Closed, the target matches by stack (proj(c), r). [] = already there, nil = unreachable.
     public func findPath(_ b: Board, from: Cell, to target: Cell, _ p: Posture, _ sh: [Cell: Int]) -> [Cell]? {
+        // The search runs over real cells — closed, the page you stand on decides where the next step lands (`land`),
+        // so reaching a stack on one page is not the same as reaching it on the other (playtest 10/20: tap-to-walk
+        // refused routes single steps allowed). Only the target matches by stack.
         func key(_ x: Cell) -> Cell { p == .closed ? Cell(proj(x.c), x.r) : x }
-        let goal = key(target), startK = key(from)
-        if startK == goal { return [] }
-        var prev: [Cell: Cell] = [:], cell: [Cell: Cell] = [startK: from]
-        var seen: Set<Cell> = [startK]
+        let goal = key(target)
+        if key(from) == goal { return [] }
+        var prev: [Cell: Cell] = [:]
+        var seen: Set<Cell> = [from]
         var queue = [from], head = 0
         while head < queue.count {
             let cur = queue[head]; head += 1
-            for nb in neighbours(b, cur, p, sh) {
-                let k = key(nb)
-                if seen.contains(k) { continue }
-                seen.insert(k); prev[k] = key(cur); cell[k] = nb
-                if k == goal {
-                    var path: [Cell] = [], at = k
-                    while at != startK { path.insert(cell[at]!, at: 0); at = prev[at]! }
+            for nb in neighbours(b, cur, p, sh) where seen.insert(nb).inserted {
+                prev[nb] = cur
+                if key(nb) == goal {
+                    var path: [Cell] = [], at = nb
+                    while at != from { path.insert(at, at: 0); at = prev[at]! }
                     return path
                 }
                 queue.append(nb)

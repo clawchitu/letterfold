@@ -6,6 +6,9 @@ public enum GameEvent: Sendable, Equatable {
     case stamped(Rules.Stamp)
     /// New cells became reachable after the hinge moved.
     case connected
+    /// The goal became reachable after the hinge moved (playtest 10/20: "a path connects" is only said for this;
+    /// new squares that do not reach the goal are `connected` alone).
+    case goalInReach
     /// Some cells stopped being reachable.
     case lost
     case shadeChanged
@@ -58,6 +61,8 @@ public final class FoldGame {
     public var reachable: Set<Cell> { rules.reachable(board, from: char, posture, shade) }
     public var goal: Cell? { board.first(.goal) }
     public func path(to target: Cell) -> [Cell]? { rules.findPath(board, from: char, to: target, posture, shade) }
+    /// The goal can be walked to from here, now (without moving the hinge).
+    public var goalInReach: Bool { goal.map { path(to: $0) != nil } ?? false }
 
     // MARK: hinge
 
@@ -66,7 +71,7 @@ public final class FoldGame {
     public func setAngle(_ target: Double) -> [GameEvent] {
         let target = min(180, max(0, target))
         var events: [GameEvent] = []
-        let before = reachable, wasPosture = posture
+        let before = reachable, wasPosture = posture, goalBefore = goalInReach
         while angle != target {
             let next = target > angle ? min(target, angle + Self.subStep) : max(target, angle - Self.subStep)
             apply(next, &events)
@@ -74,6 +79,7 @@ public final class FoldGame {
         if !won {
             let now = reachable
             if !now.subtracting(before).isEmpty { events.append(.connected) }
+            if goalInReach && !goalBefore { events.append(.goalInReach) }
             else if now.count < before.count { events.append(.lost) }
             // the shut and the opening are where a vol. 2 dead end begins: a stone glued away, a road blocked
             if !stuck && posture != wasPosture && (posture == .closed || wasPosture == .closed) && level.map.joined().contains("g") {
