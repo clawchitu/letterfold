@@ -9,7 +9,7 @@ final class Chapter3UITests: XCTestCase {
     func launch(_ level: Int) {
         app = XCUIApplication()
         app.launchArguments = ["-resetProgress", "YES", "-noOpener", "YES", "-startLevel", "\(level)",
-                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
+                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"] + Boards13.args(level)
         app.launch()
         f = FoldDriver(app: app)
         XCTAssertTrue(f.fold.waitForExistence(timeout: 8))
@@ -65,7 +65,7 @@ final class Chapter3UITests: XCTestCase {
     func testFifteenDegreeStepsStopInTheLean() {
         app = XCUIApplication()
         app.launchArguments = ["-resetProgress", "YES", "-noOpener", "YES", "-startLevel", "16", "-buttonControl", "YES",
-                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
+                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"] + Boards13.args(16)
         app.launch()
         f = FoldDriver(app: app)
         let more = app.buttons["fold.more"], less = app.buttons["fold.less"]

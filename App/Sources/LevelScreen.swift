@@ -76,6 +76,7 @@ struct LevelScreen: View {
                         .padding(.horizontal, 24)
                         .transition(.opacity)
                         .accessibilityHidden(true)   // already announced
+                        .allowsHitTesting(false)     // a rule line over the bottom row never eats a tap
                 }
                 if model.showNext {
                     NextKnot(title: model.isLastInChapter ? L10n.t("letter.read") : model.isDark && model.nextDark == nil ? L10n.t("dark.back") : L10n.t("next")) {

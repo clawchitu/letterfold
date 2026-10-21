@@ -10,7 +10,7 @@ final class Chapter5UITests: XCTestCase {
     func launch(_ level: Int, _ extra: [String] = [], lang: String = "zh-Hans", locale: String = "zh_CN") {
         app = XCUIApplication()
         app.launchArguments = ["-resetProgress", "YES", "-noOpener", "YES", "-probe", "YES", "-startLevel", "\(level)",
-                               "-AppleLanguages", "(\(lang))", "-AppleLocale", locale] + extra
+                               "-AppleLanguages", "(\(lang))", "-AppleLocale", locale] + Boards13.args(level) + extra
         app.launch()
         f = FoldDriver(app: app)
         XCTAssertTrue(f.fold.waitForExistence(timeout: 8))
@@ -75,5 +75,21 @@ final class Chapter5UITests: XCTestCase {
             shot("5-1-\(lang)")
             app.terminate()
         }
+    }
+
+    /// 5-1 胶 (regression, 0.1 (14)): one close and the glue across carries the stone off the road onto itself; opened
+    /// again, the stone is on the glue's square and the road is clear.
+    func testGlueCarriesTheStone() {
+        launch(26)
+        XCTAssertTrue(f.tile(6, 2).label.contains("石头"), f.tile(6, 2).label)
+        XCTAssertNil(f.tile(6, 4).label.range(of: "你在这里"))
+        close()
+        open()
+        Thread.sleep(forTimeInterval: 0.8)
+        XCTAssertTrue(f.tile(1, 2).label.contains("石头"), "the stone is on the glue now: \(f.tile(1, 2).label)")
+        XCTAssertFalse(f.tile(6, 2).label.contains("石头"), "the road is clear: \(f.tile(6, 2).label)")
+        shot("5-1-carried")
+        f.walk(6, 4, wait: 2.4)
+        XCTAssertTrue(app.buttons["win.next"].waitForExistence(timeout: 6), "5-1 is won over the cleared road")
     }
 }
