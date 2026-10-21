@@ -8,25 +8,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "合上过去，展开走一段，再合上回到左页。"
+            "value": "顺着右页往下走到最下一格，合上。合着往左、往下，走到最右一列，打开：你在右页最下面。往上走一格，再合上——这一叠一直通到左上角的信。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close to cross, open to walk a while, then close again to come back to the left page."
+            "value": "Walk down the right page to the bottom and close. Closed, go left and down to the far column, then open: you are at the bottom of the right page. One step up, close again — this stack runs all the way to the letter in the top-left corner."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じて渡り、開いて少し歩き、また閉じて左ページへ戻る。"
+            "value": "（TODO ja）右ページを下まで歩いて閉じる。閉じたまま左・下へ、いちばん右の列まで行って開く。一枡上がって、もう一度閉じる。その重なりが左上の手紙まで続く。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫아서 건너고, 펼쳐서 조금 걷고, 다시 닫아 왼쪽 페이지로 돌아와요."
+            "value": "(TODO ko) 오른쪽 페이지를 끝까지 내려가 닫아요. 닫은 채 왼쪽·아래로 맨 오른쪽 열까지 가서 펼쳐요. 한 칸 올라가 다시 닫아요. 그 겹이 왼쪽 위 편지까지 이어져요."
+          }
+        }
+      }
+    },
+    "back.hint1": {
+      "comment": "Level \"back\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "要合两次。第二次合在哪？"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two closes. Where is the second?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二度閉じる。二度目はどこで？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 번 닫아요. 두 번째는 어디서?"
           }
         }
       }
@@ -38,25 +68,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "过去，再回来。"
+            "value": "对岸的信，隔着一页。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Over, and home again."
+            "value": "The letter waits one page over."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "行って、また帰る。"
+            "value": "手紙は一枚向こうに。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "건너갔다가, 다시 돌아오기."
+            "value": "편지는 한 장 건너에."
           }
         }
       }
@@ -68,25 +98,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "往返"
+            "value": "隔页"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "There and Back"
+            "value": "Across"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "行き帰り"
+            "value": "隣の頁"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "오가는 길"
+            "value": "건너 쪽"
           }
         }
       }
@@ -278,25 +308,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "先合上一次开门。再把书打开到 75° 左右：纸片桥还立着，远处石头的影子正好落在桥头的缺口上。过桥、踩影子、走到岸。"
+            "value": "沿左页走到左下方。合到 60° 左右踩上影子，再打开到 80°：影子带你到第 4 列，这时纸片桥正立着。过桥，信在桥头。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close once to open the door. Then open the book to about 75°: the tabs still stand, and the far stone’s shadow lands on the gap at the foot of the bridge. Cross, step on the shadow, walk to the shore."
+            "value": "Walk the left page to its lower left. Close to about 60° and step onto the shadow, then open to 80°: it carries you to column 4, and at 80° the tabs stand. Cross; the letter is at the foot of the bridge."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "まず一度閉じて扉を開ける。それから本を75°ほどまで開く。紙片の橋はまだ立ち、遠い石の影が橋のたもとのすき間に落ちる。渡り、影を踏み、岸へ。"
+            "value": "（TODO ja）左ページを左下へ。60°ほどまで閉じて影に乗り、80°まで開く。4列目へ運ばれ、紙片の橋が立っている。渡れば手紙は橋のたもと。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먼저 한 번 닫아 문을 열어요. 그다음 책을 75° 정도까지 펼쳐요. 종이 다리는 아직 서 있고, 먼 돌의 그림자가 다리 발치의 틈에 떨어져요. 건너서 그림자를 밟고 강가로 걸어요."
+            "value": "(TODO ko) 왼쪽 페이지를 왼쪽 아래로. 60° 정도까지 닫아 그림자에 올라, 80°까지 펼쳐요. 4열로 데려가고, 종이 다리가 서 있어요. 건너면 편지는 다리 발치에."
+          }
+        }
+      }
+    },
+    "bridgeShade.hint1": {
+      "comment": "Level \"bridgeShade\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "把书打开一点，不是合上一点。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open a little, not close a little."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "少し開く。少し閉じるのではなく。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "조금 펼쳐요. 조금 닫는 게 아니라."
           }
         }
       }
@@ -320,13 +380,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "橋が立っている間、影もそこにある。"
+            "value": "橋が立つ間、影もそこに。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "다리가 선 동안, 그림자도 거기 있다."
+            "value": "다리가 서 있는 동안, 그림자도 있다."
           }
         }
       }
@@ -368,25 +428,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "先合上一次，钥匙和墨都印过去；再半开过桥，走到门边，最后合上。"
+            "value": "沿第 4 列往下走到桥头，立起来过桥，往右一格，合上：钥匙开门、墨印过去，这一叠下面是石头。合着往上走到门那一格（第 2 行右侧），打开，往右一格到右页边上，再合上——这一叠下面又是一块石头，走一步就到信。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close once so the key and the ink carry across; half-open and cross the bridge, walk to the door, then close."
+            "value": "Walk down column 4 to the bridge, stand and cross, one step right, and close: the key opens the door, the ink prints across, and this stack sits on a stone. Closed, walk up to the door square (row 2, right side), open, one step right to the edge of the page, and close again — this stack sits on another stone, and one step is the letter."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "まず一度閉じて鍵と墨を写す。半分開いて橋を渡り、扉まで歩いて、最後に閉じる。"
+            "value": "（TODO ja）4列目を橋まで下り、立てて渡り、右へ一歩で閉じる。鍵が扉を開け、墨が写り、石の背の上。閉じたまま扉の枡まで上がり、開いて右へ一歩、また閉じる。もう一つの石の背。一歩で手紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먼저 한 번 닫아 열쇠와 먹을 찍어요. 반쯤 열어 다리를 건너 문까지 걷고, 마지막에 닫아요."
+            "value": "(TODO ko) 4열을 따라 다리까지 내려가 세워서 건너고, 오른쪽 한 칸, 닫아요. 열쇠가 문을 열고 먹이 찍히고, 돌의 등 위. 닫은 채 문 칸까지 올라가 펼치고 오른콍 한 칸, 다시 닫아요. 또 다른 돌의 등. 한 걸음이면 편지."
+          }
+        }
+      }
+    },
+    "crease.hint1": {
+      "comment": "Level \"crease\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两次合，都站在石头的背上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Both closes stand on the back of a stone."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二度の閉じ、どちらも石の背の上で。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 번 닫기, 둘 다 돌의 등 위에서."
           }
         }
       }
@@ -451,6 +541,366 @@
         }
       }
     },
+    "darkBack.hint": {
+      "comment": "Level \"darkBack\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先斜起到 40°，踩着影子走到左页顶上的纸。合上：胶把那块石头粘过来。合着走到右页顶格，打开，往下走一格——你站在一块左页石头的背上。再合上：这一叠进不来，但出得去。往下走到左页第 5 行，打开到 55°，踩影子，合到 30°，下到终点。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lean to 40° first and walk the shadow to the paper at the top of the left page. Close: the glue takes that stone. Closed, walk to the top of the right page, open, step down one: you stand on the back of a left-page stone. Close again: that stack cannot be entered, but it can be left. Walk down to row 5 of the left page, open to 55°, step on the shadow, close to 30°, step down to the letter."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まず40°まで傾け、影を渡って左頁の上の紙へ。閉じる。糊がその石を引き取る。閉じたまま右頁の上の枡へ歩き、開いて、一枡下へ。左頁の石の背に立っている。もう一度閉じる。その重なりには入れないが、出られる。左頁の5行目まで下り、55°まで開いて影に乗り、30°まで閉じ、手紙へ降りる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 40°로 기울여 그림자를 건너 왼쪽 페이지 위 종이로. 닫아요. 풀이 그 돌을 가져가요. 닫은 채 오른쪽 페이지 맨 위 칸으로 가서 펼치고 한 칸 아래로. 왼쪽 페이지 돌의 등 위에 서 있어요. 다시 닫아요. 그 겹에는 들어갈 수 없지만 나갈 수는 있어요. 왼쪽 페이지 5행까지 내려가 55°로 펼쳐 그림자에 오르고, 30°로 닫아 편지로 내려가요."
+          }
+        }
+      }
+    },
+    "darkBack.hint1": {
+      "comment": "Level \"darkBack\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石头的背上也是纸。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A stone’s back is paper too."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石の背も紙。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌의 등도 종이."
+          }
+        }
+      }
+    },
+    "darkBack.line": {
+      "comment": "Level \"darkBack\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "……先别过河。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "…do not cross yet."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "……まだ渡らないで。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "……아직 건너지 마."
+          }
+        }
+      }
+    },
+    "darkBack.name": {
+      "comment": "Level \"darkBack\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暗信 · 背"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hidden Letter · Back"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隠された手紙 · 背"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "숨은 편지 · 등"
+          }
+        }
+      }
+    },
+    "darkDoor.hint": {
+      "comment": "Level \"darkDoor\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "斜起到 60°，踩上右下石头的影子，然后一直合上——影子把你放在左页的纸上，书合拢，钥匙开门，胶把石头粘走。合着走到左页顶上（要换四次页）。打开到 50°，踩影子穿过开着的门，再合上，从门那一叠走到右页，打开，她就在旁边。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lean to 60°, step onto the lower-right stone’s shadow, then keep closing: the shadow sets you on paper as the book shuts; the key opens the door, the glue takes the stone. Closed, walk to the top of the left page (you change pages four times). Open to 50°, walk the shadow through the open door, close again, walk that stack onto the right page, open: she is beside you."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "60°まで傾け、右下の石の影に乗り、そのまま閉じ続ける。本が閉じるとき影は紙の上に降ろし、鍵が扉を開け、糊が石を引き取る。閉じたまま左頁の上へ歩く（頁を四度またぐ）。50°まで開き、影で開いた扉を抜け、また閉じ、その重なりから右頁へ、開く。彼女は隣にいる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "60°로 기울여 오른쪽 아래 돌의 그림자에 오르고 계속 닫아요. 책이 닫히며 그림자가 종이에 내려 주고, 열쇠가 문을 열고, 풀이 돌을 가져가요. 닫은 채 왼쪽 페이지 맨 위로 걸어가요(페이지를 네 번 바꿔요). 50°로 펼쳐 그림자로 열린 문을 지나고, 다시 닫아 그 겹에서 오른쇽 페이지로, 펼쳐요. 그녀가 옆에 있어요."
+          }
+        }
+      }
+    },
+    "darkDoor.hint1": {
+      "comment": "Level \"darkDoor\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "乘着影子合上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ride the shadow into the close."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影に乗ったまま閉じる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자를 탄 채 닫아요."
+          }
+        }
+      }
+    },
+    "darkDoor.line": {
+      "comment": "Level \"darkDoor\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "……门后没有人。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "…nobody behind the door."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "……扉の向こうには誰もいない。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "……문 뒤에는 아무도 없다."
+          }
+        }
+      }
+    },
+    "darkDoor.name": {
+      "comment": "Level \"darkDoor\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暗信 · 门"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hidden Letter · Door"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隠された手紙 · 扉"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "숨은 편지 · 문"
+          }
+        }
+      }
+    },
+    "darkInk.hint": {
+      "comment": "Level \"darkInk\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先走到右页的墨上合书：墨印到左页，胶把石头粘到右页。合着走到左页的墨印，打开到 55°，沿第 4 列走到顶上的影子，打开到 40°，影子带你到第 3 列，走到另一处墨印。在墨印上合书，合着走到右页顶格，打开，往下一格，再合——你站在左页石头的背上，从那里走到她的那一叠。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Walk onto the right page’s ink and close: it prints onto the left page, the glue pulls the stone across. Closed, walk to the printed ink, open to 55°, up column 4 to the shadow at the top, open to 40°: it carries you to column 3 and the other ink print. Close on the ink, walk the stack to the top of the right page, open, step down one, close again: you stand on a left-page stone’s back. From there, walk to her stack."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右頁の墨に乗って閉じる。墨が左頁に写り、糊が石を右へ引く。閉じたまま写った墨へ歩き、55°まで開き、4列目を上って頂上の影へ、40°まで開くと3列目、もう一つの墨へ。墨の上で閉じ、重なりを右頁の上の枡まで歩き、開いて一枡下、また閉じる。左頁の石の背に立っている。そこから彼女の重なりへ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오른쪽 페이지의 먹에 올라 닫아요. 먹이 왼쪽에 찍히고 풀이 돌을 오른쪽으로 붙여요. 닫은 채 찍힌 먹으로 가서 55°로 펼치고 4열을 따라 맨 위 그림자로, 40°로 펼치면 3열, 다른 먹 자리로. 먹 위에서 닫고 겹을 따라 오른쪽 페이지 맨 위로, 펼치고 한 칸 아래, 다시 닫아요. 왼쪽 페이지 돌의 등 위에 서 있어요. 거기서 그녀의 겹으로."
+          }
+        }
+      }
+    },
+    "darkInk.hint1": {
+      "comment": "Level \"darkInk\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三次合上，两处墨。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Three closes, two inks."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三度閉じ、二つの墨。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "세 번 닫기, 두 먹."
+          }
+        }
+      }
+    },
+    "darkInk.line": {
+      "comment": "Level \"darkInk\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "……墨干了再合。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "…close when the ink is dry."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "……墨が乾いたら閉じて。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "……먹이 마르면 닫아."
+          }
+        }
+      }
+    },
+    "darkInk.name": {
+      "comment": "Level \"darkInk\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暗信 · 墨"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hidden Letter · Ink"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隠された手紙 · 墨"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "숨은 편지 · 먹"
+          }
+        }
+      }
+    },
     "doorBridge.hint": {
       "comment": "Level \"doorBridge\": hint. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -458,25 +908,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "先合上让钥匙开门，再打开到一半，从立起的纸片走过去。"
+            "value": "走到钥匙和纸片那格，合上：门开了。半开，过桥、穿门，沿右页走到右下角，再合上——这一叠下面是石头，你站在它背上。合着往右一格，纸把你换到左页，信在旁边。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close so the key opens the door, then open halfway and cross on the standing tabs."
+            "value": "Walk to the key beside the tab and close: the door opens. Half-open, cross, go through the door and down the right page to its corner, then close again — this stack sits on a stone; you stand on its back. Closed, one step right hands you to the left page, beside the letter."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じて鍵で扉を開け、半分開いて、立った紙片を渡る。"
+            "value": "（TODO ja）鍵の枡まで歩いて閉じる。扉が開く。半分開いて渡り、扉を抜けて右ページの角へ、また閉じる。石の背の上に立つ。閉じたまま右へ一歩で左ページ、手紙はとなり。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫아서 열쇠로 문을 열고, 반쯤 열어 일어선 종이 조각을 건너요."
+            "value": "(TODO ko) 열쇠 칸까지 걸어가 닫아요. 문이 열려요. 반쯤 열어 건너고 문을 지나 오른쪽 페이지 모서리로, 다시 닫아요. 돌의 등 위에 서 있어요. 닫은 채 오른쪽 한 칸이면 왼쪽 페이지, 편지는 옆에."
+          }
+        }
+      }
+    },
+    "doorBridge.hint1": {
+      "comment": "Level \"doorBridge\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先合，还是先过桥？"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close first, or cross first?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先に閉じるか、先に渡るか？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 닫을까, 먼저 건널까?"
           }
         }
       }
@@ -488,25 +968,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "先开门，再过桥。"
+            "value": "门在桥的那头。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "First the door, then the bridge."
+            "value": "The door is at the far end of the bridge."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "まず扉、それから橋。"
+            "value": "扉は橋の向こう端に。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먼저 문, 그다음 다리."
+            "value": "문은 다리 저쪽 끝에."
           }
         }
       }
@@ -524,7 +1004,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Door, then Bridge"
+            "value": "Door and Bridge"
           }
         },
         "ja": {
@@ -548,25 +1028,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "合上，走到右页的路上；石头挡住了，就展开继续走。"
+            "value": "直走的那一叠被石头堵住了。沿上边走到右页第 1 格（第 2 行），在那里合上：这一叠下面是石头，但你站在它背上。合着往下走，纸会把你换到左页；再往下、往右，换回右页。打开，信就在旁边。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close, and step onto the right page’s path; when a stone blocks you, open and walk on."
+            "value": "The straight stack is walled by a stone. Walk along the top to the first square of the right page (row 2) and close there: there is a stone under this stack, but you stand on its back. Closed, walk down — the paper hands you to the left page; down and right again, and you are back on the right. Open: the letter is beside you."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じて右ページの道へ。石にふさがれたら、開いて先へ。"
+            "value": "（TODO ja）まっすぐの重なりは石でふさがれている。上の列を右ページの最初の枡まで歩いて閉じる。閉じたまま下へ歩くと左ページに移り、さらに下・右で右ページに戻る。開けば手紙はとなり。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫고 오른쪽 페이지의 길로 건너가요. 돌이 막으면 펼쳐서 계속 걸어요."
+            "value": "(TODO ko) 곧장 가는 겹은 돌에 막혀 있어요. 윗줄을 따라 오른쪽 페이지 첫 칸까지 가서 닫아요. 닫은 채 아래로 걸으면 왼쪽 페이지로 옮겨지고, 다시 아래·오른쪽으로 가면 오른쪽으로 돌아와요. 펼치면 편지가 옆에."
+          }
+        }
+      }
+    },
+    "facing.hint1": {
+      "comment": "Level \"facing\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上以后，你在哪一叠？"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After you close, which stack are you in?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じたあと、あなたはどの重なりに？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫은 뒤, 나는 어느 겹에 있지?"
           }
         }
       }
@@ -578,25 +1088,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "终点在另一页。"
+            "value": "信在同一页，路不在。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The goal lies on the other page."
+            "value": "The letter is on your page. The road is not."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ゴールは、もう一枚のページに。"
+            "value": "手紙は同じページに。道は違う。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "도착점은 다른 페이지에."
+            "value": "편지는 같은 페이지에, 길은 아니다."
           }
         }
       }
@@ -627,6 +1137,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "맞은편"
+          }
+        }
+      }
+    },
+    "ferry.hint": {
+      "comment": "Level \"ferry\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先合上：胶把石头粘到右页。合着走到左页左下角，打开到 50°：新石头的影子落在第 3 列。从石头原来的位置走上影子，再把书打开到 70°——影子带你到第 4 列，而 70° 时纸片桥正立着。顺着影子往下，过桥，终点在桥头。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close first: the glue pulls the stone to the right page. Closed, walk to the bottom-left of the left page, then open to 50°: the new shadow falls in column 3. Walk from the stone’s old place onto it, then open FURTHER to 70°: the shadow carries you to column 4, and at 70° the tabs stand. Down the shadow, over the bridge; the letter is at its foot."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まず閉じる。糊が石を右頁へ引く。閉じたまま左頁の左下へ歩き、50°まで開く。新しい影が3列目に落ちる。石の元の場所から影に乗り、さらに70°まで開く。影は4列目へ運び、70°では紙片の橋が立っている。影を下り、橋を渡る。手紙は橋のたもとに。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 닫아요. 풀이 돌을 오른쪽 페이지로 붙여요. 닫은 채 왼쪽 페이지 왼쪽 아래로 걸어가 50°로 펼쳐요. 새 그림자가 3열에 떨어져요. 돌의 옛 자리에서 그림자에 올라, 더 펼쳐 70°로. 그림자가 4열로 데려가고, 70°에서는 종이 조각 다리가 서 있어요. 그림자를 따라 내려가 다리를 건너요. 편지는 다리 밑에."
+          }
+        }
+      }
+    },
+    "ferry.hint1": {
+      "comment": "Level \"ferry\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开一点，而不是合上一点。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open a little, not close a little."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "少し閉じるのではなく、少し開く。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "조금 닫지 말고, 조금 펼쳐요."
+          }
+        }
+      }
+    },
+    "ferry.line": {
+      "comment": "Level \"ferry\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "河不宽，路很长。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The river is narrow; the road is long."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "川は狭く、道は長い。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "강은 좁고 길은 길다."
+          }
+        }
+      }
+    },
+    "ferry.name": {
+      "comment": "Level \"ferry\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "渡"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ferry"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "渡し"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "나루"
           }
         }
       }
@@ -728,25 +1358,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "合上一次：墨印到右页，你也顺着叠在一起的纸走到右页。打开，踩着印过去的墨走到信前。"
+            "value": "一开始就合上：墨印到了右页。合着往上走到右上角，打开，往下一格（第 3 行），再合上：这一叠从印过去的墨下去，通到右页最下一行。半开，往右一格就是信。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close once: the ink prints onto the right page, and you walk across the stacked pages onto it. Open, and walk the printed ink to the letter."
+            "value": "Close at once: the ink prints onto the right page. Closed, walk up to the top-right corner, open, one step down (row 3), and close again: this stack goes down through the printed ink to the bottom row of the right page. Half-open, one step right is the letter."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "一度閉じる。墨が右ページに写り、重なった紙を伝ってあなたも右ページへ。開いて、写った墨を踏んでゴールまで。"
+            "value": "（TODO ja）すぐ閉じる。墨が右ページに写る。閉じたまま右上の角まで歩き、開いて一枡下がり、また閉じる。写った墨を伝って右ページの下の列へ。半分開けば右の一枡が手紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "한 번 닫아요. 먹이 오른쪽 페이지에 찍히고, 겹친 종이를 따라 나도 오른쪽으로 건너가요. 펼친 다음 찍힌 먹을 밟고 도착점까지 걸어요."
+            "value": "(TODO ko) 바로 닫아요. 먹이 오른쪽에 찍혀요. 닫은 채 오른쪽 위 모서리까지 걷고, 펼쳐 한 칸 내려가 다시 닫아요. 찍힌 먹을 타고 오른쪽 페이지 맨 아랫줄로. 반쯤 열면 오른쪽 한 칸이 편지."
+          }
+        }
+      }
+    },
+    "ink.hint1": {
+      "comment": "Level \"ink\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨印过去的那一格，是哪一叠的路？"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The square the ink prints onto: whose stack is it?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨が写る枡は、どの重なりの道？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먹이 찍힌 칸은 어느 겹의 길?"
           }
         }
       }
@@ -758,25 +1418,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "墨还没干。"
+            "value": "墨在左页，信在右页。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The ink is still wet."
+            "value": "Ink on the left, the letter on the right."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "墨はまだ乾いていない。"
+            "value": "墨は左に、手紙は右に。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먹이 아직 마르지 않았다."
+            "value": "먹은 왼쪽에, 편지는 오른쪽에."
           }
         }
       }
@@ -818,25 +1478,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "合上时石头会压住终点，所以只合一下：让墨印过去，再半开过桥。"
+            "value": "先踩过墨走到桥头，合上：墨印到了右页。半开过桥，沿右页往下走，踩着印过去的墨到右页下方，再合上——这一叠下面是石头。合着往右一格就是信。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Closing drops the stone on the goal, so close only once: let the ink print across, then half-open and cross."
+            "value": "Step over the ink to the tab and close: the ink prints across. Half-open, cross, walk down the right page over the printed ink, and close again — this stack sits on a stone. Closed, one step right is the letter."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じると石がゴールをふさぐ。だから一度だけ閉じて墨を写し、半分開いて橋を渡る。"
+            "value": "（TODO ja）墨を踏んで紙片まで歩き、閉じる。墨が写る。半分開いて渡り、写った墨を踏んで右ページを下り、また閉じる。石の背の上。閉じたまま右へ一歩が手紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫으면 돌이 도착점을 눌러요. 그러니 한 번만 닫아 먹을 찍고, 반쯤 열어 다리를 건너요."
+            "value": "(TODO ko) 먹을 밟고 종이 조각까지 가서 닫아요. 먹이 찍혀요. 반쯤 열어 건너고, 찍힌 먹을 밟아 오른왽 페이지를 내려가 다시 닫아요. 돌의 등 위. 닫은 채 오른쪽 한 칸이 편지."
+          }
+        }
+      }
+    },
+    "inkBridge.hint1": {
+      "comment": "Level \"inkBridge\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "桥那头缺的一格，谁来补？"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Who fills the missing square past the bridge?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "橋の先の足りない一枡は、誰が埋める？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다리 너머 빈 한 칸은 누가 채우지?"
           }
         }
       }
@@ -848,25 +1538,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "桥的那头，路断了；终点被压住了。"
+            "value": "桥的那头，路断了。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Past the bridge the path breaks off; the goal is pinned down."
+            "value": "Past the bridge the path breaks off."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "橋の先で道は途切れ、ゴールは押さえられている。"
+            "value": "橋の先で道は途切れる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "다리 너머 길은 끊기고, 도착점은 눌려 있다."
+            "value": "다리 너머 길이 끊긴다."
           }
         }
       }
@@ -884,7 +1574,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ink, then Bridge"
+            "value": "Ink and Bridge"
           }
         },
         "ja": {
@@ -908,25 +1598,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "站在影子上合书，你会掉下去。先合上一次，让墨印到对岸那格缺口上——那就是岸。打开，斜起到 60°，走过影子站到墨上，再合上。"
+            "value": "沿右页绕到右上，合上：墨印到左页，这一叠下面是石头。合着往左到左页，打开到 40°：踩上第 2 列的影子。再开到 55°，影子带你到第 3 列；穿过印着的墨，踩上下面那道影子，走到左下的纸上，合上——信在对面。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close the book while standing on a shadow and you fall. Close once first, so the ink prints onto the gap across the way: that is your shore. Open, lean to 60°, cross the shadow onto the ink, then close."
+            "value": "Walk round the right page to its upper right and close: the ink prints onto the left page, and this stack sits on a stone. Closed, go left onto the left page and open to 40°: step onto the shadow in column 2. Open to 55°: it carries you to column 3. Cross the printed ink onto the lower shadow, walk to the paper at the bottom-left, and close — the letter is opposite."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影の上で本を閉じれば落ちる。まず一度閉じ、向かいのすき間に墨を写す。それが岸。開いて60°まで傾け、影をわたって墨の上に立ち、閉じる。"
+            "value": "（TODO ja）右ページを回って右上で閉じる。墨が左に写り、石の背の上。閉じたまま左ページへ、40°まで開いて2列目の影に乗る。55°まで開くと3列目へ。写った墨を越えて下の影へ、左下の紙で閉じる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자 위에서 책을 닫으면 떨어져요. 먼저 한 번 닫아 맞은편 틈에 먹을 찍어요. 그게 강가예요. 펼쳐서 60°로 기울이고, 그림자를 건너 먹 위에 선 다음 닫아요."
+            "value": "(TODO ko) 오른쪽 페이지를 돌아 오른쪽 위에서 닫아요. 먹이 왼쪽에 찍히고, 돌의 등 위. 닫은 채 왼쪽 페이지로, 40°까지 펼쳐 2열 그림자에 올라요. 55°까지 펼치면 3열로. 찍힌 먹을 지나 아래 그림자로, 왼쪽 아래 종이에서 닫아요."
+          }
+        }
+      }
+    },
+    "inkShore.hint1": {
+      "comment": "Level \"inkShore\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先印岸，再走影子。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Print the shore first, then walk the shadows."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まず岸を写し、それから影を歩く。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 강가를 찍고, 그다음 그림자를 걸어요."
           }
         }
       }
@@ -938,25 +1658,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "影子是路，不是岸。"
+            "value": "两道影子之间，一格墨。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A shadow is a road, not a shore."
+            "value": "Between two shadows, one square of ink."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影は道であって、岸ではない。"
+            "value": "二つの影の間に、墨が一枡。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자는 길이지, 강가가 아니다."
+            "value": "두 그림자 사이, 먹 한 칸."
           }
         }
       }
@@ -986,7 +1706,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먹의 강가"
+            "value": "먹 강가"
           }
         }
       }
@@ -998,25 +1718,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "合上一次，墨印到墙上；立起来走过它；再合上一次。"
+            "value": "走到桥头的纸片上合上：墨印到右页。半开过桥，踩上印过去的墨，绕右页一圈走到右下方，再合上——这一叠下面是石头。合着往左一格就是信。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close once so the ink prints onto the wall; stand and walk across it; close once more."
+            "value": "Close on the tab at the foot of the start: the ink prints across. Half-open, cross, step onto the printed ink and loop round the right page to its lower right, then close again — this stack sits on a stone. Closed, one step left is the letter."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "一度閉じて、墨を壁に写す。立てて、その上を渡る。もう一度閉じる。"
+            "value": "（TODO ja）足もとの紙片で閉じる。墨が写る。半分開いて渡り、写った墨に乗り、右ページを回って右下へ、また閉じる。石の背の上。閉じたまま左へ一歩が手紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "한 번 닫아 먹을 벽에 찍어요. 세워서 그 위를 건너요. 다시 한 번 닫아요."
+            "value": "(TODO ko) 발밑 종이 조각에서 닫아요. 먹이 찍혀요. 반쯤 열어 건너고 찍힌 먹에 올라, 오른쪽 페이지를 돌아 오른쪽 아래로, 다시 닫아요. 돌의 등 위. 닫은 채 왼쪽 한 칸이 편지."
+          }
+        }
+      }
+    },
+    "inkTwice.hint1": {
+      "comment": "Level \"inkTwice\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "印过去的墨在哪？从它开始。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Where did the ink print? Start there."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨はどこに写った？そこから。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먹은 어디에 찍혔지? 거기서부터."
           }
         }
       }
@@ -1028,25 +1778,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "墨先去，人再去。"
+            "value": "墨，桥，再一格。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ink first, then you."
+            "value": "Ink, bridge, one more square."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "墨が先、人は後。"
+            "value": "墨、橋、あと一枡。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먹이 먼저, 사람은 나중에."
+            "value": "먹, 다리, 그리고 한 칸."
           }
         }
       }
@@ -1058,25 +1808,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "两次合"
+            "value": "墨痕"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close Twice"
+            "value": "Ink Mark"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "二度閉じる"
+            "value": "墨の跡"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "두 번 닫기"
+            "value": "먹 자국"
           }
         }
       }
@@ -1088,25 +1838,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "钥匙和门左右对称。合上，它们就碰到了。"
+            "value": "只有左页那扇门有钥匙。先沿右页下边走到右下角，合上：门开了，这一叠下面是石头。合着往上走到左页，穿过开着的门，打开，往右一格，再合上：这一叠通到信。右页的那扇门没有钥匙，它只是墙。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Key and door mirror each other. Close, and they meet."
+            "value": "Only the door on the left page has a key. Walk the bottom of the right page to its corner and close: the door opens, and this stack sits on a stone. Closed, walk up onto the left page, through the open door, open, one step right, and close again: that stack leads to the letter. The door on the right page has no key; it is only a wall."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "鍵と扉は左右対称。閉じれば、ふれあう。"
+            "value": "（TODO ja）鍵があるのは左ページの扉だけ。右ページの下を角まで歩いて閉じる。扉が開く。閉じたまま左ページへ上がり、開いた扉を抜けて開き、右に一歩、また閉じる。右ページの扉には鍵がない。ただの壁。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "열쇠와 문은 좌우 대칭이에요. 닫으면 서로 닿아요."
+            "value": "(TODO ko) 열쇠가 있는 건 왼쪽 페이지 문만이에요. 오른쪽 페이지 아래를 따라 모서리까지 가서 닫아요. 문이 열려요. 닫은 채 왼쪽 페이지로 올라가 열린 문을 지나 펼치고, 오른쪽 한 칸, 다시 닫아요. 오른쪽 페이지 문은 열쇠가 없어요. 그냥 벽이에요."
+          }
+        }
+      }
+    },
+    "key.hint1": {
+      "comment": "Level \"key\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "哪一扇门会开？"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Which door will open?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "どちらの扉が開く？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "어느 문이 열릴까?"
           }
         }
       }
@@ -1118,25 +1898,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "门锁着，钥匙在对页。"
+            "value": "两扇门，一把钥匙。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The door is locked. The key is on the facing page."
+            "value": "Two doors, one key."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "扉は閉ざされ、鍵は向かいのページに。"
+            "value": "扉は二つ、鍵は一つ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "문은 잠겼고, 열쇠는 맞은편에."
+            "value": "문은 둘, 열쇠는 하나."
           }
         }
       }
@@ -1178,25 +1958,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "别先合上——头顶那块石头会压下来。站上影子慢慢合书；两道影子排成一列时，往下走到纸上。再合上：终点在对页。书合拢之前，一定要先离开影子。"
+            "value": "别先合上——头顶有石头。沿右页往上走到第 2 行，合上：这一叠下面是左页的石头，你站在它背上。合着往左一格到左页，打开到 60°：沿影子走到第 4 列、再下到第 3 列的影子。合到 50°，影子带你到第 2 列；走到左下角，在那里合上——不要在石头正对面。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Do not close first: the stone over your head comes down. Stand on a shadow and close slowly; where the two shadows line up, step down onto the paper. Then close: the goal is on the facing page. Get off the shadow before the book shuts."
+            "value": "Do not close first — a stone hangs over you. Walk up the right page to row 2 and close: this stack sits on the left page’s stone, and you stand on its back. Closed, one step left puts you on the left page. Open to 60°: walk the shadow to column 4, then down to the shadow in column 3. Close to 50°: it carries you to column 2. Walk to the bottom-left corner and close there — never opposite a stone."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "先に閉じないこと。頭の上の石が落ちてくる。影に乗ってゆっくり閉じる。二つの影がそろったら、下の紙へ降りる。それから閉じる。ゴールは向かいのページ。閉じきる前に、かならず影から降りること。"
+            "value": "（TODO ja）先に閉じないこと。右ページを2行目まで上がって閉じる。石の背の上。閉じたまま左へ一歩で左ページ。60°まで開き、影を4列目へ、3列目の影へ下りる。50°まで閉じると2列目へ運ばれる。左下の角で閉じる。石の真向かいでは閉じない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먼저 닫지 마세요. 머리 위 돌이 내려와요. 그림자 위에 서서 천천히 닫아요. 두 그림자가 나란히 서면 아래 종이로 내려가요. 그다음 닫아요. 도착점은 맞은편 페이지예요. 책이 닫히기 전에 꼭 그림자에서 내려와요."
+            "value": "(TODO ko) 먼저 닫지 마세요. 오른쪽 페이지를 2행까지 올라가 닫아요. 돌의 등 위. 닫은 채 왼쪽 한 칸이면 왼쪽 페이지. 60°까지 펼쳐 그림자를 4열로, 3열의 그림자로 내려가요. 50°까지 닫으면 2열로. 왼쪽 아래 모서리에서 닫아요. 돌 맞은편에서는 안 돼요."
+          }
+        }
+      }
+    },
+    "lamp.hint1": {
+      "comment": "Level \"lamp\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先到石头的背上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get onto the stone’s back first."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まず石の背へ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 돌의 등으로."
           }
         }
       }
@@ -1208,25 +2018,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "走过影子，再把信合上。"
+            "value": "两盏灯，一块石头的背。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Walk the shadows, then fold the letter shut."
+            "value": "Two lamps, and the back of a stone."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影をわたって、手紙を閉じる。"
+            "value": "二つの灯と、石の背。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자를 건너, 편지를 덮는다."
+            "value": "두 등불, 그리고 돌의 등."
           }
         }
       }
@@ -1358,25 +2168,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "两个缺口要同时有影子。再慢慢合一点，直到两道影子排成一列——就在书快要合上之前。"
+            "value": "沿左页绕到第 4 列。先斜起到 80° 左右，只有远处石头的影子伸到第 4 列的缺口；走上去，再往上。然后合到 40° 左右，近处石头的影子落在第 3 列：走过去，到左上第 3 格，合上——这一叠直通信。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Both gaps need a shadow at once. Keep closing slowly until the two shadows line up, just before the book shuts."
+            "value": "Walk round the left page to column 4. Lean to about 80°: only the far stone’s shadow reaches the gap in column 4; step on and go up. Then close to about 40°: the near stone’s shadow falls in column 3. Cross it to the top-left third square and close — the stack runs straight to the letter."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "二つのすき間に、同時に影がいる。ゆっくり閉じていき、二つの影が一列にそろったら止める。閉じきる少し手前。"
+            "value": "（TODO ja）左ページを回って4列目へ。80°ほどに傾けると遠い石の影だけが届く。乗って上へ。40°ほどまで閉じると近い石の影が3列目に。渡って左上の3枡目で閉じる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "두 틈에 동시에 그림자가 있어야 해요. 천천히 더 닫아 두 그림자가 한 줄로 서면 멈춰요. 다 닫히기 바로 전이에요."
+            "value": "(TODO ko) 왼쪽 페이지를 돌아 4열로. 80° 정도 기울이면 먼 돌의 그림자만 닿아요. 올라서 위로. 40° 정도까지 닫으면 가까운 돌의 그림자가 3열에. 건너 왼쪽 위 셋째 칸에서 닫아요."
+          }
+        }
+      }
+    },
+    "lock.hint1": {
+      "comment": "Level \"lock\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两道影子，各在哪个角度？"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two shadows — at which angle each?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二つの影、それぞれどの角度？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 그림자, 각각 어느 각도?"
           }
         }
       }
@@ -1388,25 +2228,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "远的石头，影子走得快。"
+            "value": "远的影子跑得快。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The farther the stone, the faster its shadow."
+            "value": "The far shadow moves faster."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "遠い石ほど、影は速く動く。"
+            "value": "遠い影は速い。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먼 돌일수록 그림자는 빨리 움직인다."
+            "value": "먼 그림자가 빠르다."
           }
         }
       }
@@ -1437,6 +2277,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "멀고 가까운"
+          }
+        }
+      }
+    },
+    "oldHome.hint": {
+      "comment": "Level \"oldHome\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有石头就没有影子——先合上，让两块石头都过去。站在右页最下面那格纸上合（站在胶上会被压）。合着走到左页下角那格纸，打开到 70°：新石头的影子落在第 4 列。踩上去，慢慢合到 50°，影子带你到第 2 列；石头原来站的地方现在是纸，走过去就到了。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No stone, no shadow. Close first and let both stones cross. Close from the lowest paper on the right page (the glue would crush you). Closed, walk to the bottom paper of the left page, then open to 70°: the new stone’s shadow falls in column 4. Step on, close slowly to 50°: it carries you to column 2. Where the stone used to stand is paper now. Walk home."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石がなければ影もない。まず閉じて、二つの石を向こうへ送る。右頁いちばん下の紙の上で閉じる（糊の上では押しつぶされる）。閉じたまま左頁の下の紙へ歩き、70°まで開く。新しい石の影が4列目に落ちる。乗って、ゆっくり50°まで閉じる。影が2列目まで運ぶ。石がいた場所は今は紙。歩いて帰る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌이 없으면 그림자도 없어요. 먼저 닫아서 돌 두 개를 건너 보내요. 오른쪽 페이지 맨 아래 종이에서 닫아요(풀 위에서는 눌려요). 닫은 채 왼쪽 페이지 아래 종이로 걸어가 70°로 펼쳐요. 새 돌의 그림자가 4열에 떨어져요. 올라서서 천천히 50°까지 닫으면 2열로 데려가요. 돌이 있던 자리는 이제 종이예요. 걸어서 돌아가요."
+          }
+        }
+      }
+    },
+    "oldHome.hint1": {
+      "comment": "Level \"oldHome\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石头走了，它原来的位置呢？"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The stone left. What about where it stood?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石は去った。いた場所は？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌은 떠났다. 있던 자리는?"
+          }
+        }
+      }
+    },
+    "oldHome.line": {
+      "comment": "Level \"oldHome\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对岸一块石头也没有。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not one stone on the far page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向こうの頁に石はひとつもない。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "건너편 페이지에 돌이 하나도 없다."
+          }
+        }
+      }
+    },
+    "oldHome.name": {
+      "comment": "Level \"oldHome\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "旧处"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Old Home"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "元の場所"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "옛 자리"
           }
         }
       }
@@ -1538,25 +2498,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "合上时纸板盖住缺口，可石头会压在缺口后面的路上。只斜起：石头的影子就是桥。"
+            "value": "别在起点合上——对面的石头会压下来。沿左页往上走到顶，斜起到 30° 左右：远处石头的影子落在第 1 列。走过影子到左上角，在那里合上，合着一路往下就是信。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Closing lays the card over the gap, but drops the stone on the road beyond it. Only lean the page: the stone’s shadow is the bridge."
+            "value": "Do not close at the start — the stone opposite comes down. Walk up the left page to the top and lean to about 30°: the far stone’s shadow falls in column 1. Cross it to the top-left corner and close there; closed, walk straight down to the letter."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じると厚紙がすき間をふさぐが、石がその先の道に落ちてくる。斜めに起こすだけ。石の影が橋になる。"
+            "value": "（TODO ja）出発点で閉じないこと。向かいの石が落ちる。左ページを上まで歩き、30°ほどに傾ける。遠い石の影が1列目に落ちる。影を渡って左上の角へ、そこで閉じ、閉じたまままっすぐ下へ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫으면 종이판이 틈을 덮지만, 돌이 그 너머 길에 떨어져요. 비스듬히 세우기만 하세요. 돌의 그림자가 다리예요."
+            "value": "(TODO ko) 시작점에서 닫지 마세요. 맞은편 돌이 떨어져요. 왼쪽 페이지를 끝까지 올라가 30° 정도 기울여요. 먼 돌의 그림자가 1열에 떨어져요. 그림자를 건너 왼쪽 위 모서리에서 닫고, 닫은 채 곧장 내려가요."
+          }
+        }
+      }
+    },
+    "press.hint1": {
+      "comment": "Level \"press\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "哪一格合上是安全的？"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Which square is safe to close from?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "どの枡なら閉じても安全？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "어느 칸에서 닫으면 안전할까?"
           }
         }
       }
@@ -1568,25 +2558,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "纸板在对岸，石头也在。"
+            "value": "头顶有石头，对岸也有。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The card is on the far bank. So is the stone."
+            "value": "A stone over your head; another over the far bank."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "厚紙は向こう岸に。石も。"
+            "value": "頭の上に石。向こう岸にも。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "종이판은 건너편에 있다. 돌도."
+            "value": "머리 위에 돌, 건너편에도."
           }
         }
       }
@@ -1628,25 +2618,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "站到影子上，再慢慢合书：影子会带着你一起滑过去。合到底石头就压下来了。"
+            "value": "沿左边走到第 3 行左端。合到 30° 左右，影子伸到脚边；站上去，再把书打开到 70°：影子带着你滑到第 4 列。走到左上角那格纸，合上，合着绕一圈到信。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Stand on the shadow, then close the book slowly: it carries you across. Close all the way and the stone comes down."
+            "value": "Walk the left edge to the left end of row 3. Close to about 30°: the shadow reaches your feet. Step on, then OPEN the book to 70°: the shadow carries you to column 4. Walk to the top-left paper, close, and walk the stack round to the letter."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影の上に立って、ゆっくり本を閉じる。影があなたを乗せて滑っていく。閉じきると石が落ちてくる。"
+            "value": "（TODO ja）左端を3行目まで歩く。30°ほどまで閉じると影が足もとに。乗って、本を70°まで開く。影が4列目まで運ぶ。左上の紙へ歩いて閉じ、重なりを回って手紙へ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자 위에 서서 책을 천천히 닫아요. 그림자가 나를 태우고 미끄러져요. 끝까지 닫으면 돌이 내려와요."
+            "value": "(TODO ko) 왼쪽 끝을 따라 3행까지. 30° 정도까지 닫으면 그림자가 발밑에. 올라서서 책을 70°까지 펼쳐요. 그림자가 4열까지 데려가요. 왼쪽 위 종이로 걸어가 닫고, 겹을 돌아 편지로."
+          }
+        }
+      }
+    },
+    "ride.hint1": {
+      "comment": "Level \"ride\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "站在影子上，再动书。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stand on the shadow, then move the book."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影の上に立って、本を動かす。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자 위에 서서, 책을 움직여요."
           }
         }
       }
@@ -1676,7 +2696,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "틈은 너무 넓고, 그림자는 너무 짧다."
+            "value": "틈은 넓고, 그림자는 짧다."
           }
         }
       }
@@ -1718,25 +2738,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "书几乎合上时，影子才伸到你脚边。站上去，再把书打开：影子带你回到折痕边。"
+            "value": "沿左边走到左下角。合到 50° 左右，踩上影子，再打开到 80°：影子带你到第 4 列，旁边那格纸是唯一的岸。下去，在岸上合上，合着往右走就是信。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Only when the book is nearly shut does the shadow reach your feet. Step on, then open the book: the shadow carries you back to the crease."
+            "value": "Walk the left edge to the bottom-left corner. Close to about 50°, step onto the shadow, then open to 80°: it carries you to column 4, beside the only square of shore. Step down, close on the shore, and walk the stack right to the letter."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ほとんど閉じたときだけ、影が足もとまで届く。乗ったら本を開く。影があなたを折り目のそばまで運ぶ。"
+            "value": "（TODO ja）左端を左下まで。50°ほどまで閉じて影に乗り、80°まで開く。影が4列目へ運ぶ。となりの紙が唯一の岸。降りて岸で閉じ、右へ歩けば手紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "거의 닫혔을 때만 그림자가 발밑까지 와요. 올라선 다음 책을 펼쳐요. 그림자가 접는 선 가까이로 데려다줘요."
+            "value": "(TODO ko) 왼쪽 끝을 따라 왼쪽 아래로. 50° 정도까지 닫아 그림자에 올라, 80°까지 펼쳐요. 4열로 데려가요. 옆의 종이가 유일한 강가. 내려가 거기서 닫고, 오른쪽으로 걸으면 편지."
+          }
+        }
+      }
+    },
+    "rideBack.hint1": {
+      "comment": "Level \"rideBack\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "那格纸，怎么才到得了？"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That square of paper: how do you reach it?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "その一枡の紙へ、どうやって？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그 한 칸 종이, 어떻게 가지?"
           }
         }
       }
@@ -1748,25 +2798,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "影子会走，也会回来。"
+            "value": "岸只有一格。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A shadow goes out, and comes back."
+            "value": "The shore is one square wide."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影は出ていき、また戻ってくる。"
+            "value": "岸は一枡だけ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자는 나갔다가, 다시 돌아온다."
+            "value": "강가는 한 칸뿐."
           }
         }
       }
@@ -1988,25 +3038,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "先合上一次，钥匙开门。再斜起到 75° 踩上影子，慢慢合到 45°：影子带你穿过开着的门，落在门后的纸上。另一道影子通向一座孤岛——别上。"
+            "value": "走到右下角合上：钥匙开门，这一叠下面是石头。合着往上到左页第 3 行，合到 40° 踩上第 3 列的影子，再打开到 70°：影子带你到第 4 列。穿过开着的门往上走，到第 3 列顶上合上——别在石头正对面。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close once: the key opens the door. Lean to 75°, step on the shadow, and close slowly to 45°: it carries you through the open door onto the paper beyond. The other shadow leads to an island. Leave it."
+            "value": "Walk to the bottom-right corner and close: the key opens the door, and this stack sits on a stone. Closed, go up onto row 3 of the left page, close to 40° and step onto the shadow in column 3, then open to 70°: it carries you to column 4. Walk up through the open door to the top of column 3 and close — not opposite the stone."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "まず一度閉じて鍵で扉を開ける。75°まで傾けて影に乗り、ゆっくり45°まで閉じる。影が開いた扉をくぐって、向こうの紙に降ろしてくれる。もう一つの影は孤島へ続く。乗らないこと。"
+            "value": "（TODO ja）右下の角で閉じる。鍵が扉を開け、石の背の上。閉じたまま左ページの3行目へ。40°まで閉じて3列目の影に乗り、70°まで開く。開いた扉を抜けて3列目の上で閉じる。石の真向かいではなく。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먼저 한 번 닫아 열쇠로 문을 열어요. 75°로 기울여 그림자에 올라서고, 천천히 45°까지 닫아요. 그림자가 열린 문을 지나 너머의 종이에 내려 줘요. 다른 그림자는 외딴 섬으로 이어져요. 타지 마세요."
+            "value": "(TODO ko) 오른쪽 아래 모서리에서 닫아요. 열쇠가 문을 열고, 돌의 등 위. 닫은 채 왼쪽 페이지 3행으로. 40°까지 닫아 3열 그림자에 올라, 70°까지 펼쳐요. 열린 문을 지나 3열 꼭대기에서 닫아요. 돌 맞은편은 안 돼요."
+          }
+        }
+      }
+    },
+    "shadeDoor.hint1": {
+      "comment": "Level \"shadeDoor\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "哪一步必须在门开以后？"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Which step has to come after the door opens?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扉が開いたあとでなければできないのは？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "문이 열린 뒤에만 되는 건 어느 걸음?"
           }
         }
       }
@@ -2018,25 +3098,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "影子过不了锁着的门。"
+            "value": "影子停在门前。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A shadow cannot pass a locked door."
+            "value": "The shadow stops at the door."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影は、鍵のかかった扉を通れない。"
+            "value": "影は扉の前で止まる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자는 잠긴 문을 지나지 못한다."
+            "value": "그림자는 문 앞에서 멈춘다."
           }
         }
       }
@@ -2378,25 +3458,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "先立起来过桥，在立起的页上一直走到头，再合上——终点就在脚下。"
+            "value": "沿上边走到桥头，立起来过桥，沿立起的右页走到右下角，合上。合着往左走到底，再往下一格，打开：你在右页，信就在上面一格。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Stand the page and cross, walk to the end of the standing page, then close: the goal is right under you."
+            "value": "Walk the top row to the bridge, stand the page and cross, walk the standing right page down to its far corner, and close. Closed, go left to the end, one step down, then open: you are on the right page with the letter one square up."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ページを立てて橋を渡り、立ったページを端まで歩いてから閉じる。ゴールは足もとにある。"
+            "value": "（TODO ja）上の列を橋まで歩き、立てて渡り、立った右ページを隅まで下りて閉じる。閉じたまま左端へ、一枡下がって開く。手紙は一枡上。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "페이지를 세워 다리를 건너고, 선 페이지를 끝까지 걸은 다음 닫아요. 도착점이 바로 발밑에 있어요."
+            "value": "(TODO ko) 윗줄을 따라 다리로, 세워서 건너고, 선 오른쪽 페이지를 구석까지 내려가 닫아요. 닫은 채 왼쪽 끝으로, 한 칸 내려가 펼쳐요. 편지는 한 칸 위."
+          }
+        }
+      }
+    },
+    "standClose.hint1": {
+      "comment": "Level \"standClose\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立起的页，走到哪里再合？"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How far along the standing page before you close?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立ったページをどこまで歩いて閉じる？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "선 페이지를 어디까지 걷고 닫을까?"
           }
         }
       }
@@ -2408,25 +3518,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "墙上也能走。"
+            "value": "桥在上面，信在墙后。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "You can walk on the wall."
+            "value": "The bridge above, the letter behind the wall."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "壁の上も歩ける。"
+            "value": "橋は上に、手紙は壁のうしろに。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "벽 위도 걸을 수 있다."
+            "value": "다리는 위에, 편지는 벽 뒤에."
           }
         }
       }
@@ -2438,25 +3548,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "先立后合"
+            "value": "墙角"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Stand, then Close"
+            "value": "The Corner"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "立ててから閉じる"
+            "value": "隅"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "세우고 닫기"
+            "value": "구석"
           }
         }
       }
@@ -2468,25 +3578,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "路上每一格头顶都有石头，只有最后一格没有——合上之前先走到那里。墨印过去以后，斜起到 50° 左右踩上中间的影子，再慢慢打开到 75°：影子带你到墨边，下去。"
+            "value": "合上以后哪里都走不通——除了站在左页那块石头背上合。沿右页走到第 4 行右侧，合上，合着往左到左下角。合到 55°，踩上影子，再打开到 80°：影子带你到第 4 列。沿左页绕到左上，在第 3 列顶上合上——信在对面。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Every square of the road has a stone above it except the last: get there before you close. Once the ink has printed, lean to about 50°, step onto the middle shadow, then open slowly to 75°: the shadow carries you to the ink. Step down."
+            "value": "Closed, nothing connects — unless you close standing on the back of the left page’s stone. Walk the right page to the right of row 4 and close; closed, go left to the bottom-left corner. Close to 55°, step onto the shadow, then open to 80°: it carries you to column 4. Walk round the left page to the top of column 3 and close there — the letter is opposite."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "道のどの枡の上にも石がある。最後の枡だけは違う。閉じる前にそこまで歩く。墨が写ったら、50°ほど傾けて真ん中の影に乗り、ゆっくり75°まで開く。影が墨のそばまで運ぶ。降りる。"
+            "value": "（TODO ja）閉じてもどこもつながらない。左ページの石の背の上で閉じる以外は。右ページの4行目右で閉じ、閉じたまま左下へ。55°まで閉じて影に乗り、80°まで開く。左ページを回って3列目の上で閉じる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "길의 모든 칸 위에 돌이 있어요. 마지막 칸만 빼고요. 닫기 전에 거기까지 걸어가요. 먹이 찍히면 50° 정도 기울여 가운데 그림자에 올라서고, 천천히 75°까지 펼쳐요. 그림자가 먹 옆까지 데려다줘요. 내려가요."
+            "value": "(TODO ko) 닫아도 어디도 이어지지 않아요. 왼쪽 페이지 돌의 등 위에서 닫는 것 말고는. 오른쪽 페이지 4행 오른쪽에서 닫고, 닫은 채 왼쪽 아래로. 55°까지 닫아 그림자에 올라 80°까지 펼쳐요. 왼쪽 페이지를 돌아 3열 꼭대기에서 닫아요."
+          }
+        }
+      }
+    },
+    "stoneRain.hint1": {
+      "comment": "Level \"stoneRain\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "叠合的路被堵死了。哪一叠下面是石头？"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The stacked road is blocked. Which stack sits on a stone?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重なりの道はふさがれている。どの重なりが石の上？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "겹친 길이 막혔어요. 어느 겹이 돌 위일까?"
           }
         }
       }
@@ -2498,25 +3638,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "三块石头悬在路上。"
+            "value": "三块石头悬在叠合的路上。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Three stones hang over the road."
+            "value": "Three stones hang over the stacked road."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "三つの石が道の上に吊られている。"
+            "value": "三つの石が重なりの道の上に。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "돌 세 개가 길 위에 매달려 있다."
+            "value": "돌 셋이 겹친 길 위에 걸려 있다."
           }
         }
       }
@@ -2546,7 +3686,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "돌 비"
+            "value": "돌비"
           }
         }
       }
@@ -2637,6 +3777,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "붙은 페이지"
+          }
+        }
+      }
+    },
+    "twiceClosed.hint": {
+      "comment": "Level \"twiceClosed\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先合上一次：胶把石头粘到右页顶上。合着走到左页第 3 行，打开到 30°：影子落在第 2 列。从石头的旧位走上去，打开到 55°，影子带你到第 3 列；往下走，下页石头的影子接到最后一格纸。只有那一格合上是安全的——在那里合，终点就在脚下。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close once: the glue pulls the stone to the top of the right page. Closed, walk to row 3 of the left page and open to 30°: the shadow is in column 2. Step on from the stone’s old place, open to 55°, and it carries you to column 3; walk down, the lower stone’s shadow reaches the last paper. Only that cell is safe to close from. Close there: the letter is under your feet."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一度閉じる。糊が石を右頁の上へ引く。閉じたまま左頁の3行目へ歩き、30°まで開く。影は2列目。石の元の場所から乗り、55°まで開くと3列目へ。下へ歩くと、下の石の影が最後の紙に届く。閉じて安全なのはその一枡だけ。そこで閉じれば、手紙は足元に。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "한 번 닫아요. 풀이 돌을 오른쪽 페이지 위로 붙여요. 닫은 채 왼쇽 페이지 3행으로 걸어가 30°로 펼쳐요. 그림자는 2열. 돌의 옛 자리에서 올라서고 55°로 펼치면 3열로. 아래로 걸으면 아래 돌의 그림자가 마지막 종이에 닿아요. 닫아도 안전한 칸은 그 한 칸뿐. 거기서 닫으면 편지는 발밑에."
+          }
+        }
+      }
+    },
+    "twiceClosed.hint1": {
+      "comment": "Level \"twiceClosed\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第二次合上，站在哪？"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The second close: from where?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二度目は、どこで閉じる？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 번째 닫기, 어디서?"
+          }
+        }
+      }
+    },
+    "twiceClosed.line": {
+      "comment": "Level \"twiceClosed\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "只有三样东西。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only three things on the page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "頁には三つしかない。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "페이지에는 세 가지뿐."
+          }
+        }
+      }
+    },
+    "twiceClosed.name": {
+      "comment": "Level \"twiceClosed\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两合"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Twice Closed"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二度閉じる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 번 닫기"
           }
         }
       }
@@ -2738,25 +3998,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "对岸的人在岸边等。先走到最下面那格纸，别站在石头正对面合书。书快合上时踩上影子，再打开：影子把你送回岸边。在那里合上——钥匙开门，两岸相触，你就站到了那个人的格子里。"
+            "value": "对岸的人在等。往左、往下走到第 4 行，合上：这一叠下面是石头。合着往左到左页，打开到 55°：沿第 4 列往上，踩上第 3 列顶上的影子。合到 50°，影子带你到第 2 列；走到左上角，门开着——站在门里合上，两岸相触，你就走到了那个人的格子里。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The other one waits at the edge of the far bank. Walk down to the last square of paper; do not close while standing opposite the stone. When the book is nearly shut, step onto the shadow, then open: it carries you back to the shore. Close there: the key opens the door, the two banks touch, and you are standing in their square."
+            "value": "The other one waits across the river. Step left and down to row 4 and close: this stack sits on a stone. Closed, go left onto the left page and open to 55°: walk up column 4 and step onto the shadow at the top of column 3. Close to 50°: it carries you to column 2. Walk to the top-left corner — the door is open. Close standing in the doorway: the two banks touch, and you walk into their square."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "向こう岸の人が岸の縁で待っている。いちばん下の紙の枡まで歩く。石の真向かいでは閉じないこと。本がほとんど閉じたとき影に乗り、開く。影が岸まで送り返す。そこで閉じる。鍵が扉を開け、両岸がふれ、あなたはその人の枡に立っている。"
+            "value": "（TODO ja）右ページを右下へ歩いて閉じる。石の背の上。閉じたまま左ページへ、55°まで開いて4列目を上がり、3列目の上の影に乗る。50°まで閉じると2列目へ。左上の角、扉は開いている。扉の中で閉じる。両岸がふれ、その人の枡へ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "건너편 사람이 강가 끝에서 기다려요. 맨 아래 종이 칸까지 걸어가요. 돌 맞은편에서는 닫지 마세요. 책이 거의 닫혔을 때 그림자에 올라서고, 펼쳐요. 그림자가 강가로 돌려보내 줘요. 거기서 닫아요. 열쇠가 문을 열고, 두 강가가 맞닿고, 당신은 그 사람의 칸에 서 있어요."
+            "value": "(TODO ko) 오른쪽 페이지를 오른쪽 아래로 걸어 닫아요. 돌의 등 위. 닫은 채 왼쪽 페이지로, 55°까지 펼쳐 4열을 올라가 3열 꼭대기 그림자에 올라요. 50°까지 닫으면 2열로. 왼쪽 위 모서리, 문은 열려 있어요. 문 안에서 닫아요. 두 강가가 맞닿고, 그 사람의 칸으로."
+          }
+        }
+      }
+    },
+    "twoFigures.hint1": {
+      "comment": "Level \"twoFigures\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最后一合，站在哪里？"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The last close — where do you stand?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最後に閉じるとき、どこに立つ？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "마지막에 닫을 때, 어디에 서 있지?"
           }
         }
       }
@@ -2786,7 +4076,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "두 강가가 맞닿는다. 편지가, 도착했다."
+            "value": "두 강가가 맞닿는다. 편지는, 도착했다."
           }
         }
       }
@@ -2821,6 +4111,126 @@
         }
       }
     },
+    "twoLamps.hint": {
+      "comment": "Level \"twoLamps\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先合上：石头粘到右页，墨印到对面。合着走到左页下角，打开到 40°：两块石头都在第 4 格远，影子都落在第 2 列。踩上下面那道影子，打开到 60°，它带你到第 3 列；穿过墨印的那格往上走，到上面那道影子，再合回 40°——影子送你到她门口。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close first: the stone crosses, the ink prints. Closed, walk to the bottom corner of the left page, open to 40°: both stones are four columns out, both shadows fall in column 2. Step onto the lower one, open to 60°: it carries you to column 3. Walk up through the printed ink to the upper shadow, then close back to 40°: it sets you down at her door."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まず閉じる。石が渡り、墨が写る。閉じたまま左頁の下の角へ歩き、40°まで開く。二つの石はどちらも4枡先、影はどちらも2列目に落ちる。下の影に乗り、60°まで開く。3列目へ運ばれる。写った墨を通って上の影へ歩き、40°まで閉じ戻す。影が彼女の戸口へ降ろしてくれる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 닫아요. 돌이 건너가고 먹이 찍혀요. 닫은 채 왼쪽 페이지 아래 모서리로 가서 40°로 펼쳐요. 두 돌 모두 네 칸 밖, 그림자는 둘 다 2열에. 아래 그림자에 올라 60°로 펼치면 3열로. 찍힌 먹을 지나 위 그림자까지 올라가 다시 40°로 닫아요. 그림자가 그녀의 문 앞에 내려 줘요."
+          }
+        }
+      }
+    },
+    "twoLamps.hint1": {
+      "comment": "Level \"twoLamps\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两道影子，同一列。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two shadows, one column."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二つの影、同じ列。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 그림자, 같은 열."
+          }
+        }
+      }
+    },
+    "twoLamps.line": {
+      "comment": "Level \"twoLamps\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "页角粘着，墨还没干。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The corner is stuck; the ink is still wet."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "頁の角は貼りつき、墨はまだ乾かない。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "페이지 모서리는 붙어 있고, 먹은 아직 젖어 있다."
+          }
+        }
+      }
+    },
+    "twoLamps.name": {
+      "comment": "Level \"twoLamps\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两盏灯"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two Lamps"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二つの灯"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 등불"
+          }
+        }
+      }
+    },
     "twoShades.hint": {
       "comment": "Level \"twoShades\": hint. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -2828,25 +4238,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "斜起到 75° 左右，踩上远处石头的影子，合到快合上：它把你放在岸边那一格纸上。就在那里，近处石头的影子刚好伸到脚边——站上去，再把书打开，它带你回到折痕边。"
+            "value": "沿左边走到左上角。斜起到 55° 左右，影子落在第 3 列；站上去，再打开到 70°：影子带你到第 4 列。顺着第 4 列往下走，信就在左边。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lean to about 75°, step on the far stone’s shadow and close almost all the way: it sets you down on the one square of paper. Right there the near stone’s shadow has just reached your feet. Step on it and open the book: it carries you back towards the crease."
+            "value": "Walk the left edge to the top-left corner. Lean to about 55°: the shadow falls in column 3. Step on, then open to 70°: it carries you to column 4. Walk down column 4; the letter is on your left."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "75°ほど傾け、遠い石の影に乗り、閉じる直前まで閉じる。岸の一枡の紙に降りる。そこへ近い石の影がちょうど届く。乗って本を開けば、折り目のそばへ戻れる。"
+            "value": "（TODO ja）左端を左上まで。55°ほどに傾けると影が3列目に。乗って70°まで開く。影が4列目へ運ぶ。4列目を下れば手紙は左。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "75° 정도 기울여 먼 돌의 그림자에 올라서고, 거의 닫힐 때까지 닫아요. 강가의 종이 한 칸에 내려요. 바로 거기까지 가까운 돌의 그림자가 닿아요. 올라선 뒤 책을 펼치면 접는 선 가까이로 돌아와요."
+            "value": "(TODO ko) 왼쪽 끝을 따라 왼왽 위로. 55° 정도 기울이면 그림자가 3열에. 올라서 70°까지 펼쳐요. 4열로 데려가요. 4열을 내려가면 편지는 왼쪽에."
+          }
+        }
+      }
+    },
+    "twoShades.hint1": {
+      "comment": "Level \"twoShades\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影子往哪边走，取决于你怎么动书。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Which way the shadow carries you depends on which way you move the book."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影がどちらへ運ぶかは、本をどちらへ動かすか。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자가 어디로 데려가는지는 책을 어디로 움직이는지에 달려요."
           }
         }
       }
@@ -2858,25 +4298,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "一道影子送你出去，另一道接你回来。"
+            "value": "一道影子，一条窄岸。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "One shadow carries you out; the other brings you back."
+            "value": "One shadow, one narrow bank."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "一つの影が運び出し、もう一つが連れ帰る。"
+            "value": "一つの影、一本の狭い岸。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "한 그림자가 데려가고, 다른 그림자가 데려온다."
+            "value": "그림자 하나, 좁은 강가 하나."
           }
         }
       }
@@ -2888,25 +4328,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "两道影"
+            "value": "窄岸"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Two Shades"
+            "value": "Narrow Bank"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "二つの影"
+            "value": "狭い岸"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "두 그림자"
+            "value": "좁은 강가"
           }
         }
       }
