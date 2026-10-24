@@ -20,6 +20,11 @@ public enum GameEvent: Sendable, Equatable {
     /// The goal can no longer be reached from here without undo or restart (vol. 2 dead ends, design-review-v2c1 §3):
     /// checked as the book shuts and as it opens again; sent once, on the move that made it so.
     case deadEnd
+    /// The closed book was turned over (vol. 2 ch. 6 「翻」): `face` 1 = the third page now faces the left page.
+    case flipped(face: Int)
+    /// The turn brought a stone down on the figure (its cause; logic.js flip `crush`): it goes back to the start, the
+    /// book stays turned. Sent after `.flipped` and the turn's `.stamped` events.
+    case flipCrushed(Rules.CrushCause)
 }
 
 /// A level being played: the stateful half of main.js (angle, riding shadows, stamping, undo).
@@ -60,6 +65,12 @@ public final class FoldGame {
     public var neighbours: [Cell] { rules.neighbours(board, char, posture, shade) }
     public var reachable: Set<Cell> { rules.reachable(board, from: char, posture, shade) }
     public var goal: Cell? { board.first(.goal) }
+    /// Where the goal is on any page (face nil = the left page; 1 = on the third page, at that visible cell once turned).
+    public var goalAnywhere: (cell: Cell, face: Int?)? { board.locate(.goal) }
+    /// Which face of the right leaf faces the left page (0 right page, 1 third page).
+    public var face: Int { board.face }
+    /// Why 「翻」 is refused right now, or nil when the book can be turned over.
+    public var flipBlock: Rules.FlipBlock? { rules.flipBlock(board, char, angle) }
     public func path(to target: Cell) -> [Cell]? { rules.findPath(board, from: char, to: target, posture, shade) }
     /// The goal can be walked to from here, now (without moving the hinge).
     public var goalInReach: Bool { goal.map { path(to: $0) != nil } ?? false }
@@ -82,12 +93,7 @@ public final class FoldGame {
             if goalInReach && !goalBefore { events.append(.goalInReach) }
             else if now.count < before.count { events.append(.lost) }
             // the shut and the opening are where a vol. 2 dead end begins: a stone glued away, a road blocked
-            if !stuck && posture != wasPosture && (posture == .closed || wasPosture == .closed) && level.map.joined().contains("g") {
-                let solver = Solver(config)
-                if !solver.canStillWin(level, from: char, angle: posture == .closed ? 180 : angle, closedOnce: closedOnce) {
-                    stuck = true; events.append(.deadEnd)
-                }
-            }
+            if !stuck && posture != wasPosture && (posture == .closed || wasPosture == .closed) { checkDeadEnd(&events) }
         }
         return events
     }
@@ -121,6 +127,45 @@ public final class FoldGame {
             if next == .closed { rules.stamp(&board).forEach { events.append(.stamped($0)) }; closedOnce = true }
             checkWin(&events)
         }
+    }
+
+    /// Vol. 2 dead ends: glue (a stone glued away) or a third page (a turn that blocks a stack) can end the level.
+    private func checkDeadEnd(_ events: inout [GameEvent]) {
+        guard !stuck, !won, level.map.joined().contains("g") || board.pages > 2 else { return }
+        let solver = Solver(config)
+        let ok = board.pages > 2
+            ? solver.canStillWin(level, board: board, from: char, angle: posture == .closed ? 180 : angle)
+            : solver.canStillWin(level, from: char, angle: posture == .closed ? 180 : angle, closedOnce: closedOnce)
+        if !ok { stuck = true; events.append(.deadEnd) }
+    }
+
+    // MARK: turning the page
+
+    /// 「翻」: turn the closed book over (logic.js flip). Refused (returns [.blocked], nothing changes) unless closed, on
+    /// the left page, in a three-page book — read `flipBlock` for the reason. The press stamps like a close; a stone on
+    /// the new facing page over the figure sends it back to the start (the book stays turned). Call pushUndo first.
+    @discardableResult
+    public func flip() -> [GameEvent] {
+        guard !won, flipBlock == nil else { return [.blocked] }
+        let before = reachable, goalBefore = goalInReach
+        let (stamps, crush) = rules.flip(&board, char)
+        var events: [GameEvent] = [.flipped(face: board.face)]
+        stamps.forEach { events.append(.stamped($0)) }
+        closedOnce = true
+        shade = rules.shadows(board, angle); rideSrc = nil
+        if let crush {
+            events.append(.flipCrushed(crush))
+            char = board.start; trail = [board.start]
+        }
+        checkWin(&events)
+        if !won {
+            let now = reachable
+            if !now.subtracting(before).isEmpty { events.append(.connected) }
+            if goalInReach && !goalBefore { events.append(.goalInReach) }
+            else if now.count < before.count { events.append(.lost) }
+            checkDeadEnd(&events)
+        }
+        return events
     }
 
     // MARK: walking

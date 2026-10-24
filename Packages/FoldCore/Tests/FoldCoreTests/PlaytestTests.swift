@@ -121,7 +121,7 @@ final class PlaytestTests: XCTestCase {
     func testWonFigureStaysWhenTheFinaleShutsTheBook() throws {
         for lv in pack.levels {
             let sol = try XCTUnwrap(lv.solution), g = try FoldGame(level: lv, config: pack.config)
-            for s in sol.dropFirst() { if Double(s[2]) != g.angle { g.setAngle(Double(s[2])) } else { g.step(to: Cell(s[0], s[1])) } }
+            for s in sol.dropFirst() { if s.count > 4 && s[4] != g.face { g.flip() } else if Double(s[2]) != g.angle { g.setAngle(Double(s[2])) } else { g.step(to: Cell(s[0], s[1])) } }
             XCTAssertTrue(g.won, lv.id)
             let at = g.char
             for a in stride(from: g.angle, through: 180, by: 1) { g.setAngle(a) }

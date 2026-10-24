@@ -121,6 +121,126 @@
         }
       }
     },
+    "bleed.hint": {
+      "comment": "Level \"bleed\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先别合上：角上的胶会把左上那块石头粘走，影子就没了。沿左页走到顶行第 2 列（胶上），斜起到 55°：影子落在第 3 列第 2 行。踩上去，再把书打开到 70°：影子带你到第 4 列。往下一格，在第 3 行合上、翻过来，合着走到第 3 叠的顶上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do not close first: the glue in the corner would take the top-left stone, and its shadow with it. Walk the left page to row 1, column 2 (the glue), lean to 55°: the shadow falls at column 3, row 2. Step on, then OPEN to 70°: it carries you to column 4. Step down once, close in row 3, turn, and walk the stack to the top of stack 3."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do not close first: the glue in the corner would take the top-left stone, and its shadow with it. Walk the left page to row 1, column 2 (the glue), lean to 55°: the shadow falls at column 3, row 2. Step on, then OPEN to 70°: it carries you to column 4. Step down once, close in row 3, turn, and walk the stack to the top of stack 3."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do not close first: the glue in the corner would take the top-left stone, and its shadow with it. Walk the left page to row 1, column 2 (the glue), lean to 55°: the shadow falls at column 3, row 2. Step on, then OPEN to 70°: it carries you to column 4. Step down once, close in row 3, turn, and walk the stack to the top of stack 3."
+          }
+        }
+      }
+    },
+    "bleed.hint1": {
+      "comment": "Level \"bleed\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先别合上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do not close yet."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do not close yet."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do not close yet."
+          }
+        }
+      }
+    },
+    "bleed.line": {
+      "comment": "Level \"bleed\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "背面的字透过来了。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The writing on the back shows through."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The writing on the back shows through."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The writing on the back shows through."
+          }
+        }
+      }
+    },
+    "bleed.name": {
+      "comment": "Level \"bleed\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "透字"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bleed-through"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bleed-through"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bleed-through"
+          }
+        }
+      }
+    },
     "bridge.hint": {
       "comment": "Level \"bridge\": hint. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -1831,6 +1951,126 @@
         }
       }
     },
+    "inlay.hint": {
+      "comment": "Level \"inlay\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "走到左页第 3 行的左端，斜起到 40°：两块石头的影子一起铺到顶行。走到右上角那格纸，合上、翻过来，合着往下走两格。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Walk to the left end of row 3 on the left page, lean to 40°: both shadows pave the top row at once. Walk to the top-right paper, close, turn, and walk the stack two steps down."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Walk to the left end of row 3 on the left page, lean to 40°: both shadows pave the top row at once. Walk to the top-right paper, close, turn, and walk the stack two steps down."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Walk to the left end of row 3 on the left page, lean to 40°: both shadows pave the top row at once. Walk to the top-right paper, close, turn, and walk the stack two steps down."
+          }
+        }
+      }
+    },
+    "inlay.hint1": {
+      "comment": "Level \"inlay\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "顶行是走过去的，不是合过去的。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The top row is walked to, not closed to."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The top row is walked to, not closed to."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The top row is walked to, not closed to."
+          }
+        }
+      }
+    },
+    "inlay.line": {
+      "comment": "Level \"inlay\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两块石头，一个角度。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two stones, one angle."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two stones, one angle."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two stones, one angle."
+          }
+        }
+      }
+    },
+    "inlay.name": {
+      "comment": "Level \"inlay\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "夹层"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inlay"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inlay"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inlay"
+          }
+        }
+      }
+    },
     "key.hint": {
       "comment": "Level \"key\": hint. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -2067,6 +2307,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "등불 아래"
+          }
+        }
+      }
+    },
+    "lastPage.hint": {
+      "comment": "Level \"lastPage\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沿右页走到底行再合上：胶把左页的石头粘过去。合着走到左页第 6 行第 3 列，打开到 40°：刚过河的那块石头投下影子，顺着它走到左边那条窄路，上到第 5 行第 1 列。在那里合上、翻过来，合着沿第 1 列走到顶——她在末页的右上角。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Walk the right page down to the bottom row and close there: the glue pulls the left page’s stone across. Closed, walk to row 6, column 3 of the left page, then open to 40°: the stone that just crossed casts a shadow; follow it onto the narrow road at the left and up to row 5, column 1. Close there, turn, and walk the stack up column 1 — she is in the top-right corner of the last page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Walk the right page down to the bottom row and close there: the glue pulls the left page’s stone across. Closed, walk to row 6, column 3 of the left page, then open to 40°: the stone that just crossed casts a shadow; follow it onto the narrow road at the left and up to row 5, column 1. Close there, turn, and walk the stack up column 1 — she is in the top-right corner of the last page."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Walk the right page down to the bottom row and close there: the glue pulls the left page’s stone across. Closed, walk to row 6, column 3 of the left page, then open to 40°: the stone that just crossed casts a shadow; follow it onto the narrow road at the left and up to row 5, column 1. Close there, turn, and walk the stack up column 1 — she is in the top-right corner of the last page."
+          }
+        }
+      }
+    },
+    "lastPage.hint1": {
+      "comment": "Level \"lastPage\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "被胶粘走的石头，影子也跟着去了对岸。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A stone the glue takes brings its shadow with it."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A stone the glue takes brings its shadow with it."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A stone the glue takes brings its shadow with it."
+          }
+        }
+      }
+    },
+    "lastPage.line": {
+      "comment": "Level \"lastPage\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "翻到最后一页。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn to the last page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn to the last page."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn to the last page."
+          }
+        }
+      }
+    },
+    "lastPage.name": {
+      "comment": "Level \"lastPage\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "末页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last Page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last Page"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last Page"
           }
         }
       }
@@ -2491,6 +2851,126 @@
         }
       }
     },
+    "overleaf.hint": {
+      "comment": "Level \"overleaf\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上。合着走的时候，两页都是纸你就留在原来那页；只有一页是纸的那一叠才换页。走到右页是缺口的那一叠，你就到了左页——在那里翻。然后合着一直走到底，她在第三页的角上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close. Walking closed, where both pages are paper you stay on your page; only a stack with paper on one side changes your page. Walk into the stack whose right-page cell is a gap: you land on the left page — turn there. Then walk the stack to the bottom; she is in the corner of the third page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close. Walking closed, where both pages are paper you stay on your page; only a stack with paper on one side changes your page. Walk into the stack whose right-page cell is a gap: you land on the left page — turn there. Then walk the stack to the bottom; she is in the corner of the third page."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close. Walking closed, where both pages are paper you stay on your page; only a stack with paper on one side changes your page. Walk into the stack whose right-page cell is a gap: you land on the left page — turn there. Then walk the stack to the bottom; she is in the corner of the third page."
+          }
+        }
+      }
+    },
+    "overleaf.hint1": {
+      "comment": "Level \"overleaf\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "翻之前，先到左页。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get onto the left page before you turn."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get onto the left page before you turn."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get onto the left page before you turn."
+          }
+        }
+      }
+    },
+    "overleaf.line": {
+      "comment": "Level \"overleaf\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你站着的那一页，翻不动。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The page under your feet will not turn."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The page under your feet will not turn."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The page under your feet will not turn."
+          }
+        }
+      }
+    },
+    "overleaf.name": {
+      "comment": "Level \"overleaf\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "背面"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overleaf"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overleaf"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overleaf"
+          }
+        }
+      }
+    },
     "press.hint": {
       "comment": "Level \"press\": hint. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -2607,6 +3087,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "누름"
+          }
+        }
+      }
+    },
+    "pressedFlower.hint": {
+      "comment": "Level \"pressedFlower\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先合上的话，胶把石头粘过来，路就断了。从起点走到左下角，斜起到 40° 踩上影子，再打开到 60°：影子带你到第 2 列。走到第 4 列第 2 行，合上、翻过来，合着往下走到底。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close first and the glue pulls a stone across: the road breaks. From the start walk to the bottom-left, lean to 40° onto the shadow, then open to 60°: it carries you to column 2. Walk to column 4, row 2, close, turn, and walk the stack to the bottom."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close first and the glue pulls a stone across: the road breaks. From the start walk to the bottom-left, lean to 40° onto the shadow, then open to 60°: it carries you to column 2. Walk to column 4, row 2, close, turn, and walk the stack to the bottom."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close first and the glue pulls a stone across: the road breaks. From the start walk to the bottom-left, lean to 40° onto the shadow, then open to 60°: it carries you to column 2. Walk to column 4, row 2, close, turn, and walk the stack to the bottom."
+          }
+        }
+      }
+    },
+    "pressedFlower.hint1": {
+      "comment": "Level \"pressedFlower\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上之前，先把影子走完。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finish the shadow before you close."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finish the shadow before you close."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finish the shadow before you close."
+          }
+        }
+      }
+    },
+    "pressedFlower.line": {
+      "comment": "Level \"pressedFlower\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "页角有胶。别急。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glue in the corner. No hurry."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glue in the corner. No hurry."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glue in the corner. No hurry."
+          }
+        }
+      }
+    },
+    "pressedFlower.name": {
+      "comment": "Level \"pressedFlower\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "压花"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pressed Flower"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pressed Flower"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pressed Flower"
           }
         }
       }
@@ -3811,6 +4411,126 @@
         }
       }
     },
+    "turn.hint": {
+      "comment": "Level \"turn\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上，翻过来，再合着往下走：第 5 行左页是缺口、第三页是纸，走到那一叠你就换到了第三页——信在那里。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close, turn the book over, and walk the stack down: in row 5 the left page is a gap and the third page is paper, so that stack puts you onto the third page — the letter is there."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close, turn the book over, and walk the stack down: in row 5 the left page is a gap and the third page is paper, so that stack puts you onto the third page — the letter is there."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close, turn the book over, and walk the stack down: in row 5 the left page is a gap and the third page is paper, so that stack puts you onto the third page — the letter is there."
+          }
+        }
+      }
+    },
+    "turn.hint1": {
+      "comment": "Level \"turn\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上的书，还能翻个面。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A closed book can be turned over."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A closed book can be turned over."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A closed book can be turned over."
+          }
+        }
+      }
+    },
+    "turn.line": {
+      "comment": "Level \"turn\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这一页上没有信。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The letter is not on this page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The letter is not on this page."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The letter is not on this page."
+          }
+        }
+      }
+    },
+    "turn.name": {
+      "comment": "Level \"turn\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "翻"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn"
+          }
+        }
+      }
+    },
     "twiceClosed.hint": {
       "comment": "Level \"twiceClosed\": hint. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -4017,6 +4737,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "두 다리"
+          }
+        }
+      }
+    },
+    "twoFaces.hint": {
+      "comment": "Level \"twoFaces\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沿左页走到左下角，斜起到 60°：石头的影子接到第 4 列。顺着影子走到第 3 行，合上、翻过来，合着往上走到顶——信在第三页的顶行。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Walk the left page to its bottom-left, lean to 60°: the stone’s shadow reaches column 4. Follow the shadow up to row 3, close, turn, and walk the stack to the top — the letter is in the third page’s top row."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Walk the left page to its bottom-left, lean to 60°: the stone’s shadow reaches column 4. Follow the shadow up to row 3, close, turn, and walk the stack to the top — the letter is in the third page’s top row."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Walk the left page to its bottom-left, lean to 60°: the stone’s shadow reaches column 4. Follow the shadow up to row 3, close, turn, and walk the stack to the top — the letter is in the third page’s top row."
+          }
+        }
+      }
+    },
+    "twoFaces.hint1": {
+      "comment": "Level \"twoFaces\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先用这一面的影子，再翻。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use this face’s shadow first, then turn."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use this face’s shadow first, then turn."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use this face’s shadow first, then turn."
+          }
+        }
+      }
+    },
+    "twoFaces.line": {
+      "comment": "Level \"twoFaces\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯照着的是这一面。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The lamp lights this face."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The lamp lights this face."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The lamp lights this face."
+          }
+        }
+      }
+    },
+    "twoFaces.name": {
+      "comment": "Level \"twoFaces\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两面"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two Faces"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two Faces"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two Faces"
           }
         }
       }

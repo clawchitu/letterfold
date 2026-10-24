@@ -239,21 +239,41 @@ public struct Rules: Sendable {
             for q in 0..<n {
                 let m = mirror(q)
                 for (a, c) in [(q, m), (m, q)] {
-                    let A = b.grid[r][a], B = b.grid[r][c]
+                    let A = b[a, r], B = b[c, r]
                     if A == .key && B == .door {
-                        b.grid[r][a] = .paper; b.grid[r][c] = .openDoor
+                        b[a, r] = .paper; b[c, r] = .openDoor
                         events.append(Stamp(kind: .door, cells: [Cell(a, r), Cell(c, r)]))
                     } else if A == .ink && B == .empty {
-                        b.grid[r][c] = .ink
+                        b[c, r] = .ink
                         events.append(Stamp(kind: .ink, cells: [Cell(a, r), Cell(c, r)]))
                     } else if A == .glue && B == .stone {
-                        b.grid[r][a] = .stone; b.grid[r][c] = .paper
+                        b[a, r] = .stone; b[c, r] = .paper
                         events.append(Stamp(kind: .glue, cells: [Cell(c, r), Cell(a, r)]))
                     }
                 }
             }
         }
         return events
+    }
+
+    // MARK: turning the page (vol. 2 ch. 6 「翻」, logic.js flipBlock / flip)
+
+    /// Why the book cannot be turned over: no third page, not closed, or the figure stands on the right leaf.
+    public enum FlipBlock: String, Sendable { case single, open, leaf }
+    public func flipBlock(_ b: Board, _ char: Cell, _ a: Double) -> FlipBlock? {
+        if b.pages < 3 { return .single }
+        if a < config.foldMin { return .open }
+        if isRight(char.c) { return .leaf }
+        return nil
+    }
+
+    /// Turn the closed book over: the other face of the right leaf presses on the left page. The press stamps as a close
+    /// does; `crush` is what the new facing page did to the figure, judged before the stamp (the caller sends it home).
+    @discardableResult
+    public func flip(_ b: inout Board, _ char: Cell) -> (stamps: [Stamp], crush: CrushCause?) {
+        b.face ^= 1
+        let crush = crushCause(b, char, config.foldMin)
+        return (stamp(&b), crush)
     }
 
     // MARK: the shadow lock (design-review-ch3 §3, judged as rewritten in design-review-ch4 §2 / design-spec §5)
