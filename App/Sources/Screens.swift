@@ -743,8 +743,11 @@ private struct ChapterCard: View {
         .accessibilityIdentifier("chapter-\(chapter.id)")
         .contextMenu {
             if model.isUnlocked(chapter) {
-                ForEach(Array(idx.enumerated()), id: \.offset) { k, i in
-                    Button("\(chapter.id)-\(k + 1) · \(L10n.level(model.pack.levels[i].id).name)") { openLevel(i) }
+                // the chapter's heading over its levels (fold-proto e613f80's Levels sheet: 「一 · 折」…)
+                Section(L10n.t("chHead.\(chapter.id)")) {
+                    ForEach(Array(idx.enumerated()), id: \.offset) { k, i in
+                        Button("\(chapter.id)-\(k + 1) · \(L10n.level(model.pack.levels[i].id).name)") { openLevel(i) }
+                    }
                 }
             }
         }

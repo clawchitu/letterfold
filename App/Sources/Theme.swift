@@ -40,6 +40,14 @@ enum Tok {
     /// glue: the amber wet smear, drawn at 62 % (decoration); the information is the drop's line (`glueLine`, 5.3:1)
     static let glue = Color(hex: 0xE8B848)
     static let glueLine = Color(hex: 0x8A5A14)
+    // design-skins §1.2 / design-review-skins §2 — the pressed slot and the stone that sits in it
+    static let tileEdge     = Color(hex: 0x857868)   // 1 pt all round, ≥ 3.28:1 on every paper
+    static let stoneTop     = Color(hex: 0x8E816F)   // gradient top (was 0x9A8D7B)
+    static let stoneBottom  = Color(hex: 0x7D7163)   // = edgeLower
+    static let stoneOutline = Color(hex: 0x5A4A36)   // drawn at 0.70
+    static let doorFrame    = Color(hex: 0x3A3835)
+    static let dressInk     = Color(hex: 0xAE9D7C)   // margin marks only, ≤ 2.5:1 by design
+    // skin.line = ink700, lamp = lamp (both exist). No dressFaint, no dressHC, no 0xF0A23C.
 }
 
 /// The only per-chapter variables (design-spec §0.1, §3): paper colour, translucency, ink saturation, backlight.
@@ -55,23 +63,29 @@ struct PaperState: Equatable {
     var creaseWhite: Double = 0
     /// Vol. 2 letter paper: the grid is printed (`rule.letter`), every slot, the empty ones too.
     var ruled = false
+    /// The chapter's skin (design-review-skins §3.1): it goes with the paper, a level cannot pick its own.
+    var skin: Skin = .fold
+    /// The chapter's margin marks (a constant per chapter, not per level; off in the three accessibility modes, see
+    /// `GameModel.marginShown`).
+    var margin: [MarginMark] = []
 
     static let chapter1 = PaperState(color: Tok.paperNew, translucency: 0.05, inkSaturation: 0.82, backlit: false, thread: Tok.thread)
-    static let chapter2 = PaperState(color: Color(hex: 0xF3EDE2), translucency: 0.15, inkSaturation: 0.78, backlit: false, thread: Tok.thread)
-    static let chapter3 = PaperState(color: Color(hex: 0xF1E9D8), translucency: 0.60, inkSaturation: 0.70, backlit: true, thread: Tok.threadAged)
+    static let chapter2 = PaperState(color: Color(hex: 0xF3EDE2), translucency: 0.15, inkSaturation: 0.78, backlit: false, thread: Tok.thread, skin: .stand, margin: [.railing])
+    static let chapter3 = PaperState(color: Color(hex: 0xF1E9D8), translucency: 0.60, inkSaturation: 0.70, backlit: true, thread: Tok.threadAged, skin: .shadow, margin: [.lantern])
     /// paper.worn: old paper, thick, lit only while it leans (design-ch4 §4)
-    static let chapter4 = PaperState(color: Color(hex: 0xEFE6D2), translucency: 0.10, inkSaturation: 0.88, backlit: true, thread: Tok.threadAged, backlight: 0.45)
+    static let chapter4 = PaperState(color: Color(hex: 0xEFE6D2), translucency: 0.10, inkSaturation: 0.88, backlit: true, thread: Tok.threadAged, backlight: 0.45, skin: .shore, margin: [.reeds, .boat])
     /// paper.aged, the finale 4-6
-    static let aged = PaperState(color: Color(hex: 0xEBE0C7), translucency: 0.10, inkSaturation: 0.95, backlit: true, thread: Tok.threadAged, backlight: 0.45, creaseWhite: 1)
+    static let aged = PaperState(color: Color(hex: 0xEBE0C7), translucency: 0.10, inkSaturation: 0.95, backlit: true, thread: Tok.threadAged, backlight: 0.45, creaseWhite: 1, skin: .shore, margin: [.reeds, .boat])
     /// paper.letter, vol. 2 「翻页」 (design-v2c1 §2): cooler and whiter, a printed grid; translucency 0.14, ink 100 %,
     /// lit only while it leans (0.45, as chapter 4)
     static let letter = PaperState(color: Tok.paperLetter, translucency: 0.14, inkSaturation: 0.86, backlit: true, thread: Tok.threadAged,
-                                   backlight: 0.45, ruled: true)
+                                   backlight: 0.45, ruled: true, skin: .letter)
     /// The lamp's strength relative to chapter 3's rice paper.
     var lampScale: Double { backlight / 0.60 }
 
-    /// One step darker than the paper: the face of a walkable tile (design-spec §4).
-    var tileFace: Color { color.mix(with: Color(hex: 0x8A7A62), by: 0.075) }
+    /// One step darker than the paper: the face of a walkable tile, ≈ 1.3:1 (design-skins §1.2: 25 %, was 7.5 %).
+    /// The 1 pt `Tok.tileEdge` border carries the ≥ 3:1.
+    var tileFace: Color { color.mix(with: Color(hex: 0x8A7A62), by: 0.25) }
     var ink: Color { Tok.ink900.opacity(inkSaturation + 0.12) }
 }
 

@@ -106,8 +106,12 @@ struct TileFace: View {
     var bare = false
     /// The recipient steps aside (in points) when the sender stands in her square, so both silhouettes show.
     var figureShift: Double = 0
+    /// Which of the three splat forms wet ink takes here (design-skins §2.1: `(c*7 + r*13) % 3`, a print its source's)
+    var inkVariant = 0
     @Environment(\.highContrast) private var hc
     @Environment(\.goalIsFigure) private var goalIsFigure
+    @Environment(\.skin) private var skin
+    @Environment(\.envelopeBack) private var envelopeBack
 
     var body: some View {
         switch tile {
@@ -121,27 +125,31 @@ struct TileFace: View {
         case .goal:
             ZStack {
                 if !bare { PathTile(size: size, paper: paper, doubleFrame: hc) }
+                // the goal-figure levels (4-6, 5-7, 暗二 / 暗三) keep her, whatever the skin
                 if goalIsFigure {
                     Recipient().frame(width: size * 0.62, height: size * 0.84).offset(x: figureShift, y: -size * 0.12)
+                } else if skin == .shadow {
+                    LanternGoal(size: size)
+                } else if skin == .letter {
+                    EnvelopeGoal(size: size, back: envelopeBack)
                 } else {
                     Flag(size: size)
                 }
             }
         case .stone: PaperStone(size: size)
-        case .key: KeyGlyph().frame(width: size * 0.62, height: size * 0.3).shadowed(hc)
-        case .door: ZStack { if !bare { PathTile(size: size, paper: paper) }; DoorGlyph(open: false, size: size) }
-        case .openDoor: ZStack { if !bare { PathTile(size: size, paper: paper) }; DoorGlyph(open: true, size: size) }
+        case .key: SkinKeyGlyph(size: size, ring: paper.thread)
+        case .door: ZStack { if !bare { PathTile(size: size, paper: paper) }; SkinDoor(open: false, size: size) }
+        case .openDoor: ZStack { if !bare { PathTile(size: size, paper: paper) }; SkinDoor(open: true, size: size) }
         case .ink:
             // wet ink is walkable: it sits on a path square like every other floor (frame v2-1)
             ZStack {
                 if !bare { PathTile(size: size, paper: paper) }
-                WetInk(size: size, paper: paper, mirrored: inkPrint, spent: inkSpent, verticalMirror: mirrorAxisVertical, printedAt: inkPrint ? printedAt : nil)
+                WetInk(size: size, paper: paper, mirrored: inkPrint, spent: inkSpent, verticalMirror: mirrorAxisVertical, printedAt: inkPrint ? printedAt : nil, variant: inkVariant)
             }
         case .tab:
             ZStack {
                 if !bare { PathTile(size: size, paper: paper) }
-                Stripes(spacing: size * 0.12).stroke(Tok.ink900.opacity(hc ? 1 : 0.18), lineWidth: hc ? 2 : 1)
-                    .clipShape(RoundedRectangle(cornerRadius: 3)).padding(2)
+                TabFace(size: size)
             }
         case .glue:
             ZStack {
@@ -156,8 +164,8 @@ private extension View {
     func shadowed(_ hc: Bool) -> some View { shadow(color: .black.opacity(hc ? 0 : 0.18), radius: 1.2, x: 0.5, y: 1.5) }
 }
 
-/// A walkable square: one shade deeper than the paper, a 1pt cast shadow along the bottom, a lit top edge
-/// (design-spec §4). High contrast: white with a 3pt black frame.
+/// A walkable square: the paper mixed 25 % deeper, a 1 pt `tile.edge` all round, a 1pt cast shadow along the bottom,
+/// the top-to-bottom emboss (design-spec §4, design-skins §1.2). High contrast: white with a 3pt black frame.
 struct PathTile: View {
     let size: Double
     var paper: PaperState = .chapter1
@@ -176,13 +184,13 @@ struct PathTile: View {
             // letter paper (design-v2c1 §2): the squares are printed, not embossed — a flat card face with a printed edge
             r.fill(paper.tileFace)
                 .overlay(PaperSurface(color: .clear).clipShape(r).opacity(0.45))
-                .overlay(r.strokeBorder(Tok.ruleLetter.opacity(0.42), lineWidth: 1))
+                .overlay(r.strokeBorder(Tok.tileEdge, lineWidth: 1))
                 .shadow(color: Color(hex: 0x3A3F52).opacity(0.10), radius: 1.2, x: 0, y: 0.8)
         } else {
             r.fill(paper.tileFace)
                 .overlay(PaperSurface(color: .clear).clipShape(r).opacity(0.6))
                 .overlay(r.fill(LinearGradient(colors: [.white.opacity(0.28), .clear, .black.opacity(0.03)], startPoint: .top, endPoint: .bottom)))
-                .overlay(r.strokeBorder(LinearGradient(colors: [.white.opacity(0.85), .white.opacity(0.1), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1))
+                .overlay(r.strokeBorder(Tok.tileEdge, lineWidth: 1))   // design-skins §1.2: 1 pt all round (was a lit top-left edge)
                 .shadow(color: Color(hex: 0x5A4A36).opacity(0.28), radius: 0, x: 0, y: 1)
                 .shadow(color: Color(hex: 0x5A4A36).opacity(0.10), radius: 2.5, x: 0, y: 1.5)
         }
@@ -240,7 +248,7 @@ nonisolated struct GlueDrop: Shape {
 }
 
 /// The printed grid of letter paper (design-v2c1 §2): every slot of the page, empty ones too, in `rule.letter` at
-/// 16 % (decoration; off in high contrast).
+/// 16 % (decoration; off in high contrast), drawn down the middle of the gaps.
 struct RuledGrid: View {
     let tile: Double
     let gap: Double
@@ -251,8 +259,9 @@ struct RuledGrid: View {
     var body: some View {
         Path { p in
             for x in 0..<across { for y in 0..<down {
-                p.addRoundedRect(in: CGRect(x: pad + Double(x) * (tile + gap) + 0.5, y: pad + Double(y) * (tile + gap) + 0.5, width: tile - 1, height: tile - 1),
-                                 cornerSize: CGSize(width: 3, height: 3))
+                // centred in the gap between squares, clear of the 1 pt tile.edge (design-review-skins §1, deviation 9)
+                p.addRoundedRect(in: CGRect(x: pad + Double(x) * (tile + gap) - gap / 2, y: pad + Double(y) * (tile + gap) - gap / 2, width: tile + gap, height: tile + gap),
+                                 cornerSize: CGSize(width: 3 + gap / 2, height: 3 + gap / 2))
             } }
         }
         .stroke(Tok.ruleLetter.opacity(opacity), lineWidth: 1)
@@ -320,6 +329,16 @@ nonisolated struct FlagFold: Shape {
 /// (1.8 / 5) inside a 3pt outline.
 struct PaperStone: View {
     let size: Double
+    @Environment(\.skin) private var skin
+    var body: some View {
+        // 缆桩 (ch. 4) and 镇石 (ch. 5 / 暗信); every other chapter keeps the 石墩
+        if skin == .shore || skin == .letter { SkinStone(size: size, skin: skin) } else { StoneBlock(size: size) }
+    }
+}
+
+/// 石墩: the folded block.
+struct StoneBlock: View {
+    let size: Double
     @Environment(\.highContrast) private var hc
     var body: some View {
         let s = size * 0.62
@@ -331,10 +350,12 @@ struct PaperStone: View {
             } else {
                 Ellipse().fill(RadialGradient(colors: [.black.opacity(0.22), .clear], center: .center, startRadius: 0, endRadius: s * 0.45))
                     .frame(width: s * 0.95, height: s * 0.22).offset(y: s * 0.27)
-                StoneFacet(points: [(0.18, 0.62), (0.32, 0.36), (0.52, 0.52), (0.46, 0.76), (0.28, 0.74)]).fill(Color(hex: 0xD8CFBF))
-                StoneFacet(points: [(0.52, 0.52), (0.80, 0.40), (0.86, 0.66), (0.62, 0.78), (0.46, 0.76)]).fill(Color(hex: 0xBDB09C))
-                StoneFacet(points: [(0.32, 0.36), (0.56, 0.24), (0.80, 0.40), (0.52, 0.52)]).fill(Color(hex: 0xF7F3EC))
-                StoneOutline().stroke(Color(hex: 0x8E816D).opacity(0.35), lineWidth: 0.6)
+                // design-review-skins §1.1: solid warm grey, stone.top → stone.bottom (average ≥ 3:1 on every paper), the
+                // facets only as light and shade on top of it, a 1 pt stone.outline at 70 %
+                StoneOutline().fill(LinearGradient(colors: [Tok.stoneTop, Tok.stoneBottom], startPoint: .top, endPoint: .bottom))
+                StoneFacet(points: [(0.32, 0.36), (0.56, 0.24), (0.80, 0.40), (0.52, 0.52)]).fill(.white.opacity(0.16))
+                StoneFacet(points: [(0.52, 0.52), (0.80, 0.40), (0.86, 0.66), (0.62, 0.78), (0.46, 0.76)]).fill(.black.opacity(0.08))
+                StoneOutline().stroke(Tok.stoneOutline.opacity(0.70), style: StrokeStyle(lineWidth: 1, lineJoin: .round))
             }
         }
         .frame(width: s, height: s)
@@ -369,7 +390,9 @@ struct WetInk: View {
     var spent = false
     var verticalMirror = true
     var printedAt: Date? = nil
+    var variant = 0
     @Environment(\.highContrast) private var hc
+    @Environment(\.skin) private var skin
     @State private var bleed: Double = 1
 
     var body: some View {
@@ -379,7 +402,7 @@ struct WetInk: View {
                 if spent {
                     Circle().strokeBorder(.black, style: StrokeStyle(lineWidth: 2.5, dash: [5, 4])).frame(width: s, height: s)
                 } else {
-                    InkBlot().fill(.black).frame(width: s, height: s)
+                    SkinInkBlot(skin: skin, variant: variant).fill(.black).frame(width: s, height: s)
                 }
             } else {
                 // halo: the ink travelling along the fibres
@@ -389,7 +412,11 @@ struct WetInk: View {
                     .blur(radius: 1 + 5 * bleed)
                     .overlay(Image(uiImage: PaperTexture.back).resizable(resizingMode: .tile).blendMode(.multiply).opacity(0.9)
                         .frame(width: s * 1.3, height: s * 1.3).mask(Circle().blur(radius: 6)))
-                InkBlot().fill(Tok.ink900.opacity(spent ? 0.30 : paper.inkSaturation + 0.14))
+                // old ink (ch. 4, design-skins §2.1): the same splat, its centre faded 15 %
+                let o = spent ? 0.30 : paper.inkSaturation + 0.14
+                SkinInkBlot(skin: skin, variant: variant)
+                    .fill(skin == .shore ? AnyShapeStyle(RadialGradient(colors: [Tok.ink900.opacity(o * 0.85), Tok.ink900.opacity(o)], center: .center, startRadius: 0, endRadius: s * 0.4))
+                                         : AnyShapeStyle(Tok.ink900.opacity(o)))
                     .frame(width: s * 0.86, height: s * 0.86)
                     .blur(radius: 0.6 + 0.8 * bleed)
                     .scaleEffect(x: mirrored && !verticalMirror ? -1 : 1, y: mirrored && verticalMirror ? -1 : 1)
@@ -461,7 +488,7 @@ struct DoorGlyph: View {
                 Rectangle().fill(Color(hex: 0xE7E0D3)).frame(width: w * 0.5, height: h).offset(x: w * 0.25)
                 KeyholeShape().fill(Tok.figure).frame(width: w * 0.16, height: h * 0.2).offset(x: w * 0.06)
             }
-            VStack { Rectangle().frame(height: bar); Spacer(); Rectangle().frame(height: bar) }.foregroundStyle(Tok.figure).frame(width: w + 6, height: h + bar)
+            VStack { Rectangle().frame(height: bar); Spacer(); Rectangle().frame(height: bar) }.foregroundStyle(hc ? Color.black : Tok.doorFrame).frame(width: w + 6, height: h + bar)
             if hc { Rectangle().stroke(.black, lineWidth: 3).frame(width: w, height: h) }
         }
     }
@@ -503,20 +530,27 @@ struct StoneSilhouette: View {
     /// The backlit rim (#FBF6EA, 1.5 pt outside), where the stone hangs over its own shadow's hatch
     var rim = false
     @Environment(\.highContrast) private var hc
+    @Environment(\.skin) private var skin
     var body: some View {
-        let s = StoneOutline()
+        // the skin's own outline (石墩 / 缆桩 / 镇石); chapter 3's 石墩 always has the lamp's rim, `lamp` 1.5 pt outside
+        // (design-review-skins §1.1: the stone's second identity is told by its shadow, not by a lion)
+        let s = SkinStoneOutline(skin: skin, silhouette: true)
         ZStack {
-            if rim && !hc { s.stroke(Tok.rimLight, style: StrokeStyle(lineWidth: 3, lineJoin: .round)) }
+            if !hc && skin == .shadow { s.stroke(Tok.lamp, style: StrokeStyle(lineWidth: 3, lineJoin: .round)) }
+            else if rim && !hc { s.stroke(Tok.rimLight, style: StrokeStyle(lineWidth: 3, lineJoin: .round)) }
             if hc {
                 s.fill(.white)
                 Hatch(spacing: 5).stroke(.black, lineWidth: 1.5).clipShape(s)
                 s.stroke(.black, lineWidth: 3)
             } else {
                 s.fill(Tok.figure).blur(radius: reduced ? 0 : 0.6)
-                if reduced { StoneRidge().stroke(.white.opacity(0.9), style: StrokeStyle(lineWidth: 1.2, lineCap: .round, lineJoin: .round)) }
+                if reduced && skin != .shore && skin != .letter {
+                    StoneRidge().stroke(.white.opacity(0.9), style: StrokeStyle(lineWidth: 1.2, lineCap: .round, lineJoin: .round))
+                        .frame(width: size * 0.72, height: size * 0.56)
+                }
             }
         }
-        .frame(width: size * 0.72, height: size * 0.56)
+        .frame(width: size, height: size)
     }
 }
 
