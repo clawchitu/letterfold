@@ -1098,7 +1098,10 @@ final class GameModel {
         let before = game.char
         pushUndo()
         let events = game.flip()
-        let to = game.face
+        // the face the turn came to (a crushing turn restarts the level, so game.face is already back on 0)
+        var to = game.face
+        for case let .flipped(face) in events { to = face }
+        let crushed = events.contains { if case .flipCrushed = $0 { return true } else { return false } }
         flipping = true
         haptics.turn()
         sound.turn()
@@ -1123,8 +1126,25 @@ final class GameModel {
             if rm { withAnimation(.linear(duration: 0.15)) { self.flipFade = 1 } }
             try? await Task.sleep(for: .milliseconds(rm ? 150 : Int(300 * slow)))
             guard !Task.isCancelled else { return }
-            self.flipLanding = nil
             self.flipTurn = 0   // 180° is the book again, the other face up
+            if crushed {
+                // the stone came down: once the crush has landed, the book turns back to how the level began
+                try? await Task.sleep(for: .milliseconds(rm ? 300 : 450))
+                guard !Task.isCancelled else { return }
+                if rm { withAnimation(.linear(duration: 0.15)) { self.flipFade = 0 } }
+                else { withAnimation(.easeInOut(duration: 0.6 * slow)) { self.flipTurn = 180 } }
+                try? await Task.sleep(for: .milliseconds(rm ? 150 : Int(300 * slow)))
+                guard !Task.isCancelled else { return }
+                self.shownFace = self.game.face
+                self.flipping = false
+                self.sync()
+                self.flipping = true
+                if rm { withAnimation(.linear(duration: 0.15)) { self.flipFade = 1 } }
+                try? await Task.sleep(for: .milliseconds(rm ? 150 : Int(300 * slow)))
+                guard !Task.isCancelled else { return }
+                self.flipTurn = 0
+            }
+            self.flipLanding = nil
             self.flipping = false
             self.sync()
         }
@@ -1260,7 +1280,7 @@ final class GameModel {
             case .flipped:
                 break   // said by flipBook, with what the press did
             case .flipCrushed(let cause):
-                // the turned-to page has a stone over her square: back to the start; the book stays turned
+                // the turned-to page has a stone over her square: the level starts again (flipBook turns the book back after)
                 stopWalk(); stopRideFeel()
                 beginCrush(at: here)
                 let text = L10n.t(cause == .glue ? "crushedGlue" : "crushedFlip")

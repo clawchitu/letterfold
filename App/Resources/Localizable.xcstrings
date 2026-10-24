@@ -1928,25 +1928,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "翻过来的那页上有石头，正压在你这格。回到起点"
+            "value": "翻过来的那页上有石头，正压在你这格。书翻回原样，回到起点"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The page you turned to has a stone over your square. Back to the start."
+            "value": "The page you turned to has a stone over your square. The book turns back; back to the start."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "めくった頁の石が、このマスに落ちてきた。はじめに戻る"
+            "value": "めくった頁の石が、このマスに落ちてきた。本を元に戻して、はじめから"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "넘긴 페이지의 돌이 이 칸에 떨어졌어요. 처음으로 돌아가요"
+            "value": "넘긴 페이지의 돌이 이 칸에 떨어졌어요. 책을 되돌리고 처음으로 돌아가요"
           }
         }
       }

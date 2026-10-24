@@ -86,7 +86,8 @@ final class Chapter6UITests: XCTestCase {
         shot("07-6-2-win")
     }
 
-    /// A turn onto a stone: the third page's stone comes down on her square; back to the start, the book stays turned.
+    /// A turn onto a stone: the third page's stone comes down on her square; the level starts again and the book turns
+    /// back to its front face (no crush loop, 6-3).
     func testCrushedByTheTurn() {
         launch(36, ["-levelMap", "_S.._...__x_|G___________"])
         close()
@@ -95,6 +96,7 @@ final class Chapter6UITests: XCTestCase {
         XCTAssertTrue(toast("翻过来的那页上有石头"), "crushedFlip toast")
         Thread.sleep(forTimeInterval: 2)
         XCTAssertTrue(f.isHere(1, 0), "back at the start: \(f.tile(1, 0).label)")
+        XCTAssertEqual(f.probe("face"), "0", "the book turned back to the front face")
         shot("08-crushed-flip")
     }
 

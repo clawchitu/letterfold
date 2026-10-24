@@ -22,8 +22,9 @@ public enum GameEvent: Sendable, Equatable {
     case deadEnd
     /// The closed book was turned over (vol. 2 ch. 6 「翻」): `face` 1 = the third page now faces the left page.
     case flipped(face: Int)
-    /// The turn brought a stone down on the figure (its cause; logic.js flip `crush`): it goes back to the start, the
-    /// book stays turned. Sent after `.flipped` and the turn's `.stamped` events.
+    /// The turn brought a stone down on the figure (its cause; logic.js flip `crush`): the level starts again — grids
+    /// and face as they began, the figure on the start, the book still shut (logic.js restart). Sent after `.flipped`
+    /// (which carries the face the turn came to); a crushing turn presses nothing, so no `.stamped`.
     case flipCrushed(Rules.CrushCause)
 }
 
@@ -143,20 +144,24 @@ public final class FoldGame {
 
     /// 「翻」: turn the closed book over (logic.js flip). Refused (returns [.blocked], nothing changes) unless closed, on
     /// the left page, in a three-page book — read `flipBlock` for the reason. The press stamps like a close; a stone on
-    /// the new facing page over the figure sends it back to the start (the book stays turned). Call pushUndo first.
+    /// the new facing page over the figure restarts the level: grids and face as they began, the figure on the start
+    /// (else on 6-3, whose start lies under a third-page stone, the next opening crushes her again). The book stays
+    /// shut and undo still steps back to before the turn. Call pushUndo first.
     @discardableResult
     public func flip() -> [GameEvent] {
         guard !won, flipBlock == nil else { return [.blocked] }
         let before = reachable, goalBefore = goalInReach
         let (stamps, crush) = rules.flip(&board, char)
         var events: [GameEvent] = [.flipped(face: board.face)]
-        stamps.forEach { events.append(.stamped($0)) }
-        closedOnce = true
-        shade = rules.shadows(board, angle); rideSrc = nil
         if let crush {
             events.append(.flipCrushed(crush))
-            char = board.start; trail = [board.start]
+            board = try! Board(level: level, columnsPerPage: config.columnsPerPage)
+            char = board.start; trail = [board.start]; closedOnce = false; stuck = false
+        } else {
+            stamps.forEach { events.append(.stamped($0)) }
+            closedOnce = true
         }
+        shade = rules.shadows(board, angle); rideSrc = nil
         checkWin(&events)
         if !won {
             let now = reachable
