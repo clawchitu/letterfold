@@ -1309,6 +1309,7 @@ final class GameModel {
             // crushed / fell: what the shut did, then the reason, last (nothing about paths: you are back at the start)
             if p.stamps.contains(where: { $0.kind == .glue }) { parts.append(L10n.t("glued")) }
             for s in p.stamps where s.kind != .glue { parts.append(L10n.t(s.kind == .door ? "doorOpened" : "inkPrinted")) }
+            if p.dead { parts.append(L10n.t("lost")) }   // said once (game.stuck): a crush that ends the level must still say so (Codex review 15)
             parts.append(p.fell)
             announce(parts.joined(separator: L10n.t("sep")))
             return
@@ -1340,7 +1341,9 @@ final class GameModel {
         settleTask?.cancel()
         settleTask = Task { [weak self] in
             try? await Task.sleep(for: .milliseconds(350))
-            if !Task.isCancelled { self?.settle() }
+            // a new motion started meanwhile (Lean / a drag / the hinge): its own rest settles, with the reason last (Codex review 15)
+            guard !Task.isCancelled, let self, self.motionTarget == nil, !self.dragging, !self.hingeActive else { return }
+            self.settle()
         }
     }
 
