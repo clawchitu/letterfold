@@ -28,7 +28,7 @@ struct Chapter: Identifiable {
     var volumeNumeral: String { Self.numeral(inVolume) }
     var name: String { L10n.t("ch.\(id)") }
     /// The chapter's seal on its map card and (vol. 2) on the finale: 达 · 通 · 影 · 成 · 胶 (design-v2c1 §2 章印).
-    var sealGlyph: String { ["达", "通", "影", "成", "胶", "页"][min(5, id - 1)] }
+    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "页"][min(6, id - 1)] }
     static func volumeChapters(_ v: Int) -> [Chapter] { all.filter { $0.volume == v } }
 
     static let all: [Chapter] = [
@@ -44,8 +44,11 @@ struct Chapter: Identifiable {
         // 0.1 (14): 5-4 … 5-7 redrawn under new IDs (SavedProgress.renamed carries 0.1 (13) saves), plus three 暗信
         Chapter(id: 5, levelIDs: ["glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps"], unlocked: true, soon: false,
                 darkIDs: ["darkBack", "darkDoor", "darkInk"]),
-        // vol. 2 chapter 2 「翻页」 is not written yet: a dashed card, never a sealed chapter that looks openable
-        Chapter(id: 6, levelIDs: [], unlocked: false, soon: true),
+        // vol. 2 chapter 2 「翻」 (fold-proto design-ch6.md): a third page; opens once chapter 5's seven main levels are
+        // delivered (the strict rule; its 暗信 are not required — they are not in `levelIDs`)
+        Chapter(id: 6, levelIDs: ["turn", "overleaf", "twoFaces", "inlay", "bleed", "pressedFlower", "lastPage"], unlocked: true, soon: false),
+        // vol. 2 chapter 3 is not written yet: a dashed card, never a sealed chapter that looks openable
+        Chapter(id: 7, levelIDs: [], unlocked: false, soon: true),
     ]
 }
 
@@ -155,6 +158,18 @@ final class GameModel {
     var spread: Spread { Spread(orientation, columnsPerPage: config.columnsPerPage, rows: board.h) }
 
     private(set) var toast: String?
+
+    // 「翻」 (vol. 2 ch. 6, design-ch6.md §2): turning the closed book over. BookView rotates the whole book by `flipTurn`
+    // (0 → 180°, 0.6 s ease-in-out, around the vertical axis) and draws `shownFace`, which switches at the midpoint.
+    // Reduce motion: no rotation; `flipFade` dips 1 → 0 → 1 (0.3 s) and the face switches at the dip.
+    private(set) var flipTurn: Double = 0
+    private(set) var flipFade: Double = 1
+    private(set) var shownFace = 0
+    private(set) var flipping = false
+    @ObservationIgnored private var flipTask: Task<Void, Never>?
+    /// The press of a turn still in the air (Codex review 16): land it at once when other input arrives.
+    @ObservationIgnored private var flipLanding: (events: [GameEvent], before: Cell, face: Int, landed: Bool)?
+    static let layerRuleKey = "fold.layerRule", shadowPaperKey = "fold.shadowOnPaper"
     private(set) var lastAnnouncement: String?
     private(set) var shake: [Cell: Int] = [:]
     private(set) var done: Set<Int>
@@ -236,6 +251,8 @@ final class GameModel {
     @ObservationIgnored private var hingeIdle: Task<Void, Never>?
 
     private struct Pending { var mode = false, connected = false, goal = false, lost = false, shade = false, hadShade = false, lit = false, dead = false; var stamps: [Rules.Stamp] = []
+        /// Where a ridden shadow picked the figure up: the carry is said once, where it ends (playtest-ch6 §2 #6).
+        var carryFrom: Cell?
         /// Crushed or fallen: the reason, said last in the fold announcement so 「路接通了」 cannot drown it (fold-proto e613f80).
         var fell = "" }
 
@@ -276,7 +293,7 @@ final class GameModel {
     /// -cameraPitch <deg> (screenshots), -probe YES (UI tests: the drag's edge probe).
     static func launch() -> GameModel {
         let d = UserDefaults.standard
-        if d.bool(forKey: "resetProgress") { SavedProgress.reset(d); d.removeObject(forKey: ruleBlockedKey); d.removeObject(forKey: ruleUnderKey); for k in 2...5 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
+        if d.bool(forKey: "resetProgress") { SavedProgress.reset(d); for k in [ruleBlockedKey, ruleUnderKey, layerRuleKey, shadowPaperKey] { d.removeObject(forKey: k) }; for k in 2...6 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
         var pack = try! LevelPack.bundled()
         let start = d.integer(forKey: "startLevel")
         // -levelMap "row|row|…" (UI tests only; gaps written "_", as a value starting with "-" would read as a flag): play the -startLevel level on another board, so a rule's regression test
@@ -393,6 +410,7 @@ final class GameModel {
         game = try! FoldGame(level: pack.levels[index], config: config)
         original = game.board
         won = false; aha = false; caption = false; sealShown = false; sealSettled = false; showNext = false
+        cancelFlip(); shownFace = 0
         finaleSeal = false; finaleSettled = false; finaleLetter = false; finaleBank = nil
         letterTask?.cancel(); letterTask = nil
         quiet = false; dragging = false; angleHint = false; walking = false
@@ -639,6 +657,7 @@ final class GameModel {
 
     /// Input that needs the hinge at rest (a walk): land the current motion at its target now.
     private func finishMotionNow() {
+        finishFlipNow()
         guard let t = motionTarget else { return }
         stopMotion(); rubber = 0
         if t != angle { setAngle(t) }
@@ -769,6 +788,7 @@ final class GameModel {
     /// Buttons and VoiceOver: one undoable move to an angle.
     func foldTo(_ a: Double) {
         if aha { finishAhaNow(); return }
+        finishFlipNow()
         if Int(a.rounded()) == Int(angle.rounded()) { settle(); return }
         stopWalk(); stopGhost(); hasFolded = true
         hingeIdle?.cancel(); hingeActive = false; hingeSamples = []   // buttons / VoiceOver take the page from the hinge
@@ -847,6 +867,7 @@ final class GameModel {
         hingeTarget = Self.virtualFold(fold)
         if !hingeActive {
             guard let first = hingeSamples.first, abs(physical - first.p) >= 8 else { return }
+            finishFlipNow()
             hingeActive = true
             freezeCamera()
             stopWalk(); stopGhost(); hasFolded = true
@@ -875,6 +896,7 @@ final class GameModel {
 
     func dragBegan() {
         if aha { finishAhaNow() }
+        finishFlipNow()   // the turn lands before the finger takes the page (its undo snapshot must be the turned book)
         stopMotion(); stopWalk(); stopGhost(); hasFolded = true
         freezeCamera(); probeAngle = 0
         hingeIdle?.cancel(); hingeActive = false; hingeSamples = []   // the finger has the page now
@@ -969,7 +991,9 @@ final class GameModel {
             else {
                 // say why (fold-proto e613f80): the blocker nearest the square, and where it is
                 let b = rules.pathBlock(board, from: char, to: cell, posture, shade) ?? Rules.Blocker(.gap, cell.c, cell.r)
-                show(L10n.t("cantReachWhy", ["why": L10n.t("why.\(b.why.rawValue)"), "pos": pos(b.c, b.r)]))
+                // shut, say which layer's stone (playtest-ch6 §2 #5)
+                let why = posture == .closed && b.why == .stone ? "stoneTop" : posture == .closed && b.why == .card ? "stoneUnder" : b.why.rawValue
+                show(L10n.t("cantReachWhy", ["why": L10n.t("why.\(why)"), "pos": pos(b.c, b.r)]))
             }
             nopes += 1
             if nopes >= 2 { hintAvailable = true }
@@ -1042,9 +1066,125 @@ final class GameModel {
     }
     func stopWalk() { walkTask?.cancel(); walkTask = nil; walking = false }
     private func stopAll() {
+        cancelFlip()   // undo / restart / a new level: the turn being undone is not landed or announced
         stopWalk(); stopMotion(); stopGhost(); freezeCamera(); settleTask?.cancel(); ahaTask?.cancel(); stuckTask?.cancel()
         clearCrush(); stopRideFeel()
         hingeIdle?.cancel(); hingeIdle = nil; hingeActive = false; hingeSamples = []
+    }
+
+    // MARK: 「翻」 (design-ch6.md §1–2)
+
+    /// The book has a third page (12-column rows).
+    var hasThirdPage: Bool { board.pages > 2 }
+    /// The 「翻」 button is offered: a three-page book, shut, nothing else running. Standing on the leaf it is still
+    /// offered and the tap says why it cannot turn (no.flip.leaf).
+    var canShowFlip: Bool { hasThirdPage && posture == .closed && !won && !aha && !flipping && crushAt == nil }
+
+    func flipAccessibilityAction() { flipBook() }
+
+    /// Turn the closed book over: refused with the reason as a toast, else one undoable move — the whole book flips,
+    /// the press stamps as a close does, a stone on the new facing page over her square sends her home.
+    func flipBook() {
+        if aha { finishAhaNow(); return }
+        if won || flipping { return }
+        stopWalk()
+        finishMotionNow()
+        if let why = game.flipBlock {
+            haptics.nope()
+            if settings.soundMode { sound.hollow() }
+            show(L10n.t("no.flip.\(why)"))
+            return
+        }
+        let before = game.char
+        pushUndo()
+        let events = game.flip()
+        // the face the turn came to (a crushing turn restarts the level, so game.face is already back on 0)
+        var to = game.face
+        for case let .flipped(face) in events { to = face }
+        let crushed = events.contains { if case .flipCrushed = $0 { return true } else { return false } }
+        flipping = true
+        haptics.turn()
+        sound.turn()
+        let rm = settings.motionReduced
+        // -flipSlow YES (screenshots only): the turn runs 6× slower so a still can catch it mid-air
+        let slow = UserDefaults.standard.bool(forKey: "flipSlow") ? 6.0 : 1.0
+        flipTask?.cancel()
+        flipLanding = (events, before, to, false)
+        flipTask = Task { [weak self] in
+            guard let self else { return }
+            if rm { withAnimation(.linear(duration: 0.15)) { self.flipFade = 0 } }
+            else { withAnimation(.easeInOut(duration: 0.6 * slow)) { self.flipTurn = 180 } }
+            try? await Task.sleep(for: .milliseconds(rm ? 150 : Int(300 * slow)))
+            guard !Task.isCancelled else { return }
+            // the midpoint: the other face comes round; the press lands as it does
+            self.shownFace = to
+            self.flipping = false
+            self.sync()
+            self.flipping = true
+            self.flipLanding?.landed = true
+            self.landFlip(events, at: before, face: to)
+            if rm { withAnimation(.linear(duration: 0.15)) { self.flipFade = 1 } }
+            try? await Task.sleep(for: .milliseconds(rm ? 150 : Int(300 * slow)))
+            guard !Task.isCancelled else { return }
+            self.flipTurn = 0   // 180° is the book again, the other face up
+            if crushed {
+                // the stone came down: once the crush has landed, the book turns back to how the level began
+                try? await Task.sleep(for: .milliseconds(rm ? 300 : 450))
+                guard !Task.isCancelled else { return }
+                if rm { withAnimation(.linear(duration: 0.15)) { self.flipFade = 0 } }
+                else { withAnimation(.easeInOut(duration: 0.6 * slow)) { self.flipTurn = 180 } }
+                try? await Task.sleep(for: .milliseconds(rm ? 150 : Int(300 * slow)))
+                guard !Task.isCancelled else { return }
+                self.shownFace = self.game.face
+                self.flipping = false
+                self.sync()
+                self.flipping = true
+                if rm { withAnimation(.linear(duration: 0.15)) { self.flipFade = 1 } }
+                try? await Task.sleep(for: .milliseconds(rm ? 150 : Int(300 * slow)))
+                guard !Task.isCancelled else { return }
+                self.flipTurn = 0
+            }
+            self.flipLanding = nil
+            self.flipping = false
+            self.sync()
+        }
+    }
+
+    /// Stop a turn in the air without landing it (undo, restart, another level): the caller restores and syncs.
+    private func cancelFlip() {
+        flipTask?.cancel(); flipTask = nil; flipLanding = nil
+        flipping = false; flipTurn = 0; flipFade = 1
+    }
+
+    /// Other input during a turn (a drag, a tap, Lean, a fold button): the turn ends now, on the face the game is on,
+    /// and its press is said if the midpoint had not come yet — the screen never shows a face the game is not on.
+    private func finishFlipNow() {
+        guard flipping, let l = flipLanding else { return }
+        cancelFlip()
+        sync()
+        if !l.landed { landFlip(l.events, at: l.before, face: l.face) }
+    }
+
+    private func landFlip(_ events: [GameEvent], at before: Cell, face: Int) {
+        pending = Pending(hadShade: !shade.isEmpty)
+        handle(events, from: .closed, at: before)
+        if events.contains(where: { if case .stamped = $0 { return true } else { return false } }) {
+            haptics.contact(CloseFeel(speed: CloseFeel.defaultSpeed)); sound.slap(CloseFeel(speed: CloseFeel.defaultSpeed))
+        }
+        if game.won { pending = Pending(); return }
+        let p = pending
+        pending = Pending(hadShade: !shade.isEmpty)
+        var parts = [L10n.t(face == 1 ? "turned" : "turnedBack")]
+        if p.fell.isEmpty {
+            if p.dead { parts.append(L10n.t("lost")) }
+            else if p.goal && game.goalInReach { parts.append(L10n.t("connected")) }
+            else if p.connected { parts.append(L10n.t(game.goalInReach ? "connected" : "reach.more")) }
+            else if p.lost { parts.append(L10n.t("lost")) }
+        }
+        if p.stamps.contains(where: { $0.kind == .glue }) { parts.append(L10n.t("glued")) }
+        for s in p.stamps where s.kind != .glue { parts.append(L10n.t(s.kind == .door ? "doorOpened" : "inkPrinted")) }
+        if !p.fell.isEmpty { if p.dead { parts.append(L10n.t("lost")) }; parts.append(p.fell) }
+        announce(parts.joined(separator: L10n.t("sep")))
     }
 
     // MARK: undo
@@ -1075,6 +1215,8 @@ final class GameModel {
 
     private func sync() {
         board = game.board; char = game.char; trail = game.trail; posture = game.posture; shade = game.shade; canUndo = game.canUndo
+        // mid-turn the tiles stay on the face still showing; they swap at 90° (flipBook sets shownFace at the midpoint)
+        if flipping { board.face = shownFace } else { shownFace = game.face }
         if stuck != game.stuck { stuck = game.stuck }
         refreshLock()
     }
@@ -1088,7 +1230,10 @@ final class GameModel {
             switch e {
             case .postureChanged(_, let to):
                 pending.mode = true
-                if to == .closed && !game.won { teachUnderOnClose() }
+                if to == .closed && !game.won {
+                    // three-page books: how the layers work, once (playtest-ch6 §2 #1); else the gap rule
+                    if board.pages > 2 && teachRule(Self.layerRuleKey, "layerRule") {} else { teachUnderOnClose() }
+                }
                 // 90°: the two tabs lock into a bridge: Impact .medium, a paper-tongue click, crease.glow 400 ms.
                 // No 「通」 seal here: that is the chapter's seal, for the map card (design-review-2 §2.2)
                 if to == .standing && hasTabBridge {
@@ -1113,10 +1258,10 @@ final class GameModel {
             case .shadeChanged:
                 pending.shade = true
             case .slid(let to):
+                if pending.carryFrom == nil { pending.carryFrom = here }
                 here = to
                 haptics.tick()
                 sound.note(row: to.r, timbre: .paper, pan: pan(of: to), volume: 0.45)   // one gliding note per square ridden
-                announce(L10n.t("slid", ["pos": pos(to)]))
             case .fell(let crushed):
                 // crushed: the closing goes on to the slap (stopping it left the book at ~155°, Codex review 5)
                 stopWalk(); stopRideFeel()
@@ -1132,6 +1277,15 @@ final class GameModel {
                 if board[to] == .glue { haptics.soft(); sound.glueTick(pan: pan(of: to)) }
             case .blocked:
                 break
+            case .flipped:
+                break   // said by flipBook, with what the press did
+            case .flipCrushed(let cause):
+                // the turned-to page has a stone over her square: the level starts again (flipBook turns the book back after)
+                stopWalk(); stopRideFeel()
+                beginCrush(at: here)
+                let text = L10n.t(cause == .glue ? "crushedGlue" : "crushedFlip")
+                show(text, speak: false)
+                pending.fell = text; pending.connected = false; pending.goal = false
             case .deadEnd:
                 // a vol. 2 dead end: 「有的路断了」, the falling two-note, a warning tap; undo and restart still work
                 pending.dead = true
@@ -1290,7 +1444,7 @@ final class GameModel {
         let a = Int(angle.rounded())
         let p = pending
         pending = Pending(hadShade: !shade.isEmpty)
-        if a == saidAngle && !p.mode && !p.connected && !p.shade && !p.lit && !p.dead && p.stamps.isEmpty && p.fell.isEmpty { return }
+        if a == saidAngle && !p.mode && !p.connected && !p.shade && !p.lit && !p.dead && p.stamps.isEmpty && p.fell.isEmpty && p.carryFrom == nil { return }
         saidAngle = a
         var parts: [String] = []
         switch posture {
@@ -1324,6 +1478,11 @@ final class GameModel {
         // the shut: 「胶把石头粘到了对页」 once however many stones moved, then the door (design-review-v2c1 §3)
         if p.stamps.contains(where: { $0.kind == .glue }) { parts.append(L10n.t("glued")) }
         for s in p.stamps where s.kind != .glue { parts.append(L10n.t(s.kind == .door ? "doorOpened" : "inkPrinted")) }
+        // a ridden shadow: where it took her, said once at the end of the ride (playtest-ch6 §2 #6)
+        if let c0 = p.carryFrom, c0.c != char.c {
+            let text = L10n.t("carried", ["from": c0.c + 1, "to": char.c + 1, "pos": pos(char)])
+            show(text, speak: false); parts.append(text)
+        }
         if p.shade {
             let gaps = shade.keys.filter(isGap).sorted { ($0.r, $0.c) < ($1.r, $1.c) }
             if !gaps.isEmpty {
@@ -1333,6 +1492,13 @@ final class GameModel {
                 let cells = shade.keys.sorted { ($0.r, $0.c) < ($1.r, $1.c) }.map(pos).joined(separator: L10n.t("list"))
                 parts.append(L10n.t("shadowOn", ["cells": cells]))
             } else if p.hadShade { parts.append(L10n.t("shadowGone")) }
+            // 「纸上的影子只是纸」 (playtest-ch6 §4): once, the first time in vol. 2 a shadow lies on paper of the bottom page
+            if index >= 25, shade.keys.contains(where: { !rules.isRight($0.c) && board[$0].isFloor }),
+               !UserDefaults.standard.bool(forKey: Self.shadowPaperKey) {
+                UserDefaults.standard.set(true, forKey: Self.shadowPaperKey)
+                let text = L10n.t("shadowOnPaper")
+                show(text, speak: false); parts.append(text)
+            }
         }
         announce(parts.joined(separator: L10n.t("sep")))
     }
@@ -1521,7 +1687,7 @@ final class GameModel {
             let want = Cell(here.c + dc, here.r + dr)
             return game.neighbours.contains { n in posture == .closed ? Cell(rules.proj(n.c), n.r) == want : n == want }
         }.map { L10n.t("dir.\($0.rawValue)") }
-        let page = L10n.t(rules.isRight(char.c) ? "page.folding" : "page.fixed")
+        let page = L10n.t(rules.isRight(char.c) ? (game.face == 1 ? "thirdPage" : "page.folding") : "page.fixed")
         announce(L10n.t("where", ["pos": pos(char), "page": page, "ways": ways.isEmpty ? L10n.t("nowhere") : ways.joined(separator: L10n.t("list")),
                                   "a": shownAngle, "goal": progressValue]))
     }

@@ -65,6 +65,8 @@ public struct Expectation: Sendable, Codable, Equatable {
     public var needsGlue: Bool?
     /// Vol. 2: closing really moves a stone across (glue as a trap).
     public var glueFires: Bool?
+    /// Vol. 2 ch. 6: unsolvable without turning the page (three-page levels only).
+    public var needsFlip: Bool?
     public var stepped15: Bool
     /// tools/check.js `analyse()` (design-difficulty.md §2); the Swift `Difficulty` port must agree.
     public var difficulty: Difficulty.Summary?
@@ -80,6 +82,7 @@ public struct Expectation: Sendable, Codable, Equatable {
         case "needsInk": return needsInk
         case "needsGlue": return needsGlue
         case "glueFires": return glueFires
+        case "needsFlip": return needsFlip
         default: return nil
         }
     }
@@ -154,37 +157,62 @@ public struct LevelPack: Sendable, Codable {
 
 public enum FoldError: Error, Equatable { case badTile(Character), noStart, ragged }
 
-/// The mutable grid of a level.
+/// The mutable grid of a level. A map row is 2N columns (left | right page) or 3N (left | right | third page, the
+/// back of the right leaf: vol. 2 ch. 6 「翻」, fold-proto design-ch6.md). Only two pages are visible: columns N..<2N
+/// read whichever page faces the left page (`face` 0 = right, 1 = third), so every rule works on the facing page.
 public struct Board: Sendable, Equatable {
     public var grid: [[Tile]]
     public let h: Int
+    /// Visible width: always 2N.
     public let w: Int
     public let start: Cell
+    /// 2 or 3.
+    public let pages: Int
+    /// Which page of the right leaf faces the left page: 0 = right page, 1 = third page.
+    public var face: Int = 0
+    let n: Int
 
     public init(level: Level, columnsPerPage n: Int = 4) throws {
         var start: Cell?
+        let width = level.map.first?.count ?? 0
+        guard width == 2 * n || width == 3 * n else { throw FoldError.ragged }
         grid = try level.map.enumerated().map { r, row in
-            guard row.count == 2 * n else { throw FoldError.ragged }
+            guard row.count == width else { throw FoldError.ragged }
             return try row.enumerated().map { c, ch in
                 guard let t = Tile(rawValue: ch) else { throw FoldError.badTile(ch) }
                 if t == .start { start = Cell(c, r) }
                 return t
             }
         }
-        guard let start else { throw FoldError.noStart }
+        guard let start, start.c < 2 * n else { throw FoldError.noStart }
         self.start = start
+        self.n = n
+        pages = width / n
         h = grid.count
         w = 2 * n
     }
 
+    /// The grid column behind a visible column (logic.js colOf).
+    @inline(__always) public func colOf(_ c: Int) -> Int { face == 1 && c >= n ? c + n : c }
+
     public subscript(c: Int, r: Int) -> Tile {
-        get { r >= 0 && r < h && c >= 0 && c < w ? grid[r][c] : .empty }
-        set { grid[r][c] = newValue }
+        get { r >= 0 && r < h && c >= 0 && c < w ? grid[r][colOf(c)] : .empty }
+        set { grid[r][colOf(c)] = newValue }
     }
     public subscript(cell: Cell) -> Tile { self[cell.c, cell.r] }
 
+    /// The first visible cell holding `t` (the facing page only).
     public func first(_ t: Tile) -> Cell? {
-        for r in 0..<h { for c in 0..<w where grid[r][c] == t { return Cell(c, r) } }
+        for r in 0..<h { for c in 0..<w where self[c, r] == t { return Cell(c, r) } }
+        return nil
+    }
+
+    /// Where a tile lies on any page: its visible cell and the face it shows on (nil = the left page, always visible).
+    public func locate(_ t: Tile) -> (cell: Cell, face: Int?)? {
+        for r in 0..<h { for c in 0..<grid[r].count where grid[r][c] == t {
+            if c < n { return (Cell(c, r), nil) }
+            return c < 2 * n ? (Cell(c, r), 0) : (Cell(c - n, r), 1)
+        } }
         return nil
     }
 }

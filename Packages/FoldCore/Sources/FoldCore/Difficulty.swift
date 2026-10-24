@@ -19,7 +19,7 @@ public struct Difficulty: Sendable {
     public static let parMax: [String: Int] = ["teach": 3, "easy": 3, "mid": 3, "hard": 4, "final": 4, "dark": 6]
     public static func range(of tier: String) -> ClosedRange<Int>? { tiers.first { $0.name == tier }?.range }
     /// The mechanics `combo` counts (check.js MECHANICS).
-    static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue"]
+    static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue", "needsFlip"]
 
     /// What levels.json ships under `expect.difficulty`.
     public struct Summary: Sendable, Codable, Equatable {
@@ -66,31 +66,34 @@ public struct Difficulty: Sendable {
     }
 
     private typealias State = FoldState
-    private struct Collapsed: Hashable { var c: Int; var r: Int; var feel: Feel; var st: Int }
+    private struct Collapsed: Hashable { var c: Int; var r: Int; var feel: Feel; var face: Int; var g: Int }
 
     /// How far the goal looks from here to a player who reads the board and not the rules (check.js hOf): Manhattan
     /// distance, in stacked columns when the book is closed, plus two for "on the other page" when it is open.
-    func apparent(_ s: FoldState, _ g: Cell?) -> Int {
-        guard let g else { return 0 }
-        if rules.posture(s.a) == .closed { return abs(rules.proj(s.c) - rules.proj(g.c)) + abs(s.r - g.r) }
-        return abs(s.c - g.c) + abs(s.r - g.r) + (rules.isRight(s.c) != rules.isRight(g.c) ? 2 : 0)
+    /// Plus two more when the goal is on a page that is not facing now (you would have to turn the book).
+    func apparent(_ s: FoldState, _ goal: (cell: Cell, face: Int?)?) -> Int {
+        guard let goal else { return 0 }
+        let g = goal.cell
+        let turned = goal.face != nil && goal.face != s.face ? 2 : 0
+        if rules.posture(s.a) == .closed { return abs(rules.proj(s.c) - rules.proj(g.c)) + abs(s.r - g.r) + turned }
+        return abs(s.c - g.c) + abs(s.r - g.r) + (rules.isRight(s.c) != rules.isRight(g.c) ? 2 : 0) + turned
     }
 
     public func analyse(_ level: Level) -> Report? {
-        guard let best = solver.solve(level), let grids = solver.grids(level) else { return nil }
-        let base = grids[0], goal = base.first(.goal)
+        guard let best = solver.solve(level), let B = solver.chain(level) else { return nil }
+        let base = B.base, goal = base.locate(.goal)
         let cfg = rules.config
         let angles = Solver.angles
         let shade = angles.filter { $0 >= cfg.shadeMin && $0 < cfg.foldMin }
-        func board(_ s: State) -> Board { grids[s.st] }
+        func board(_ s: State) -> Board { B.world(s) }
         func cell(_ s: State) -> Cell { Cell(s.c, s.r) }
         func won(_ s: State) -> Bool { rules.isWin(board(s), cell(s), rules.posture(s.a)) }
-        func moved(_ s: State, _ to: Cell, _ a: Double) -> State { State(c: to.c, r: to.r, a: a, st: solver.after(s, a)) }
+        func moved(_ s: State, _ to: Cell, _ a: Double) -> State { State(c: to.c, r: to.r, a: a, face: s.face, g: solver.after(B, s, a)) }
         func steps(_ s: State) -> [State] {
             let b = board(s)
-            return rules.neighbours(b, cell(s), rules.posture(s.a), rules.shadows(b, s.a)).map { State(c: $0.c, r: $0.r, a: s.a, st: s.st) }
+            return rules.neighbours(b, cell(s), rules.posture(s.a), rules.shadows(b, s.a)).map { State(c: $0.c, r: $0.r, a: s.a, face: s.face, g: s.g) }
         }
-        func collapse(_ s: State) -> Collapsed { Collapsed(c: s.c, r: s.r, feel: feel(s.a), st: s.st) }
+        func collapse(_ s: State) -> Collapsed { Collapsed(c: s.c, r: s.r, feel: feel(s.a), face: s.face, g: s.g) }
         /// Every state reachable by walking alone from s, in BFS order (check.js closure).
         func closure(_ s: State) -> [State] {
             var seen: Set<State> = [s], q = [s], i = 0
@@ -99,7 +102,7 @@ public struct Difficulty: Sendable {
         }
 
         // every reachable state, its edges both ways, the winning ones, and the ones a hinge move kills from solid paper
-        let start = State(c: base.start.c, r: base.start.r, a: 0, st: 0)
+        let start = solver.startOf(B)
         var nodes: Set<State> = [start], order: [State] = [start]
         var rev: [State: [State]] = [:], fwd: [State: [State]] = [:]
         var wins: Set<State> = [], traps: Set<State> = []
@@ -116,6 +119,11 @@ public struct Difficulty: Sendable {
                     continue
                 }
                 out.append(moved(s, to, a))
+            }
+            switch solver.flipOf(B, s) {   // turning the book onto a stone is a crush from paper
+            case .crushed: kills += 1; traps.insert(s)
+            case let .to(f): out.append(f)
+            case .notAllowed: break
             }
             out += steps(s)
             for n in out {
@@ -163,10 +171,21 @@ public struct Difficulty: Sendable {
                 for x in cl { if let to = solver.turn(board(x), cell(x), x.a, a) { let n = moved(x, to, a); if seen.insert(n).inserted { nexts.append(n) } } }
                 for n in nexts { rec(n, depth - 1, labels + [label(s.a, a)]) }
             }
+            var flips: [State] = [], seenF: Set<State> = []
+            for x in cl { if case let .to(f) = solver.flipOf(B, x), seenF.insert(f).inserted { flips.append(f) } }
+            for n in flips { rec(n, depth - 1, labels + ["flip"]) }
         }
         rec(start, min(best.cost, 3), [])   // exponential in par: past 3 forks are reported as 1 (check.js, postmortem §6)
 
-        let path = best.steps.map { State(c: $0.cell.c, r: $0.cell.r, a: $0.angle, st: $0.st) }
+        // the path's states, with their grids (the steps carry only st / face; replay the presses along the way)
+        var path: [State] = []
+        for (i, st) in best.steps.enumerated() {
+            if i == 0 { path.append(start); continue }
+            let p = path[i - 1]
+            var g = p.g
+            if st.face != p.face { g = B.press(p.g, st.face) } else if st.angle != p.a { g = solver.after(B, p, st.angle) }
+            path.append(State(c: st.cell.c, r: st.cell.r, a: st.angle, face: st.face, g: g))
+        }
         let bestCells = Set(best.steps.map(\.cell))
         let trap = traps.contains { bestCells.contains(cell($0)) }
         let explore = Set(nodes.map(collapse)).count
@@ -179,18 +198,18 @@ public struct Difficulty: Sendable {
         let forks = best.cost > 3 ? 1 : seqs.count, walk = best.walk
 
         // ---- v2: the naive player ----
-        let naive = greedy(level, grids: grids, goal: goal)
+        let naive = greedy(level, chain: B, goal: goal)
         // the goal-direct first move: from wherever you can walk at the start, the hinge move that makes the goal look
         // closest (ties: the fuller close — closing is what a player does first)
         var direct: (h: Int, a: Double, from: State)?
         for x in closure(start) { for a in angles where a != 0 {
-            let h = apparent(State(c: x.c, r: x.r, a: a, st: solver.after(x, a)), goal)
+            let h = apparent(State(c: x.c, r: x.r, a: a, face: 0, g: solver.after(B, x, a)), goal)
             if direct == nil || h < direct!.h || (h == direct!.h && a > direct!.a) { direct = (h, a, x) }
         } }
         var misdirect = false
         if let d = direct {
             if let to = solver.turn(board(d.from), cell(d.from), 0, d.a) {
-                let rest = solver.solve(level, angles: angles, from: State(c: to.c, r: to.r, a: d.a, st: solver.after(d.from, d.a)))
+                let rest = solver.solve(level, angles: angles, from: State(c: to.c, r: to.r, a: d.a, face: 0, g: solver.after(B, d.from, d.a)), chain: B)
                 misdirect = rest == nil || rest!.cost > best.cost
             } else { misdirect = true }                                   // crushed or dropped
         }
@@ -199,14 +218,14 @@ public struct Difficulty: Sendable {
         for i in 1..<max(1, path.count) {
             let p = path[i - 1], s = path[i]
             if s.a != p.a { if i + 1 < path.count && path[i + 1].a != s.a { undo += 1 } }
-            else if apparent(s, goal) > apparent(p, goal) { away += 1 }
+            else if s.face == p.face && apparent(s, goal) > apparent(p, goal) { away += 1 }
         }
         // twist: something must happen before the first close (it takes it away); the walked shadow was built
-        let before = solver.solve(level, angles: angles, from: State(c: start.c, r: start.r, a: 0, st: 1)) == nil
+        let before = solver.solve(level, angles: angles, from: State(c: start.c, r: start.r, a: 0, face: 0, g: B.press(0, 0)), chain: B) == nil
         let made = path.contains { s in
-            guard s.st == 1, feel(s.a) == .lean, !rules.isRight(s.c), !board(s)[cell(s)].isFloor,
+            guard s.g != 0, feel(s.a) == .lean, !rules.isRight(s.c), !board(s)[cell(s)].isFloor,
                   let src = rules.shadows(board(s), s.a)[cell(s)] else { return false }
-            return base[src, s.r] != .stone
+            return base.grid[s.r][s.face == 1 && src >= rules.n ? src + rules.n : src] != .stone
         }
         let structure = best.cost + (forks == 1 ? 1 : 0) + (walk >= 8 ? 1 : 0) + (trap ? 1 : 0) + (window <= 2 ? 1 : 0) + (combo >= 3 ? 1 : 0)
         let insight = 2 * (misdirect ? 1 : 0) + 2 * (deadEnds >= 1 ? 1 : 0) + (deadC.count >= 12 ? 1 : 0) + 2 * (before ? 1 : 0)
@@ -222,9 +241,8 @@ public struct Difficulty: Sendable {
     /// A naive player (check.js greedy): best-first search that always expands the state that looks closest to the
     /// goal, preferring fewer hinge moves on ties, then the earlier found (JS's stable sort). Returns how many
     /// collapsed states it visits before winning.
-    func greedy(_ level: Level, grids: [Board], goal: Cell?) -> Int {
-        let base = grids[0]
-        let start = State(c: base.start.c, r: base.start.r, a: 0, st: 0)
+    func greedy(_ level: Level, chain B: GridChain, goal: (cell: Cell, face: Int?)?) -> Int {
+        let start = solver.startOf(B)
         var seen: Set<State> = [start], visited: Set<Collapsed> = []
         var open: [(h: Int, hc: Int, seq: Int, s: State)] = [(apparent(start, goal), 0, 0, start)]
         var seq = 1
@@ -235,16 +253,17 @@ public struct Difficulty: Sendable {
                 if (x.h, x.hc, x.seq) < (y.h, y.hc, y.seq) { bi = i }
             }
             let (_, hc, _, s) = open.remove(at: bi)
-            visited.insert(Collapsed(c: s.c, r: s.r, feel: feel(s.a), st: s.st))
-            let b = grids[s.st], p = rules.posture(s.a), here = Cell(s.c, s.r)
+            visited.insert(Collapsed(c: s.c, r: s.r, feel: feel(s.a), face: s.face, g: s.g))
+            let b = B.world(s), p = rules.posture(s.a), here = Cell(s.c, s.r)
             if rules.isWin(b, here, p) { return visited.count }
             func push(_ n: State, _ cost: Int) {
                 if seen.insert(n).inserted { open.append((apparent(n, goal), cost, seq, n)); seq += 1 }
             }
-            for n in rules.neighbours(b, here, p, rules.shadows(b, s.a)) { push(State(c: n.c, r: n.r, a: s.a, st: s.st), hc) }
+            for n in rules.neighbours(b, here, p, rules.shadows(b, s.a)) { push(State(c: n.c, r: n.r, a: s.a, face: s.face, g: s.g), hc) }
             for a in Solver.angles where a != s.a {
-                if let to = solver.turn(b, here, s.a, a) { push(State(c: to.c, r: to.r, a: a, st: solver.after(s, a)), hc + 1) }
+                if let to = solver.turn(b, here, s.a, a) { push(State(c: to.c, r: to.r, a: a, face: s.face, g: solver.after(B, s, a)), hc + 1) }
             }
+            if case let .to(f) = solver.flipOf(B, s) { push(f, hc + 1) }
         }
         return visited.count
     }

@@ -24,7 +24,8 @@ final class ParTests: XCTestCase {
         XCTAssertEqual(Array(ids[5...12]), ["stand", "twoBridges", "standClose", "doorBridge", "inkBridge", "inkTwice", "crease", "rightBank"])
         XCTAssertEqual(Array(ids[19..<25]), ["twoShades", "bridgeShade", "inkShore", "stoneRain", "shadeDoor", "twoFigures"])
         // vol. 2 chapter 1 「胶」: the save IDs are the level IDs (design-review-v2c1 §3 存档), never positions
-        XCTAssertEqual(Array(ids[25...]), ["glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps",
+        XCTAssertEqual(Array(ids[35...]), ["turn", "overleaf", "twoFaces", "inlay", "bleed", "pressedFlower", "lastPage"])
+        XCTAssertEqual(Array(ids[25..<35]), ["glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps",
                                        "darkBack", "darkDoor", "darkInk"])
     }
 }

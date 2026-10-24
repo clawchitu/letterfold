@@ -684,7 +684,7 @@ private struct ChapterCard: View {
         let n = idx.filter { model.done.contains($0) }.count
         let delivered = model.isUnlocked(chapter) && n == idx.count && !idx.isEmpty
         let paper: Color = [PaperState.chapter1.color, PaperState.chapter2.color, PaperState.chapter3.color, PaperState.chapter4.color,
-                            Tok.paperLetter, Tok.paperLetter][min(5, chapter.id - 1)]
+                            Tok.paperLetter, Tok.paperLetter, Tok.paperLetter][min(6, chapter.id - 1)]
         let status = chapter.soon ? L10n.t(chapter.volume == 2 ? "ch.unwritten" : "ch.soon") : !model.isUnlocked(chapter) ? L10n.t("ch.sealed") : delivered ? L10n.t("ch.delivered") : L10n.t("ch.inProgress")
         let sealed = !chapter.soon && !model.isUnlocked(chapter)
         // each chapter's seal on its card (frame ch4-map): 达 · 通 · 影 · 成; 「成」 is the finale's cinnabar seal

@@ -1,7 +1,7 @@
 import XCTest
 
-/// A first-time player's run through the whole book in Chinese, all 35 levels: cover → 1-1 … 4-6 → 5-1 … 5-7 → the
-/// three 暗信 → map, with the letters and chapter openers between. Every fold is a real one-finger drag on the page,
+/// A first-time player's run through the whole book in Chinese, all 42 levels: cover → 1-1 … 4-6 → 5-1 … 5-7 → the
+/// three 暗信 → map → 6-1 … 6-7 (「翻」) → the sixth letter, with the letters and chapter openers between. Every fold is a real one-finger drag on the page,
 /// every walk a tap on a square. The moves come from PlaythroughPlan.swift, generated from the proto solver's shortest
 /// solutions and checked in FoldCore (UIPlanTests): angles the page can rest at, with tolerances a drag can hit.
 /// Set TEST_RUNNER_LF_SHOTS=/some/dir to also write each level's start and end as PNGs (QA passes).
@@ -73,6 +73,12 @@ class PlaythroughUITests: XCTestCase {
                 shut = false
             case .stand:
                 stand(fromClosed: shut); shut = false
+            case .flip:
+                // 「翻」 (vol. 2 ch. 6): the button shows only while the book is shut and a third page exists
+                let b = app.buttons["flip"]
+                XCTAssertTrue(b.waitForExistence(timeout: 3), "\(id): act \(k) the 翻 button")
+                b.tap()
+                Thread.sleep(forTimeInterval: 0.9)
             case let .lean(p, tol):
                 let got = f.lean(to: p, tol: tol)
                 XCTAssertLessThanOrEqual(abs(got - p), tol, "\(id): act \(k) leans to \(p)±\(tol), got \(got)")
@@ -132,6 +138,7 @@ class PlaythroughUITests: XCTestCase {
         ["twoShades", "bridgeShade", "inkShore", "stoneRain", "shadeDoor", "twoFigures"],
         ["glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps"],
     ]
+    static let chapter6 = ["turn", "overleaf", "twoFaces", "inlay", "bleed", "pressedFlower", "lastPage"]
 
     func testPlaythroughAllLevels() {
         app = XCUIApplication()
@@ -200,6 +207,26 @@ class PlaythroughUITests: XCTestCase {
         XCTAssertTrue(dark.waitForExistence(timeout: 4), "back on the map after the last 暗信")
         XCTAssertEqual(dark.value as? String, "3/3")
         shot("map-dark-done")
-        XCTAssertEqual(played, 35)
+
+        // vol. 2 chapter 6 「翻」: opens once all of chapter 5 is delivered (strict unlock; the 暗信 are not required)
+        enterChapter(6)
+        for (li, id) in Self.chapter6.enumerated() {
+            let code = "6-\(li + 1)"
+            let name = app.descendants(matching: .any)["level.name"]
+            XCTAssertTrue(name.waitForExistence(timeout: 4) && name.label.contains(code), "\(code) \(id): \(name.label)")
+            Thread.sleep(forTimeInterval: 0.3)
+            shot("\(code)-start")
+            play(id, level(id))
+            played += 1
+            if li == Self.chapter6.count - 1 {
+                // the chapter end: either the win line and then the letter, or the letter by itself (a finale)
+                Thread.sleep(forTimeInterval: 0.45)
+                if app.buttons["win.next"].waitForExistence(timeout: 4) { won(code); letter(6) } else { letter(6, auto: true) }
+                shot("map-ch6-done")
+            } else {
+                won(code)
+            }
+        }
+        XCTAssertEqual(played, 42)
     }
 }

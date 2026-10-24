@@ -8,7 +8,7 @@ final class SolverTests: XCTestCase {
     override func setUpWithError() throws { pack = try LevelPack.bundled() }
 
     func testPackDecodes() throws {
-        XCTAssertEqual(pack.levels.count, 35)
+        XCTAssertEqual(pack.levels.count, 42)
         XCTAssertEqual(pack.levels.filter(\.isOptional).map(\.id), ["darkBack", "darkDoor", "darkInk"])
         XCTAssertEqual(pack.config, .standard)
         for lv in pack.levels { XCTAssertNoThrow(try Board(level: lv), lv.id) }
@@ -82,7 +82,7 @@ final class DifficultyTests: XCTestCase {
         }
         // 5-1 – 5-3 are the ramp and never punish closing; 5-4 … 5-7 and the 暗信 do, and their dead ends are deep
         for lv in pack.levels[25..<28] { XCTAssertEqual(d.analyse(lv)?.dead, 0, lv.id) }
-        for lv in pack.levels.suffix(7) {
+        for lv in pack.levels[28..<35] {
             let r = try XCTUnwrap(d.analyse(lv), lv.id)
             XCTAssertTrue(r.before && r.misdirect && r.deadEnds >= 1, "\(lv.id): before \(r.before) misdirect \(r.misdirect) deadEnds \(r.deadEnds)")
         }
@@ -119,10 +119,10 @@ final class DifficultyTests: XCTestCase {
     func testTheCurve() throws {
         XCTAssertEqual(pack.levels.map { $0.len ?? -1 },
                        [5, 13, 16, 16, 17, 10, 16, 17, 17, 18, 18, 19, 20, 5, 13, 16, 17, 16, 18, 11, 12, 18, 19, 20, 19,
-                        6, 6, 10, 17, 17, 18, 20, 20, 19, 22])
+                        6, 6, 10, 17, 17, 18, 20, 20, 19, 22, 6, 9, 16, 16, 18, 19, 20])
         let vol1 = pack.levels.prefix(25).compactMap(\.len)
         XCTAssertGreaterThanOrEqual(Double(vol1.reduce(0, +)) / Double(vol1.count), 15)
-        for range in [0..<5, 5..<13, 13..<19, 19..<25, 25..<32] {
+        for range in [0..<5, 5..<13, 13..<19, 19..<25, 25..<32, 35..<42] {
             let ch = Array(pack.levels[range])
             XCTAssertLessThanOrEqual(ch.compactMap { $0.expect?.changes }.reduce(0, +), 24, "chapter \(range): over the chapter budget")
             if range.lowerBound != 19 { XCTAssertEqual(ch.first?.tier, "teach", "chapter \(range) starts at teach") }
@@ -140,7 +140,7 @@ final class DifficultyTests: XCTestCase {
             XCTAssertEqual(Cell(sol[0][0], sol[0][1]), g.char, lv.id)
             for (i, s) in sol.enumerated().dropFirst() {
                 let cell = Cell(s[0], s[1]), a = Double(s[2])
-                if a != g.angle { g.setAngle(a) } else { XCTAssertNotEqual(g.step(to: cell), [.blocked], "\(lv.id) step \(i) to \(cell)") }
+                if s.count > 4 && s[4] != g.face { XCTAssertNotEqual(g.flip(), [.blocked], "\(lv.id) flip \(i)") } else if a != g.angle { g.setAngle(a) } else { XCTAssertNotEqual(g.step(to: cell), [.blocked], "\(lv.id) step \(i) to \(cell)") }
                 XCTAssertEqual(g.char, cell, "\(lv.id) state \(i)")
                 XCTAssertEqual(g.closedOnce, s[3] == 1, "\(lv.id) state \(i) stamped")
             }
@@ -410,7 +410,7 @@ final class ChapterFourTests: XCTestCase {
         let lv = try level(id), sol = try XCTUnwrap(lv.solution)
         let g = try FoldGame(level: lv)
         for s in sol.prefix(n ?? sol.count).dropFirst() {
-            if Double(s[2]) != g.angle { play(g, to: Double(s[2])) } else { g.step(to: Cell(s[0], s[1])) }
+            if s.count > 4 && s[4] != g.face { g.flip() } else if Double(s[2]) != g.angle { play(g, to: Double(s[2])) } else { g.step(to: Cell(s[0], s[1])) }
         }
         return (g, sol)
     }

@@ -35,7 +35,6 @@ const NATIVE = {
   'ch.3': ['影', 'Shade', '影', '그림자'],
   'ch.4': ['岸', 'Shore', '岸', '강가'],
   'ch.5': ['胶', 'Glue', '糊', '풀'],
-  'ch.6': ['翻页', 'Turn the Page', 'ページをめくる', '책장 넘기기'],
   // 0.1 (13): vol. 2 《翻页》 (design-review-v2c1 §3 地图)
   'vol.2': ['翻页', 'Turn the Page', 'ページをめくる', '책장 넘기기'],
   'map.vol1Back': ['卷一《两岸》', 'Book One: Both Banks', '第一巻『両岸』', '제1권 《양안》'],
@@ -165,6 +164,21 @@ const NATIVE = {
   'kind.i.ch5': ['墨池（湿墨）', 'ink pool (wet ink)', '墨池（濡れた墨）', '먹물 웅덩이(젖은 먹)'],
   'kind.p.ch5': ['笺条（纸片）', 'ruled slip (tab)', '便箋の切れ端（紙片）', '편지지 조각(종이 조각)'],
   'kind.G.ch5': ['信封（终点）', 'envelope (goal)', '封筒（ゴール）', '봉투(도착점)'],
+  // 0.1 (16): chapter 6 「翻」 (fold-proto design-ch6.md): the turn's VoiceOver action / hint, the carry message at the
+  // final position (playtest-ch6 §2 #6), skinned kinds (ch. 6 reuses ch. 5's 信笺 objects). ja / ko: TODO-native-check.
+  'ch.6': ['翻', 'Turn', 'めくる', '넘김'],
+  carried: ['影子把你从第{from}列带到第{to}列（你现在在这里）', 'The shadow carried you from column {from} to column {to} (you are there now)', '影がきみを{from}列目から{to}列目へ運んだ（いまはそこにいる）', '그림자가 당신을 {from}열에서 {to}열로 옮겼어요(지금 거기 있어요)'],
+  // the next chapter, not yet written (map card)
+  'ch.7': ['待续', 'To Be Continued', 'つづく', '다음 이야기'],
+  'flip.action': ['翻过来', 'Turn over', '裏返す', '뒤집기'],
+  'flip.hint': ['合上时把书翻个面', 'Turns the closed book over', '閉じた本を裏返す', '닫힌 책을 뒤집어요'],
+  'kind.x.ch6': ['镇石（石头）', 'paperweight (stone)', '文鎮石（石）', '문진돌(돌)'],
+  'kind.D.ch6': ['闸（锁着的门）', 'sluice (locked door)', '水門（鍵のかかった扉）', '수문(잠긴 문)'],
+  'kind.o.ch6': ['闸（开着的门）', 'sluice (open door)', '水門（開いた扉）', '수문(열린 문)'],
+  'kind.k.ch6': ['符（钥匙）', 'token (key)', '割符（鍵）', '부절(열쇠)'],
+  'kind.i.ch6': ['墨池（湿墨）', 'ink pool (wet ink)', '墨池（濡れた墨）', '먹물 웅덩이(젖은 먹)'],
+  'kind.p.ch6': ['笺条（纸片）', 'ruled slip (tab)', '便箋の切れ端（紙片）', '편지지 조각(종이 조각)'],
+  'kind.G.ch6': ['信封（终点）', 'envelope (goal)', '封筒（ゴール）', '봉투(도착점)'],
 };
 const A11Y = /^(kind|noun|pos|col|here|fallsHere|doorKey|crushedHere|inkPrints|tabBridge|stoneShadow|keyOpens|inkTo|covers|book\.|connected|lost|doorOpened|inkPrinted|shadow|intro|elsewhere|stack|already|arrived|cantReach|no\.|slid|undone|win$|dir\.|goal|where|leftPage|rightPage|nowhere|nothingToUndo|lv|walkHere|sep|list|semi|angle$|step|foldLessLabel|foldMoreLabel)/;
 
@@ -180,16 +194,46 @@ function catalog(entries) {
   return JSON.stringify({ sourceLanguage: 'en', strings, version: '1.0' }, null, 2) + '\n';
 }
 
+// 0.1 (16): ch. 6 strings fold-proto has only in zh / en (or in an older form) for ja / ko. Marked TODO-native-check in
+// the catalog comments until a native speaker has read them.
+const CH6_NATIVE = ['ch.6', 'ch.7', 'carried', 'flip.action', 'flip.hint'];
+const STRING_FIX = {
+  ja: {
+    'chHead.6': '六 · めくる',
+    'no.flip.leaf': 'めくる頁の上に立っている——閉じたまま左頁へ歩いてから、めくる',
+    layerRule: '閉じたまま歩くとき：両方の頁が紙のところでは、いまの頁にとどまる。片方だけが紙のところで、その頁へ移る',
+    shadowOnPaper: '紙の上の影は、ただの紙。きみを運べるのは、すき間の上の影だけ',
+    'why.stoneTop': '上の頁の石がこの重なりをふさいでいる',
+    'why.stoneUnder': 'この重なりの下に左頁の石がある',
+  },
+  ko: {
+    'no.flip.leaf': '넘길 페이지 위에 서 있어요. 닫은 채 왼쪽 페이지로 걸어간 뒤 넘기세요',
+    layerRule: '닫은 채 걸을 때: 두 페이지가 모두 종이인 곳에서는 지금 페이지에 머물러요. 한쪽만 종이인 곳에서만 그 페이지로 옮겨 가요',
+    shadowOnPaper: '종이 위 그림자는 그냥 종이예요. 당신을 실어 나르는 건 틈 위의 그림자뿐이에요',
+    'why.stoneTop': '위 페이지의 돌이 이 겹을 막고 있어요',
+    'why.stoneUnder': '이 겹 아래에 왼쪽 페이지의 돌이 있어요',
+  },
+};
+const HELP_ADD = {
+  ja: ['O：開く。', 'O：開く。T：めくる（閉じているとき）。閉じたまま歩くとき、両方の頁が紙なら同じ頁にとどまり、片方だけが紙なら頁を移る。紙の上の影は、ただの紙。'],
+  ko: ['O: 열기.', 'O: 열기. T: 넘기기(닫혀 있을 때). 닫은 채 걸을 때 두 페이지가 모두 종이면 그 페이지에 머물고, 한쪽만 종이일 때만 페이지를 옮겨요. 종이 위 그림자는 그냥 종이예요.'],
+};
+const CHECKED = new Set(['help', ...Object.keys(STRING_FIX.ja), ...Object.keys(STRING_FIX.ko)]);
+for (const [l, table] of Object.entries(STRING_FIX)) Object.assign(src.strings[l], table);
+for (const [l, [from, to]] of Object.entries(HELP_ADD)) {
+  if (!src.strings[l].help.includes(to)) src.strings[l].help = src.strings[l].help.replace(from, to);
+}
+
 const ui = {};
 for (const key of Object.keys(src.strings.en)) {
   const values = {};
   for (const l of Object.keys(LANG)) values[l] = src.strings[l][key] ?? src.strings.en[key];
   const params = [...new Set((values.en.match(/\{\w+/g) || []).map((p) => p.slice(1)))];
   const where = A11Y.test(key) ? 'VoiceOver / announcement' : 'UI';
-  ui[key] = { comment: `${where}. From fold-proto i18n.js.` + (params.length ? ` Placeholders: ${params.map((p) => '{' + p + '}').join(' ')}` : ''), values };
+  ui[key] = { comment: `${where}. From fold-proto i18n.js.` + (params.length ? ` Placeholders: ${params.map((p) => '{' + p + '}').join(' ')}` : '') + (CHECKED.has(key) ? ' ja/ko: TODO-native-check.' : ''), values };
 }
 for (const [key, [zh, en, ja, ko]] of Object.entries(NATIVE)) {
-  ui[key] = { comment: (A11Y.test(key) ? 'VoiceOver' : 'UI') + '. Native app only.', values: { zh, en, ja, ko } };
+  ui[key] = { comment: (A11Y.test(key) ? 'VoiceOver' : 'UI') + '. Native app only.' + (CH6_NATIVE.includes(key) || key.endsWith('.ch6') ? ' ja/ko: TODO-native-check.' : ''), values: { zh, en, ja, ko } };
 }
 fs.writeFileSync(path.join(outDir, 'Localizable.xcstrings'), catalog(ui));
 
@@ -206,6 +250,30 @@ const LEVEL_FIX = {
 };
 for (const [id, langs] of Object.entries(LEVEL_FIX)) for (const [l, v] of Object.entries(langs)) src.levelTexts[l][id] = v;
 
+// 0.1 (16): ch. 6 「翻」 level copy for ja / ko (fold-proto falls back to en). TODO-native-check.
+const LEVEL_CH6 = {
+  ja: {
+    turn: ['めくる', 'この頁に手紙はない。', '閉じて、裏返して、閉じたまま下へ歩く。5行目は左頁がすき間で三枚目の頁が紙——その重なりへ歩けば三枚目の頁に移る。手紙はそこに。', '閉じた本は、裏返すこともできる。'],
+    overleaf: ['裏面', '立っている頁は、めくれない。', '閉じる。閉じたまま歩くとき、両方の頁が紙ならいまの頁にとどまり、片方だけが紙の重なりでだけ頁を移る。右頁がすき間の重なりへ歩けば左頁に移る——そこでめくる。それから閉じたまま下まで歩く。彼女は三枚目の頁の角にいる。', 'めくる前に、左頁へ。'],
+    twoFaces: ['両面', '灯りが照らすのは、この面。', '左頁を左下の角まで歩き、60°まで傾ける。石の影が4列目につながる。影をたどって3行目へ、閉じて裏返し、閉じたまま上まで歩く——手紙は三枚目の頁のいちばん上の行。', 'まずこの面の影を使ってから、めくる。'],
+    inlay: ['間紙', '石が二つ、角度は一つ。', '左頁3行目の左端まで歩き、40°まで傾ける。二つの石の影が一緒にいちばん上の行を敷く。右上の紙まで歩いて、閉じて裏返し、閉じたまま下へ二枡。', 'いちばん上の行は、閉じてではなく歩いて行く。'],
+    bleed: ['裏写り', '裏の字が透けて見える。', '先に閉じないこと：角の糊が左上の石を引き取り、影も消える。左頁をいちばん上の行の2列目（糊の上）まで歩き、55°まで傾ける。影が3列目2行目に落ちる。踏んで、本を70°まで開く。影がきみを4列目へ運ぶ。下へ一枡、3行目で閉じて裏返し、閉じたまま3番目の重なりのいちばん上へ。', 'まだ閉じないで。'],
+    pressedFlower: ['押し花', '頁の角に糊。急がないで。', '先に閉じると糊が石を引き寄せ、道が切れる。はじめの位置から左下の角へ歩き、40°まで傾けて影に乗り、60°まで開く。影がきみを2列目へ運ぶ。4列目2行目まで歩いて、閉じて裏返し、閉じたまま下まで。', '閉じる前に、影を歩ききる。'],
+    lastPage: ['最後の頁', '最後の頁まで、めくる。', '右頁をいちばん下の行まで歩いて、そこで閉じる。糊が左頁の石を引き取る。閉じたまま左頁の6行目3列目まで歩き、40°まで開く。川を渡ったばかりの石が影を落とす。それをたどって左の細い道へ、5行目1列目まで上る。そこで閉じて裏返し、閉じたまま1列目を上まで——彼女は最後の頁の右上の角にいる。', '糊に取られた石は、影も向こう岸へ連れていく。'],
+  },
+  ko: {
+    turn: ['넘김', '이 페이지에는 편지가 없다.', '닫고, 뒤집고, 닫은 채 아래로 걸어요. 5행은 왼쪽 페이지가 틈이고 세 번째 페이지가 종이예요. 그 겹으로 가면 세 번째 페이지로 옮겨 가요. 편지는 거기 있어요.', '닫힌 책은 뒤집을 수도 있다.'],
+    overleaf: ['뒷면', '서 있는 페이지는 넘어가지 않는다.', '닫아요. 닫은 채 걸을 때 두 페이지가 모두 종이면 지금 페이지에 머물고, 한쪽만 종이인 겹에서만 페이지를 옮겨요. 오른쪽 페이지가 틈인 겹으로 가면 왼쪽 페이지에 닿아요. 거기서 넘겨요. 그다음 닫은 채 맨 아래까지 걸어요. 그녀는 세 번째 페이지 모서리에 있어요.', '넘기기 전에 먼저 왼쪽 페이지로.'],
+    twoFaces: ['양면', '등불이 비추는 건 이 면이다.', '왼쪽 페이지를 따라 왼쪽 아래 모서리까지 가서 60°로 기울여요. 돌의 그림자가 4열에 이어져요. 그림자를 따라 3행까지 가서 닫고 뒤집은 뒤, 닫은 채 맨 위까지 걸어요. 편지는 세 번째 페이지 맨 윗줄에 있어요.', '먼저 이 면의 그림자를 쓰고, 그다음 넘겨요.'],
+    inlay: ['속지', '돌 둘, 각도 하나.', '왼쪽 페이지 3행 왼쪽 끝까지 가서 40°로 기울여요. 두 돌의 그림자가 함께 맨 윗줄을 깔아요. 오른쪽 위 종이까지 걸어가 닫고 뒤집은 뒤, 닫은 채 아래로 두 칸.', '맨 윗줄은 닫아서가 아니라 걸어서 간다.'],
+    bleed: ['배어 나온 글', '뒷면의 글이 비쳐 보인다.', '먼저 닫지 마세요. 모서리의 풀이 왼쪽 위 돌을 붙여 가면 그림자도 사라져요. 왼쪽 페이지를 따라 맨 윗줄 2열(풀 위)까지 가서 55°로 기울여요. 그림자가 3열 2행에 떨어져요. 밟고 올라선 뒤 책을 70°까지 펼쳐요. 그림자가 당신을 4열로 옮겨요. 아래로 한 칸, 3행에서 닫고 뒤집은 뒤, 닫은 채 세 번째 겹 맨 위까지.', '아직 닫지 마세요.'],
+    pressedFlower: ['압화', '페이지 모서리에 풀. 서두르지 마.', '먼저 닫으면 풀이 돌을 끌어와 길이 끊겨요. 출발점에서 왼쪽 아래 모서리까지 가서 40°로 기울여 그림자에 올라선 뒤 60°까지 펼쳐요. 그림자가 당신을 2열로 옮겨요. 4열 2행까지 걸어가 닫고 뒤집은 뒤, 닫은 채 맨 아래까지.', '닫기 전에 그림자를 끝까지 걸어요.'],
+    lastPage: ['마지막 페이지', '마지막 페이지까지 넘겨라.', '오른쪽 페이지를 맨 아랫줄까지 걸어가 거기서 닫아요. 풀이 왼쪽 페이지의 돌을 붙여 가요. 닫은 채 왼쪽 페이지 6행 3열까지 가서 40°까지 펼쳐요. 막 강을 건넌 돌이 그림자를 드리워요. 그것을 따라 왼쪽 좁은 길로, 5행 1열까지 올라가요. 거기서 닫고 뒤집은 뒤, 닫은 채 1열을 따라 맨 위까지. 그녀는 마지막 페이지 오른쪽 위 모서리에 있어요.', '풀에 붙어 간 돌은 그림자도 데리고 강을 건넌다.'],
+  },
+};
+for (const [l, table] of Object.entries(LEVEL_CH6)) for (const [id, v] of Object.entries(table)) if (!src.levelTexts[l][id]) src.levelTexts[l][id] = v;
+const LEVEL_CHECKED = new Set(Object.keys(LEVEL_CH6.ja));
+
 for (const id of Object.keys(src.levelTexts.en)) {
   // an optional 4th entry: the first rung of the 「?」 ladder (design-review-v2c1 §2), shown before the hint
   ['name', 'line', 'hint', 'hint1'].forEach((part, i) => {
@@ -213,7 +281,7 @@ for (const id of Object.keys(src.levelTexts.en)) {
     const values = {};
     for (const l of Object.keys(LANG)) values[l] = (src.levelTexts[l][id] || src.levelTexts.en[id])[i] ?? src.levelTexts.en[id][i];
     const what = { name: 'title', line: 'one-line teaser', hint: 'hint', hint1: 'first hint (the 「?」 ladder, before the hint)' }[part];
-    lv[`${id}.${part}`] = { comment: `Level "${id}": ${what}. From fold-proto i18n.js.`, values };
+    lv[`${id}.${part}`] = { comment: `Level "${id}": ${what}. From fold-proto i18n.js.` + (LEVEL_CHECKED.has(id) ? ' ja/ko: TODO-native-check.' : ''), values };
   });
 }
 fs.writeFileSync(path.join(outDir, 'Levels.xcstrings'), catalog(lv));
