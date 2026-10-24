@@ -90,6 +90,10 @@ struct BookView: View {
         let x0 = (available.width - book.width) / 2
         ZStack(alignment: .topLeading) {
             BookBody(model: model, geo: geo, rotorSpace: rotorSpace)
+                // 「翻」 (ch. 6): the whole closed book turns over about the vertical axis; past 90° the content is
+                // mirrored back so the new face reads the right way round. Reduce Motion: a crossfade (flipFade).
+                .modifier(TurnOver(angle: model.flipTurn))
+                .opacity(model.flipFade)
                 .id(settings.motionReduced ? Int(model.angle.rounded()) : -1)
                 .transition(.opacity)
                 .frame(width: book.width, height: book.height)
@@ -432,6 +436,7 @@ private struct FoldControl: View {
                 }
             }
             .accessibilityActions { if model.canLean { Button(L10n.t("pre.leanLabel")) { model.lean() } } }
+            .accessibilityActions { if model.board.pages == 3 { Button(L10n.t("flip.action")) { model.flipAccessibilityAction() } } }
             .accessibilityAction(named: L10n.t("closeAllLabel")) { model.foldTo(180) }
             .accessibilityAction(named: L10n.t("openAllLabel")) { model.foldTo(0) }
             .accessibilityAction(named: L10n.t("undo")) { model.undo() }
@@ -597,6 +602,7 @@ private struct TileAccessibility: ViewModifier {
             .accessibilityAction(named: L10n.t("foldMoreLabel")) { model.foldBy(1) }
             .accessibilityAction(named: L10n.t("foldLessLabel")) { model.foldBy(-1) }
             .accessibilityActions { if model.canLean { Button(L10n.t("pre.leanLabel")) { model.lean() } } }
+            .accessibilityActions { if model.board.pages == 3 { Button(L10n.t("flip.action")) { model.flipAccessibilityAction() } } }
             .accessibilityAction(named: L10n.t("closeAllLabel")) { model.foldTo(180) }
             .accessibilityAction(named: L10n.t("openAllLabel")) { model.foldTo(0) }
             .accessibilityAction(named: L10n.t("undo")) { model.undo() }
@@ -778,6 +784,7 @@ private struct FrontFace: View {
             PageSheet(horizontal: geo.horizontal, isFixed: false, color: model.paper.color)
             if model.paper.ruled && !hc { RuledGrid(tile: geo.tile, gap: geo.gap, pad: geo.pad, across: s.slotsAcross, down: s.slotsDown) }
             MarginLayer(model: model, geo: geo, page: .folding)
+            if model.shownFace == 1 { TurnedFace(model: model, geo: geo, bleed: true) }
             // the top page stays tappable (and in VoiceOver) while it lies flat or stands: 2-1's goal is up there
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: targets && (angle < 20 || model.posture == .standing))
             ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .folding),
@@ -854,6 +861,7 @@ private struct BackFace: View {
                     .allowsHitTesting(false)
             }
             if model.paper.ruled && !hc && !closed { RuledGrid(tile: geo.tile, gap: geo.gap, pad: geo.pad, across: s.slotsAcross, down: s.slotsDown, opacity: 0.07) }
+            if closed && model.shownFace == 1 { TurnedFace(model: model, geo: geo, bleed: false) }
             // chapter 3 leaning: the hanging lantern shows through the lit page, where the glow starts (review-skins §4.4)
             if backlit { MarginLayer(model: model, geo: geo, page: .folding, back: true, only: .lantern) }
             if backlit && lit > 0 && stones { CanopyStones(model: model, geo: geo, lit: lit) }
@@ -1015,6 +1023,59 @@ private struct StackTargets: View {
 }
 
 /// One page of paper with its half of the valley at the crease.
+/// Ch. 6 「翻」 (design-ch6 §2, Chitu 10/24): the third page is the back of the right leaf. A shade warmer (sepia .18),
+/// and the front's writing bleeds through, mirrored because it is seen from behind, at 0.14 — drawn from the front
+/// page's own tiles (grid columns N..2N−1), no grid lines. High contrast: no tint, no bleed; a 3 pt dashed inner frame
+/// says which face this is instead. `bleed` false on the shut book (the stacks are drawn over it).
+private struct TurnedFace: View {
+    let model: GameModel
+    let geo: BookGeometry
+    var bleed = true
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        let s = geo.spread, page = geo.pageSize
+        if hc {
+            Rectangle().strokeBorder(.black, style: StrokeStyle(lineWidth: 3, dash: [7, 5]))
+                .padding(6).allowsHitTesting(false).accessibilityHidden(true)
+        } else {
+            ZStack(alignment: .topLeading) {
+                Color(hex: 0xB98A4E).opacity(0.16).blendMode(.multiply)
+                if bleed {
+                    // the front page's ink, mirrored across this page's own vertical axis
+                    ZStack(alignment: .topLeading) {
+                        ForEach(0..<s.slotsAcross, id: \.self) { x in ForEach(0..<s.slotsDown, id: \.self) { y in
+                            let c = s.cell(page: .folding, x: x, y: y)
+                            let t = c.r >= 0 && c.r < model.board.h && c.c >= 0 && c.c < model.board.grid[c.r].count ? model.board.grid[c.r][c.c] : .empty
+                            if t != .empty {
+                                let p = geo.center(x: x, y: y)
+                                RoundedRectangle(cornerRadius: t == .stone ? geo.tile * 0.3 : 3)
+                                    .fill(Tok.ink900.opacity(t == .stone || t == .door ? 0.9 : 0.45))
+                                    .frame(width: geo.tile * (t == .stone ? 0.62 : 0.86), height: geo.tile * (t == .stone ? 0.62 : 0.86))
+                                    .position(x: page.width - p.x, y: p.y)
+                            }
+                        } }
+                    }
+                    .opacity(0.14)
+                    .blur(radius: 1.2)
+                }
+            }
+            .frame(width: page.width, height: page.height, alignment: .topLeading)
+            .allowsHitTesting(false).accessibilityHidden(true)
+        }
+    }
+}
+
+/// The whole book turning over (ch. 6): animatable, so the mirror that keeps the far side readable switches at the
+/// interpolated 90°, not when the model's target jumps to 180°.
+private struct TurnOver: ViewModifier, Animatable {
+    var angle: Double
+    var animatableData: Double { get { angle } set { angle = newValue } }
+    func body(content: Content) -> some View {
+        content.scaleEffect(x: angle > 90 ? -1 : 1, y: 1)
+            .rotation3DEffect(.degrees(angle), axis: (x: 0, y: 1, z: 0), perspective: 0.5)
+    }
+}
+
 private struct PageSheet: View {
     let horizontal: Bool
     let isFixed: Bool

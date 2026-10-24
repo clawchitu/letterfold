@@ -80,6 +80,8 @@ final class Haptics {
     func seal() { if !play([tap(0, 0.6, 0.15)]) { impactSoft.impactOccurred(intensity: 0.6 * scale) } }
     func success() { guard scale > 0 else { return }; notice.notificationOccurred(.success) }
     /// Bumping into a wall / out of reach: Impact .light 0.4, dull.
+    /// 「翻」: the closed book turned over in the hand — two soft taps 60 ms apart (the web's [20, 40, 20]).
+    func turn() { if !play([tap(0, 0.5, 0.25), tap(0.06, 0.5, 0.25)]) { impactSoft.impactOccurred(intensity: 0.5 * scale) } }
     func nope() { if !play([tap(0, 0.4, 0.1)]) { impactLight.impactOccurred(intensity: 0.4 * scale) } }
     func undo() { tick() }
     /// Crushed under a stone (design-review-ch3 §2, §6.1): Impact .rigid, the same instant as the 「啪」.

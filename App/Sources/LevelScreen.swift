@@ -87,6 +87,8 @@ struct LevelScreen: View {
                     .transition(.opacity)
                 } else if settings.showButtons {
                     FooterButtons(model: model)
+                } else if model.canShowFlip {
+                    FlipButton(model: model).transition(.opacity)
                 }
             }
             .padding(.bottom, 6)
@@ -112,7 +114,7 @@ struct LevelScreen: View {
     /// 二 · 立: the first time chapter 2 opens, its opener plays once (frame 6-A). -noOpener YES skips it.
     private func checkOpener() {
         let d = UserDefaults.standard
-        let key = ["stand": "opener.2", "shadow": "opener.3", "twoShades": "opener.4", "glue": "opener.5"][model.level.id]
+        let key = ["stand": "opener.2", "shadow": "opener.3", "twoShades": "opener.4", "glue": "opener.5", "turn": "opener.6"][model.level.id]
         guard let key, !d.bool(forKey: key), !d.bool(forKey: "noOpener") else { return }
         d.set(true, forKey: key)
         opener = true
@@ -183,6 +185,12 @@ private struct FooterButtons: View {
             }
             FooterButton(glyph: "⊓", title: L10n.t("closeAll"), label: L10n.t("closeAllLabel"), id: "fold.close") { model.foldTo(180) }
             FooterButton(glyph: "⊔", title: L10n.t("openAll"), label: L10n.t("openAllLabel"), id: "fold.open") { model.foldTo(0) }
+            if model.hasThirdPage {
+                // 「翻」 in a three-page book: always here, so the refusal (open / on the leaf) can be heard
+                FooterButton(glyph: "⇋", title: L10n.t("pre.flip"), label: L10n.t("pre.flip"), id: "flip") { model.flipBook() }
+                    .accessibilityHint(L10n.t("flip.hint"))
+                    .keyboardShortcut("t", modifiers: [])
+            }
             FooterButton(glyph: "↺", title: L10n.t("undo"), label: L10n.t("undo"), id: "undo") { model.undo() }
                 .disabled(!model.canUndo)
         }
@@ -191,6 +199,31 @@ private struct FooterButtons: View {
         .padding(.horizontal, 12)
         .accessibilityElement(children: .contain)
         .accessibilitySortPriority(20_000)
+    }
+}
+
+/// 「翻」 (vol. 2 ch. 6): an ink-on-paper button under the shut book of a three-page level.
+private struct FlipButton: View {
+    let model: GameModel
+    var body: some View {
+        Button { model.flipBook() } label: {
+            HStack(spacing: 8) {
+                Text("⇋").font(.system(size: 17, weight: .semibold))
+                Text(L10n.t("pre.flip")).font(FontBook.shared.songti(.bold, 20, relativeTo: .title3))
+            }
+            .foregroundStyle(Tok.ink900)
+            .padding(.horizontal, 26)
+            .frame(minHeight: 48)
+            .background(Capsule().fill(Color(hex: 0xF4F0E8)).shadow(color: .black.opacity(0.10), radius: 5, y: 2))
+            .overlay(Capsule().stroke(Tok.ink900.opacity(0.55), lineWidth: 1))
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .keyboardShortcut("t", modifiers: [])
+        .accessibilityLabel(L10n.t("pre.flip"))
+        .accessibilityHint(L10n.t("flip.hint"))
+        .accessibilityIdentifier("flip")
+        .padding(.bottom, 4)
     }
 }
 

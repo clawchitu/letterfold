@@ -122,7 +122,7 @@
       }
     },
     "bleed.hint": {
-      "comment": "Level \"bleed\": hint. From fold-proto i18n.js.",
+      "comment": "Level \"bleed\": hint. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -140,19 +140,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Do not close first: the glue in the corner would take the top-left stone, and its shadow with it. Walk the left page to row 1, column 2 (the glue), lean to 55°: the shadow falls at column 3, row 2. Step on, then OPEN to 70°: it carries you to column 4. Step down once, close in row 3, turn, and walk the stack to the top of stack 3."
+            "value": "先に閉じないこと：角の糊が左上の石を引き取り、影も消える。左頁をいちばん上の行の2列目（糊の上）まで歩き、55°まで傾ける。影が3列目2行目に落ちる。踏んで、本を70°まで開く。影がきみを4列目へ運ぶ。下へ一枡、3行目で閉じて裏返し、閉じたまま3番目の重なりのいちばん上へ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Do not close first: the glue in the corner would take the top-left stone, and its shadow with it. Walk the left page to row 1, column 2 (the glue), lean to 55°: the shadow falls at column 3, row 2. Step on, then OPEN to 70°: it carries you to column 4. Step down once, close in row 3, turn, and walk the stack to the top of stack 3."
+            "value": "먼저 닫지 마세요. 모서리의 풀이 왼쪽 위 돌을 붙여 가면 그림자도 사라져요. 왼쪽 페이지를 따라 맨 윗줄 2열(풀 위)까지 가서 55°로 기울여요. 그림자가 3열 2행에 떨어져요. 밟고 올라선 뒤 책을 70°까지 펼쳐요. 그림자가 당신을 4열로 옮겨요. 아래로 한 칸, 3행에서 닫고 뒤집은 뒤, 닫은 채 세 번째 겹 맨 위까지."
           }
         }
       }
     },
     "bleed.hint1": {
-      "comment": "Level \"bleed\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "comment": "Level \"bleed\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -170,19 +170,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Do not close yet."
+            "value": "まだ閉じないで。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Do not close yet."
+            "value": "아직 닫지 마세요."
           }
         }
       }
     },
     "bleed.line": {
-      "comment": "Level \"bleed\": one-line teaser. From fold-proto i18n.js.",
+      "comment": "Level \"bleed\": one-line teaser. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -200,19 +200,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "The writing on the back shows through."
+            "value": "裏の字が透けて見える。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "The writing on the back shows through."
+            "value": "뒷면의 글이 비쳐 보인다."
           }
         }
       }
     },
     "bleed.name": {
-      "comment": "Level \"bleed\": title. From fold-proto i18n.js.",
+      "comment": "Level \"bleed\": title. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -230,13 +230,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bleed-through"
+            "value": "裏写り"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bleed-through"
+            "value": "배어 나온 글"
           }
         }
       }
@@ -1952,7 +1952,7 @@
       }
     },
     "inlay.hint": {
-      "comment": "Level \"inlay\": hint. From fold-proto i18n.js.",
+      "comment": "Level \"inlay\": hint. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1970,19 +1970,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Walk to the left end of row 3 on the left page, lean to 40°: both shadows pave the top row at once. Walk to the top-right paper, close, turn, and walk the stack two steps down."
+            "value": "左頁3行目の左端まで歩き、40°まで傾ける。二つの石の影が一緒にいちばん上の行を敷く。右上の紙まで歩いて、閉じて裏返し、閉じたまま下へ二枡。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Walk to the left end of row 3 on the left page, lean to 40°: both shadows pave the top row at once. Walk to the top-right paper, close, turn, and walk the stack two steps down."
+            "value": "왼쪽 페이지 3행 왼쪽 끝까지 가서 40°로 기울여요. 두 돌의 그림자가 함께 맨 윗줄을 깔아요. 오른쪽 위 종이까지 걸어가 닫고 뒤집은 뒤, 닫은 채 아래로 두 칸."
           }
         }
       }
     },
     "inlay.hint1": {
-      "comment": "Level \"inlay\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "comment": "Level \"inlay\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2000,19 +2000,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "The top row is walked to, not closed to."
+            "value": "いちばん上の行は、閉じてではなく歩いて行く。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "The top row is walked to, not closed to."
+            "value": "맨 윗줄은 닫아서가 아니라 걸어서 간다."
           }
         }
       }
     },
     "inlay.line": {
-      "comment": "Level \"inlay\": one-line teaser. From fold-proto i18n.js.",
+      "comment": "Level \"inlay\": one-line teaser. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2030,19 +2030,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Two stones, one angle."
+            "value": "石が二つ、角度は一つ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Two stones, one angle."
+            "value": "돌 둘, 각도 하나."
           }
         }
       }
     },
     "inlay.name": {
-      "comment": "Level \"inlay\": title. From fold-proto i18n.js.",
+      "comment": "Level \"inlay\": title. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2060,13 +2060,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Inlay"
+            "value": "間紙"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Inlay"
+            "value": "속지"
           }
         }
       }
@@ -2312,7 +2312,7 @@
       }
     },
     "lastPage.hint": {
-      "comment": "Level \"lastPage\": hint. From fold-proto i18n.js.",
+      "comment": "Level \"lastPage\": hint. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2330,19 +2330,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Walk the right page down to the bottom row and close there: the glue pulls the left page’s stone across. Closed, walk to row 6, column 3 of the left page, then open to 40°: the stone that just crossed casts a shadow; follow it onto the narrow road at the left and up to row 5, column 1. Close there, turn, and walk the stack up column 1 — she is in the top-right corner of the last page."
+            "value": "右頁をいちばん下の行まで歩いて、そこで閉じる。糊が左頁の石を引き取る。閉じたまま左頁の6行目3列目まで歩き、40°まで開く。川を渡ったばかりの石が影を落とす。それをたどって左の細い道へ、5行目1列目まで上る。そこで閉じて裏返し、閉じたまま1列目を上まで——彼女は最後の頁の右上の角にいる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Walk the right page down to the bottom row and close there: the glue pulls the left page’s stone across. Closed, walk to row 6, column 3 of the left page, then open to 40°: the stone that just crossed casts a shadow; follow it onto the narrow road at the left and up to row 5, column 1. Close there, turn, and walk the stack up column 1 — she is in the top-right corner of the last page."
+            "value": "오른쪽 페이지를 맨 아랫줄까지 걸어가 거기서 닫아요. 풀이 왼쪽 페이지의 돌을 붙여 가요. 닫은 채 왼쪽 페이지 6행 3열까지 가서 40°까지 펼쳐요. 막 강을 건넌 돌이 그림자를 드리워요. 그것을 따라 왼쪽 좁은 길로, 5행 1열까지 올라가요. 거기서 닫고 뒤집은 뒤, 닫은 채 1열을 따라 맨 위까지. 그녀는 마지막 페이지 오른쪽 위 모서리에 있어요."
           }
         }
       }
     },
     "lastPage.hint1": {
-      "comment": "Level \"lastPage\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "comment": "Level \"lastPage\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2360,19 +2360,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "A stone the glue takes brings its shadow with it."
+            "value": "糊に取られた石は、影も向こう岸へ連れていく。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "A stone the glue takes brings its shadow with it."
+            "value": "풀에 붙어 간 돌은 그림자도 데리고 강을 건넌다."
           }
         }
       }
     },
     "lastPage.line": {
-      "comment": "Level \"lastPage\": one-line teaser. From fold-proto i18n.js.",
+      "comment": "Level \"lastPage\": one-line teaser. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2390,19 +2390,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Turn to the last page."
+            "value": "最後の頁まで、めくる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Turn to the last page."
+            "value": "마지막 페이지까지 넘겨라."
           }
         }
       }
     },
     "lastPage.name": {
-      "comment": "Level \"lastPage\": title. From fold-proto i18n.js.",
+      "comment": "Level \"lastPage\": title. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2420,13 +2420,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Last Page"
+            "value": "最後の頁"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Last Page"
+            "value": "마지막 페이지"
           }
         }
       }
@@ -2852,7 +2852,7 @@
       }
     },
     "overleaf.hint": {
-      "comment": "Level \"overleaf\": hint. From fold-proto i18n.js.",
+      "comment": "Level \"overleaf\": hint. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2870,19 +2870,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close. Walking closed, where both pages are paper you stay on your page; only a stack with paper on one side changes your page. Walk into the stack whose right-page cell is a gap: you land on the left page — turn there. Then walk the stack to the bottom; she is in the corner of the third page."
+            "value": "閉じる。閉じたまま歩くとき、両方の頁が紙ならいまの頁にとどまり、片方だけが紙の重なりでだけ頁を移る。右頁がすき間の重なりへ歩けば左頁に移る——そこでめくる。それから閉じたまま下まで歩く。彼女は三枚目の頁の角にいる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close. Walking closed, where both pages are paper you stay on your page; only a stack with paper on one side changes your page. Walk into the stack whose right-page cell is a gap: you land on the left page — turn there. Then walk the stack to the bottom; she is in the corner of the third page."
+            "value": "닫아요. 닫은 채 걸을 때 두 페이지가 모두 종이면 지금 페이지에 머물고, 한쪽만 종이인 겹에서만 페이지를 옮겨요. 오른쪽 페이지가 틈인 겹으로 가면 왼쪽 페이지에 닿아요. 거기서 넘겨요. 그다음 닫은 채 맨 아래까지 걸어요. 그녀는 세 번째 페이지 모서리에 있어요."
           }
         }
       }
     },
     "overleaf.hint1": {
-      "comment": "Level \"overleaf\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "comment": "Level \"overleaf\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2900,19 +2900,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Get onto the left page before you turn."
+            "value": "めくる前に、左頁へ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Get onto the left page before you turn."
+            "value": "넘기기 전에 먼저 왼쪽 페이지로."
           }
         }
       }
     },
     "overleaf.line": {
-      "comment": "Level \"overleaf\": one-line teaser. From fold-proto i18n.js.",
+      "comment": "Level \"overleaf\": one-line teaser. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2930,19 +2930,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "The page under your feet will not turn."
+            "value": "立っている頁は、めくれない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "The page under your feet will not turn."
+            "value": "서 있는 페이지는 넘어가지 않는다."
           }
         }
       }
     },
     "overleaf.name": {
-      "comment": "Level \"overleaf\": title. From fold-proto i18n.js.",
+      "comment": "Level \"overleaf\": title. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2960,13 +2960,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Overleaf"
+            "value": "裏面"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Overleaf"
+            "value": "뒷면"
           }
         }
       }
@@ -3092,7 +3092,7 @@
       }
     },
     "pressedFlower.hint": {
-      "comment": "Level \"pressedFlower\": hint. From fold-proto i18n.js.",
+      "comment": "Level \"pressedFlower\": hint. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -3110,19 +3110,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close first and the glue pulls a stone across: the road breaks. From the start walk to the bottom-left, lean to 40° onto the shadow, then open to 60°: it carries you to column 2. Walk to column 4, row 2, close, turn, and walk the stack to the bottom."
+            "value": "先に閉じると糊が石を引き寄せ、道が切れる。はじめの位置から左下の角へ歩き、40°まで傾けて影に乗り、60°まで開く。影がきみを2列目へ運ぶ。4列目2行目まで歩いて、閉じて裏返し、閉じたまま下まで。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close first and the glue pulls a stone across: the road breaks. From the start walk to the bottom-left, lean to 40° onto the shadow, then open to 60°: it carries you to column 2. Walk to column 4, row 2, close, turn, and walk the stack to the bottom."
+            "value": "먼저 닫으면 풀이 돌을 끌어와 길이 끊겨요. 출발점에서 왼쪽 아래 모서리까지 가서 40°로 기울여 그림자에 올라선 뒤 60°까지 펼쳐요. 그림자가 당신을 2열로 옮겨요. 4열 2행까지 걸어가 닫고 뒤집은 뒤, 닫은 채 맨 아래까지."
           }
         }
       }
     },
     "pressedFlower.hint1": {
-      "comment": "Level \"pressedFlower\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "comment": "Level \"pressedFlower\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -3140,19 +3140,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Finish the shadow before you close."
+            "value": "閉じる前に、影を歩ききる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Finish the shadow before you close."
+            "value": "닫기 전에 그림자를 끝까지 걸어요."
           }
         }
       }
     },
     "pressedFlower.line": {
-      "comment": "Level \"pressedFlower\": one-line teaser. From fold-proto i18n.js.",
+      "comment": "Level \"pressedFlower\": one-line teaser. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -3170,19 +3170,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Glue in the corner. No hurry."
+            "value": "頁の角に糊。急がないで。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Glue in the corner. No hurry."
+            "value": "페이지 모서리에 풀. 서두르지 마."
           }
         }
       }
     },
     "pressedFlower.name": {
-      "comment": "Level \"pressedFlower\": title. From fold-proto i18n.js.",
+      "comment": "Level \"pressedFlower\": title. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -3200,13 +3200,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pressed Flower"
+            "value": "押し花"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pressed Flower"
+            "value": "압화"
           }
         }
       }
@@ -4412,7 +4412,7 @@
       }
     },
     "turn.hint": {
-      "comment": "Level \"turn\": hint. From fold-proto i18n.js.",
+      "comment": "Level \"turn\": hint. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -4430,19 +4430,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close, turn the book over, and walk the stack down: in row 5 the left page is a gap and the third page is paper, so that stack puts you onto the third page — the letter is there."
+            "value": "閉じて、裏返して、閉じたまま下へ歩く。5行目は左頁がすき間で三枚目の頁が紙——その重なりへ歩けば三枚目の頁に移る。手紙はそこに。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Close, turn the book over, and walk the stack down: in row 5 the left page is a gap and the third page is paper, so that stack puts you onto the third page — the letter is there."
+            "value": "닫고, 뒤집고, 닫은 채 아래로 걸어요. 5행은 왼쪽 페이지가 틈이고 세 번째 페이지가 종이예요. 그 겹으로 가면 세 번째 페이지로 옮겨 가요. 편지는 거기 있어요."
           }
         }
       }
     },
     "turn.hint1": {
-      "comment": "Level \"turn\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "comment": "Level \"turn\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -4460,19 +4460,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "A closed book can be turned over."
+            "value": "閉じた本は、裏返すこともできる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "A closed book can be turned over."
+            "value": "닫힌 책은 뒤집을 수도 있다."
           }
         }
       }
     },
     "turn.line": {
-      "comment": "Level \"turn\": one-line teaser. From fold-proto i18n.js.",
+      "comment": "Level \"turn\": one-line teaser. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -4490,19 +4490,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "The letter is not on this page."
+            "value": "この頁に手紙はない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "The letter is not on this page."
+            "value": "이 페이지에는 편지가 없다."
           }
         }
       }
     },
     "turn.name": {
-      "comment": "Level \"turn\": title. From fold-proto i18n.js.",
+      "comment": "Level \"turn\": title. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -4520,13 +4520,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Turn"
+            "value": "めくる"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Turn"
+            "value": "넘김"
           }
         }
       }
@@ -4742,7 +4742,7 @@
       }
     },
     "twoFaces.hint": {
-      "comment": "Level \"twoFaces\": hint. From fold-proto i18n.js.",
+      "comment": "Level \"twoFaces\": hint. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -4760,19 +4760,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Walk the left page to its bottom-left, lean to 60°: the stone’s shadow reaches column 4. Follow the shadow up to row 3, close, turn, and walk the stack to the top — the letter is in the third page’s top row."
+            "value": "左頁を左下の角まで歩き、60°まで傾ける。石の影が4列目につながる。影をたどって3行目へ、閉じて裏返し、閉じたまま上まで歩く——手紙は三枚目の頁のいちばん上の行。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Walk the left page to its bottom-left, lean to 60°: the stone’s shadow reaches column 4. Follow the shadow up to row 3, close, turn, and walk the stack to the top — the letter is in the third page’s top row."
+            "value": "왼쪽 페이지를 따라 왼쪽 아래 모서리까지 가서 60°로 기울여요. 돌의 그림자가 4열에 이어져요. 그림자를 따라 3행까지 가서 닫고 뒤집은 뒤, 닫은 채 맨 위까지 걸어요. 편지는 세 번째 페이지 맨 윗줄에 있어요."
           }
         }
       }
     },
     "twoFaces.hint1": {
-      "comment": "Level \"twoFaces\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "comment": "Level \"twoFaces\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -4790,19 +4790,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Use this face’s shadow first, then turn."
+            "value": "まずこの面の影を使ってから、めくる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Use this face’s shadow first, then turn."
+            "value": "먼저 이 면의 그림자를 쓰고, 그다음 넘겨요."
           }
         }
       }
     },
     "twoFaces.line": {
-      "comment": "Level \"twoFaces\": one-line teaser. From fold-proto i18n.js.",
+      "comment": "Level \"twoFaces\": one-line teaser. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -4820,19 +4820,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "The lamp lights this face."
+            "value": "灯りが照らすのは、この面。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "The lamp lights this face."
+            "value": "등불이 비추는 건 이 면이다."
           }
         }
       }
     },
     "twoFaces.name": {
-      "comment": "Level \"twoFaces\": title. From fold-proto i18n.js.",
+      "comment": "Level \"twoFaces\": title. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -4850,13 +4850,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Two Faces"
+            "value": "両面"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Two Faces"
+            "value": "양면"
           }
         }
       }

@@ -125,6 +125,8 @@ final class SoundBoard {
         }
     }
     /// The page rubbing, quieter as the angle closes.
+    /// 「翻」: a longer, softer paper crease as the shut book turns over.
+    func turn() { play("turn", volume: 0.5) { Self.noiseBurst(0.24, decay: 9, lowpass: 3800, gain: 0.45) } }
     func rub(volume: Double = 0.35) { play("rub", volume: volume) { Self.noiseBurst(0.12, decay: 18, lowpass: 5200, gain: 0.5) } }
     func hollow(pan: Double = 0) {
         play("hollow", pan: pan, volume: 0.7) {
