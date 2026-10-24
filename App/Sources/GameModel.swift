@@ -167,6 +167,8 @@ final class GameModel {
     private(set) var shownFace = 0
     private(set) var flipping = false
     @ObservationIgnored private var flipTask: Task<Void, Never>?
+    /// The press of a turn still in the air (Codex review 16): land it at once when other input arrives.
+    @ObservationIgnored private var flipLanding: (events: [GameEvent], before: Cell, face: Int, landed: Bool)?
     static let layerRuleKey = "fold.layerRule", shadowPaperKey = "fold.shadowOnPaper"
     private(set) var lastAnnouncement: String?
     private(set) var shake: [Cell: Int] = [:]
@@ -408,7 +410,7 @@ final class GameModel {
         game = try! FoldGame(level: pack.levels[index], config: config)
         original = game.board
         won = false; aha = false; caption = false; sealShown = false; sealSettled = false; showNext = false
-        flipTask?.cancel(); flipTask = nil; flipping = false; flipTurn = 0; flipFade = 1; shownFace = 0
+        cancelFlip(); shownFace = 0
         finaleSeal = false; finaleSettled = false; finaleLetter = false; finaleBank = nil
         letterTask?.cancel(); letterTask = nil
         quiet = false; dragging = false; angleHint = false; walking = false
@@ -655,6 +657,7 @@ final class GameModel {
 
     /// Input that needs the hinge at rest (a walk): land the current motion at its target now.
     private func finishMotionNow() {
+        finishFlipNow()
         guard let t = motionTarget else { return }
         stopMotion(); rubber = 0
         if t != angle { setAngle(t) }
@@ -785,6 +788,7 @@ final class GameModel {
     /// Buttons and VoiceOver: one undoable move to an angle.
     func foldTo(_ a: Double) {
         if aha { finishAhaNow(); return }
+        finishFlipNow()
         if Int(a.rounded()) == Int(angle.rounded()) { settle(); return }
         stopWalk(); stopGhost(); hasFolded = true
         hingeIdle?.cancel(); hingeActive = false; hingeSamples = []   // buttons / VoiceOver take the page from the hinge
@@ -863,6 +867,7 @@ final class GameModel {
         hingeTarget = Self.virtualFold(fold)
         if !hingeActive {
             guard let first = hingeSamples.first, abs(physical - first.p) >= 8 else { return }
+            finishFlipNow()
             hingeActive = true
             freezeCamera()
             stopWalk(); stopGhost(); hasFolded = true
@@ -891,6 +896,7 @@ final class GameModel {
 
     func dragBegan() {
         if aha { finishAhaNow() }
+        finishFlipNow()   // the turn lands before the finger takes the page (its undo snapshot must be the turned book)
         stopMotion(); stopWalk(); stopGhost(); hasFolded = true
         freezeCamera(); probeAngle = 0
         hingeIdle?.cancel(); hingeActive = false; hingeSamples = []   // the finger has the page now
@@ -950,7 +956,6 @@ final class GameModel {
         pending = Pending(); saidAngle = Int(angle.rounded())
         forgetMotion()
         clearCrush(); stopRideFeel()
-        if flipping { flipTask?.cancel(); flipTask = nil; flipping = false; flipTurn = 0; flipFade = 1 }
         if paper.backlit { setLamp(posture == .closed ? 0 : 1, now: true) }
         aimCamera(at: angle)
     }
@@ -1061,6 +1066,7 @@ final class GameModel {
     }
     func stopWalk() { walkTask?.cancel(); walkTask = nil; walking = false }
     private func stopAll() {
+        cancelFlip()   // undo / restart / a new level: the turn being undone is not landed or announced
         stopWalk(); stopMotion(); stopGhost(); freezeCamera(); settleTask?.cancel(); ahaTask?.cancel(); stuckTask?.cancel()
         clearCrush(); stopRideFeel()
         hingeIdle?.cancel(); hingeIdle = nil; hingeActive = false; hingeSamples = []
@@ -1100,6 +1106,7 @@ final class GameModel {
         // -flipSlow YES (screenshots only): the turn runs 6× slower so a still can catch it mid-air
         let slow = UserDefaults.standard.bool(forKey: "flipSlow") ? 6.0 : 1.0
         flipTask?.cancel()
+        flipLanding = (events, before, to, false)
         flipTask = Task { [weak self] in
             guard let self else { return }
             if rm { withAnimation(.linear(duration: 0.15)) { self.flipFade = 0 } }
@@ -1111,14 +1118,31 @@ final class GameModel {
             self.flipping = false
             self.sync()
             self.flipping = true
+            self.flipLanding?.landed = true
             self.landFlip(events, at: before, face: to)
             if rm { withAnimation(.linear(duration: 0.15)) { self.flipFade = 1 } }
             try? await Task.sleep(for: .milliseconds(rm ? 150 : Int(300 * slow)))
             guard !Task.isCancelled else { return }
+            self.flipLanding = nil
             self.flipTurn = 0   // 180° is the book again, the other face up
             self.flipping = false
             self.sync()
         }
+    }
+
+    /// Stop a turn in the air without landing it (undo, restart, another level): the caller restores and syncs.
+    private func cancelFlip() {
+        flipTask?.cancel(); flipTask = nil; flipLanding = nil
+        flipping = false; flipTurn = 0; flipFade = 1
+    }
+
+    /// Other input during a turn (a drag, a tap, Lean, a fold button): the turn ends now, on the face the game is on,
+    /// and its press is said if the midpoint had not come yet — the screen never shows a face the game is not on.
+    private func finishFlipNow() {
+        guard flipping, let l = flipLanding else { return }
+        cancelFlip()
+        sync()
+        if !l.landed { landFlip(l.events, at: l.before, face: l.face) }
     }
 
     private func landFlip(_ events: [GameEvent], at before: Cell, face: Int) {

@@ -126,7 +126,7 @@ struct BookView: View {
                 // UI tests: the shadow lock, the camera's pose and the finale's seal (design-review-ch4 §4.3–4.5)
                 Color.clear.frame(width: 2, height: 2)
                     .accessibilityElement().accessibilityIdentifier("probe.state")
-                    .accessibilityValue("lock=\(model.lockedCells.map { "\($0.c),\($0.r)" }.joined(separator: " "));cam=\(Int(model.cameraPitch.rounded()));seal=\(model.finaleSeal ? 1 : 0);split=\(model.finaleSealSplit ? 1 : 0);aha=\(model.aha ? 1 : 0);me=\(model.figureCell.c),\(model.figureCell.r);stuck=\(model.stuck ? 1 : 0);glued=\(model.gluePulls.count)")
+                    .accessibilityValue("lock=\(model.lockedCells.map { "\($0.c),\($0.r)" }.joined(separator: " "));cam=\(Int(model.cameraPitch.rounded()));seal=\(model.finaleSeal ? 1 : 0);split=\(model.finaleSealSplit ? 1 : 0);aha=\(model.aha ? 1 : 0);me=\(model.figureCell.c),\(model.figureCell.r);stuck=\(model.stuck ? 1 : 0);glued=\(model.gluePulls.count);face=\(model.shownFace);said=\(model.lastAnnouncement ?? "");toast=\(model.toast ?? "")")
             }
         }
         .environment(\.goalIsFigure, model.goalIsFigure)
@@ -1041,7 +1041,10 @@ private struct TurnedFace: View {
             ZStack(alignment: .topLeading) {
                 Color(hex: 0xB98A4E).opacity(0.16).blendMode(.multiply)
                 if bleed {
-                    // the front page's ink, mirrored across this page's own vertical axis
+                    // the front page's ink seen from behind: T column j is the back of R column j (both fall on L
+                    // column 3 − j), so a front square bleeds through in its own slot (only the writing would read
+                    // mirrored). Not mirrored across the page: that put it rows-reversed (portrait) or columns-reversed
+                    // (landscape), over squares it has nothing to do with.
                     ZStack(alignment: .topLeading) {
                         ForEach(0..<s.slotsAcross, id: \.self) { x in ForEach(0..<s.slotsDown, id: \.self) { y in
                             let c = s.cell(page: .folding, x: x, y: y)
@@ -1051,7 +1054,7 @@ private struct TurnedFace: View {
                                 RoundedRectangle(cornerRadius: t == .stone ? geo.tile * 0.3 : 3)
                                     .fill(Tok.ink900.opacity(t == .stone || t == .door ? 0.9 : 0.45))
                                     .frame(width: geo.tile * (t == .stone ? 0.62 : 0.86), height: geo.tile * (t == .stone ? 0.62 : 0.86))
-                                    .position(x: page.width - p.x, y: p.y)
+                                    .position(p)
                             }
                         } }
                     }
