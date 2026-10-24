@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0ACF1846232647123A81BF6B /* Skins.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD058B4451F306D134BBAF38 /* Skins.swift */; };
 		11BE4B3530A847817165737B /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDBB77B419ABE4C00953E0 /* App.swift */; };
 		23541C263217811CE7EE57A7 /* BookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9649A387FE6D80E352CD3FC9 /* BookView.swift */; };
 		2440B5FB027790D0976AF907 /* Hinge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2991315D14E1D1169059EEE2 /* Hinge.swift */; };
@@ -71,6 +72,7 @@
 		A8EC280F556F518FD3E0CF1A /* Letterfold.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Letterfold.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9AA4B7A8AA01181783D9B58 /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		AB5597D142A9CB8FB0E573B6 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		AD058B4451F306D134BBAF38 /* Skins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Skins.swift; sourceTree = "<group>"; };
 		AD2ACD110F34C4648B09D796 /* PlaythroughPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaythroughPlan.swift; sourceTree = "<group>"; };
 		B298358295F0A825501A00E9 /* LevelScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelScreen.swift; sourceTree = "<group>"; };
 		B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterfoldUITests.swift; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 				EF748F41958AB1E89B0C34D9 /* Petals.swift */,
 				73CBDC31A0224AF98A0B8641 /* Screens.swift */,
 				4097B0AC06804266642AEB30 /* Settings.swift */,
+				AD058B4451F306D134BBAF38 /* Skins.swift */,
 				A9AA4B7A8AA01181783D9B58 /* Sound.swift */,
 				AB5597D142A9CB8FB0E573B6 /* Theme.swift */,
 			);
@@ -294,6 +297,7 @@
 				CDAFA5AA7DB1731BE06494F7 /* Petals.swift in Sources */,
 				99273F2D8C732350A8BCA85B /* Screens.swift in Sources */,
 				287378E19EFCA32706FC4E35 /* Settings.swift in Sources */,
+				0ACF1846232647123A81BF6B /* Skins.swift in Sources */,
 				F82CD4AB1512484854127089 /* Sound.swift in Sources */,
 				E6F6C5E335E9922EBEEF96E7 /* Theme.swift in Sources */,
 			);

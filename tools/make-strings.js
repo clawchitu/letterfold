@@ -146,6 +146,25 @@ const NATIVE = {
   'letter.2.end': ['第二章完。\n下一封信，还在路上。', 'End of Chapter Two.\nThe next letter is still on its way.', '第二章 了。\n次の手紙は、まだ途中。', '제2장 끝.\n다음 편지는 아직 오는 길.'],
   'closeAllLabel': ['合上书', 'Close the book', '本を閉じる', '책 덮기'],
   'openAllLabel': ['打开书', 'Open the book', '本を開く', '책 펴기'],
+  // 0.1 (15): chapter skins (design-skins §4, design-review-skins §3.3): 「皮名（规则名）」, the rule's name in brackets; a
+  // chapter without a key reads the plain kind.* (ch. 1 throughout, ch. 3's stone). noun.* (the rule sentences) unchanged.
+  // ja / ko: TODO native review (as ch. 2).
+  'kind.D.ch2': ['篱门（锁着的门）', 'bamboo gate (locked door)', '竹垣の門（鍵のかかった扉）', '대나무 문(잠긴 문)'],
+  'kind.o.ch2': ['篱门（开着的门）', 'bamboo gate (open door)', '竹垣の門（開いた扉）', '대나무 문(열린 문)'],
+  'kind.k.ch2': ['竹钥（钥匙）', 'bamboo key (key)', '竹の鍵（鍵）', '대나무 열쇠(열쇠)'],
+  'kind.G.ch3': ['灯笼（终点）', 'lantern (goal)', '提灯（ゴール）', '등롱(도착점)'],
+  'kind.x.ch4': ['缆桩（石头）', 'bollard (stone)', '係船柱（石）', '계선주(돌)'],
+  'kind.D.ch4': ['月洞门（锁着的门）', 'moon gate (locked door)', '月洞門（鍵のかかった扉）', '월동문(잠긴 문)'],
+  'kind.o.ch4': ['月洞门（开着的门）', 'moon gate (open door)', '月洞門（開いた扉）', '월동문(열린 문)'],
+  'kind.k.ch4': ['铁钥（钥匙）', 'iron key (key)', '鉄の鍵（鍵）', '쇠 열쇠(열쇠)'],
+  'kind.p.ch4': ['渡板（纸片）', 'plank (tab)', '渡し板（紙片）', '건널판(종이 조각)'],
+  'kind.x.ch5': ['镇石（石头）', 'paperweight (stone)', '文鎮石（石）', '문진돌(돌)'],
+  'kind.D.ch5': ['闸（锁着的门）', 'sluice (locked door)', '水門（鍵のかかった扉）', '수문(잠긴 문)'],
+  'kind.o.ch5': ['闸（开着的门）', 'sluice (open door)', '水門（開いた扉）', '수문(열린 문)'],
+  'kind.k.ch5': ['符（钥匙）', 'token (key)', '割符（鍵）', '부절(열쇠)'],
+  'kind.i.ch5': ['墨池（湿墨）', 'ink pool (wet ink)', '墨池（濡れた墨）', '먹물 웅덩이(젖은 먹)'],
+  'kind.p.ch5': ['笺条（纸片）', 'ruled slip (tab)', '便箋の切れ端（紙片）', '편지지 조각(종이 조각)'],
+  'kind.G.ch5': ['信封（终点）', 'envelope (goal)', '封筒（ゴール）', '봉투(도착점)'],
 };
 const A11Y = /^(kind|noun|pos|col|here|fallsHere|doorKey|crushedHere|inkPrints|tabBridge|stoneShadow|keyOpens|inkTo|covers|book\.|connected|lost|doorOpened|inkPrinted|shadow|intro|elsewhere|stack|already|arrived|cantReach|no\.|slid|undone|win$|dir\.|goal|where|leftPage|rightPage|nowhere|nothingToUndo|lv|walkHere|sep|list|semi|angle$|step|foldLessLabel|foldMoreLabel)/;
 

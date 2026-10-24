@@ -4261,6 +4261,96 @@
         }
       }
     },
+    "kind.D.ch2": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "篱门（锁着的门）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bamboo gate (locked door)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "竹垣の門（鍵のかかった扉）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "대나무 문(잠긴 문)"
+          }
+        }
+      }
+    },
+    "kind.D.ch4": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "月洞门（锁着的门）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "moon gate (locked door)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "月洞門（鍵のかかった扉）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "월동문(잠긴 문)"
+          }
+        }
+      }
+    },
+    "kind.D.ch5": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "闸（锁着的门）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sluice (locked door)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "水門（鍵のかかった扉）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "수문(잠긴 문)"
+          }
+        }
+      }
+    },
     "kind.G": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -4287,6 +4377,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "도착점"
+          }
+        }
+      }
+    },
+    "kind.G.ch3": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯笼（终点）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lantern (goal)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提灯（ゴール）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "등롱(도착점)"
+          }
+        }
+      }
+    },
+    "kind.G.ch5": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "信封（终点）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "envelope (goal)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "封筒（ゴール）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "봉투(도착점)"
           }
         }
       }
@@ -4381,6 +4531,36 @@
         }
       }
     },
+    "kind.i.ch5": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨池（湿墨）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ink pool (wet ink)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨池（濡れた墨）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먹물 웅덩이(젖은 먹)"
+          }
+        }
+      }
+    },
     "kind.k": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -4407,6 +4587,96 @@
           "stringUnit": {
             "state": "translated",
             "value": "열쇠"
+          }
+        }
+      }
+    },
+    "kind.k.ch2": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "竹钥（钥匙）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bamboo key (key)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "竹の鍵（鍵）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "대나무 열쇠(열쇠)"
+          }
+        }
+      }
+    },
+    "kind.k.ch4": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "铁钥（钥匙）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iron key (key)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鉄の鍵（鍵）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "쇠 열쇠(열쇠)"
+          }
+        }
+      }
+    },
+    "kind.k.ch5": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "符（钥匙）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "token (key)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "割符（鍵）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "부절(열쇠)"
           }
         }
       }
@@ -4441,6 +4711,96 @@
         }
       }
     },
+    "kind.o.ch2": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "篱门（开着的门）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bamboo gate (open door)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "竹垣の門（開いた扉）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "대나무 문(열린 문)"
+          }
+        }
+      }
+    },
+    "kind.o.ch4": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "月洞门（开着的门）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "moon gate (open door)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "月洞門（開いた扉）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "월동문(열린 문)"
+          }
+        }
+      }
+    },
+    "kind.o.ch5": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "闸（开着的门）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sluice (open door)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "水門（開いた扉）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "수문(열린 문)"
+          }
+        }
+      }
+    },
     "kind.p": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -4471,6 +4831,66 @@
         }
       }
     },
+    "kind.p.ch4": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "渡板（纸片）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "plank (tab)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "渡し板（紙片）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "건널판(종이 조각)"
+          }
+        }
+      }
+    },
+    "kind.p.ch5": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "笺条（纸片）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ruled slip (tab)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "便箋の切れ端（紙片）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "편지지 조각(종이 조각)"
+          }
+        }
+      }
+    },
     "kind.x": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -4497,6 +4917,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "돌"
+          }
+        }
+      }
+    },
+    "kind.x.ch4": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "缆桩（石头）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bollard (stone)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "係船柱（石）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "계선주(돌)"
+          }
+        }
+      }
+    },
+    "kind.x.ch5": {
+      "comment": "VoiceOver. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "镇石（石头）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "paperweight (stone)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文鎮石（石）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "문진돌(돌)"
           }
         }
       }

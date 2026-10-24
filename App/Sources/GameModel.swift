@@ -1417,6 +1417,12 @@ final class GameModel {
 
     /// A cell holding a print of wet ink from the facing page (its mirror image, design-spec v2-①).
     func isInkPrint(_ c: Cell) -> Bool { board[c] == .ink && original[c] == .empty }
+    /// The splat form of the ink drawn here (design-skins §2.1): `(c*7 + r*13) % 3`; a print is its source's mirror image,
+    /// so it takes the source's form.
+    func inkVariant(_ c: Cell) -> Int {
+        let src = isInkPrint(c) ? Cell(rules.mirror(c.c), c.r) : c
+        return (src.c * 7 + src.r * 13) % 3
+    }
     /// Wet ink that has already printed across: drawn faded ("已印走").
     func isInkSpent(_ c: Cell) -> Bool { board[c] == .ink && original[c] == .ink && isInkPrint(Cell(rules.mirror(c.c), c.r)) }
 
@@ -1450,7 +1456,15 @@ final class GameModel {
     func label(_ c: Int, _ r: Int) -> String {
         let f = rules.facts(board, Cell(c, r), posture: posture, shade: shade, figure: figureCell)
         let figure = goalIsFigure
-        func kind(_ t: Tile) -> String { t == .goal && figure ? L10n.t("kind.figure") : L10n.t("kind.\(t == .start ? "." : String(t.rawValue))") }
+        // the chapter's skin name first, the rule's name in brackets (design-skins §4): 「缆桩（石头）」; `kind.x.ch4` falls
+        // back to `kind.x` where the skin keeps the plain object (chapter 1, chapter 3's stone)
+        let ch = chapter.id
+        func kind(_ t: Tile) -> String {
+            if t == .goal && figure { return L10n.t("kind.figure") }
+            let base = "kind.\(t == .start ? "." : String(t.rawValue))", skinned = "\(base).ch\(ch)"
+            let v = L10n.t(skinned)
+            return v == skinned ? L10n.t(base) : v
+        }
         func noun(_ t: Tile) -> String { L10n.t("noun.\(t == .start ? "." : String(t.rawValue))") }
         func col(_ n: Int) -> String { L10n.t("col", ["c": n]) }
         // shut: the stack is named by its bottom-page square (the one the stack sits on)

@@ -24,9 +24,15 @@ struct BookGeometry {
     func center(_ cell: Cell) -> CGPoint { let s = spread.slot(cell); return center(x: s.x, y: s.y) }
     func stackCenter(_ cell: Cell) -> CGPoint { let s = spread.stackSlot(cell); return center(x: s.x, y: s.y) }
 
-    static func make(rows: Int, orientation: Spread.Orientation, available: CGSize, large: Bool, columnsPerPage n: Int = 4) -> BookGeometry {
+    /// `margins`: the chapter has margin marks (二 桥栏 · 三 挂灯 · 四 芦苇 + 渡船). design-review-skins §1.2 #2 sets the
+    /// pad's floor for them at 0.3 cell; the decision (0.1 (15) B2): in portrait, without extra-large squares, the pad
+    /// grows to ⌈0.3 × tile⌉ and the tile gives way to fit (72 → ~66 pt on a 402 pt phone), so a mark never overlaps a
+    /// square or gets clipped. It is set by the chapter, not by high contrast / reduce transparency (which only hide the
+    /// marks), so toggling those never reflows the board. Every other case keeps the 10 pt pad and draws no marks.
+    static func make(rows: Int, orientation: Spread.Orientation, available: CGSize, large: Bool, columnsPerPage n: Int = 4, margins: Bool = false) -> BookGeometry {
         let s = Spread(orientation, columnsPerPage: n, rows: rows)
-        let pad = 10.0, gap = 4.0
+        var pad = 10.0
+        let gap = 4.0
         let across = Double(s.slotsAcross), down = Double(s.slotsDown)
         let horizontal = orientation == .horizontalCrease
         let pageW = horizontal ? available.width : available.width / 2
@@ -40,6 +46,11 @@ struct BookGeometry {
             tile = max(min(64, fitW), min(tile, fitW))
         } else {
             tile = max(30, min(tile, fitW, fitH))
+            if margins && horizontal {
+                pad = max(pad, ceil(0.3 * tile))
+                let fw = (pageW - 2 * pad - (across - 1) * gap) / across, fh = (pageH - 2 * pad - (down - 1) * gap) / down
+                tile = max(30, min(tile, fw, fh))
+            }
         }
         return BookGeometry(spread: s, tile: floor(tile), pad: pad)
     }
@@ -69,7 +80,7 @@ struct BookView: View {
     var body: some View {
         let orientation: Spread.Orientation = model.hingeKind == .device || available.width > available.height * 1.15 ? .verticalCrease : .horizontalCrease
         let geo = BookGeometry.make(rows: model.board.h, orientation: orientation, available: available, large: settings.largeGrid,
-                                    columnsPerPage: model.config.columnsPerPage)
+                                    columnsPerPage: model.config.columnsPerPage, margins: !model.paper.margin.isEmpty)
         let book = geo.bookSize
         // the camera book is shorter on screen than its layout: measure what it really covers
         let overflow = orientation == .horizontalCrease
@@ -115,6 +126,8 @@ struct BookView: View {
             }
         }
         .environment(\.goalIsFigure, model.goalIsFigure)
+        .environment(\.skin, model.paper.skin)
+        .environment(\.envelopeBack, model.isDark)
         .onChange(of: orientation, initial: true) { _, o in model.orientation = o }
         .onChange(of: model.index) { _, _ in scrollY = 0 }
         .accessibilityElement(children: .contain)
@@ -504,7 +517,8 @@ private struct TileItem: View {
         let t = model.shownTile(c)
         let shaded = model.shade[c] != nil && !t.isFloor
         let face = TileFace(tile: t, size: geo.tile, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
-                            mirrorAxisVertical: geo.horizontal, printedAt: model.inkPrintedAt[c], figureShift: model.meetShift(c, geo.tile))
+                            mirrorAxisVertical: geo.horizontal, printedAt: model.inkPrintedAt[c], figureShift: model.meetShift(c, geo.tile),
+                            inkVariant: model.inkVariant(c))
         let r = RoundedRectangle(cornerRadius: 3, style: .continuous)
         ZStack {
             face
@@ -723,6 +737,7 @@ private struct FixedPage: View {
             } else {
             PageSheet(horizontal: geo.horizontal, isFixed: true, color: model.paper.color)
             if model.paper.ruled && !hc { RuledGrid(tile: geo.tile, gap: geo.gap, pad: geo.pad, across: s.slotsAcross, down: s.slotsDown) }
+            MarginLayer(model: model, geo: geo, page: .fixed)
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: !covered && targets)
             // kept in the tree while the book is closed (hidden, not removed): re-inserting it mid-aha lost the
             // thread's redraw and left this page without its thread after the book reopened
@@ -762,6 +777,7 @@ private struct FrontFace: View {
         ZStack(alignment: .topLeading) {
             PageSheet(horizontal: geo.horizontal, isFixed: false, color: model.paper.color)
             if model.paper.ruled && !hc { RuledGrid(tile: geo.tile, gap: geo.gap, pad: geo.pad, across: s.slotsAcross, down: s.slotsDown) }
+            MarginLayer(model: model, geo: geo, page: .folding)
             // the top page stays tappable (and in VoiceOver) while it lies flat or stands: 2-1's goal is up there
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: targets && (angle < 20 || model.posture == .standing))
             ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .folding),
@@ -838,6 +854,8 @@ private struct BackFace: View {
                     .allowsHitTesting(false)
             }
             if model.paper.ruled && !hc && !closed { RuledGrid(tile: geo.tile, gap: geo.gap, pad: geo.pad, across: s.slotsAcross, down: s.slotsDown, opacity: 0.07) }
+            // chapter 3 leaning: the hanging lantern shows through the lit page, where the glow starts (review-skins §4.4)
+            if backlit { MarginLayer(model: model, geo: geo, page: .folding, back: true, only: .lantern) }
             if backlit && lit > 0 && stones { CanopyStones(model: model, geo: geo, lit: lit) }
             if closed {
                 // chapter 3 shut: the lamp goes out over 350 ms from the moment the book closed (design-review-ch3 §6.7)
@@ -960,7 +978,8 @@ private struct StackTile: View {
     @ViewBuilder private func glyph(_ t: Tile, cell c: Cell) -> some View {
         if t != .empty && t != .stone && t != .paper {
             TileFace(tile: t, size: size, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
-                     mirrorAxisVertical: flipVertical, printedAt: model.inkPrintedAt[c], bare: true, figureShift: model.meetShift(c, size))
+                     mirrorAxisVertical: flipVertical, printedAt: model.inkPrintedAt[c], bare: true, figureShift: model.meetShift(c, size),
+                     inkVariant: model.inkVariant(c))
                 .frame(width: size, height: size)
         }
     }
@@ -1142,6 +1161,12 @@ extension GameModel {
 
     /// The lamp's glow: centred on the page, or at the finale on her lamp (design-ch4 §4: the lamp is hers).
     func lampCenter(_ geo: BookGeometry, page: Spread.Page) -> UnitPoint {
+        // chapter 3: the glow starts at the hanging lantern in the top page's margin (design-review-skins §1.2 #7);
+        // `.fixed` is the top page's back, laid out in bottom-page coordinates (mirrored across the page)
+        if !goalIsFigure && paper.margin.contains(.lantern) && marginShown(geo) {
+            let p = geo.lanternBody, sz = geo.pageSize
+            return UnitPoint(x: Double(p.x) / Double(sz.width), y: (page == .fixed ? Double(sz.height) - Double(p.y) : Double(p.y)) / Double(sz.height))
+        }
         guard goalIsFigure, let g = goal else { return page == .fixed ? UnitPoint(x: 0.5, y: 0.55) : .center }
         let cell = page == .fixed ? Cell(rules.mirror(g.c), g.r) : g
         let p = geo.center(cell), sz = geo.pageSize
@@ -1330,7 +1355,12 @@ private struct RampFlap: View {
         ZStack {
             Rectangle().fill(hc ? Color.white : paper.tileFace)
             if !hc { Color.white.opacity(lit) }
-            Stripes(spacing: 100.0 / 7).stroke(hc ? Color.black : Tok.ink900.opacity(0.26), lineWidth: hc ? 2 : 1)
+            // 渡板 / 笺条 (design-skins §2.1): the V stays, its face takes the skin's grain or ruling
+            if !hc && (paper.skin == .shore || paper.skin == .letter) {
+                TabPattern(skin: paper.skin).stroke(Tok.ink700.opacity(paper.skin == .shore ? 0.34 : 0.28), lineWidth: 1)
+            } else {
+                Stripes(spacing: 100.0 / 7).stroke(hc ? Color.black : Tok.ink900.opacity(0.26), lineWidth: hc ? 2 : 1)
+            }
             Rectangle().strokeBorder(hc ? Color.black : Tok.ink900.opacity(0.30), lineWidth: hc ? 3 : 0.8)
         }
     }

@@ -106,8 +106,12 @@ struct TileFace: View {
     var bare = false
     /// The recipient steps aside (in points) when the sender stands in her square, so both silhouettes show.
     var figureShift: Double = 0
+    /// Which of the three splat forms wet ink takes here (design-skins §2.1: `(c*7 + r*13) % 3`, a print its source's)
+    var inkVariant = 0
     @Environment(\.highContrast) private var hc
     @Environment(\.goalIsFigure) private var goalIsFigure
+    @Environment(\.skin) private var skin
+    @Environment(\.envelopeBack) private var envelopeBack
 
     var body: some View {
         switch tile {
@@ -121,27 +125,31 @@ struct TileFace: View {
         case .goal:
             ZStack {
                 if !bare { PathTile(size: size, paper: paper, doubleFrame: hc) }
+                // the goal-figure levels (4-6, 5-7, 暗二 / 暗三) keep her, whatever the skin
                 if goalIsFigure {
                     Recipient().frame(width: size * 0.62, height: size * 0.84).offset(x: figureShift, y: -size * 0.12)
+                } else if skin == .shadow {
+                    LanternGoal(size: size)
+                } else if skin == .letter {
+                    EnvelopeGoal(size: size, back: envelopeBack)
                 } else {
                     Flag(size: size)
                 }
             }
         case .stone: PaperStone(size: size)
-        case .key: KeyGlyph().frame(width: size * 0.62, height: size * 0.3).shadowed(hc)
-        case .door: ZStack { if !bare { PathTile(size: size, paper: paper) }; DoorGlyph(open: false, size: size) }
-        case .openDoor: ZStack { if !bare { PathTile(size: size, paper: paper) }; DoorGlyph(open: true, size: size) }
+        case .key: SkinKeyGlyph(size: size, ring: paper.thread)
+        case .door: ZStack { if !bare { PathTile(size: size, paper: paper) }; SkinDoor(open: false, size: size) }
+        case .openDoor: ZStack { if !bare { PathTile(size: size, paper: paper) }; SkinDoor(open: true, size: size) }
         case .ink:
             // wet ink is walkable: it sits on a path square like every other floor (frame v2-1)
             ZStack {
                 if !bare { PathTile(size: size, paper: paper) }
-                WetInk(size: size, paper: paper, mirrored: inkPrint, spent: inkSpent, verticalMirror: mirrorAxisVertical, printedAt: inkPrint ? printedAt : nil)
+                WetInk(size: size, paper: paper, mirrored: inkPrint, spent: inkSpent, verticalMirror: mirrorAxisVertical, printedAt: inkPrint ? printedAt : nil, variant: inkVariant)
             }
         case .tab:
             ZStack {
                 if !bare { PathTile(size: size, paper: paper) }
-                Stripes(spacing: size * 0.12).stroke(Tok.ink900.opacity(hc ? 1 : 0.18), lineWidth: hc ? 2 : 1)
-                    .clipShape(RoundedRectangle(cornerRadius: 3)).padding(2)
+                TabFace(size: size)
             }
         case .glue:
             ZStack {
@@ -321,6 +329,16 @@ nonisolated struct FlagFold: Shape {
 /// (1.8 / 5) inside a 3pt outline.
 struct PaperStone: View {
     let size: Double
+    @Environment(\.skin) private var skin
+    var body: some View {
+        // 缆桩 (ch. 4) and 镇石 (ch. 5 / 暗信); every other chapter keeps the 石墩
+        if skin == .shore || skin == .letter { SkinStone(size: size, skin: skin) } else { StoneBlock(size: size) }
+    }
+}
+
+/// 石墩: the folded block.
+struct StoneBlock: View {
+    let size: Double
     @Environment(\.highContrast) private var hc
     var body: some View {
         let s = size * 0.62
@@ -372,7 +390,9 @@ struct WetInk: View {
     var spent = false
     var verticalMirror = true
     var printedAt: Date? = nil
+    var variant = 0
     @Environment(\.highContrast) private var hc
+    @Environment(\.skin) private var skin
     @State private var bleed: Double = 1
 
     var body: some View {
@@ -382,7 +402,7 @@ struct WetInk: View {
                 if spent {
                     Circle().strokeBorder(.black, style: StrokeStyle(lineWidth: 2.5, dash: [5, 4])).frame(width: s, height: s)
                 } else {
-                    InkBlot().fill(.black).frame(width: s, height: s)
+                    SkinInkBlot(skin: skin, variant: variant).fill(.black).frame(width: s, height: s)
                 }
             } else {
                 // halo: the ink travelling along the fibres
@@ -392,7 +412,11 @@ struct WetInk: View {
                     .blur(radius: 1 + 5 * bleed)
                     .overlay(Image(uiImage: PaperTexture.back).resizable(resizingMode: .tile).blendMode(.multiply).opacity(0.9)
                         .frame(width: s * 1.3, height: s * 1.3).mask(Circle().blur(radius: 6)))
-                InkBlot().fill(Tok.ink900.opacity(spent ? 0.30 : paper.inkSaturation + 0.14))
+                // old ink (ch. 4, design-skins §2.1): the same splat, its centre faded 15 %
+                let o = spent ? 0.30 : paper.inkSaturation + 0.14
+                SkinInkBlot(skin: skin, variant: variant)
+                    .fill(skin == .shore ? AnyShapeStyle(RadialGradient(colors: [Tok.ink900.opacity(o * 0.85), Tok.ink900.opacity(o)], center: .center, startRadius: 0, endRadius: s * 0.4))
+                                         : AnyShapeStyle(Tok.ink900.opacity(o)))
                     .frame(width: s * 0.86, height: s * 0.86)
                     .blur(radius: 0.6 + 0.8 * bleed)
                     .scaleEffect(x: mirrored && !verticalMirror ? -1 : 1, y: mirrored && verticalMirror ? -1 : 1)
@@ -506,20 +530,27 @@ struct StoneSilhouette: View {
     /// The backlit rim (#FBF6EA, 1.5 pt outside), where the stone hangs over its own shadow's hatch
     var rim = false
     @Environment(\.highContrast) private var hc
+    @Environment(\.skin) private var skin
     var body: some View {
-        let s = StoneOutline()
+        // the skin's own outline (石墩 / 缆桩 / 镇石); chapter 3's 石墩 always has the lamp's rim, `lamp` 1.5 pt outside
+        // (design-review-skins §1.1: the stone's second identity is told by its shadow, not by a lion)
+        let s = SkinStoneOutline(skin: skin, silhouette: true)
         ZStack {
-            if rim && !hc { s.stroke(Tok.rimLight, style: StrokeStyle(lineWidth: 3, lineJoin: .round)) }
+            if !hc && skin == .shadow { s.stroke(Tok.lamp, style: StrokeStyle(lineWidth: 3, lineJoin: .round)) }
+            else if rim && !hc { s.stroke(Tok.rimLight, style: StrokeStyle(lineWidth: 3, lineJoin: .round)) }
             if hc {
                 s.fill(.white)
                 Hatch(spacing: 5).stroke(.black, lineWidth: 1.5).clipShape(s)
                 s.stroke(.black, lineWidth: 3)
             } else {
                 s.fill(Tok.figure).blur(radius: reduced ? 0 : 0.6)
-                if reduced { StoneRidge().stroke(.white.opacity(0.9), style: StrokeStyle(lineWidth: 1.2, lineCap: .round, lineJoin: .round)) }
+                if reduced && skin != .shore && skin != .letter {
+                    StoneRidge().stroke(.white.opacity(0.9), style: StrokeStyle(lineWidth: 1.2, lineCap: .round, lineJoin: .round))
+                        .frame(width: size * 0.72, height: size * 0.56)
+                }
             }
         }
-        .frame(width: size * 0.72, height: size * 0.56)
+        .frame(width: size, height: size)
     }
 }
 
