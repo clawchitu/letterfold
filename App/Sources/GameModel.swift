@@ -1097,12 +1097,14 @@ final class GameModel {
         haptics.turn()
         sound.turn()
         let rm = settings.motionReduced
+        // -flipSlow YES (screenshots only): the turn runs 6× slower so a still can catch it mid-air
+        let slow = UserDefaults.standard.bool(forKey: "flipSlow") ? 6.0 : 1.0
         flipTask?.cancel()
         flipTask = Task { [weak self] in
             guard let self else { return }
             if rm { withAnimation(.linear(duration: 0.15)) { self.flipFade = 0 } }
-            else { withAnimation(.easeInOut(duration: 0.6)) { self.flipTurn = 180 } }
-            try? await Task.sleep(for: .milliseconds(rm ? 150 : 300))
+            else { withAnimation(.easeInOut(duration: 0.6 * slow)) { self.flipTurn = 180 } }
+            try? await Task.sleep(for: .milliseconds(rm ? 150 : Int(300 * slow)))
             guard !Task.isCancelled else { return }
             // the midpoint: the other face comes round; the press lands as it does
             self.shownFace = to
@@ -1111,7 +1113,7 @@ final class GameModel {
             self.flipping = true
             self.landFlip(events, at: before, face: to)
             if rm { withAnimation(.linear(duration: 0.15)) { self.flipFade = 1 } }
-            try? await Task.sleep(for: .milliseconds(rm ? 150 : 300))
+            try? await Task.sleep(for: .milliseconds(rm ? 150 : Int(300 * slow)))
             guard !Task.isCancelled else { return }
             self.flipTurn = 0   // 180° is the book again, the other face up
             self.flipping = false

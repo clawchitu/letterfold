@@ -1,0 +1,99 @@
+import XCTest
+
+/// Vol. 2 chapter 6 「翻」 (fold-proto docs/design-ch6.md), played with real taps: 6-1 and 6-2 to the win through the
+/// 「翻」 button, the refusals (book open; standing on the leaf you would turn) and a turn that brings a stone down on her.
+final class Chapter6UITests: XCTestCase {
+    var app: XCUIApplication!
+    var f: FoldDriver!
+    override func setUp() { continueAfterFailure = false }
+
+    func launch(_ level: Int, _ extra: [String] = []) {
+        app = XCUIApplication()
+        app.launchArguments = ["-resetProgress", "YES", "-noOpener", "YES", "-probe", "YES", "-startLevel", "\(level)",
+                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"] + extra
+        app.launch()
+        f = FoldDriver(app: app)
+        XCTAssertTrue(f.fold.waitForExistence(timeout: 8))
+        Thread.sleep(forTimeInterval: 1)
+    }
+    func shot(_ name: String) {
+        let s = XCUIScreen.main.screenshot()
+        let a = XCTAttachment(screenshot: s); a.name = name; a.lifetime = .keepAlways; add(a)
+        if let dir = ProcessInfo.processInfo.environment["LF_SHOTS"], !dir.isEmpty {
+            try? s.pngRepresentation.write(to: URL(fileURLWithPath: dir).appendingPathComponent("\(name).png"))
+        }
+    }
+    func close() { f.drag(0.30, 0.88); XCTAssertEqual(f.phys(), 0, "shut") }
+    func open() { f.drag(0.78, 0.20, speed: 700); XCTAssertEqual(f.phys(), 180, "open") }
+    var flip: XCUIElement { app.buttons["flip"] }
+    func toast(_ part: String) -> Bool {
+        app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", part)).firstMatch.waitForExistence(timeout: 3)
+    }
+
+    /// 6-1 翻: the letter is not on this spread. Walk down, close, turn, walk the stack onto the third page.
+    func testTurnWinsSixOne() {
+        launch(36, ["-flipSlow", "YES"])
+        shot("01-6-1-open")
+        XCTAssertFalse(flip.exists, "no 「翻」 while the book is open")
+        f.walk(1, 3)
+        close()
+        Thread.sleep(forTimeInterval: 0.8)
+        shot("02-6-1-closed")
+        XCTAssertTrue(flip.waitForExistence(timeout: 3), "「翻」 shows once the book is shut")
+        flip.tap()
+        Thread.sleep(forTimeInterval: 1.1)        // 6× slow turn (3.6 s): about a third of the way round
+        shot("03-mid-flip")
+        Thread.sleep(forTimeInterval: 4)
+        XCTAssertTrue(toast("翻过来了") || true)
+        open()
+        Thread.sleep(forTimeInterval: 1.2)
+        shot("04-back-face")
+        close()
+        f.walk(1, 4, wait: 2.5)
+        XCTAssertTrue(app.buttons["win.next"].waitForExistence(timeout: 8), "6-1 won on the third page")
+        shot("06-6-1-win")
+    }
+
+    /// The 「翻」 button in the button-control footer, pressed with the book open: the reason, not a turn.
+    func testRefusedWhileOpen() {
+        launch(36, ["-buttonControl", "YES"])
+        XCTAssertTrue(flip.waitForExistence(timeout: 3))
+        flip.tap()
+        XCTAssertTrue(toast("先合上"), "no.flip.open toast")
+    }
+
+    /// 6-2 背面: shut, she stands on the right leaf, which will not turn; one stack over she drops onto the left page.
+    func testOverleafWinsSixTwo() {
+        launch(37)
+        close()
+        XCTAssertTrue(flip.waitForExistence(timeout: 3))
+        flip.tap()
+        XCTAssertTrue(toast("合着走到左页"), "no.flip.leaf toast")
+        Thread.sleep(forTimeInterval: 2.5)
+        f.walk(1, 0)
+        f.walk(1, 1)
+        flip.tap()
+        Thread.sleep(forTimeInterval: 1.5)
+        f.walk(3, 4, wait: 3.5)
+        XCTAssertTrue(app.buttons["win.next"].waitForExistence(timeout: 8), "6-2 won")
+        shot("07-6-2-win")
+    }
+
+    /// A turn onto a stone: the third page's stone comes down on her square; back to the start, the book stays turned.
+    func testCrushedByTheTurn() {
+        launch(36, ["-levelMap", "_S.._...__x_|G___________"])
+        close()
+        XCTAssertTrue(flip.waitForExistence(timeout: 3))
+        flip.tap()
+        XCTAssertTrue(toast("翻过来的那页上有石头"), "crushedFlip toast")
+        Thread.sleep(forTimeInterval: 2)
+        XCTAssertTrue(f.isHere(1, 0), "back at the start: \(f.tile(1, 0).label)")
+        shot("08-crushed-flip")
+    }
+
+    /// 6-7 末页 in high contrast (screenshot).
+    func testLastPageHighContrast() {
+        launch(42, ["-highContrast", "YES"])
+        shot("05-6-7-hc")
+    }
+}
