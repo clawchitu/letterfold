@@ -4,7 +4,9 @@ import XCTest
 /// Codex review 7 #1: a 0.1 (8) save (positions in the 17-level pack) keeps meaning the same levels in 0.1 (9).
 final class ProgressTests: XCTestCase {
     var d: UserDefaults!
-    let suite = "letterfold.progress.tests"
+    /// One suite per test instance: `swift test --parallel` runs tests in separate processes that would otherwise share
+    /// (and wipe) one plist.
+    let suite = "letterfold.progress.tests.\(UUID().uuidString)"
     override func setUp() { d = UserDefaults(suiteName: suite); d.removePersistentDomain(forName: suite) }
     override func tearDown() { d.removePersistentDomain(forName: suite) }
 
