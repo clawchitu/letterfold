@@ -156,8 +156,8 @@ private extension View {
     func shadowed(_ hc: Bool) -> some View { shadow(color: .black.opacity(hc ? 0 : 0.18), radius: 1.2, x: 0.5, y: 1.5) }
 }
 
-/// A walkable square: one shade deeper than the paper, a 1pt cast shadow along the bottom, a lit top edge
-/// (design-spec §4). High contrast: white with a 3pt black frame.
+/// A walkable square: the paper mixed 25 % deeper, a 1 pt `tile.edge` all round, a 1pt cast shadow along the bottom,
+/// the top-to-bottom emboss (design-spec §4, design-skins §1.2). High contrast: white with a 3pt black frame.
 struct PathTile: View {
     let size: Double
     var paper: PaperState = .chapter1
@@ -176,13 +176,13 @@ struct PathTile: View {
             // letter paper (design-v2c1 §2): the squares are printed, not embossed — a flat card face with a printed edge
             r.fill(paper.tileFace)
                 .overlay(PaperSurface(color: .clear).clipShape(r).opacity(0.45))
-                .overlay(r.strokeBorder(Tok.ruleLetter.opacity(0.42), lineWidth: 1))
+                .overlay(r.strokeBorder(Tok.tileEdge, lineWidth: 1))
                 .shadow(color: Color(hex: 0x3A3F52).opacity(0.10), radius: 1.2, x: 0, y: 0.8)
         } else {
             r.fill(paper.tileFace)
                 .overlay(PaperSurface(color: .clear).clipShape(r).opacity(0.6))
                 .overlay(r.fill(LinearGradient(colors: [.white.opacity(0.28), .clear, .black.opacity(0.03)], startPoint: .top, endPoint: .bottom)))
-                .overlay(r.strokeBorder(LinearGradient(colors: [.white.opacity(0.85), .white.opacity(0.1), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1))
+                .overlay(r.strokeBorder(Tok.tileEdge, lineWidth: 1))   // design-skins §1.2: 1 pt all round (was a lit top-left edge)
                 .shadow(color: Color(hex: 0x5A4A36).opacity(0.28), radius: 0, x: 0, y: 1)
                 .shadow(color: Color(hex: 0x5A4A36).opacity(0.10), radius: 2.5, x: 0, y: 1.5)
         }
@@ -240,7 +240,7 @@ nonisolated struct GlueDrop: Shape {
 }
 
 /// The printed grid of letter paper (design-v2c1 §2): every slot of the page, empty ones too, in `rule.letter` at
-/// 16 % (decoration; off in high contrast).
+/// 16 % (decoration; off in high contrast), drawn down the middle of the gaps.
 struct RuledGrid: View {
     let tile: Double
     let gap: Double
@@ -251,8 +251,9 @@ struct RuledGrid: View {
     var body: some View {
         Path { p in
             for x in 0..<across { for y in 0..<down {
-                p.addRoundedRect(in: CGRect(x: pad + Double(x) * (tile + gap) + 0.5, y: pad + Double(y) * (tile + gap) + 0.5, width: tile - 1, height: tile - 1),
-                                 cornerSize: CGSize(width: 3, height: 3))
+                // centred in the gap between squares, clear of the 1 pt tile.edge (design-review-skins §1, deviation 9)
+                p.addRoundedRect(in: CGRect(x: pad + Double(x) * (tile + gap) - gap / 2, y: pad + Double(y) * (tile + gap) - gap / 2, width: tile + gap, height: tile + gap),
+                                 cornerSize: CGSize(width: 3 + gap / 2, height: 3 + gap / 2))
             } }
         }
         .stroke(Tok.ruleLetter.opacity(opacity), lineWidth: 1)
@@ -331,10 +332,12 @@ struct PaperStone: View {
             } else {
                 Ellipse().fill(RadialGradient(colors: [.black.opacity(0.22), .clear], center: .center, startRadius: 0, endRadius: s * 0.45))
                     .frame(width: s * 0.95, height: s * 0.22).offset(y: s * 0.27)
-                StoneFacet(points: [(0.18, 0.62), (0.32, 0.36), (0.52, 0.52), (0.46, 0.76), (0.28, 0.74)]).fill(Color(hex: 0xD8CFBF))
-                StoneFacet(points: [(0.52, 0.52), (0.80, 0.40), (0.86, 0.66), (0.62, 0.78), (0.46, 0.76)]).fill(Color(hex: 0xBDB09C))
-                StoneFacet(points: [(0.32, 0.36), (0.56, 0.24), (0.80, 0.40), (0.52, 0.52)]).fill(Color(hex: 0xF7F3EC))
-                StoneOutline().stroke(Color(hex: 0x8E816D).opacity(0.35), lineWidth: 0.6)
+                // design-review-skins §1.1: solid warm grey, stone.top → stone.bottom (average ≥ 3:1 on every paper), the
+                // facets only as light and shade on top of it, a 1 pt stone.outline at 70 %
+                StoneOutline().fill(LinearGradient(colors: [Tok.stoneTop, Tok.stoneBottom], startPoint: .top, endPoint: .bottom))
+                StoneFacet(points: [(0.32, 0.36), (0.56, 0.24), (0.80, 0.40), (0.52, 0.52)]).fill(.white.opacity(0.16))
+                StoneFacet(points: [(0.52, 0.52), (0.80, 0.40), (0.86, 0.66), (0.62, 0.78), (0.46, 0.76)]).fill(.black.opacity(0.08))
+                StoneOutline().stroke(Tok.stoneOutline.opacity(0.70), style: StrokeStyle(lineWidth: 1, lineJoin: .round))
             }
         }
         .frame(width: s, height: s)
@@ -461,7 +464,7 @@ struct DoorGlyph: View {
                 Rectangle().fill(Color(hex: 0xE7E0D3)).frame(width: w * 0.5, height: h).offset(x: w * 0.25)
                 KeyholeShape().fill(Tok.figure).frame(width: w * 0.16, height: h * 0.2).offset(x: w * 0.06)
             }
-            VStack { Rectangle().frame(height: bar); Spacer(); Rectangle().frame(height: bar) }.foregroundStyle(Tok.figure).frame(width: w + 6, height: h + bar)
+            VStack { Rectangle().frame(height: bar); Spacer(); Rectangle().frame(height: bar) }.foregroundStyle(hc ? Color.black : Tok.doorFrame).frame(width: w + 6, height: h + bar)
             if hc { Rectangle().stroke(.black, lineWidth: 3).frame(width: w, height: h) }
         }
     }
