@@ -94,7 +94,9 @@ final class ProgressTests: XCTestCase {
     func testStableIDs() throws {
         let ids = try LevelPack.bundled().levels.map(\.id)
         XCTAssertEqual(Array(ids.prefix(28)), Array(Self.build13.prefix(28)), "vol. 1 and 5-1 … 5-3 keep their IDs and order")
-        XCTAssertEqual(Array(ids.suffix(7)), ["oldHome", "ferry", "twiceClosed", "twoLamps", "darkBack", "darkDoor", "darkInk"])
+        XCTAssertEqual(Array(ids[28..<35]), ["oldHome", "ferry", "twiceClosed", "twoLamps", "darkBack", "darkDoor", "darkInk"])
+        // vol. 2 chapter 6 「翻」 (fold-proto design-ch6.md): the proto's stable IDs
+        XCTAssertEqual(Array(ids.suffix(7)), ["turn", "overleaf", "twoFaces", "inlay", "bleed", "pressedFlower", "lastPage"])
         XCTAssertEqual(Set(ids).count, ids.count)
     }
 
@@ -104,7 +106,11 @@ final class ProgressTests: XCTestCase {
         let pack = try LevelPack.bundled()
         SavedProgress.save(Set(Self.build13), d)
         let done = SavedProgress.load(d)
-        for lv in pack.levels where !lv.isOptional { XCTAssertTrue(done.contains(lv.id), "\(lv.id) stays solved") }
+        // chapter 6 did not exist in 0.1 (13): it stays to play
+        let ch6: Set = ["turn", "overleaf", "twoFaces", "inlay", "bleed", "pressedFlower", "lastPage"]
+        for lv in pack.levels where !lv.isOptional && !ch6.contains(lv.id) { XCTAssertTrue(done.contains(lv.id), "\(lv.id) stays solved") }
+        for id in ch6 { XCTAssertFalse(done.contains(id), id) }
+        XCTAssertTrue(SavedProgress.chapterOpen(previous: ["glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps"], done: done), "chapter 6 opens after all of chapter 5")
         for lv in pack.levels where lv.isOptional { XCTAssertFalse(done.contains(lv.id), lv.id) }
         XCTAssertEqual(Set(d.stringArray(forKey: SavedProgress.idsKey) ?? []), done, "migrated once, written back")
         XCTAssertEqual(SavedProgress.load(d), done)

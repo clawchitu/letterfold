@@ -12,6 +12,7 @@ final class UIPlanTests: XCTestCase {
     enum Act: Equatable, CustomStringConvertible {
         case walk(Int, Int, steps: Int)         // tap tile-c-r (shut: the stack's bottom-page column)
         case close, open, stand                 // the drag helpers; stand = 90° physical
+        case flip                               // the 「翻」 button (vol. 2 ch. 6): turn the shut book over
         case lean(phys: Int, tol: Int)          // FoldDriver.lean: free page, figure on paper
         case creep(phys: Int, tol: Int)         // FoldDriver.creep: figure riding a shadow, never past the target
         var description: String {
@@ -20,6 +21,7 @@ final class UIPlanTests: XCTestCase {
             case .close: return ".close"
             case .open: return ".open"
             case .stand: return ".stand"
+            case .flip: return ".flip"
             case let .lean(p, t): return ".lean(\(p), tol: \(t))"
             case let .creep(p, t): return ".creep(\(p), tol: \(t))"
             }
@@ -65,6 +67,9 @@ final class UIPlanTests: XCTestCase {
             case let .walk(c, r, _):
                 guard tappable(Cell(c, r), g), let p = g.path(to: Cell(c, r)), !p.isEmpty else { return nil }
                 for s in p { if g.step(to: s) == [.blocked] { return nil } }
+            case .flip:
+                let ev = g.flip()
+                if ev == [.blocked] || ev.contains(where: { if case .flipCrushed = $0 { return true } else { return false } }) { return nil }
             case .close, .open, .stand, .lean, .creep:
                 var phys: Double
                 switch act {
@@ -90,15 +95,19 @@ final class UIPlanTests: XCTestCase {
 
     func plan(_ i: Int) throws -> [Act] {
         let lv = pack.levels[i], d = detents(i)
-        let sol = try XCTUnwrap(lv.solution, lv.id).map { (cell: Cell($0[0], $0[1]), a: Double($0[2])) }
+        let sol = try XCTUnwrap(lv.solution, lv.id).map { (cell: Cell($0[0], $0[1]), a: Double($0[2]), face: $0.count > 4 ? $0[4] : 0) }
         var acts: [Act] = []
         var k = 1
         while k < sol.count {
             let g = try XCTUnwrap(run(lv, acts, detents: d), "\(lv.id): plan broke before state \(k)")
+            if sol[k].face != sol[k - 1].face {
+                // a turn of the shut book: the 「翻」 button
+                acts.append(.flip); k += 1; continue
+            }
             if sol[k].a == sol[k - 1].a {
                 // a walk at this angle: one tap to its end (shut: one per stack)
                 var e = k
-                while e + 1 < sol.count && sol[e + 1].a == sol[k].a { e += 1 }
+                while e + 1 < sol.count && sol[e + 1].a == sol[k].a && sol[e + 1].face == sol[k].face { e += 1 }
                 if g.posture == .closed {
                     for s in k...e { acts.append(.walk(g.rules.proj(sol[s].cell.c), sol[s].cell.r, steps: 1)) }
                 } else {
@@ -112,9 +121,9 @@ final class UIPlanTests: XCTestCase {
             // the next walk start
             let a = sol[k].a, want = sol[k].cell
             var nextEnd = k + 1
-            while nextEnd + 1 < sol.count && sol[nextEnd + 1].a == a { nextEnd += 1 }
+            while nextEnd + 1 < sol.count && sol[nextEnd + 1].a == a && sol[nextEnd + 1].face == sol[k].face { nextEnd += 1 }
             // the tap that follows goes to the end of the next walk (shut: its first stack)
-            let next: Cell? = k + 1 < sol.count && sol[k + 1].a == a ? (a >= 180 ? sol[k + 1].cell : sol[nextEnd].cell) : nil
+            let next: Cell? = k + 1 < sol.count && sol[k + 1].a == a && sol[k + 1].face == sol[k].face ? (a >= 180 ? sol[k + 1].cell : sol[nextEnd].cell) : nil
             let riding = !g.rules.isRight(g.char.c) && !g.board[g.char].isFloor
             func ok(_ phys: Int) -> Bool {
                 guard let h = run(lv, acts + [riding ? .creep(phys: phys, tol: 0) : .lean(phys: phys, tol: 0)], detents: d) else { return false }
@@ -175,7 +184,7 @@ final class UIPlanTests: XCTestCase {
         // Angles are physical (180 flat, 0 shut). Shut walks tap one stack at a time (tile ids use the bottom-page column).
         enum PlanAct {
             case walk(Int, Int, Int)
-            case close, open, stand
+            case close, open, stand, flip
             case lean(Int, tol: Int)
             case creep(Int, tol: Int)
         }

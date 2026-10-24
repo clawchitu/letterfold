@@ -3,7 +3,7 @@
 // Angles are physical (180 flat, 0 shut). Shut walks tap one stack at a time (tile ids use the bottom-page column).
 enum PlanAct {
     case walk(Int, Int, Int)
-    case close, open, stand
+    case close, open, stand, flip
     case lean(Int, tol: Int)
     case creep(Int, tol: Int)
 }
@@ -44,4 +44,11 @@ let playthroughPlan: [(id: String, acts: [PlanAct])] = [
     ("darkBack", [.walk(1, 0, 4), .lean(44, tol: 8), .walk(3, 0, 2), .close, .walk(2, 0, 1), .walk(3, 0, 1), .lean(70, tol: 8), .walk(4, 1, 1), .close, .walk(3, 2, 1), .walk(3, 3, 1), .walk(3, 4, 1), .lean(50, tol: 8), .walk(2, 4, 1), .creep(30, tol: 3), .walk(1, 5, 1)]),
     ("darkDoor", [.walk(3, 5, 2), .lean(60, tol: 7), .walk(2, 5, 1), .close, .walk(1, 4, 1), .walk(1, 3, 1), .walk(0, 3, 1), .walk(0, 2, 1), .walk(0, 1, 1), .walk(0, 0, 1), .lean(50, tol: 8), .walk(2, 1, 3), .close, .walk(2, 2, 1), .lean(70, tol: 8), .walk(6, 2, 1)]),
     ("darkInk", [.walk(4, 4, 4), .close, .walk(3, 5, 1), .walk(3, 4, 1), .lean(55, tol: 8), .walk(3, 0, 4), .creep(33, tol: 6), .walk(1, 0, 1), .close, .walk(0, 0, 1), .walk(0, 1, 1), .lean(70, tol: 8), .walk(7, 2, 1), .close, .walk(0, 3, 1), .walk(1, 3, 1)]),
+    ("turn", [.walk(1, 3, 3), .close, .flip, .walk(1, 4, 1)]),
+    ("overleaf", [.walk(6, 0, 1), .close, .walk(1, 1, 1), .walk(1, 2, 1), .walk(1, 3, 1), .walk(2, 3, 1), .walk(3, 3, 1), .walk(3, 4, 1), .flip]),
+    ("twoFaces", [.walk(3, 4, 7), .lean(70, tol: 8), .walk(3, 2, 2), .close, .flip, .walk(3, 1, 1), .walk(2, 1, 1), .walk(2, 0, 1), .walk(1, 0, 1)]),
+    ("inlay", [.walk(0, 2, 5), .lean(42, tol: 8), .walk(3, 0, 5), .close, .flip, .walk(3, 1, 1), .walk(2, 1, 1), .walk(2, 2, 1)]),
+    ("bleed", [.walk(1, 0, 8), .lean(55, tol: 4), .walk(2, 1, 2), .creep(75, tol: 6), .walk(3, 2, 1), .close, .flip, .walk(2, 2, 1), .walk(2, 1, 1), .walk(2, 0, 1)]),
+    ("pressedFlower", [.walk(0, 4, 6), .lean(40, tol: 8), .walk(1, 4, 1), .creep(60, tol: 6), .walk(3, 1, 4), .close, .flip, .walk(3, 2, 1), .walk(3, 3, 1), .walk(3, 4, 1), .walk(2, 4, 1)]),
+    ("lastPage", [.walk(5, 4, 6), .close, .walk(2, 5, 1), .lean(44, tol: 8), .walk(0, 4, 3), .close, .flip, .walk(0, 3, 1), .walk(0, 2, 1), .walk(1, 2, 1), .walk(1, 1, 1), .walk(1, 0, 1), .walk(0, 0, 1)]),
 ]
