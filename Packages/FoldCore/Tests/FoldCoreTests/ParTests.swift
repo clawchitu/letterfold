@@ -1,8 +1,8 @@
 import XCTest
 @testable import FoldCore
 
-/// plan.md §12.3 as tiered by difficulty-postmortem.md §1.4: teach–mid ≤ 3 posture changes, hard / final ≤ 4,
-/// 「暗信」 ≤ 6; full closes ≤ 2 on the main path, ≤ 3 in 「暗信」 (the budget tools/check.js asserts in fold-proto). Also pins the physical-angle export (review-2 §4.3).
+/// plan.md §12.3 as tiered by difficulty-postmortem.md §1.4: teach–mid ≤ 3 posture changes, hard ≤ 4, final ≤ 5,
+/// 「暗信」 ≤ 6; full closes ≤ 2 on the main path, ≤ 3 on a final and in 「暗信」 (the budget tools/check.js asserts in fold-proto). Also pins the physical-angle export (review-2 §4.3).
 final class ParTests: XCTestCase {
     func testEveryLevelWithinPar() throws {
         let pack = try LevelPack.bundled()
@@ -12,7 +12,7 @@ final class ParTests: XCTestCase {
             XCTAssertLessThanOrEqual(s.cost, Difficulty.parMax[lv.isOptional ? "dark" : lv.tier ?? ""] ?? 3, lv.id)
             var closes = 0, prev: Posture? = nil
             for st in s.steps { if st.posture == .closed && prev != .closed { closes += 1 }; prev = st.posture }
-            XCTAssertLessThanOrEqual(closes, lv.isOptional ? 3 : 2, lv.id)
+            XCTAssertLessThanOrEqual(closes, Difficulty.closesMax(optional: lv.isOptional, tier: lv.tier), lv.id)
         }
     }
 

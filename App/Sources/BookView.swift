@@ -440,6 +440,7 @@ private struct FoldControl: View {
             .accessibilityAction(named: L10n.t("closeAllLabel")) { model.foldTo(180) }
             .accessibilityAction(named: L10n.t("openAllLabel")) { model.foldTo(0) }
             .accessibilityAction(named: L10n.t("undo")) { model.undo() }
+            .accessibilityActions { if model.canRestart { Button(L10n.t("restartLabel")) { model.restart() } } }
             .accessibilitySortPriority(10_000)
     }
 }
@@ -606,6 +607,7 @@ private struct TileAccessibility: ViewModifier {
             .accessibilityAction(named: L10n.t("closeAllLabel")) { model.foldTo(180) }
             .accessibilityAction(named: L10n.t("openAllLabel")) { model.foldTo(0) }
             .accessibilityAction(named: L10n.t("undo")) { model.undo() }
+            .accessibilityActions { if model.canRestart { Button(L10n.t("restartLabel")) { model.restart() } } }
             .accessibilityRotorEntry(id: c, in: rotorSpace)
     }
 }
@@ -1016,6 +1018,7 @@ private struct StackTargets: View {
                 .accessibilityAction(named: L10n.t("foldLessLabel")) { model.foldBy(-1) }
                 .accessibilityAction(named: L10n.t("openAllLabel")) { model.foldTo(0) }
                 .accessibilityAction(named: L10n.t("undo")) { model.undo() }
+                .accessibilityActions { if model.canRestart { Button(L10n.t("restartLabel")) { model.restart() } } }
                 .accessibilityRotorEntry(id: c, in: rotorSpace)
                 .accessibilitySortPriority(Double(1000 - Int(item.slot.y)))
         }

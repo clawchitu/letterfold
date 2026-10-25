@@ -98,7 +98,7 @@ final class DifficultyTests: XCTestCase {
 
     /// check.js v3 gates (difficulty-postmortem.md §6): the shortest solution (fewest postures, then fewest steps) is
     /// at least the tier's floor (teach: at most 10), equals the length levels.js declares, and stays inside the
-    /// tier's posture and close budget. 「暗信」: len ≥ 18, par ≤ 6, closes ≤ 3.
+    /// tier's posture and close budget. 「暗信」: len ≥ 18, par ≤ 6, closes ≤ 3; final: par ≤ 5, closes ≤ 3.
     func testSolutionLengthGates() throws {
         let solver = Solver(pack.config)
         for lv in pack.levels {
@@ -109,7 +109,7 @@ final class DifficultyTests: XCTestCase {
             if let hi = Difficulty.lenMax[tier] { XCTAssertLessThanOrEqual(len, hi, "\(lv.id): too long for \(tier)") }
             XCTAssertLessThanOrEqual(s.par, Difficulty.parMax[tier] ?? 3, "\(lv.id): over par for \(tier)")
             let closes = s.path.indices.dropFirst().filter { s.path[$0].posture == .closed && s.path[$0 - 1].posture != .closed }.count
-            XCTAssertLessThanOrEqual(closes, lv.isOptional ? 3 : 2, "\(lv.id): too many full closes")
+            XCTAssertLessThanOrEqual(closes, Difficulty.closesMax(optional: lv.isOptional, tier: lv.tier), "\(lv.id): too many full closes")
             XCTAssertEqual(s.par, lv.expect?.changes, lv.id)
         }
     }
@@ -118,8 +118,8 @@ final class DifficultyTests: XCTestCase {
     /// and each chapter's main path stays inside the 24-change chapter budget.
     func testTheCurve() throws {
         XCTAssertEqual(pack.levels.map { $0.len ?? -1 },
-                       [5, 13, 16, 16, 17, 10, 16, 17, 17, 18, 18, 19, 20, 5, 13, 16, 17, 16, 18, 11, 12, 18, 19, 20, 19,
-                        6, 6, 10, 17, 17, 18, 20, 20, 19, 22, 6, 9, 16, 16, 18, 19, 20])
+                       [5, 13, 16, 16, 17, 10, 16, 17, 17, 18, 18, 19, 20, 5, 13, 16, 17, 16, 18, 11, 12, 18, 19, 20, 18,
+                        6, 6, 10, 17, 17, 18, 20, 20, 19, 22, 6, 9, 16, 16, 18, 19, 18])
         let vol1 = pack.levels.prefix(25).compactMap(\.len)
         XCTAssertGreaterThanOrEqual(Double(vol1.reduce(0, +)) / Double(vol1.count), 15)
         for range in [0..<5, 5..<13, 13..<19, 19..<25, 25..<32, 35..<42] {
@@ -241,6 +241,23 @@ final class GameTests: XCTestCase {
         XCTAssertEqual(g.board[1, 2], .door)
         XCTAssertEqual(g.angle, 0)
         XCTAssertEqual(g.posture, .open)
+    }
+
+    /// 0.1 (17) 「重新开始」: back to how the level began, and one undo steps back to before the restart.
+    func testRestartIsUndoable() throws {
+        let g = try FoldGame(level: level("key"))
+        let start = g.board, home = g.char
+        g.pushUndo(); g.setAngle(180)
+        g.pushUndo(); g.setAngle(30)
+        XCTAssertEqual(g.board[1, 2], .openDoor)
+        let before = (g.board, g.char, g.angle, g.trail)
+        g.restart()
+        XCTAssertEqual(g.board, start); XCTAssertEqual(g.char, home); XCTAssertEqual(g.trail, [home])
+        XCTAssertEqual(g.angle, 0); XCTAssertEqual(g.posture, .open); XCTAssertFalse(g.closedOnce); XCTAssertFalse(g.stuck)
+        XCTAssertTrue(g.undo())
+        XCTAssertEqual(g.board, before.0); XCTAssertEqual(g.char, before.1); XCTAssertEqual(g.angle, before.2); XCTAssertEqual(g.trail, before.3)
+        XCTAssertTrue(g.closedOnce)
+        XCTAssertTrue(g.undo()); XCTAssertEqual(g.angle, 180)   // the older history is still under it
     }
 
     func testRideTheShadow() throws {
@@ -447,7 +464,7 @@ final class ChapterFourTests: XCTestCase {
         XCTAssertTrue(g.won)
         XCTAssertEqual(g.posture, .closed, "they meet only in the shut book")
         XCTAssertEqual(g.board[g.goal!], .goal, "she never moves")
-        XCTAssertEqual(g.goal, Cell(6, 1))
+        XCTAssertEqual(g.goal, Cell(7, 3))
         XCTAssertEqual(sol.last?[2], 180)
         // one state before the end, the book is still open or the figure is elsewhere: not yet won
         let (h, _) = try replay("twoFigures", upTo: sol.count - 1)

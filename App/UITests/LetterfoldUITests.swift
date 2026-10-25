@@ -129,6 +129,64 @@ final class LetterfoldUITests: XCTestCase {
         keep(app, "buttons")
     }
 
+    /// 0.1 (17) 「重新开始」 in the button footer: a walk and a close (the key opens a door: not walkable back), then
+    /// restart — book flat, figure on the start, the door locked again, nothing to restart — and one undo steps back.
+    func testRestartAndUndoTheRestart() {
+        let app = launch(["-startLevel", "4", "-buttonControl", "YES", "-probe", "YES"])
+        let f = FoldDriver(app: app)
+        let restart = app.buttons["restart"]
+        XCTAssertTrue(restart.waitForExistence(timeout: 8))
+        XCTAssertFalse(restart.isEnabled, "no move yet: nothing to restart")
+        XCTAssertEqual(f.probe("me"), "5,2")
+        let door = f.tile(1, 1).label
+        XCTAssertTrue(door.contains("locked door"), door)
+        f.walk(4, 2)
+        XCTAssertEqual(f.probe("me"), "4,2")
+        app.buttons["fold.close"].tap()
+        sleep(1)
+        XCTAssertEqual(f.fold.value as? String, "Closed, 0°")
+        // lift the page three steps (out of the closed posture, Codex review 17): the opened door shows, the book is not flat
+        for _ in 0..<3 { app.buttons["fold.less"].tap(); sleep(1) }
+        let lifted = f.fold.value as? String
+        XCTAssertNotEqual(lifted, "Open, 180°")
+        XCTAssertFalse(lifted?.hasPrefix("Closed") ?? true, lifted ?? "nil")
+        let opened = f.tile(1, 1).label
+        XCTAssertTrue(opened.contains("open door"), "the key has opened the door: \(opened)")
+        XCTAssertTrue(restart.isEnabled)
+        keep(app, "before-restart")
+        restart.tap()
+        sleep(1)
+        XCTAssertEqual(f.fold.value as? String, "Open, 180°", "the book is flat again")
+        XCTAssertEqual(f.probe("me"), "5,2", "the figure is back on the start")
+        XCTAssertEqual(f.tile(1, 1).label, door, "the door is locked again")
+        XCTAssertEqual(f.probe("toast"), "")
+        XCTAssertEqual(f.probe("face"), "0")
+        XCTAssertFalse(restart.isEnabled, "as the level began: nothing to restart")
+        XCTAssertTrue(app.buttons["undo"].isEnabled, "the restart itself can be undone")
+        keep(app, "after-restart")
+        app.buttons["undo"].tap()
+        sleep(1)
+        XCTAssertEqual(f.fold.value as? String, lifted, "undo steps back to before the restart")
+        XCTAssertEqual(f.probe("me"), "4,2")
+        XCTAssertEqual(f.tile(1, 1).label, opened)
+        XCTAssertTrue(opened.contains("open door"))
+    }
+
+    /// Without the button footer 「重新开始」 is an icon in the top bar, dimmed until the first move.
+    func testRestartInTheTopBar() {
+        let app = launch(["-startLevel", "4", "-probe", "YES"])
+        let f = FoldDriver(app: app)
+        let restart = app.buttons["restart"]
+        XCTAssertTrue(restart.waitForExistence(timeout: 8))
+        XCTAssertFalse(restart.isEnabled)
+        f.walk(4, 2)
+        XCTAssertTrue(restart.isEnabled)
+        restart.tap()
+        sleep(1)
+        XCTAssertEqual(f.probe("me"), "5,2")
+        XCTAssertFalse(restart.isEnabled)
+    }
+
     func testJapanese() {
         let app = launch(["-startLevel", "1"], lang: "ja")
         let name = app.descendants(matching: .any)["level.name"]

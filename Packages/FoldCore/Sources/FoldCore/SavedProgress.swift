@@ -50,6 +50,13 @@ public enum SavedProgress {
         !previous.isEmpty && previous.allSatisfy(done.contains)
     }
 
+    /// The level rule inside an open chapter (owner, 0.1 (17)): a delivered level replays, and the first level not yet
+    /// delivered is the one to play next; every later level stays shut until it is reached, so no level is skipped.
+    public static func levelOpen(_ id: String, in chapter: [String], done: Set<String>) -> Bool {
+        guard chapter.contains(id) else { return false }
+        return done.contains(id) || chapter.first { !done.contains($0) } == id
+    }
+
     public static func reset(_ d: UserDefaults = .standard) {
         d.removeObject(forKey: idsKey); d.removeObject(forKey: legacyKey)
     }

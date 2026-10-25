@@ -223,6 +223,16 @@ public final class FoldGame {
         return true
     }
 
+    /// The player's 「重新开始」: the level as it began (grids and face, the figure on the start, the trail, the book
+    /// flat) — but undoable: the state before is pushed first, so one undo steps back to before the restart and the
+    /// older history is still there under it.
+    public func restart() {
+        pushUndo()
+        board = try! Board(level: level, columnsPerPage: config.columnsPerPage)
+        char = board.start; trail = [board.start]; angle = 0; posture = rules.posture(0); shade = rules.shadows(board, 0)
+        rideSrc = nil; won = false; closedOnce = false; stuck = false
+    }
+
     public func reset() {
         board = try! Board(level: level, columnsPerPage: config.columnsPerPage)
         char = board.start; trail = [board.start]; angle = 0; posture = .open; shade = [:]; rideSrc = nil; won = false; undoStack = []

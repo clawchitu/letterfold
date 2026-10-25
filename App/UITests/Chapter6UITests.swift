@@ -165,4 +165,17 @@ final class Chapter6UITests: XCTestCase {
         launch(42, ["-highContrast", "YES"])
         shot("05-6-7-hc")
     }
+
+    /// With button control a chapter-6 footer already holds Lean and 「翻」, so 「重新开始」 moves to the top bar and the
+    /// footer keeps seven buttons, each at least 44 pt wide (Codex review 17).
+    func testRestartInTheTopBarWhenTheFooterIsFull() {
+        launch(36, ["-buttonControl", "YES"])
+        let restart = app.buttons["restart"]
+        XCTAssertTrue(restart.waitForExistence(timeout: 8))
+        XCTAssertTrue(app.buttons["fold.lean"].exists && flip.exists)
+        XCTAssertLessThan(restart.frame.midY, app.buttons["undo"].frame.minY, "in the top bar, above the footer")
+        for id in ["fold.more", "fold.less", "fold.lean", "fold.close", "fold.open", "flip", "undo"] {
+            XCTAssertGreaterThanOrEqual(app.buttons[id].frame.width, 44, id)
+        }
+    }
 }

@@ -9151,6 +9151,126 @@
         }
       }
     },
+    "restart": {
+      "comment": "UI. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新开始"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restart"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "やり直す"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다시 시작"
+          }
+        }
+      }
+    },
+    "restartHint": {
+      "comment": "VoiceOver. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回到这一关的开头，撤销可以回来"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back to how the level began; undo brings you back"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "関の最初に戻る。戻すで元に戻せる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "단계 처음으로 돌아가요. 되돌리기로 돌아올 수 있어요"
+          }
+        }
+      }
+    },
+    "restartLabel": {
+      "comment": "VoiceOver. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新开始本关"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restart the level"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この関を最初からやり直す"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 단계를 처음부터 다시 시작"
+          }
+        }
+      }
+    },
+    "restarted": {
+      "comment": "VoiceOver. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已重新开始。你在{pos}，撤销可以回到刚才"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restarted. You are at {pos}; undo to go back"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "やり直しました。あなたは{pos}。戻すでさっきに戻れます"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다시 시작했어요. 지금 {pos}, 되돌리기로 방금 전으로 돌아갈 수 있어요"
+          }
+        }
+      }
+    },
     "right": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",

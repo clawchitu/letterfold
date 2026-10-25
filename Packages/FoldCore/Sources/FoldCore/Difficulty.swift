@@ -16,7 +16,13 @@ public struct Difficulty: Sendable {
     public static let lenMin: [String: Int] = ["easy": 6, "mid": 11, "hard": 15, "final": 18, "dark": 18]
     public static let lenMax: [String: Int] = ["teach": 10]
     /// check.js PAR_MAX / CLOSES_MAX (postmortem §1.4): posture changes and full closes per tier; 「暗信」 = dark.
-    public static let parMax: [String: Int] = ["teach": 3, "easy": 3, "mid": 3, "hard": 4, "final": 4, "dark": 6]
+    /// final par 4 → 5 and final closes 2 → 3 (fold-proto c4b9d48 / 82e0990, difficulty-v3.md §6).
+    public static let parMax: [String: Int] = ["teach": 3, "easy": 3, "mid": 3, "hard": 4, "final": 5, "dark": 6]
+    public static let closesMax: [String: Int] = ["main": 2, "final": 3, "dark": 3]
+    /// The full-close budget of a level: 「暗信」 3, a main-path final 3, everything else 2.
+    public static func closesMax(optional: Bool, tier: String?) -> Int {
+        closesMax[optional ? "dark" : tier == "final" ? "final" : "main"]!
+    }
     public static func range(of tier: String) -> ClosedRange<Int>? { tiers.first { $0.name == tier }?.range }
     /// The mechanics `combo` counts (check.js MECHANICS).
     static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue", "needsFlip"]

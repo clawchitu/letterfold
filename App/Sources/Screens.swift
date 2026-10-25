@@ -624,7 +624,10 @@ struct ChapterMapView: View {
     private func card(_ ch: Chapter, _ width: Double) -> some View {
         HStack {
             if ch.inVolume % 2 == 0 { Spacer() }
-            ChapterCard(model: model, chapter: ch, action: { open(ch) }, openLevel: { i in model.go(i); router.go(.level) })
+            ChapterCard(model: model, chapter: ch, action: { open(ch) }, openLevel: { i in
+                guard model.isLevelOpen(i) else { return }
+                model.go(i); router.go(.level)
+            })
                 .frame(width: (width - 64) / 2)
             if ch.inVolume % 2 == 1 { Spacer() }
         }
@@ -660,6 +663,15 @@ extension GameModel {
         // strict: every level of the previous chapter delivered, nothing else (FoldCore.SavedProgress.chapterOpen)
         let prev = Chapter.all[ch.id - 2].levelIDs.filter { id in pack.levels.contains { $0.id == id } }
         return SavedProgress.chapterOpen(previous: prev, done: Set(done.map { pack.levels[$0].id }))
+    }
+    /// Inside an open chapter a level opens once reached: delivered ones replay, the first undelivered one is next,
+    /// later ones stay shut (FoldCore.SavedProgress.levelOpen). 暗信 keep their own rule (isDarkOpen).
+    func isLevelOpen(_ i: Int) -> Bool {
+        guard pack.levels.indices.contains(i) else { return false }
+        let id = pack.levels[i].id
+        guard let ch = Chapter.all.first(where: { $0.levelIDs.contains(id) }) else { return true }
+        let ids = ch.levelIDs.filter { id in pack.levels.contains { $0.id == id } }
+        return isUnlocked(ch) && SavedProgress.levelOpen(id, in: ids, done: Set(done.map { pack.levels[$0].id }))
     }
     /// 「2-3」 for a level index.
     func code(for i: Int) -> String {
@@ -746,7 +758,12 @@ private struct ChapterCard: View {
                 // the chapter's heading over its levels (fold-proto e613f80's Levels sheet: 「一 · 折」…)
                 Section(L10n.t("chHead.\(chapter.id)")) {
                     ForEach(Array(idx.enumerated()), id: \.offset) { k, i in
-                        Button("\(chapter.id)-\(k + 1) · \(L10n.level(model.pack.levels[i].id).name)") { openLevel(i) }
+                        // a level not reached yet stays listed, shut, with a lock: no skipping ahead in a chapter
+                        let open = model.isLevelOpen(i), title = "\(chapter.id)-\(k + 1) · \(L10n.level(model.pack.levels[i].id).name)"
+                        Button { openLevel(i) } label: {
+                            if open { Text(title) } else { Label(title, systemImage: "lock") }
+                        }
+                        .disabled(!open)
                     }
                 }
             }
@@ -755,6 +772,7 @@ private struct ChapterCard: View {
             if model.isUnlocked(chapter) {
                 ForEach(Array(idx.enumerated()), id: \.offset) { k, i in
                     Button(L10n.t("lvAria", ["n": "\(chapter.id)-\(k + 1)", "name": L10n.level(model.pack.levels[i].id).name])) { openLevel(i) }
+                        .disabled(!model.isLevelOpen(i))
                 }
             }
         }

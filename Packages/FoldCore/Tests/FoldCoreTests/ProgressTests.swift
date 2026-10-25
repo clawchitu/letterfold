@@ -65,6 +65,25 @@ final class ProgressTests: XCTestCase {
         XCTAssertFalse(SavedProgress.chapterOpen(previous: [], done: done))
     }
 
+    /// 0.1 (17): inside an open chapter only delivered levels and the first undelivered one open; a later level is
+    /// listed but shut, so 1-5 cannot be played before 1-2. A gap left by an older save opens only its first hole.
+    func testLevelsInsideAChapterOpenInOrder() {
+        let ch1 = ["bridge", "facing", "back", "key", "ink"]
+        XCTAssertTrue(SavedProgress.levelOpen("bridge", in: ch1, done: []))
+        XCTAssertFalse(SavedProgress.levelOpen("facing", in: ch1, done: []))
+        XCTAssertFalse(SavedProgress.levelOpen("ink", in: ch1, done: []))
+        var done: Set<String> = ["bridge"]
+        XCTAssertTrue(SavedProgress.levelOpen("bridge", in: ch1, done: done), "a delivered level replays")
+        XCTAssertTrue(SavedProgress.levelOpen("facing", in: ch1, done: done))
+        XCTAssertFalse(SavedProgress.levelOpen("back", in: ch1, done: done))
+        done = ["bridge", "back"]   // a gap: 1-2 undelivered, 1-3 delivered
+        XCTAssertTrue(SavedProgress.levelOpen("facing", in: ch1, done: done))
+        XCTAssertTrue(SavedProgress.levelOpen("back", in: ch1, done: done))
+        XCTAssertFalse(SavedProgress.levelOpen("key", in: ch1, done: done))
+        XCTAssertTrue(ch1.allSatisfy { SavedProgress.levelOpen($0, in: ch1, done: Set(ch1)) })
+        XCTAssertFalse(SavedProgress.levelOpen("stand", in: ch1, done: Set(ch1)), "not a level of this chapter")
+    }
+
     /// Vol. 2 (design-review-v2c1 §3 存档): the seven new levels save under their IDs, so nothing earlier moves, and the
     /// strict rule holds across the volume boundary: chapter 5 opens only once all of chapter 4 is delivered.
     func testVolumeTwoOpensOnlyAfterAllOfChapterFour() throws {
@@ -100,6 +119,21 @@ final class ProgressTests: XCTestCase {
         // vol. 2 chapter 6 「翻」 (fold-proto design-ch6.md): the proto's stable IDs
         XCTAssertEqual(Array(ids.suffix(7)), ["turn", "overleaf", "twoFaces", "inlay", "bleed", "pressedFlower", "lastPage"])
         XCTAssertEqual(Set(ids).count, ids.count)
+    }
+
+    /// 0.1 (17): 4-6 twoFigures and 6-7 lastPage were redrawn (difficulty-v3 §6) under the same IDs. A 0.1 (16) save
+    /// that cleared the old boards loads unchanged: both stay delivered, and chapter 5 / vol. 2's end still count as open.
+    func testReworkedFinalsStaySolved() throws {
+        let pack = try LevelPack.bundled()
+        let main = Set(pack.levels.filter { !$0.isOptional }.map(\.id))
+        XCTAssertTrue(main.isSuperset(of: ["twoFigures", "lastPage"]), "the IDs are stable")
+        XCTAssertEqual(pack.levels.first { $0.id == "twoFigures" }?.map.first, "-...----", "4-6 is the reworked board")
+        XCTAssertEqual(pack.levels.first { $0.id == "lastPage" }?.map.first, ".--.-..-----", "6-7 is the reworked board")
+        SavedProgress.save(main, d)
+        let done = SavedProgress.load(d)
+        XCTAssertEqual(done, main)
+        XCTAssertTrue(done.contains("twoFigures") && done.contains("lastPage"))
+        XCTAssertTrue(SavedProgress.chapterOpen(previous: ["twoShades", "bridgeShade", "inkShore", "stoneRain", "shadeDoor", "twoFigures"], done: done))
     }
 
     /// A 0.1 (13) player who had finished everything: every redrawn level stays solved, chapter 5's redesigned four
