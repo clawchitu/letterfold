@@ -82,7 +82,8 @@ struct LevelScreen: View {
                     NextKnot(title: model.isLastInChapter ? L10n.t("letter.read") : model.isDark && model.nextDark == nil ? L10n.t("dark.back") : L10n.t("next")) {
                         if model.isLastInChapter { router.go(.letter) }
                         else if model.isDark { if let n = model.nextDark { model.go(n); fadeName() } else { router.go(.map) } }
-                        else { model.go(model.index + 1); fadeName() }
+                        // the next level, or (an older save with a gap) the first one not yet delivered: never past it
+                        else { model.go(model.isLevelOpen(model.index + 1) ? model.index + 1 : model.chapterLevelIndices.first { !model.done.contains($0) } ?? model.index + 1); fadeName() }
                     }
                     .transition(.opacity)
                 } else if settings.showButtons {
