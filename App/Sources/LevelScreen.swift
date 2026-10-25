@@ -144,7 +144,7 @@ private struct TopBar: View {
             }
             .accessibilityLabel(L10n.t("nav.bookLabel"))
             .accessibilityIdentifier("nav.book")
-            if !AppSettings.shared.showButtons { Color.clear.frame(width: 44, height: 44).accessibilityHidden(true) }   // balances 「重新开始」
+            if model.restartInTopBar { Color.clear.frame(width: 44, height: 44).accessibilityHidden(true) }   // balances 「重新开始」
             Spacer(minLength: 4)
             if inline {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
@@ -161,7 +161,7 @@ private struct TopBar: View {
             Spacer(minLength: 4)
             // 「重新开始」 without the button footer (which has its own): a quiet icon beside 「?」, shown once a move
             // has been made (0.1 (17), Haoqiang 10/25: some moves cannot be walked back without leaving the level)
-            if !AppSettings.shared.showButtons {
+            if model.restartInTopBar {
                 Button { model.restart() } label: {
                     Image(systemName: "arrow.counterclockwise.circle").font(.system(size: 22, weight: .regular)).foregroundStyle(Tok.ink900)
                         .frame(width: 44, height: 44).contentShape(Rectangle())
@@ -188,6 +188,12 @@ private struct TopBar: View {
     }
 }
 
+extension GameModel {
+    /// 「重新开始」 sits in the top bar without the button footer, and also where the footer is already full (Lean and
+    /// 「翻」 in a chapter-6 book: an eighth button would be under 44 pt wide on a 390 pt phone, Codex review 17).
+    var restartInTopBar: Bool { !AppSettings.shared.showButtons || (canLean && hasThirdPage) }
+}
+
 /// The footer of buttons, only for assistive tech or Settings › Button control (frame a11y-e1): five buttons,
 /// 15° steps, no precision, no timing. They are also the board's custom actions.
 private struct FooterButtons: View {
@@ -210,10 +216,12 @@ private struct FooterButtons: View {
             FooterButton(glyph: "↺", title: L10n.t("undo"), label: L10n.t("undo"), id: "undo") { model.undo() }
                 .disabled(!model.canUndo)
             // 「重新开始」 (0.1 (17)): undoable, so no confirmation; disabled until the first move
-            FooterButton(glyph: "", symbol: "arrow.counterclockwise.circle", title: L10n.t("restart"), label: L10n.t("restartLabel"), id: "restart") { model.restart() }
-                .disabled(!model.canRestart)
-                .accessibilityHint(L10n.t("restartHint"))
-                .keyboardShortcut("r", modifiers: [])
+            if !model.restartInTopBar {
+                FooterButton(glyph: "", symbol: "arrow.counterclockwise.circle", title: L10n.t("restart"), label: L10n.t("restartLabel"), id: "restart") { model.restart() }
+                    .disabled(!model.canRestart)
+                    .accessibilityHint(L10n.t("restartHint"))
+                    .keyboardShortcut("r", modifiers: [])
+            }
         }
         .padding(6)
         .background(RoundedRectangle(cornerRadius: 14).fill(Color(hex: 0xF4F0E8)).shadow(color: .black.opacity(0.08), radius: 6, y: 2))

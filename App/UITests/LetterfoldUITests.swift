@@ -145,12 +145,13 @@ final class LetterfoldUITests: XCTestCase {
         app.buttons["fold.close"].tap()
         sleep(1)
         XCTAssertEqual(f.fold.value as? String, "Closed, 0°")
-        app.buttons["fold.less"].tap()   // lift the page a step: the opened door shows, the book is not flat
-        sleep(1)
+        // lift the page three steps (out of the closed posture, Codex review 17): the opened door shows, the book is not flat
+        for _ in 0..<3 { app.buttons["fold.less"].tap(); sleep(1) }
         let lifted = f.fold.value as? String
         XCTAssertNotEqual(lifted, "Open, 180°")
+        XCTAssertFalse(lifted?.hasPrefix("Closed") ?? true, lifted ?? "nil")
         let opened = f.tile(1, 1).label
-        XCTAssertNotEqual(opened, door, "the key has opened the door")
+        XCTAssertTrue(opened.contains("open door"), "the key has opened the door: \(opened)")
         XCTAssertTrue(restart.isEnabled)
         keep(app, "before-restart")
         restart.tap()
@@ -168,6 +169,7 @@ final class LetterfoldUITests: XCTestCase {
         XCTAssertEqual(f.fold.value as? String, lifted, "undo steps back to before the restart")
         XCTAssertEqual(f.probe("me"), "4,2")
         XCTAssertEqual(f.tile(1, 1).label, opened)
+        XCTAssertTrue(opened.contains("open door"))
     }
 
     /// Without the button footer 「重新开始」 is an icon in the top bar, dimmed until the first move.
