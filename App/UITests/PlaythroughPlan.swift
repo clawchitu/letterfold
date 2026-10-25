@@ -33,7 +33,7 @@ let playthroughPlan: [(id: String, acts: [PlanAct])] = [
     ("inkShore", [.walk(6, 1, 8), .close, .walk(0, 1, 1), .lean(40, tol: 8), .walk(1, 2, 2), .creep(55, tol: 4), .walk(3, 4, 3), .close]),
     ("stoneRain", [.walk(6, 3, 5), .close, .walk(0, 3, 1), .walk(0, 4, 1), .lean(49, tol: 8), .walk(2, 4, 2), .creep(70, tol: 6), .walk(2, 0, 5), .close, .walk(1, 0, 1)]),
     ("shadeDoor", [.walk(7, 3, 7), .close, .walk(0, 2, 1), .lean(33, tol: 8), .walk(2, 3, 3), .creep(55, tol: 6), .walk(2, 0, 4), .close, .walk(1, 0, 1)]),
-    ("twoFigures", [.walk(4, 3, 2), .close, .walk(3, 4, 1), .walk(2, 4, 1), .walk(1, 4, 1), .walk(1, 3, 1), .lean(55, tol: 4), .walk(2, 0, 6), .creep(40, tol: 6), .walk(0, 1, 2), .close, .walk(1, 1, 1)]),
+    ("twoFigures", [.walk(5, 2, 1), .close, .walk(1, 2, 1), .walk(1, 1, 1), .walk(1, 0, 1), .walk(2, 0, 1), .walk(3, 0, 1), .lean(76, tol: 7), .walk(3, 4, 4), .lean(49, tol: 8), .walk(0, 4, 3), .close, .walk(0, 3, 1)]),
     ("glue", [.walk(6, 1, 1), .close, .lean(70, tol: 8), .walk(6, 4, 3)]),
     ("lend", [.walk(1, 1, 1), .close, .lean(39, tol: 8), .walk(1, 4, 3)]),
     ("bridgeGlue", [.walk(4, 0, 3), .close, .lean(76, tol: 7), .walk(1, 2, 5)]),
@@ -50,5 +50,5 @@ let playthroughPlan: [(id: String, acts: [PlanAct])] = [
     ("inlay", [.walk(0, 2, 5), .lean(42, tol: 8), .walk(3, 0, 5), .close, .flip, .walk(3, 1, 1), .walk(2, 1, 1), .walk(2, 2, 1)]),
     ("bleed", [.walk(1, 0, 8), .lean(55, tol: 4), .walk(2, 1, 2), .creep(75, tol: 6), .walk(3, 2, 1), .close, .flip, .walk(2, 2, 1), .walk(2, 1, 1), .walk(2, 0, 1)]),
     ("pressedFlower", [.walk(0, 4, 6), .lean(40, tol: 8), .walk(1, 4, 1), .creep(60, tol: 6), .walk(3, 1, 4), .close, .flip, .walk(3, 2, 1), .walk(3, 3, 1), .walk(3, 4, 1), .walk(2, 4, 1)]),
-    ("lastPage", [.walk(5, 4, 6), .close, .walk(2, 5, 1), .lean(44, tol: 8), .walk(0, 4, 3), .close, .flip, .walk(0, 3, 1), .walk(0, 2, 1), .walk(1, 2, 1), .walk(1, 1, 1), .walk(1, 0, 1), .walk(0, 0, 1)]),
+    ("lastPage", [.walk(7, 1, 1), .close, .walk(0, 0, 1), .walk(1, 0, 1), .walk(2, 0, 1), .walk(3, 0, 1), .walk(3, 1, 1), .walk(3, 2, 1), .walk(3, 3, 1), .walk(2, 3, 1), .walk(2, 4, 1), .walk(2, 3, 1), .flip, .flip, .lean(49, tol: 8), .walk(1, 1, 3)]),
 ]

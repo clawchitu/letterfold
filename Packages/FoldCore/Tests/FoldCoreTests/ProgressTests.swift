@@ -102,6 +102,21 @@ final class ProgressTests: XCTestCase {
         XCTAssertEqual(Set(ids).count, ids.count)
     }
 
+    /// 0.1 (17): 4-6 twoFigures and 6-7 lastPage were redrawn (difficulty-v3 §6) under the same IDs. A 0.1 (16) save
+    /// that cleared the old boards loads unchanged: both stay delivered, and chapter 5 / vol. 2's end still count as open.
+    func testReworkedFinalsStaySolved() throws {
+        let pack = try LevelPack.bundled()
+        let main = Set(pack.levels.filter { !$0.isOptional }.map(\.id))
+        XCTAssertTrue(main.isSuperset(of: ["twoFigures", "lastPage"]), "the IDs are stable")
+        XCTAssertEqual(pack.levels.first { $0.id == "twoFigures" }?.map.first, "-...----", "4-6 is the reworked board")
+        XCTAssertEqual(pack.levels.first { $0.id == "lastPage" }?.map.first, ".--.-..-----", "6-7 is the reworked board")
+        SavedProgress.save(main, d)
+        let done = SavedProgress.load(d)
+        XCTAssertEqual(done, main)
+        XCTAssertTrue(done.contains("twoFigures") && done.contains("lastPage"))
+        XCTAssertTrue(SavedProgress.chapterOpen(previous: ["twoShades", "bridgeShade", "inkShore", "stoneRain", "shadeDoor", "twoFigures"], done: done))
+    }
+
     /// A 0.1 (13) player who had finished everything: every redrawn level stays solved, chapter 5's redesigned four
     /// count through `renamed`, and the 暗信 side letters are still to read.
     func testBuild13SaveStaysSolved() throws {
