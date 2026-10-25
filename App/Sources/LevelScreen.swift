@@ -143,6 +143,7 @@ private struct TopBar: View {
             }
             .accessibilityLabel(L10n.t("nav.bookLabel"))
             .accessibilityIdentifier("nav.book")
+            if !AppSettings.shared.showButtons { Color.clear.frame(width: 44, height: 44).accessibilityHidden(true) }   // balances 「重新开始」
             Spacer(minLength: 4)
             if inline {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
@@ -157,6 +158,20 @@ private struct TopBar: View {
                 .accessibilityIdentifier("level.name")
             }
             Spacer(minLength: 4)
+            // 「重新开始」 without the button footer (which has its own): a quiet icon beside 「?」, shown once a move
+            // has been made (0.1 (17), Haoqiang 10/25: some moves cannot be walked back without leaving the level)
+            if !AppSettings.shared.showButtons {
+                Button { model.restart() } label: {
+                    Image(systemName: "arrow.counterclockwise.circle").font(.system(size: 22, weight: .regular)).foregroundStyle(Tok.ink900)
+                        .frame(width: 44, height: 44).contentShape(Rectangle())
+                }
+                .opacity(model.canRestart ? 1 : 0.3)
+                .disabled(!model.canRestart)
+                .accessibilityLabel(L10n.t("restartLabel"))
+                .accessibilityHint(L10n.t("restartHint"))
+                .accessibilityIdentifier("restart")
+                .keyboardShortcut("r", modifiers: [])
+            }
             Button { model.hint() } label: {
                 Image(systemName: "questionmark.circle").font(.system(size: 22, weight: .regular)).foregroundStyle(Tok.ink900)
                     .frame(width: 44, height: 44).contentShape(Rectangle())
@@ -193,6 +208,11 @@ private struct FooterButtons: View {
             }
             FooterButton(glyph: "↺", title: L10n.t("undo"), label: L10n.t("undo"), id: "undo") { model.undo() }
                 .disabled(!model.canUndo)
+            // 「重新开始」 (0.1 (17)): undoable, so no confirmation; disabled until the first move
+            FooterButton(glyph: "", symbol: "arrow.counterclockwise.circle", title: L10n.t("restart"), label: L10n.t("restartLabel"), id: "restart") { model.restart() }
+                .disabled(!model.canRestart)
+                .accessibilityHint(L10n.t("restartHint"))
+                .keyboardShortcut("r", modifiers: [])
         }
         .padding(6)
         .background(RoundedRectangle(cornerRadius: 14).fill(Color(hex: 0xF4F0E8)).shadow(color: .black.opacity(0.08), radius: 6, y: 2))
@@ -228,13 +248,20 @@ private struct FlipButton: View {
 }
 
 private struct FooterButton: View {
-    let glyph: String, title: String, label: String, id: String
+    let glyph: String
+    /// An SF Symbol drawn in place of the glyph, at the glyph's size and weight.
+    var symbol: String? = nil
+    let title: String, label: String, id: String
     let action: () -> Void
     @Environment(\.isEnabled) private var enabled
     var body: some View {
         Button(action: action) {
             VStack(spacing: 2) {
-                Text(glyph).font(.system(size: 17, weight: .semibold))
+                if let symbol {
+                    Image(systemName: symbol).font(.system(size: 17, weight: .semibold)).frame(height: 20.5)
+                } else {
+                    Text(glyph).font(.system(size: 17, weight: .semibold))
+                }
                 Text(title).font(.footnote).lineLimit(1).minimumScaleFactor(0.6)
             }
             .foregroundStyle(Tok.ink900.opacity(enabled ? 1 : 0.35))

@@ -243,6 +243,23 @@ final class GameTests: XCTestCase {
         XCTAssertEqual(g.posture, .open)
     }
 
+    /// 0.1 (17) 「重新开始」: back to how the level began, and one undo steps back to before the restart.
+    func testRestartIsUndoable() throws {
+        let g = try FoldGame(level: level("key"))
+        let start = g.board, home = g.char
+        g.pushUndo(); g.setAngle(180)
+        g.pushUndo(); g.setAngle(30)
+        XCTAssertEqual(g.board[1, 2], .openDoor)
+        let before = (g.board, g.char, g.angle, g.trail)
+        g.restart()
+        XCTAssertEqual(g.board, start); XCTAssertEqual(g.char, home); XCTAssertEqual(g.trail, [home])
+        XCTAssertEqual(g.angle, 0); XCTAssertEqual(g.posture, .open); XCTAssertFalse(g.closedOnce); XCTAssertFalse(g.stuck)
+        XCTAssertTrue(g.undo())
+        XCTAssertEqual(g.board, before.0); XCTAssertEqual(g.char, before.1); XCTAssertEqual(g.angle, before.2); XCTAssertEqual(g.trail, before.3)
+        XCTAssertTrue(g.closedOnce)
+        XCTAssertTrue(g.undo()); XCTAssertEqual(g.angle, 180)   // the older history is still under it
+    }
+
     func testRideTheShadow() throws {
         let g = try FoldGame(level: level("ride"))
         g.setAngle(120)

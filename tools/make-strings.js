@@ -179,6 +179,12 @@ const NATIVE = {
   'kind.i.ch6': ['墨池（湿墨）', 'ink pool (wet ink)', '墨池（濡れた墨）', '먹물 웅덩이(젖은 먹)'],
   'kind.p.ch6': ['笺条（纸片）', 'ruled slip (tab)', '便箋の切れ端（紙片）', '편지지 조각(종이 조각)'],
   'kind.G.ch6': ['信封（终点）', 'envelope (goal)', '封筒（ゴール）', '봉투(도착점)'],
+  // 0.1 (17): 「重新开始」 in the level (Haoqiang 10/25): footer / top-bar button, its VoiceOver label, the announcement.
+  // Undoable, so no confirmation. ja / ko: TODO-native-check.
+  restart: ['重新开始', 'Restart', 'やり直す', '다시 시작'],
+  restartLabel: ['重新开始本关', 'Restart the level', 'この関を最初からやり直す', '이 단계를 처음부터 다시 시작'],
+  restartHint: ['回到这一关的开头，撤销可以回来', 'Back to how the level began; undo brings you back', '関の最初に戻る。戻すで元に戻せる', '단계 처음으로 돌아가요. 되돌리기로 돌아올 수 있어요'],
+  restarted: ['已重新开始。你在{pos}，撤销可以回到刚才', 'Restarted. You are at {pos}; undo to go back', 'やり直しました。あなたは{pos}。戻すでさっきに戻れます', '다시 시작했어요. 지금 {pos}, 되돌리기로 방금 전으로 돌아갈 수 있어요'],
 };
 const A11Y = /^(kind|noun|pos|col|here|fallsHere|doorKey|crushedHere|inkPrints|tabBridge|stoneShadow|keyOpens|inkTo|covers|book\.|connected|lost|doorOpened|inkPrinted|shadow|intro|elsewhere|stack|already|arrived|cantReach|no\.|slid|undone|win$|dir\.|goal|where|leftPage|rightPage|nowhere|nothingToUndo|lv|walkHere|sep|list|semi|angle$|step|foldLessLabel|foldMoreLabel)/;
 
@@ -196,7 +202,7 @@ function catalog(entries) {
 
 // 0.1 (16): ch. 6 strings fold-proto has only in zh / en (or in an older form) for ja / ko. Marked TODO-native-check in
 // the catalog comments until a native speaker has read them.
-const CH6_NATIVE = ['ch.6', 'ch.7', 'carried', 'flip.action', 'flip.hint'];
+const CH6_NATIVE = ['ch.6', 'ch.7', 'carried', 'flip.action', 'flip.hint', 'restart', 'restartLabel', 'restartHint', 'restarted'];
 const STRING_FIX = {
   ja: {
     'chHead.6': '六 · めくる',
@@ -233,7 +239,7 @@ for (const key of Object.keys(src.strings.en)) {
   ui[key] = { comment: `${where}. From fold-proto i18n.js.` + (params.length ? ` Placeholders: ${params.map((p) => '{' + p + '}').join(' ')}` : '') + (CHECKED.has(key) ? ' ja/ko: TODO-native-check.' : ''), values };
 }
 for (const [key, [zh, en, ja, ko]] of Object.entries(NATIVE)) {
-  ui[key] = { comment: (A11Y.test(key) ? 'VoiceOver' : 'UI') + '. Native app only.' + (CH6_NATIVE.includes(key) || key.endsWith('.ch6') ? ' ja/ko: TODO-native-check.' : ''), values: { zh, en, ja, ko } };
+  ui[key] = { comment: (A11Y.test(key) || /^restart(Label|Hint|ed)$/.test(key) ? 'VoiceOver' : 'UI') + '. Native app only.' + (CH6_NATIVE.includes(key) || key.endsWith('.ch6') ? ' ja/ko: TODO-native-check.' : ''), values: { zh, en, ja, ko } };
 }
 fs.writeFileSync(path.join(outDir, 'Localizable.xcstrings'), catalog(ui));
 

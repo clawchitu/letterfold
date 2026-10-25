@@ -410,18 +410,14 @@ final class GameModel {
         game = try! FoldGame(level: pack.levels[index], config: config)
         original = game.board
         won = false; aha = false; caption = false; sealShown = false; sealSettled = false; showNext = false
-        cancelFlip(); shownFace = 0
+        shownFace = 0
         finaleSeal = false; finaleSettled = false; finaleLetter = false; finaleBank = nil
         letterTask?.cancel(); letterTask = nil
-        quiet = false; dragging = false; angleHint = false; walking = false
-        threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]
-        pending = Pending(); saidAngle = 0; nopes = 0; hintAvailable = false; toast = nil; hintRung = 0
-        clearGlue()
+        clearTransient()
+        saidAngle = 0; hintAvailable = false; hintRung = 0
         angle = 0
-        cameraTask?.cancel(); cameraTask = nil; cameraPitch = Self.handPitch
-        setLamp(1, now: true)
+        cameraPitch = Self.handPitch
         sync()
-        lockKey = nil; refreshLock(); if !lockedCells.isEmpty { lockedCells = [] }; lockFlashTask?.cancel(); lockFlash = []
         sound.figureMotif = goalIsFigure
         if hingeKind == .device, settings.hingeFold, let a = (device as? AnyHingeAngle)?.lastAngle {
             setAngle(Self.virtualFold(a)); pending = Pending()
@@ -464,6 +460,54 @@ final class GameModel {
         if ghost != 0 || tease != 0 { withAnimation(.easeOut(duration: 0.15)) { ghost = 0; tease = 0 } }
     }
     func reset() { go(index) }
+
+    /// 「重新开始」 is offered: the player has made a move (the book, the figure or the grids are not as the level
+    /// began) and the level is not won.
+    var canRestart: Bool { !won && !aha && (angle != 0 || trail.count > 1 || char != original.start || board != original) }
+
+    /// 「重新开始」 (0.1 (17), Haoqiang 10/25): the level as it began — grids and face, the figure on the start, the book
+    /// flat — with everything in flight stopped (a turn, a walk, a spring, a crush, glue, toasts). Undoable rather than
+    /// confirmed: FoldGame pushes the state before, so one undo steps back to before the restart. Not a hint, and the
+    /// 「?」 ladder and the stuck timer's progress are left as they were.
+    func restart() {
+        if aha { finishAhaNow(); return }
+        guard canRestart else { return }
+        stopAll()
+        game.restart()
+        clearTransient()
+        haptics.undo()
+        sound.rub(volume: 0.3)
+        withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .easeInOut(duration: 0.3)) {
+            angle = game.angle
+            sync()
+        }
+        forgetMotion()
+        if hingeKind == .device, settings.hingeFold, let a = (device as? AnyHingeAngle)?.lastAngle {
+            setAngle(Self.virtualFold(a)); pending = Pending()
+        }
+        aimCamera(at: angle)
+        saidAngle = Int(angle.rounded())
+        if !hintAvailable {
+            stuckTask = Task { [weak self] in
+                try? await Task.sleep(for: .seconds(45))
+                if !Task.isCancelled, let self, !self.won { self.hintAvailable = true }
+            }
+        }
+        announce(L10n.t("restarted", ["pos": pos(game.char)]))
+    }
+
+    /// The per-level transient state a new level and a restart both clear.
+    private func clearTransient() {
+        cancelFlip()
+        quiet = false; dragging = false; angleHint = false; walking = false
+        threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]
+        pending = Pending(); nopes = 0
+        toastTask?.cancel(); toastTask = nil; toast = nil
+        clearGlue()
+        cameraTask?.cancel(); cameraTask = nil
+        setLamp(1, now: true)
+        lockKey = nil; lockFlashTask?.cancel(); lockFlash = []; if !lockedCells.isEmpty { lockedCells = [] }
+    }
 
     var intro: String {
         let t = levelText, g = game.goal
