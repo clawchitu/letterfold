@@ -169,3 +169,33 @@ final class FoldTallyTests: XCTestCase {
         d.removePersistentDomain(forName: "FoldTallyTests")
     }
 }
+
+/// Codex review 18 #2: Restart → Undo brings back the attempt's 折数 and resting angle.
+final class RestartUndoTallyTests: XCTestCase {
+    func testRestartThenUndoKeepsTheFoldCount() throws {
+        let pack = try LevelPack.bundled()
+        let lv = try XCTUnwrap(pack.levels.first { $0.id == "key" })   // 1-4, par 3
+        let sol = try XCTUnwrap(lv.solution), par = try XCTUnwrap(lv.expect?.changes)
+        let g = try FoldGame(level: lv, config: pack.config)
+        // the solution up to the last step onto the goal
+        for (prev, s) in zip(sol, sol.dropFirst()).dropLast() {
+            g.pushUndo()
+            if s[2] != prev[2] { _ = g.setAngle(Double(s[2])); g.tally.rest(at: g.angle) }
+            else { _ = g.step(to: Cell(s[0], s[1])) }
+        }
+        XCTAssertEqual(g.tally.count, par)
+        let angle = g.angle, rest = g.tally.restAngle
+        g.restart()
+        XCTAssertEqual(g.tally.count, 0); XCTAssertEqual(g.tally.restAngle, 0)
+        XCTAssertTrue(g.undo())
+        XCTAssertEqual(g.tally.count, par, "undoing the restart brings the count back")
+        XCTAssertEqual(g.tally.restAngle, rest); XCTAssertEqual(g.angle, angle)
+        g.tally.rest(at: g.angle)   // the app's settle after the undo: same angle, no fold
+        let last = try XCTUnwrap(sol.last)
+        _ = g.step(to: Cell(last[0], last[1])); g.tally.rest(at: g.angle)
+        XCTAssertTrue(g.won)
+        XCTAssertEqual(g.tally.count, par, "the three-fold solution records three")
+        // a plain undo after more folds does not bring a count back down
+        g.restart(); _ = g.undo(); XCTAssertEqual(g.tally.count, par)
+    }
+}
