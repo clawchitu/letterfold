@@ -179,13 +179,12 @@ final class GameModel {
     private(set) var hintAvailable = false
     /// The 「?」 ladder (design-review-v2c1 §2): a level with a first hint (5-4's old line) shows it on the first press.
     @ObservationIgnored private var hintRung = 0
-    /// 折数 (design-review-onboarding §4 ②): posture changes since entering — a rest in another posture than the
-    /// last, so a sweep through standing to shut is one, as in check.js; a turn is one; a crush home does not reset.
-    @ObservationIgnored private var folds = 0
-    @ObservationIgnored private var restPosture: Posture = .open
+    /// 折数 (design-review-onboarding §4 ②) lives in `game.tally` (FoldCore.FoldTally): counted as the solver counts
+    /// par — a rest at another angle than the last is one (a sweep through standing to shut is one; 0° → 130° on 3-1
+    /// is one though both are open), a turn is one; a crush home does not reset it, a restart does, undoing it restores it.
     /// fold.bestFolds: the fewest posture changes each level was delivered in (the contents page's 折 n · 标准 m).
     private(set) var bestFolds: [String: Int] = SavedProgress.loadBestFolds()
-    private func noteRest() { if posture != restPosture { folds += 1; restPosture = posture } }
+    private func noteRest() { game.tally.rest(at: game.angle) }
 
     // 物件笺 (fold-proto design-onboarding §2, §7): one slip per rule object, pulled out of the crease once per player
     /// The slips already pulled out (fold.slipsSeen), by object.
@@ -290,6 +289,7 @@ final class GameModel {
 
     init(pack: LevelPack) {
         self.pack = pack
+        bestFolds = SavedProgress.sanitizeBestFolds(par: Dictionary(pack.levels.compactMap { l in l.expect?.changes.map { (l.id, $0) } }, uniquingKeysWith: { a, _ in a }))
         let first = try! FoldGame(level: pack.levels[0], config: pack.config)
         game = first
         board = first.board; original = first.board; char = first.char; trail = first.trail
@@ -468,7 +468,7 @@ final class GameModel {
         // 2-1: no text; the ghost hand stands the page after 8 s without a fold (or after a failed close, in tap())
         teachCount = 0
         if level.id == "stand" || level.id == "shadow" { startTeach(after: 8) }
-        folds = 0; restPosture = posture
+        game.tally = FoldTally(restAngle: game.angle)
         // 物件笺: the unseen objects this level uses come out of the crease 1.2 s in (§2.2, §7.4)
         slipTask?.cancel(); slipTask = nil
         slipOut = false; slipPages = []; slipPage = 0; slipHintUsed = false
@@ -622,7 +622,6 @@ final class GameModel {
         stopAll()
         game.restart()
         clearTransient()
-        folds = 0; restPosture = .open
         haptics.undo()
         sound.rub(volume: 0.3)
         withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .easeInOut(duration: 0.3)) {
@@ -1485,7 +1484,7 @@ final class GameModel {
             case .blocked:
                 break
             case .flipped:
-                folds += 1   // said by flipBook, with what the press did
+                game.tally.turn()   // said by flipBook, with what the press did
             case .flipCrushed(let cause):
                 // the turned-to page has a stone over her square: the level starts again (flipBook turns the book back after)
                 stopWalk(); stopRideFeel()
@@ -1509,7 +1508,7 @@ final class GameModel {
         done.insert(index)
         doneIDs.insert(level.id); SavedProgress.save(doneIDs)
         noteRest()
-        bestFolds[level.id] = SavedProgress.recordFolds(folds, for: level.id)
+        bestFolds[level.id] = SavedProgress.recordFolds(game.tally.count, for: level.id)
         if isFinale { finaleBank = trail.last { !rules.isRight($0.c) } ?? trail.first }
         startAha()
     }

@@ -86,6 +86,17 @@ extension SavedProgress {
         (d.dictionary(forKey: bestFoldsKey) ?? [:]).compactMapValues { ($0 as? NSNumber)?.intValue ?? ($0 as? String).flatMap { Int($0) } }   // launch arguments give strings
     }
 
+    /// Drops stored bests no play can reach — below 1, or below the level's par (what the solver says is possible):
+    /// builds ≤ 0.1 (18) undercounted leaning folds and lost the count on restart → undo (Codex review 18). Levels
+    /// without a par only lose values below 1. Rewrites the store if anything was dropped; returns what is left.
+    @discardableResult
+    public static func sanitizeBestFolds(par: [String: Int], _ d: UserDefaults = .standard) -> [String: Int] {
+        let all = loadBestFolds(d)
+        let kept = all.filter { $0.value >= max(1, par[$0.key] ?? 1) }
+        if kept.count != all.count { d.set(kept, forKey: bestFoldsKey) }
+        return kept
+    }
+
     /// Keeps the minimum; returns the stored best.
     @discardableResult
     public static func recordFolds(_ n: Int, for id: String, _ d: UserDefaults = .standard) -> Int {

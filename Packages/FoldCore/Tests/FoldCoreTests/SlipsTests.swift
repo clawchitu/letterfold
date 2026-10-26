@@ -117,3 +117,55 @@ final class SlipsTests: XCTestCase {
         XCTAssertTrue(SavedProgress.levelOpen("facing", in: ["bridge", "facing"], done: ["bridge"]))
     }
 }
+
+/// Codex review 18 #1: 折数 is counted as the solver counts par.
+final class FoldTallyTests: XCTestCase {
+    /// Replays every level's shipped solution (levels.json `solution`: [c, r, fold angle, stamped, face]) through
+    /// FoldGame, noting a rest after each hinge move and a turn after each page turn as the app does: it wins and
+    /// records exactly par (expect.changes) — 3-1 (0° → 130°, both open) is 1, 3-4 is 3.
+    func testShippedSolutionsRecordPar() throws {
+        let pack = try LevelPack.bundled()
+        var checked = 0
+        for lv in pack.levels {
+            guard let sol = lv.solution, let par = lv.expect?.changes, sol.count > 1 else { continue }
+            let g = try FoldGame(level: lv, config: pack.config)
+            for (prev, s) in zip(sol, sol.dropFirst()) {
+                let face = s.count > 4 ? s[4] : 0, prevFace = prev.count > 4 ? prev[4] : 0
+                if face != prevFace {
+                    _ = g.flip(); g.tally.turn()
+                } else if s[2] != prev[2] {
+                    _ = g.setAngle(Double(s[2])); g.tally.rest(at: g.angle)
+                } else {
+                    XCTAssertNotEqual(g.step(to: Cell(s[0], s[1])), [.blocked], "\(lv.id) step to \(s)")
+                }
+                XCTAssertEqual(g.char, Cell(s[0], s[1]), "\(lv.id) at \(s)")
+            }
+            g.tally.rest(at: g.angle)   // the app notes a rest on the win too
+            XCTAssertTrue(g.won, lv.id)
+            XCTAssertEqual(g.tally.count, par, "\(lv.id): folds = par")
+            checked += 1
+        }
+        XCTAssertEqual(checked, pack.levels.filter { $0.solution != nil }.count)
+        XCTAssertGreaterThanOrEqual(checked, 40)
+    }
+
+    func testLeaningMovesCount() {
+        var t = FoldTally()
+        t.rest(at: 130); XCTAssertEqual(t.count, 1, "0° → 130°: both open, still one fold")
+        t.rest(at: 130.2); XCTAssertEqual(t.count, 1, "noise is not a fold")
+        t.rest(at: 150); t.rest(at: 125); XCTAssertEqual(t.count, 3)
+        t.turn(); XCTAssertEqual(t.count, 4)
+    }
+
+    /// Saves from ≤ 0.1 (18) may hold impossible minima: on load they are dropped.
+    func testImpossibleBestsAreDroppedOnLoad() throws {
+        let d = try XCTUnwrap(UserDefaults(suiteName: "FoldTallyTests"))
+        d.removePersistentDomain(forName: "FoldTallyTests")
+        d.set(["shadow": 0, "ride": 1, "bridge": 1, "facing": 3, "gone": 0], forKey: SavedProgress.bestFoldsKey)
+        let kept = SavedProgress.sanitizeBestFolds(par: ["shadow": 1, "ride": 3, "bridge": 1, "facing": 2], d)
+        XCTAssertEqual(kept, ["bridge": 1, "facing": 3])
+        XCTAssertEqual(SavedProgress.loadBestFolds(d), kept)
+        XCTAssertEqual(SavedProgress.recordFolds(3, for: "ride", d), 3)
+        d.removePersistentDomain(forName: "FoldTallyTests")
+    }
+}

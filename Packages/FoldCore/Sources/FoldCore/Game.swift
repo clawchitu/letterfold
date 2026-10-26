@@ -50,6 +50,8 @@ public final class FoldGame {
     private struct Snapshot { var board: Board; var char: Cell; var angle: Double; var trail: [Cell]; var closedOnce: Bool; var stuck: Bool }
     private var undoStack: [Snapshot] = []
     public var canUndo: Bool { !undoStack.isEmpty }
+    /// 折数 so far (the app notes rests and turns). A restart zeroes it; undos leave it (a fold that was made and taken back was still made).
+    public var tally = FoldTally()
 
     /// The hinge is simulated in steps of at most this many degrees, so riding a shadow does not depend on frame rate.
     public static let subStep = 5.0
@@ -228,6 +230,7 @@ public final class FoldGame {
     /// older history is still there under it.
     public func restart() {
         pushUndo()
+        tally = FoldTally(restAngle: 0)
         board = try! Board(level: level, columnsPerPage: config.columnsPerPage)
         char = board.start; trail = [board.start]; angle = 0; posture = rules.posture(0); shade = rules.shadows(board, 0)
         rideSrc = nil; won = false; closedOnce = false; stuck = false
@@ -236,6 +239,7 @@ public final class FoldGame {
     public func reset() {
         board = try! Board(level: level, columnsPerPage: config.columnsPerPage)
         char = board.start; trail = [board.start]; angle = 0; posture = .open; shade = [:]; rideSrc = nil; won = false; undoStack = []
+        tally = FoldTally()
         closedOnce = false; stuck = false
     }
 }
