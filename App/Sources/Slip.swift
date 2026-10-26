@@ -96,7 +96,9 @@ struct SlipLayer: View {
     private func slipBox(_ a: SlipAnchor) -> CGRect {
         if a.horizontal {
             let w = min(size.width + 2 * margin - 64, 420)
-            let h = min(MiniBook.size.height + 24, a.page.height - 16)
+            // §2.1 caps it at the top page's height less 16; a short top page (a five-row board's 63 pt squares)
+            // would shrink the small book to ~60 %, so the slip may rise past the page into the empty table above it
+            let h = min(MiniBook.size.height + 24, max(a.page.height - 16, a.crease - 16))
             let x = min(max(a.page.midX - w / 2, -margin + 8), size.width + margin - 8 - w)
             return CGRect(x: x, y: a.crease - 8 - h, width: w, height: h)
         }
@@ -195,7 +197,7 @@ struct SlipView: View {
         let k = min(1, room / s.height)
         return Group {
             if let film = SlipFilms.film(id, config: model.config) {
-                MiniBook(film: film, paper: paper, animate: !AppSettings.shared.motionReduced, sideways: rotated)
+                MiniBook(film: film, paper: paper, animate: !AppSettings.shared.motionReduced, sideways: rotated, paused: !model.slipOut)
             } else { Color.clear }
         }
         .frame(width: s.width, height: s.height)

@@ -486,7 +486,9 @@ final class GameModel {
             } }
             return best
         }
-        return ids.enumerated().sorted { (distance($0.element), $0.offset) < (distance($1.element), $1.offset) }.map(\.element)
+        // a tie: the object this level introduces first (5-1 is glue's level), then the §1 table's order
+        func own(_ id: SlipID) -> Int { slipFirstLevels[id] == level.id ? 0 : 1 }
+        return ids.enumerated().sorted { (distance($0.element), own($0.element), $0.offset) < (distance($1.element), own($1.element), $1.offset) }.map(\.element)
     }
 
     /// The level's chapter opener is in front: the slip's 1.2 s count from when it leaves.
@@ -530,6 +532,13 @@ final class GameModel {
         withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .spring(response: 0.36, dampingFraction: 0.78)) { slipOut = true }
         haptics.tick()
         sound.rub(volume: 0.18)
+        // -slipThen next|tuck (screenshots): turn to the second page, or tuck, 1.5 s after it comes out
+        if auto, let then = UserDefaults.standard.string(forKey: "slipThen") {
+            Task { [weak self] in
+                try? await Task.sleep(for: .seconds(1.5))
+                if then == "next" { self?.nextSlipPage() } else { self?.tuckSlip() }
+            }
+        }
     }
 
     /// 「下一张 ›」 on the first of two pages.

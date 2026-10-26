@@ -13,6 +13,8 @@ struct MiniBook: View {
     let animate: Bool
     /// Drawn on its side (landscape slips): the glyphs are turned back upright.
     var sideways = false
+    /// Tucked away: the clock stops (nothing on screen to draw).
+    var paused = false
     @State private var start = Date()
 
     static let tile = 30.0, gap = 3.0, pad = 6.0
@@ -25,7 +27,7 @@ struct MiniBook: View {
         let timeline = MiniTimeline(film)
         Group {
             if animate {
-                TimelineView(.animation) { ctx in
+                TimelineView(.animation(paused: paused)) { ctx in
                     let loop = timeline.total + Self.rest + Self.fade
                     let t = (ctx.date.timeIntervalSince(start) * 1000).truncatingRemainder(dividingBy: loop)
                     if t > timeline.total + Self.rest {
@@ -251,17 +253,45 @@ private struct MiniScene: View {
     }
 
     @ViewBuilder private func thread(_ cam: BookCamera, _ g: MiniGeom, rise: Double) -> some View {
-        let pts = state.trail.map { cam.project(point($0, g, rise: rise)) }
-        let tail = figurePoint(cam, g, rise: rise, hop: false)
-        let all = state.u < 1 ? pts + [tail] : pts
-        if all.count > 1 {
-            let path = Path { p in p.addLines(all) }
+        let pieces = threadPieces(cam, g, rise: rise)
+        ForEach(pieces.indices, id: \.self) { i in
+            let path = Path { p in p.addLines(pieces[i]) }
             if hc { path.stroke(.white, style: StrokeStyle(lineWidth: 4.5, lineCap: .round, lineJoin: .round)) }
             path.stroke(hc ? Tok.hcLine : paper.thread, style: StrokeStyle(lineWidth: hc ? 2.5 : 1.6, lineCap: .round, lineJoin: .round))
         }
-        if state.won && state.u >= 1, let last = pts.last {
-            Knot(color: hc ? Tok.hcLine : paper.thread, small: true).scaleEffect(0.7).position(x: last.x + 5, y: last.y + 5)
+        if state.won && state.u >= 1, let last = state.trail.last {
+            let q = cam.project(point(last, g, rise: rise))
+            Knot(color: hc ? Tok.hcLine : paper.thread, small: true).scaleEffect(0.7).position(x: q.x + 5, y: q.y + 5)
         }
+    }
+
+    /// The walked thread as the real book draws it: shut, one line over the stacks; open, never across the crease —
+    /// a step taken between the layers of a stack ends half-way on each page (only a tab bridge really crosses).
+    private func threadPieces(_ cam: BookCamera, _ g: MiniGeom, rise: Double) -> [[CGPoint]] {
+        let shut = state.angle >= 155
+        var cells = state.trail.map { point($0, g, rise: rise) }
+        if state.u < 1 {
+            let a = point(state.from, g, rise: rise), b = point(state.to, g, rise: rise)
+            cells.append(a + (b - a) * state.u)
+        }
+        var owner = state.trail
+        if state.u < 1 { owner.append(state.u < 0.5 ? state.from : state.to) }
+        guard cells.count > 1 else { return [] }
+        if shut { return [cells.map(cam.project)] }
+        var pieces: [[CGPoint]] = [], cur: [CGPoint] = [cam.project(cells[0])]
+        for k in 1..<cells.count {
+            let a = owner[k - 1], b = owner[k]
+            let across = (a.c < 4) != (b.c < 4)
+            let bridge = across && a.r == b.r && Set([a.c, b.c]) == [3, 4]
+            if !across || bridge { cur.append(cam.project(cells[k])); continue }
+            // half a step towards where the other layer's square lies on this page, then the same on the other page
+            let am = g.point(Cell(7 - b.c, b.r)), bm = g.point(Cell(7 - a.c, a.r))
+            cur.append(cam.project(cells[k - 1] + (am - cells[k - 1]) * 0.5))
+            pieces.append(cur)
+            cur = [cam.project(cells[k] + (bm - cells[k]) * 0.5), cam.project(cells[k])]
+        }
+        pieces.append(cur)
+        return pieces.filter { $0.count > 1 }
     }
 
     private func figurePoint(_ cam: BookCamera, _ g: MiniGeom, rise: Double, hop: Bool) -> CGPoint {
@@ -381,9 +411,8 @@ private struct MiniPage: View {
             let base = side == .fixed ? paper.color.mix(with: Color(hex: 0x8A7A62), by: 0.04)
                 : third ? paper.color.mix(with: Color(hex: 0xE2CFA6), by: 0.35) : paper.color.mix(with: .white, by: 0.15)
             r.fill(base.opacity(side == .back ? (rt ? 0.95 : 0.62) : 1))
-            if paper.ruled && side != .back {
-                RuledGrid(tile: MiniBook.tile, gap: MiniBook.gap, pad: MiniBook.pad, across: 2, down: 4, opacity: 0.16)
-            }
+            // no printed grid in the small book on letter paper: drawn in ink, its gaps must read as gaps (the slip's
+            // own paper carries the rule)
             if third {
                 // the third page: the back of the right leaf, warmer, with vertical rules (design-ch6 §2)
                 VerticalRules().stroke(Tok.ruleLetter.opacity(0.22), lineWidth: 0.6)
@@ -400,8 +429,8 @@ private struct MiniPage: View {
         let dashed = side == .back
         let frame = RoundedRectangle(cornerRadius: 2)
         let flash = state.flash.contains(c)
-        let edge: Color = hc ? .black : flash ? Tok.ink900 : Tok.tileEdge
-        let lw: Double = hc ? 2 : flash ? 1.4 : 1
+        let edge: Color = hc ? .black : flash ? Tok.ink900.opacity(0.8) : Tok.tileEdge
+        let lw: Double = hc ? 2 : 1
         ZStack {
             if t == .empty {
                 if !dashed {
@@ -414,8 +443,8 @@ private struct MiniPage: View {
                 }
             } else if t == .stone {
                 if side == .back && lamp > 0 { StoneSilhouette(size: MiniBook.tile * 0.86, rim: true) }
-                else { PaperStone(size: MiniBook.tile) }
-                if flash { frame.stroke(edge, lineWidth: lw) }
+                else { PaperStone(size: MiniBook.tile * 1.4) }
+                if flash { frame.stroke(edge, lineWidth: 1) }
             } else {
                 if !hc { frame.fill(dashed ? paper.tileFace.opacity(0.35) : paper.tileFace.opacity(0.85)) } else if !dashed { frame.fill(.white) }
                 frame.stroke(edge, style: StrokeStyle(lineWidth: lw, dash: dashed ? [3, 2] : []))
