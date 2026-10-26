@@ -287,6 +287,32 @@ const SLIPS = {
 for (const [key, [zh, en, ja, ko]] of Object.entries(SLIPS)) {
   ui[key] = { comment: (/^slip\.(pic|label|bookmark|hint|pageOf|aria)/.test(key) ? 'VoiceOver' : 'UI') + '. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.', values: { zh, en, ja, ko } };
 }
+// 0.1 (18): the contents page and the 「物件」 page (fold-proto design-onboarding §2.6, §3.5; review F7–F9).
+// zh / en from the spec; ja / ko drafts: TODO-native-check.
+const CONTENTS = {
+  'map.vol2Back': ["卷二《翻页》", "Book Two: Turning the Page", "第二巻『ページをめくる』", "제2권 《책장 넘기기》"],
+  'lv.done': ["已送达", "Delivered", "届いた", "도착"],
+  'lv.next': ["下一封", "Next letter", "次の手紙", "다음 편지"],
+  'lv.locked': ["未到", "Not yet", "まだ", "아직"],
+  'lv.lockedValue': ["未到，先送出上一封", "Not yet: deliver the letter before it first", "まだ。先に前の手紙を届けて", "아직, 먼저 앞 편지를 전하세요"],
+  'lv.lockedToast': ["先送出上一封。", "Deliver the letter before it first.", "先に前の手紙を届けて。", "먼저 앞 편지를 전하세요."],
+  'lv.why': ["为什么锁着", "Why it is tied shut", "なぜ閉じているか", "왜 묶여 있나요"],
+  'lv.par': ["折 {n} · 标准 {par}", "{n} folds · par {par}", "折り {n} · 標準 {par}", "접기 {n} · 기준 {par}"],
+  'lv.parSpoken': ["折 {n}，标准 {par}", "{n} folds, par {par}", "折り {n}、標準 {par}", "접기 {n}, 기준 {par}"],
+  'dark.code': ["暗{n}", "Hidden {n}", "隠{n}", "숨은 {n}"],
+  'dark.afterChapter': ["章送完后开", "Opens once the chapter is delivered", "章を届けたら開く", "장을 다 전하면 열려요"],
+  'contents.objects': ["物件笺 · 已集 {n} / {total}", "Object slips · {n} / {total} collected", "物の栞 · {n} / {total} 集めた", "물건 쪽지 · {n} / {total} 모음"],
+  'objects.title': ["物件", "Objects", "物", "물건"],
+  'objects.count': ["已集 {n} / {total}", "{n} / {total} collected", "{n} / {total} 集めた", "{n} / {total} 모음"],
+  'objects.unseen': ["还没遇到", "Not met yet", "まだ出会っていない", "아직 못 만났어요"],
+  'objects.unseenLabel': ["物件笺，还没遇到", "Object slip, not met yet", "物の栞、まだ出会っていない", "물건 쪽지, 아직 못 만났어요"],
+  'slips.introLine': ["书里夹了几张物件笺", "A few object slips are tucked in the book", "本に物の栞が何枚か挟まっている", "책에 물건 쪽지가 몇 장 끼워져 있어요"],
+  'settings.bookGroup': ["书", "Book", "本", "책"],
+  'settings.objects': ["物件笺", "Object slips", "物の栞", "물건 쪽지"],
+};
+for (const [key, [zh, en, ja, ko]] of Object.entries(CONTENTS)) {
+  ui[key] = { comment: (/^(lv\.(lockedValue|why|parSpoken)|objects\.unseenLabel)$/.test(key) ? 'VoiceOver' : 'UI') + '. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.', values: { zh, en, ja, ko } };
+}
 fs.writeFileSync(path.join(outDir, 'Localizable.xcstrings'), catalog(ui));
 
 const lv = {};

@@ -179,6 +179,13 @@ final class GameModel {
     private(set) var hintAvailable = false
     /// The 「?」 ladder (design-review-v2c1 §2): a level with a first hint (5-4's old line) shows it on the first press.
     @ObservationIgnored private var hintRung = 0
+    /// 折数 (design-review-onboarding §4 ②): posture changes since entering — a rest in another posture than the
+    /// last, so a sweep through standing to shut is one, as in check.js; a turn is one; a crush home does not reset.
+    @ObservationIgnored private var folds = 0
+    @ObservationIgnored private var restPosture: Posture = .open
+    /// fold.bestFolds: the fewest posture changes each level was delivered in (the contents page's 折 n · 标准 m).
+    private(set) var bestFolds: [String: Int] = SavedProgress.loadBestFolds()
+    private func noteRest() { if posture != restPosture { folds += 1; restPosture = posture } }
 
     // 物件笺 (fold-proto design-onboarding §2, §7): one slip per rule object, pulled out of the crease once per player
     /// The slips already pulled out (fold.slipsSeen), by object.
@@ -461,6 +468,7 @@ final class GameModel {
         // 2-1: no text; the ghost hand stands the page after 8 s without a fold (or after a failed close, in tap())
         teachCount = 0
         if level.id == "stand" || level.id == "shadow" { startTeach(after: 8) }
+        folds = 0; restPosture = posture
         // 物件笺: the unseen objects this level uses come out of the crease 1.2 s in (§2.2, §7.4)
         slipTask?.cancel(); slipTask = nil
         slipOut = false; slipPages = []; slipPage = 0; slipHintUsed = false
@@ -614,6 +622,7 @@ final class GameModel {
         stopAll()
         game.restart()
         clearTransient()
+        folds = 0; restPosture = .open
         haptics.undo()
         sound.rub(volume: 0.3)
         withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .easeInOut(duration: 0.3)) {
@@ -1476,7 +1485,7 @@ final class GameModel {
             case .blocked:
                 break
             case .flipped:
-                break   // said by flipBook, with what the press did
+                folds += 1   // said by flipBook, with what the press did
             case .flipCrushed(let cause):
                 // the turned-to page has a stone over her square: the level starts again (flipBook turns the book back after)
                 stopWalk(); stopRideFeel()
@@ -1499,6 +1508,8 @@ final class GameModel {
         stopWalk()
         done.insert(index)
         doneIDs.insert(level.id); SavedProgress.save(doneIDs)
+        noteRest()
+        bestFolds[level.id] = SavedProgress.recordFolds(folds, for: level.id)
         if isFinale { finaleBank = trail.last { !rules.isRight($0.c) } ?? trail.first }
         startAha()
     }
@@ -1638,6 +1649,7 @@ final class GameModel {
     // MARK: settle (one announcement when the hinge comes to rest, like the web's aria-live flush)
 
     func settle() {
+        noteRest()
         settleTask?.cancel(); settleTask = nil
         let a = Int(angle.rounded())
         let p = pending

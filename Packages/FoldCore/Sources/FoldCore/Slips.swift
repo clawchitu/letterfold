@@ -83,7 +83,7 @@ extension SavedProgress {
     public static func slipsLineShown(_ d: UserDefaults = .standard) { d.set(true, forKey: slipsIntroducedKey) }
 
     public static func loadBestFolds(_ d: UserDefaults = .standard) -> [String: Int] {
-        (d.dictionary(forKey: bestFoldsKey) ?? [:]).compactMapValues { ($0 as? NSNumber)?.intValue }
+        (d.dictionary(forKey: bestFoldsKey) ?? [:]).compactMapValues { ($0 as? NSNumber)?.intValue ?? ($0 as? String).flatMap { Int($0) } }   // launch arguments give strings
     }
 
     /// Keeps the minimum; returns the stored best.

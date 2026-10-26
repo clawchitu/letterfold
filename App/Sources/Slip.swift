@@ -158,11 +158,15 @@ struct SlipView: View {
     let pages: Int
     let horizontal: Bool
     let size: CGSize
+    /// The 「物件」 page: the paper of the chapter that introduces the object, and its own tuck.
+    var paperOverride: PaperState? = nil
+    var onNext: (() -> Void)? = nil
+    var onTuck: (() -> Void)? = nil
     @Environment(\.highContrast) private var hc
     @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
-        let paper = model.paper
+        let paper = paperOverride ?? model.paper
         let text = SlipText.body(id, horizontalCrease: horizontal)
         let last = page + 1 >= pages
         Group {
@@ -188,8 +192,8 @@ struct SlipView: View {
         .accessibilityValue((pages > 1 ? L10n.t("slip.pageOf", ["n": page + 1, "total": pages]) + L10n.t("sep") : "") + text + " " + SlipText.picture(id))
         .accessibilityHint(L10n.t(last ? "slip.hint" : "slip.hintNext"))
         .accessibilityAddTraits(.isStaticText)
-        .accessibilityAction { model.nextSlipPage() }
-        .accessibilityAction(.escape) { model.tuckSlip() }
+        .accessibilityAction { (onNext ?? { model.nextSlipPage() })() }
+        .accessibilityAction(.escape) { (onTuck ?? { model.tuckSlip() })() }
         .accessibilityIdentifier("slip")
         .accessibilitySortPriority(30_000)
     }
@@ -238,10 +242,10 @@ struct SlipView: View {
             .scrollIndicators(big ? .visible : .hidden)
             .mask { VStack(spacing: 0) { Rectangle(); LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom).frame(height: 12) } }
             .allowsHitTesting(big)
-            .simultaneousGesture(TapGesture().onEnded { model.tuckSlip() })
+            .simultaneousGesture(TapGesture().onEnded { (onTuck ?? { model.tuckSlip() })() })
             HStack {
                 Spacer()
-                Button { model.nextSlipPage() } label: {
+                Button { (onNext ?? { model.nextSlipPage() })() } label: {
                     Text(L10n.t(last ? "slip.tuck" : "slip.next") + " ›")
                         .font(SlipFont.font(.regular, 13, .footnote)).foregroundStyle(hc ? .black : Tok.ink600)
                         .padding(.horizontal, 8)
@@ -265,7 +269,7 @@ enum SlipFont {
 
 /// The slip's paper: the chapter's paper (letter paper with its printed rule in vol. 2), a 6 pt folded-over corner at
 /// the top left, radius 2, a 1 pt edge and one soft shadow — no backdrop (§2.1). High contrast: white, 2 pt black.
-private struct SlipPaper: View {
+struct SlipPaper: View {
     let paper: PaperState
     @Environment(\.highContrast) private var hc
     var body: some View {

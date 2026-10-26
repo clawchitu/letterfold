@@ -1741,6 +1741,36 @@
         }
       }
     },
+    "contents.objects": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物件笺 · 已集 {n} / {total}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Object slips · {n} / {total} collected"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物の栞 · {n} / {total} 集めた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "물건 쪽지 · {n} / {total} 모음"
+          }
+        }
+      }
+    },
     "cover.begin": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -2011,6 +2041,36 @@
         }
       }
     },
+    "dark.afterChapter": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "章送完后开"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens once the chapter is delivered"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "章を届けたら開く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "장을 다 전하면 열려요"
+          }
+        }
+      }
+    },
     "dark.back": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -2037,6 +2097,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "장 목록으로"
+          }
+        }
+      }
+    },
+    "dark.code": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暗{n}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hidden {n}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隠{n}"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "숨은 {n}"
           }
         }
       }
@@ -6721,6 +6811,246 @@
         }
       }
     },
+    "lv.done": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已送达"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delivered"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "届いた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "도착"
+          }
+        }
+      }
+    },
+    "lv.locked": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未到"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not yet"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직"
+          }
+        }
+      }
+    },
+    "lv.lockedToast": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先送出上一封。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deliver the letter before it first."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先に前の手紙を届けて。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 앞 편지를 전하세요."
+          }
+        }
+      }
+    },
+    "lv.lockedValue": {
+      "comment": "VoiceOver. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未到，先送出上一封"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not yet: deliver the letter before it first"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだ。先に前の手紙を届けて"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직, 먼저 앞 편지를 전하세요"
+          }
+        }
+      }
+    },
+    "lv.next": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下一封"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next letter"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次の手紙"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음 편지"
+          }
+        }
+      }
+    },
+    "lv.par": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折 {n} · 标准 {par}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} folds · par {par}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折り {n} · 標準 {par}"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "접기 {n} · 기준 {par}"
+          }
+        }
+      }
+    },
+    "lv.parSpoken": {
+      "comment": "VoiceOver. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折 {n}，标准 {par}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} folds, par {par}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折り {n}、標準 {par}"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "접기 {n}, 기준 {par}"
+          }
+        }
+      }
+    },
+    "lv.why": {
+      "comment": "VoiceOver. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "为什么锁着"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Why it is tied shut"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "なぜ閉じているか"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "왜 묶여 있나요"
+          }
+        }
+      }
+    },
     "lvAria": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {n} {name}",
       "extractionState": "manual",
@@ -7047,6 +7377,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "제1권 《양안》으로, {total}통 중 {n}통 도착"
+          }
+        }
+      }
+    },
+    "map.vol2Back": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷二《翻页》"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Book Two: Turning the Page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第二巻『ページをめくる』"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제2권 《책장 넘기기》"
           }
         }
       }
@@ -7947,6 +8307,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "없음"
+          }
+        }
+      }
+    },
+    "objects.count": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已集 {n} / {total}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} / {total} collected"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} / {total} 集めた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} / {total} 모음"
+          }
+        }
+      }
+    },
+    "objects.title": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物件"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Objects"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "물건"
+          }
+        }
+      }
+    },
+    "objects.unseen": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没遇到"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not met yet"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだ出会っていない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직 못 만났어요"
+          }
+        }
+      }
+    },
+    "objects.unseenLabel": {
+      "comment": "VoiceOver. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物件笺，还没遇到"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Object slip, not met yet"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物の栞、まだ出会っていない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "물건 쪽지, 아직 못 만났어요"
           }
         }
       }
@@ -10081,6 +10561,66 @@
         }
       }
     },
+    "settings.bookGroup": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "书"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Book"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책"
+          }
+        }
+      }
+    },
+    "settings.objects": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物件笺"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Object slips"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物の栞"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "물건 쪽지"
+          }
+        }
+      }
+    },
     "settings.title": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -11427,6 +11967,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "세 번째 페이지"
+          }
+        }
+      }
+    },
+    "slips.introLine": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "书里夹了几张物件笺"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A few object slips are tucked in the book"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本に物の栞が何枚か挟まっている"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책에 물건 쪽지가 몇 장 끼워져 있어요"
           }
         }
       }

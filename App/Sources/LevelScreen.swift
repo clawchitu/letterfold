@@ -84,7 +84,7 @@ struct LevelScreen: View {
                 if model.showNext {
                     NextKnot(title: model.isLastInChapter ? L10n.t("letter.read") : model.isDark && model.nextDark == nil ? L10n.t("dark.back") : L10n.t("next")) {
                         if model.isLastInChapter { router.go(.letter) }
-                        else if model.isDark { if let n = model.nextDark { model.go(n); fadeName() } else { router.go(.map) } }
+                        else if model.isDark { if let n = model.nextDark { model.go(n); fadeName() } else { router.leaveLevel(chapter: model.chapter.id) } }
                         // the next level, or (an older save with a gap) the first one not yet delivered: never past it
                         else { model.go(model.isLevelOpen(model.index + 1) ? model.index + 1 : model.chapterLevelIndices.first { !model.done.contains($0) } ?? model.index + 1); fadeName() }
                     }
@@ -113,7 +113,7 @@ struct LevelScreen: View {
         .onChange(of: model.finaleLetter) { _, go in if go { router.go(.letter) } }
         .onChange(of: model.index) { _, _ in fadeName(); checkOpener() }
         .onDisappear { model.stopGhost(); if !model.finaleLetter { model.leaveLevel() } }        // no teaching moves behind the map's back
-        .accessibilityAction(.escape) { router.go(.map) }
+        .accessibilityAction(.escape) { router.leaveLevel(chapter: model.chapter.id) }
     }
 
     /// 二 · 立: the first time chapter 2 opens, its opener plays once (frame 6-A). -noOpener YES skips it.
@@ -143,7 +143,7 @@ private struct TopBar: View {
     let inline: Bool
     var body: some View {
         HStack(spacing: 4) {
-            Button { router.go(.map) } label: {
+            Button { router.leaveLevel(chapter: model.chapter.id) } label: {
                 Image(systemName: "book").font(.system(size: 20, weight: .regular)).foregroundStyle(Tok.ink900)
                     .frame(width: 44, height: 44).contentShape(Rectangle())
             }
