@@ -27,16 +27,20 @@ struct ContentsLayer: View, Animatable {
     let open: (Int) -> Void
     @State private var sheet: CGRect = .zero
 
+    /// The page's own type comes in only once the paper has nearly landed (it would spill past a paper still in
+    /// flight), as the flying card's title goes, so the two titles never print over each other.
+    private var fade: Double { max(0, min(1, (p - 0.82) / 0.18)) }
+
     var body: some View {
         let rm = AppSettings.shared.motionReduced
         GeometryReader { g in
             ZStack(alignment: .topLeading) {
                 if !rm, p < 0.995, let from, sheet != .zero {
                     let to = CGRect(x: sheet.minX, y: sheet.minY, width: sheet.width, height: max(80, min(sheet.height, g.size.height - sheet.minY - 16)))
-                    FlyingPaper(chapter: chapter, rect: lerp(from, to, p))
+                    FlyingPaper(chapter: chapter, rect: lerp(from, to, p), titleOpacity: 1 - fade)
                 }
                 ContentsPage(model: model, chapter: chapter, back: back, open: open,
-                             paperShown: rm || p >= 0.995, contentOpacity: rm ? 1 : max(0, (p - 0.6) / 0.4), sheet: $sheet)
+                             paperShown: rm || p >= 0.995, contentOpacity: rm ? 1 : fade, sheet: $sheet)
                     .opacity(rm ? p : 1)
             }
         }
@@ -52,6 +56,7 @@ struct ContentsLayer: View, Animatable {
 private struct FlyingPaper: View {
     let chapter: Chapter
     let rect: CGRect
+    var titleOpacity = 1.0
     @Environment(\.highContrast) private var hc
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -64,6 +69,7 @@ private struct FlyingPaper: View {
             .foregroundStyle(Tok.ink900)
             .lineLimit(1).minimumScaleFactor(0.5)
             .padding(.horizontal, 18).padding(.top, 16)
+            .opacity(titleOpacity)
         }
         .frame(width: rect.width, height: rect.height)
         .clipped()
@@ -111,6 +117,7 @@ struct ContentsPage: View {
             }
             .buttonStyle(.plain)
             .padding(.horizontal, 20)
+            .opacity(contentOpacity)   // the map's own top line is still fading out under it
             .accessibilityIdentifier("contents.back")
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {

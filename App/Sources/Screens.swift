@@ -492,7 +492,9 @@ struct ChapterMapView: View {
 
     init(model: GameModel, router: Router) {
         self.model = model; self.router = router
-        _reveal = State(initialValue: router.contents == nil ? 0 : 1)
+        // -contentsAt <0…1> (screenshots): hold the card→page unfold at that point
+        let at = UserDefaults.standard.object(forKey: "contentsAt") != nil ? UserDefaults.standard.double(forKey: "contentsAt") : 1
+        _reveal = State(initialValue: router.contents == nil ? 0 : at)
     }
 
     private var volumeTwoOpen: Bool { Chapter.all.first { $0.id == 5 }.map(model.isUnlocked) ?? false }
