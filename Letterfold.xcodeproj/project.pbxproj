@@ -23,6 +23,7 @@
 		632B7BC5D43A1FE091458D59 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */; };
 		83E16CC195AEC3EC5512860E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B5BC6A962BF940695C18366 /* Assets.xcassets */; };
 		940B2DA1796BB58F3B8FCFAD /* Chapter3UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33328FA03A6FDAE3C9019CD5 /* Chapter3UITests.swift */; };
+		95BDB217EE07141E153788C9 /* SlipUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EBA74BD18A4CCAC6C76307B /* SlipUITests.swift */; };
 		99273F2D8C732350A8BCA85B /* Screens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CBDC31A0224AF98A0B8641 /* Screens.swift */; };
 		9B11B3E45713A193AA36B5AF /* Slip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0F961EF86FAC46A7C6FE8 /* Slip.swift */; };
 		A14167539C197C23C60606DD /* Chapter5UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59688079C7688C54335A73BD /* Chapter5UITests.swift */; };
@@ -53,6 +54,7 @@
 
 /* Begin PBXFileReference section */
 		011869BA3DC1C9873A1049D7 /* PlanLevelUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanLevelUITests.swift; sourceTree = "<group>"; };
+		0EBA74BD18A4CCAC6C76307B /* SlipUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlipUITests.swift; sourceTree = "<group>"; };
 		23DC96729D3FCEAF07A7743F /* Paper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paper.swift; sourceTree = "<group>"; };
 		2991315D14E1D1169059EEE2 /* Hinge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hinge.swift; sourceTree = "<group>"; };
 		2BC0F961EF86FAC46A7C6FE8 /* Slip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slip.swift; sourceTree = "<group>"; };
@@ -113,6 +115,7 @@
 				011869BA3DC1C9873A1049D7 /* PlanLevelUITests.swift */,
 				AD2ACD110F34C4648B09D796 /* PlaythroughPlan.swift */,
 				661C1BE741FF0CB5D1E9EE51 /* PlaythroughUITests.swift */,
+				0EBA74BD18A4CCAC6C76307B /* SlipUITests.swift */,
 			);
 			path = UITests;
 			sourceTree = "<group>";
@@ -328,6 +331,7 @@
 				41C9101008DFEE17CF0C3A91 /* PlanLevelUITests.swift in Sources */,
 				C8A342F843413DC1FB323FDC /* PlaythroughPlan.swift in Sources */,
 				4808A9C05E1935D6FFE4F8B2 /* PlaythroughUITests.swift in Sources */,
+				95BDB217EE07141E153788C9 /* SlipUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
