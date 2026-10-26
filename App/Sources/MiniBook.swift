@@ -27,7 +27,8 @@ struct MiniBook: View {
         let timeline = MiniTimeline(film)
         Group {
             if animate {
-                TimelineView(.animation(paused: paused)) { ctx in
+                // a 30 Hz clock rather than the display link: the app still goes idle between ticks (XCUITest waits for that)
+                TimelineView(.periodic(from: start, by: paused ? 3600 : 1.0 / 30)) { ctx in
                     let loop = timeline.total + Self.rest + Self.fade
                     let t = (ctx.date.timeIntervalSince(start) * 1000).truncatingRemainder(dividingBy: loop)
                     if t > timeline.total + Self.rest {

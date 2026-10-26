@@ -66,16 +66,16 @@ struct SlipLayer: View {
             let rm = AppSettings.shared.motionReduced
             let page = min(model.slipPage, model.slipPages.count - 1)
             let id = model.slipPages[page]
-            let p: Double = model.slipOut ? 1 : 0
             let box = slipBox(a)
             ZStack(alignment: .topLeading) {
-                SlipView(model: model, id: id, page: page, pages: model.slipPages.count, horizontal: a.horizontal, size: box.size)
-                    .frame(width: box.width, height: box.height)
-                    .modifier(SlipPull(p: p, reduced: rm, horizontal: a.horizontal))
-                    .offset(x: box.minX, y: box.minY)
-                    .allowsHitTesting(model.slipOut)
-                    .accessibilityHidden(!model.slipOut)
-                    .accessibilityFocused($focused)
+                if model.slipOut {
+                    SlipView(model: model, id: id, page: page, pages: model.slipPages.count, horizontal: a.horizontal, size: box.size)
+                        .frame(width: box.width, height: box.height)
+                        .transition(.modifier(active: SlipPull(p: 0, reduced: rm, horizontal: a.horizontal),
+                                              identity: SlipPull(p: 1, reduced: rm, horizontal: a.horizontal)))
+                        .offset(x: box.minX, y: box.minY)
+                        .accessibilityFocused($focused)
+                }
                 if !model.slipOut && !model.won {
                     SlipBookmark(model: model, id: model.slipPages[0])
                         .position(bookmarkPoint(a))
@@ -177,7 +177,7 @@ struct SlipView: View {
         }
         .padding(.leading, 12).padding(.trailing, 6).padding(.vertical, 12)
         .frame(width: size.width, height: size.height, alignment: .topLeading)
-        .background { SlipPaper(paper: paper) }
+        .background { SlipPaper(paper: paper).allowsHitTesting(false) }
         .environment(\.skin, paper.skin)
         // VoiceOver: one element (design-onboarding §2.5); the small book is the text's picture, so it is hidden
         .accessibilityElement(children: .ignore)
@@ -197,7 +197,7 @@ struct SlipView: View {
         let k = min(1, room / s.height)
         return Group {
             if let film = SlipFilms.film(id, config: model.config) {
-                MiniBook(film: film, paper: paper, animate: !AppSettings.shared.motionReduced, sideways: rotated, paused: !model.slipOut)
+                MiniBook(film: film, paper: paper, animate: !AppSettings.shared.motionReduced, sideways: rotated)
             } else { Color.clear }
         }
         .frame(width: s.width, height: s.height)
@@ -222,6 +222,7 @@ struct SlipView: View {
                 }
             }
             .padding(.top, 2).padding(.trailing, 8)
+            .allowsHitTesting(false)   // the slip never takes a touch from the page under it (only 「收起」 does)
             // AX sizes: the text scrolls inside the slip, fading out over its last 12 pt above a fixed 「收起」
             ScrollView {
                 Text(L10n.tight(text, size: 15)).font(SlipFont.font(.regular, 15, .subheadline))
