@@ -483,12 +483,76 @@ struct ChapterMapView: View {
     @Environment(\.highContrast) private var hc
     /// The two-banks map has a page per volume (design-review-v2c1 §3 地图). Once book one is all delivered the map
     /// opens on vol. 2's page 「翻页」; 「‹ 卷一《两岸》」 turns back to the first page. nil: the default.
-    @State private var page: Int? = nil
+    private var page: Int? { router.mapPage }
+    /// The contents page's unfold, 0 (the map) … 1 (the page), and where each card lies ("mapSpace").
+    @State private var reveal: Double
+    @State private var cardRects: [Int: CGRect] = [:]
+    /// The one-time 「书里夹了几张物件笺 ›」 for a seeded old save (design-onboarding §4).
+    @State private var slipsLine = false
+
+    init(model: GameModel, router: Router) {
+        self.model = model; self.router = router
+        // -contentsAt <0…1> (screenshots): hold the card→page unfold at that point
+        let at = UserDefaults.standard.object(forKey: "contentsAt") != nil ? UserDefaults.standard.double(forKey: "contentsAt") : 1
+        _reveal = State(initialValue: router.contents == nil ? 0 : at)
+    }
 
     private var volumeTwoOpen: Bool { Chapter.all.first { $0.id == 5 }.map(model.isUnlocked) ?? false }
     private var shown: Int { volumeTwoOpen ? (page ?? 2) : 1 }
 
     var body: some View {
+        ZStack(alignment: .topLeading) {
+            TableBackground()
+            map
+                .opacity(1 - reveal)
+                .allowsHitTesting(router.contents == nil)
+                .accessibilityHidden(router.contents != nil)
+            if let id = router.contents, let ch = Chapter.all.first(where: { $0.id == id }) {
+                ContentsLayer(p: reveal, model: model, chapter: ch, from: cardRects[id], back: closeContents) { i in
+                    model.go(i); router.go(.level)
+                }
+            }
+        }
+        .coordinateSpace(.named("mapSpace"))
+        .overlay(alignment: .bottom) {
+            // the contents page's toast: where the level's is (F9)
+            if router.contents != nil, let toast = model.toast {
+                Text(toast).font(.callout).foregroundStyle(Tok.paperNew).multilineTextAlignment(.center)
+                    .padding(.horizontal, 16).padding(.vertical, 10)
+                    .background(RoundedRectangle(cornerRadius: 14).fill(Tok.ink900.opacity(0.94)))
+                    .padding(.horizontal, 24).padding(.bottom, 14)
+                    .transition(.opacity)
+                    .allowsHitTesting(false)
+                    .accessibilityIdentifier("contents.toast")
+            }
+        }
+        .overlay(alignment: .top) {
+            if slipsLine && router.contents == nil {
+                Button { slipsLine = false; router.go(.objects) } label: {
+                    HStack(spacing: 6) { Text(L10n.t("slips.introLine")); Image(systemName: "chevron.right").font(.footnote.weight(.semibold)) }
+                        .font(.callout).foregroundStyle(Tok.paperNew)
+                        .padding(.horizontal, 16).padding(.vertical, 10).frame(minHeight: 44)
+                        .background(RoundedRectangle(cornerRadius: 14).fill(Tok.ink900.opacity(0.94)))
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal, 24).padding(.top, 52)
+                .transition(.opacity)
+                .accessibilityIdentifier("map.slipsLine")
+            }
+        }
+        .onAppear {
+            // only the real map (the cover shows a picture of it), once per seeded save, for 10 s or a tap
+            guard router.screen == .map, SavedProgress.owesSlipsLine() else { return }
+            SavedProgress.slipsLineShown()
+            withAnimation(.easeOut(duration: 0.3)) { slipsLine = true }
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(10))
+                withAnimation(.easeOut(duration: 0.3)) { slipsLine = false }
+            }
+        }
+    }
+
+    @ViewBuilder private var map: some View {
         let vol1 = Chapter.volumeChapters(1).flatMap { model.chapterIndices($0) }
         let vol1Done = vol1.filter { model.done.contains($0) }.count
         let playable = Chapter.all.filter { model.isUnlocked($0) }.flatMap { model.chapterIndices($0) }
@@ -558,7 +622,7 @@ struct ChapterMapView: View {
         }
         .overlay(alignment: .top) {
             // a tap on a chapter that is not here yet says why (the level screen's toast, shown on the map too)
-            if let toast = model.toast {
+            if router.contents == nil, let toast = model.toast {
                 Text(toast).font(.callout).foregroundStyle(Tok.paperNew).multilineTextAlignment(.center)
                     .padding(.horizontal, 16).padding(.vertical, 10)
                     .background(RoundedRectangle(cornerRadius: 14).fill(Tok.ink900.opacity(0.94)))
@@ -572,7 +636,7 @@ struct ChapterMapView: View {
     }
 
     private func turn(to p: Int) {
-        withAnimation(AppSettings.shared.motionReduced ? .linear(duration: 0.2) : .easeInOut(duration: 0.35)) { page = p }
+        withAnimation(AppSettings.shared.motionReduced ? .linear(duration: 0.2) : .easeInOut(duration: 0.35)) { router.mapPage = p }
         UIAccessibility.post(notification: .screenChanged, argument: nil)
     }
 
@@ -591,6 +655,7 @@ struct ChapterMapView: View {
                     Spacer()
                     NextPageCard(open: volumeTwoOpen) { turn(to: 2) }.frame(width: (width - 64) / 2)
                 }
+                objectsLink.padding(.top, 10)
             }
             .padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 100)
         }
@@ -616,6 +681,7 @@ struct ChapterMapView: View {
                         .padding(.top, -8)
                     }
                 }
+                objectsLink.padding(.top, 10)
             }
             .padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 100)
         }
@@ -624,11 +690,11 @@ struct ChapterMapView: View {
     private func card(_ ch: Chapter, _ width: Double) -> some View {
         HStack {
             if ch.inVolume % 2 == 0 { Spacer() }
-            ChapterCard(model: model, chapter: ch, action: { open(ch) }, openLevel: { i in
-                guard model.isLevelOpen(i) else { return }
-                model.go(i); router.go(.level)
-            })
+            ChapterCard(model: model, chapter: ch, action: { open(ch) })
                 .frame(width: (width - 64) / 2)
+                .onGeometryChange(for: CGRect.self) { $0.frame(in: .named("mapSpace")) } action: { cardRects[ch.id] = $0 }
+                // its paper is the one that unfolds into the contents page
+                .opacity(router.contents == ch.id ? 0 : 1)
             if ch.inVolume % 2 == 1 { Spacer() }
         }
     }
@@ -642,9 +708,34 @@ struct ChapterMapView: View {
 
     private func open(_ ch: Chapter) {
         guard model.isUnlocked(ch) else { model.show(L10n.t(ch.soon ? "ch.soon" : "ch.lockedToast")); return }
-        let idx = model.chapterIndices(ch)
-        model.go(idx.first { !model.done.contains($0) } ?? idx.first ?? 0)
-        router.go(.level)
+        // a card opens its contents page (design-review-onboarding §4 ③); 「继续」 stays the quick way in
+        router.contents = ch.id
+        reveal = 0
+        withAnimation(AppSettings.shared.motionReduced ? .linear(duration: 0.2) : .easeInOut(duration: 0.28)) { reveal = 1 }
+    }
+
+    /// 「‹ 卷一《两岸》」: the page folds back into its card.
+    private func closeContents() {
+        withAnimation(AppSettings.shared.motionReduced ? .linear(duration: 0.2) : .easeInOut(duration: 0.28), completionCriteria: .logicallyComplete) {
+            reveal = 0
+        } completion: { router.contents = nil }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.32) { UIAccessibility.post(notification: .screenChanged, argument: nil) }
+    }
+
+    /// 「物件笺 · 已集 6 / 9 ›」 under the last card (§2.6): Songti 15, ink.700, a dotted underline, 44 pt to touch.
+    private var objectsLink: some View {
+        let n = SlipID.allCases.filter { model.slipsSeen.contains($0.rawValue) }.count
+        let text = L10n.t("contents.objects", ["n": n, "total": SlipID.allCases.count])
+        return Button { router.go(.objects) } label: {
+            Text(text + " ›").font(fonts.songti(.regular, 15, relativeTo: .subheadline)).foregroundStyle(Tok.ink700)
+                .padding(.bottom, 3)
+                .overlay(alignment: .bottom) { HLine().stroke(Tok.ink700, style: StrokeStyle(lineWidth: 1, dash: [1.5, 2.5])).frame(height: 1) }
+                .frame(minHeight: 44).contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
+        .accessibilityLabel(text)
+        .accessibilityIdentifier("map.objects")
     }
 }
 
@@ -687,7 +778,6 @@ private struct ChapterCard: View {
     let model: GameModel
     let chapter: Chapter
     let action: () -> Void
-    let openLevel: (Int) -> Void
     let fonts = FontBook.shared
     @Environment(\.highContrast) private var hc
 
@@ -753,29 +843,6 @@ private struct ChapterCard: View {
         .accessibilityValue([idx.isEmpty || chapter.soon ? nil : L10n.t("ch.count", ["n": n, "total": idx.count]), status].compactMap { $0 }.joined(separator: L10n.t("sep")))
         .accessibilityAddTraits(.isButton)
         .accessibilityIdentifier("chapter-\(chapter.id)")
-        .contextMenu {
-            if model.isUnlocked(chapter) {
-                // the chapter's heading over its levels (fold-proto e613f80's Levels sheet: 「一 · 折」…)
-                Section(L10n.t("chHead.\(chapter.id)")) {
-                    ForEach(Array(idx.enumerated()), id: \.offset) { k, i in
-                        // a level not reached yet stays listed, shut, with a lock: no skipping ahead in a chapter
-                        let open = model.isLevelOpen(i), title = "\(chapter.id)-\(k + 1) · \(L10n.level(model.pack.levels[i].id).name)"
-                        Button { openLevel(i) } label: {
-                            if open { Text(title) } else { Label(title, systemImage: "lock") }
-                        }
-                        .disabled(!open)
-                    }
-                }
-            }
-        }
-        .accessibilityActions {
-            if model.isUnlocked(chapter) {
-                ForEach(Array(idx.enumerated()), id: \.offset) { k, i in
-                    Button(L10n.t("lvAria", ["n": "\(chapter.id)-\(k + 1)", "name": L10n.level(model.pack.levels[i].id).name])) { openLevel(i) }
-                        .disabled(!model.isLevelOpen(i))
-                }
-            }
-        }
         }
     }
 }
@@ -1158,6 +1225,18 @@ struct SettingsView: View {
                 }
                 .padding(12)
                 .background(RoundedRectangle(cornerRadius: 14).fill(Color(hex: 0xFCFBF8)))
+                Text(L10n.t("settings.bookGroup")).font(.footnote).foregroundStyle(Tok.ink600).padding(.leading, 18).padding(.top, 18)
+                Button { router.go(.objects) } label: {
+                    HStack {
+                        Text(L10n.t("settings.objects")).font(.body).foregroundStyle(Tok.ink900)
+                        Spacer()
+                        Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(Tok.ink600)
+                    }
+                    .padding(.horizontal, 16).frame(minHeight: 52).contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .background(RoundedRectangle(cornerRadius: 14).fill(Color(hex: 0xFCFBF8)))
+                .accessibilityIdentifier("settings.objects")
             }
             .padding(.horizontal, 16).padding(.bottom, 24)
         }

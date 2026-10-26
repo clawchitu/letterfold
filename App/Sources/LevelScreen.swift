@@ -34,6 +34,9 @@ struct LevelScreen: View {
             ZStack(alignment: .top) {
                 GeometryReader { g in
                     BookView(model: model, available: g.size)
+                        // 物件笺: the first touch on the board tucks the slip away and still lands (design-onboarding §2.2)
+                        .simultaneousGesture(DragGesture(minimumDistance: 0).onChanged { _ in model.tuckSlip() })
+                        .overlay(alignment: .topLeading) { SlipLayer(model: model, size: g.size, margin: settings.largeGrid ? 0 : 20) }
                 }
                 .padding(.horizontal, settings.largeGrid ? 0 : 20)
                 // 「信，送到了。」 in the space the top page left when it closed (frame v2-4); it steps aside as the book
@@ -81,7 +84,7 @@ struct LevelScreen: View {
                 if model.showNext {
                     NextKnot(title: model.isLastInChapter ? L10n.t("letter.read") : model.isDark && model.nextDark == nil ? L10n.t("dark.back") : L10n.t("next")) {
                         if model.isLastInChapter { router.go(.letter) }
-                        else if model.isDark { if let n = model.nextDark { model.go(n); fadeName() } else { router.go(.map) } }
+                        else if model.isDark { if let n = model.nextDark { model.go(n); fadeName() } else { router.leaveLevel(chapter: model.chapter.id) } }
                         // the next level, or (an older save with a gap) the first one not yet delivered: never past it
                         else { model.go(model.isLevelOpen(model.index + 1) ? model.index + 1 : model.chapterLevelIndices.first { !model.done.contains($0) } ?? model.index + 1); fadeName() }
                     }
@@ -94,12 +97,13 @@ struct LevelScreen: View {
             }
             .padding(.bottom, 6)
         }
-        .background(TableBackground())
+        .background(TableBackground().contentShape(Rectangle()).onTapGesture { model.tuckSlip() })
         .accessibilityHidden(opener)              // the opener is modal for VoiceOver and Switch Control
         .overlay {
             if opener {
                 ChapterOpener(chapter: model.chapter) {
                     withAnimation(.easeInOut(duration: AppSettings.shared.motionReduced ? 0.2 : 0.4)) { opener = false }
+                    model.armSlip()   // the slip's 1.2 s count from the opener's leaving (§2.2)
                 }
                 .transition(.opacity)
             }
@@ -109,7 +113,7 @@ struct LevelScreen: View {
         .onChange(of: model.finaleLetter) { _, go in if go { router.go(.letter) } }
         .onChange(of: model.index) { _, _ in fadeName(); checkOpener() }
         .onDisappear { model.stopGhost(); if !model.finaleLetter { model.leaveLevel() } }        // no teaching moves behind the map's back
-        .accessibilityAction(.escape) { router.go(.map) }
+        .accessibilityAction(.escape) { router.leaveLevel(chapter: model.chapter.id) }
     }
 
     /// 二 · 立: the first time chapter 2 opens, its opener plays once (frame 6-A). -noOpener YES skips it.
@@ -119,6 +123,7 @@ struct LevelScreen: View {
         guard let key, !d.bool(forKey: key), !d.bool(forKey: "noOpener") else { return }
         d.set(true, forKey: key)
         opener = true
+        model.holdSlip()
     }
 
     /// level.name: fades in for 1.5 s, then rests at 40% grey (100% at AX sizes and in high contrast).
@@ -138,7 +143,7 @@ private struct TopBar: View {
     let inline: Bool
     var body: some View {
         HStack(spacing: 4) {
-            Button { router.go(.map) } label: {
+            Button { router.leaveLevel(chapter: model.chapter.id) } label: {
                 Image(systemName: "book").font(.system(size: 20, weight: .regular)).foregroundStyle(Tok.ink900)
                     .frame(width: 44, height: 44).contentShape(Rectangle())
             }

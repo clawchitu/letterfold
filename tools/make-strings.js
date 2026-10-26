@@ -241,6 +241,78 @@ for (const key of Object.keys(src.strings.en)) {
 for (const [key, [zh, en, ja, ko]] of Object.entries(NATIVE)) {
   ui[key] = { comment: (A11Y.test(key) || /^restart(Label|Hint|ed)$/.test(key) ? 'VoiceOver' : 'UI') + '. Native app only.' + (CH6_NATIVE.includes(key) || key.endsWith('.ch6') ? ' ja/ko: TODO-native-check.' : ''), values: { zh, en, ja, ko } };
 }
+// 0.1 (18): the nine 物件笺 (fold-proto design-onboarding §2.4–2.5; zh / en final there, ja / ko drafts). `.body` is the
+// portrait copy (top / bottom page), `.body.h` the vertical crease's where they differ. ja/ko: TODO-native-check.
+const SLIPS = {
+  'slip.stone.title': ["石头", "Stone", "石", "돌"],
+  'slip.stone.body': ["石头挡路，开着合着都绕不过它。合上书，从别的一叠走。", "A stone blocks the road, open or closed. Close the book and take another stack round it.", "石は道をふさぐ。開いていても閉じていても越えられない。本を閉じて、別の重なりから回り込む。", "돌은 길을 막아요. 펼쳐도 닫아도 넘을 수 없어요. 책을 닫고 다른 겹으로 돌아가세요."],
+  'slip.door.title': ["门与钥匙", "Door and Key", "扉と鍵", "문과 열쇠"],
+  'slip.door.body': ["门锁着，钥匙在对面那页。合上书，钥匙对上门，门就开了。", "The door is locked; the key is on the facing page. Close the book: the key meets the door, and it opens.", "扉は鍵がかかっていて、鍵は向かいのページにある。本を閉じると鍵が扉に重なり、扉が開く。", "문은 잠겨 있고, 열쇠는 맞은편 페이지에 있어요. 책을 닫으면 열쇠가 문에 닿아 문이 열려요."],
+  'slip.ink.title': ["墨", "Ink", "墨", "먹"],
+  'slip.ink.body': ["湿墨。合上书，它印到对面那一格——那里就多出一格纸。", "Wet ink. Close the book and it prints onto the facing square — one more square of paper there.", "濡れた墨。本を閉じると向かいの枡に写り、そこが一枡ぶんの紙になる。", "젖은 먹이에요. 책을 닫으면 맞은편 칸에 찍혀서, 그곳이 종이 한 칸이 돼요."],
+  'slip.tab.title': ["纸片", "Tab", "紙片", "종이 조각"],
+  'slip.tab.body': ["纸片在中缝两边成对。把书立到一半，它们站起来，搭成桥。", "Tabs sit in pairs across the crease. Stand the book half open and they rise into a bridge.", "紙片は折り目の両側に対になっている。本を半分立てると起き上がり、橋になる。", "종이 조각은 접는 선 양쪽에 짝으로 있어요. 책을 반쯤 세우면 일어나 다리가 돼요."],
+  'slip.shadow.title': ["影子", "Shadow", "影", "그림자"],
+  'slip.shadow.body': ["把上页斜起，灯在它背后：上页的石头把影子投到下页。影子，也是路。", "Lean the top page towards the lamp: its stone throws a shadow onto the page below. A shadow is a road too.", "上のページを傾けると、灯が後ろにある。上のページの石が下のページに影を落とす。影も、道。", "위 페이지를 기울이면 등불이 그 뒤에 있어요. 위 페이지의 돌이 아래 페이지에 그림자를 드리워요. 그림자도 길이에요."],
+  'slip.shadow.body.h': ["把右页斜起，灯在它背后：右页的石头把影子投到左页。影子，也是路。", "Lean the right page towards the lamp: its stone throws a shadow onto the left page. A shadow is a road too.", "右のページを傾けると、灯が後ろにある。右のページの石が左のページに影を落とす。影も、道。", "오른쪽 페이지를 기울이면 등불이 그 뒤에 있어요. 오른쪽 페이지의 돌이 왼쪽 페이지에 그림자를 드리워요. 그림자도 길이에요."],
+  'slip.press.title': ["压", "Press", "押す", "누름"],
+  'slip.press.body': ["合上时，上页的石头会落下来。别站在它正对面的那一格。", "When the book closes, a stone on the top page comes down. Don't stand on the square facing it.", "閉じるとき、上のページの石が落ちてくる。その真向かいの枡に立たないこと。", "책을 닫으면 위 페이지의 돌이 떨어져요. 그 바로 맞은편 칸에는 서지 마세요."],
+  'slip.press.body.h': ["合上时，右页的石头会落下来。别站在它正对面的那一格。", "When the book closes, a stone on the right page comes down. Don't stand on the square facing it.", "閉じるとき、右のページの石が落ちてくる。その真向かいの枡に立たないこと。", "책을 닫으면 오른쪽 페이지의 돌이 떨어져요. 그 바로 맞은편 칸에는 서지 마세요."],
+  'slip.ride.title': ["乘影", "Ride the Shadow", "影に乗る", "그림자 타기"],
+  'slip.ride.body': ["站在影子上，慢慢改变页角：影子会带着你走。", "Stand on a shadow and change the angle slowly: the shadow carries you with it.", "影の上に立ってページの角度をゆっくり変えると、影があなたを運ぶ。", "그림자 위에 서서 페이지 각도를 천천히 바꾸면, 그림자가 당신을 데려가요."],
+  'slip.glue.title': ["胶", "Glue", "糊", "풀"],
+  'slip.glue.body': ["胶。合上书，它把对面那格的石头粘过来——石头换了页，路也换了。", "Glue. Close the book and it pulls the stone facing it across — the stone changes page, and so does the road.", "糊。本を閉じると、向かいの枡の石をこちらに貼りつける。石がページを変え、道も変わる。", "풀이에요. 책을 닫으면 맞은편 칸의 돌을 이쪽으로 붙여 와요. 돌이 페이지를 옮기면 길도 바뀌어요."],
+  'slip.turn.title': ["第三页", "The Third Page", "三枚目の頁", "세 번째 페이지"],
+  'slip.turn.body': ["这封信有第三页。合上书，翻个面再打开：下页没变，对面换成了第三页。", "This letter has a third page. Close the book, turn it over and open it: the bottom page is the same, but it now faces the third page.", "この手紙には三枚目の頁がある。本を閉じ、裏返して開くと、下の頁はそのまま、向かいが三枚目の頁になる。", "이 편지에는 세 번째 페이지가 있어요. 책을 닫고 뒤집어 펼치면, 아래 페이지는 그대로이고 맞은편이 세 번째 페이지로 바뀌어요."],
+  'slip.turn.body.h': ["这封信有第三页。合上书，翻个面再打开：左页没变，对面换成了第三页。", "This letter has a third page. Close the book, turn it over and open it: the left page is the same, but it now faces the third page.", "この手紙には三枚目の頁がある。本を閉じ、裏返して開くと、左頁はそのまま、向かいが三枚目の頁になる。", "이 편지에는 세 번째 페이지가 있어요. 책을 닫고 뒤집어 펼치면, 왼쪽 페이지는 그대로이고 맞은편이 세 번째 페이지로 바뀌어요."],
+  'slip.pic.stone': ["图：纸人绕开石头那一叠，合着走到终点。", "Picture: closed, she walks round the stone's stack to the letter.", "図：閉じたまま、石の重なりを避けて終点まで歩く。", "그림: 닫은 채, 돌이 있는 겹을 피해 도착점까지 걸어가요."],
+  'slip.pic.door': ["图：书合上，钥匙碰到门，门开了；纸人穿过门口走到终点。", "Picture: the book closes, the key meets the door and it opens; she walks through to the letter.", "図：本を閉じると鍵が扉に重なって開き、扉を抜けて終点へ。", "그림: 책을 닫으면 열쇠가 문에 닿아 열리고, 문을 지나 도착점으로 가요."],
+  'slip.pic.ink': ["图：书合上，墨印到对面的缺口上；打开后纸人踩着印出来的墨走到终点。", "Picture: the book closes and the ink prints onto the gap facing it; opened, she walks over the printed ink to the letter.", "図：本を閉じると墨が向かいのすき間に写り、開いてからその墨を踏んで終点へ。", "그림: 책을 닫으면 먹이 맞은편 틈에 찍히고, 펼친 뒤 찍힌 먹을 밟고 도착점으로 가요."],
+  'slip.pic.tab': ["图：书立到一半，两片纸片搭成桥，纸人从桥上走过中缝。", "Picture: the book stands half open, the two tabs make a bridge, and she walks across the crease.", "図：本を半分立てると二枚の紙片が橋になり、折り目を渡る。", "그림: 책을 반쯤 세우면 두 종이 조각이 다리가 되어, 접는 선을 건너가요."],
+  'slip.pic.shadow': ["图：上页斜起，石头的影子填住下页的缺口，纸人踩着影子走到终点。", "Picture: the top page leans, the stone's shadow fills the gap on the page below, and she walks over it to the letter.", "図：上のページを傾けると石の影が下のページのすき間を埋め、影を踏んで終点へ。", "그림: 위 페이지를 기울이면 돌의 그림자가 아래 페이지의 틈을 메우고, 그림자를 밟고 도착점으로 가요."],
+  'slip.pic.press': ["图：纸人站在石头正对面，合上时被压回起点；站开一格再合上，就没事。", "Picture: standing facing the stone, she is pressed back to the start when the book closes; one square aside, she is safe.", "図：石の真向かいに立っていると、閉じたとき押されて出発点に戻る。一枡ずれて閉じれば無事。", "그림: 돌 바로 맞은편에 서 있으면 책을 닫을 때 눌려 출발점으로 돌아가요. 한 칸 비켜서 닫으면 괜찮아요."],
+  'slip.pic.ride': ["图：纸人站在影子上，页角慢慢变，影子带着她滑到另一格。", "Picture: she stands on a shadow; as the angle slowly changes, the shadow carries her to another square.", "図：影の上に立ち、角度がゆっくり変わると、影が別の枡まで運ぶ。", "그림: 그림자 위에 서서 각도가 천천히 바뀌면, 그림자가 다른 칸으로 데려가요."],
+  'slip.pic.glue': ["图：书合上，胶把对面的石头粘过来；石头换了页，纸人从空出来的路走到终点。", "Picture: the book closes and the glue pulls the stone across; the stone has changed page, and she walks the freed road to the letter.", "図：本を閉じると糊が向かいの石を貼りつけ、石がページを移り、空いた道を通って終点へ。", "그림: 책을 닫으면 풀이 맞은편 돌을 붙여 오고, 돌이 페이지를 옮겨 비워진 길로 도착점에 가요."],
+  'slip.pic.turn': ["图：书合上，翻个面再打开，对面换成了第三页，终点就在那里。", "Picture: closed, the book turns over and opens on the third page, where the letter is.", "図：閉じて裏返して開くと、向かいが三枚目の頁になり、終点はそこにある。", "그림: 닫고 뒤집어 펼치면 맞은편이 세 번째 페이지가 되고, 도착점은 거기 있어요."],
+  'slip.tuck': ["收起", "Tuck in", "しまう", "넣기"],
+  'slip.next': ["下一张", "Next", "次へ", "다음"],
+  'slip.aria': ["物件笺", "object slip", "物の栞", "물건 쪽지"],
+  'slip.label': ["物件笺，{name}", "Object slip: {name}", "物の栞、{name}", "물건 쪽지, {name}"],
+  'slip.bookmark': ["{name}，物件笺", "{name}, object slip", "{name}、物の栞", "{name}, 물건 쪽지"],
+  'slip.hint': ["双击收起", "Double-tap to tuck it in", "ダブルタップでしまう", "두 번 탭하면 넣어요"],
+  'slip.hintNext': ["双击看下一张", "Double-tap for the next slip", "ダブルタップで次へ", "두 번 탭하면 다음 쪽지"],
+  'slip.bookmarkHint': ["双击再读一遍", "Double-tap to read it again", "ダブルタップでもう一度読む", "두 번 탭하면 다시 읽어요"],
+  'slip.pageOf': ["第 {n} 张，共 {total} 张", "Slip {n} of {total}", "{total} 枚中 {n} 枚目", "{total}장 중 {n}번째"],
+};
+for (const [key, [zh, en, ja, ko]] of Object.entries(SLIPS)) {
+  ui[key] = { comment: (/^slip\.(pic|label|bookmark|hint|pageOf|aria)/.test(key) ? 'VoiceOver' : 'UI') + '. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.', values: { zh, en, ja, ko } };
+}
+// 0.1 (18): the contents page and the 「物件」 page (fold-proto design-onboarding §2.6, §3.5; review F7–F9).
+// zh / en from the spec; ja / ko drafts: TODO-native-check.
+const CONTENTS = {
+  'map.vol2Back': ["卷二《翻页》", "Book Two: Turning the Page", "第二巻『ページをめくる』", "제2권 《책장 넘기기》"],
+  'lv.done': ["已送达", "Delivered", "届いた", "도착"],
+  'lv.next': ["下一封", "Next letter", "次の手紙", "다음 편지"],
+  'lv.locked': ["未到", "Not yet", "まだ", "아직"],
+  'lv.lockedValue': ["未到，先送出上一封", "Not yet: deliver the letter before it first", "まだ。先に前の手紙を届けて", "아직, 먼저 앞 편지를 전하세요"],
+  'lv.lockedToast': ["先送出上一封。", "Deliver the letter before it first.", "先に前の手紙を届けて。", "먼저 앞 편지를 전하세요."],
+  'lv.why': ["为什么锁着", "Why it is tied shut", "なぜ閉じているか", "왜 묶여 있나요"],
+  'lv.par': ["折 {n} · 标准 {par}", "{n} folds · par {par}", "折り {n} · 標準 {par}", "접기 {n} · 기준 {par}"],
+  'lv.parSpoken': ["折 {n}，标准 {par}", "{n} folds, par {par}", "折り {n}、標準 {par}", "접기 {n}, 기준 {par}"],
+  'dark.code': ["暗{n}", "Hidden {n}", "隠{n}", "숨은 {n}"],
+  'dark.afterChapter': ["章送完后开", "Opens once the chapter is delivered", "章を届けたら開く", "장을 다 전하면 열려요"],
+  'contents.objects': ["物件笺 · 已集 {n} / {total}", "Object slips · {n} / {total} collected", "物の栞 · {n} / {total} 集めた", "물건 쪽지 · {n} / {total} 모음"],
+  'objects.title': ["物件", "Objects", "物", "물건"],
+  'objects.count': ["已集 {n} / {total}", "{n} / {total} collected", "{n} / {total} 集めた", "{n} / {total} 모음"],
+  'objects.unseen': ["还没遇到", "Not met yet", "まだ出会っていない", "아직 못 만났어요"],
+  'objects.unseenLabel': ["物件笺，还没遇到", "Object slip, not met yet", "物の栞、まだ出会っていない", "물건 쪽지, 아직 못 만났어요"],
+  'slips.introLine': ["书里夹了几张物件笺", "A few object slips are tucked in the book", "本に物の栞が何枚か挟まっている", "책에 물건 쪽지가 몇 장 끼워져 있어요"],
+  'settings.bookGroup': ["书", "Book", "本", "책"],
+  'settings.objects': ["物件笺", "Object slips", "物の栞", "물건 쪽지"],
+};
+for (const [key, [zh, en, ja, ko]] of Object.entries(CONTENTS)) {
+  ui[key] = { comment: (/^(lv\.(lockedValue|why|parSpoken)|objects\.unseenLabel)$/.test(key) ? 'VoiceOver' : 'UI') + '. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.', values: { zh, en, ja, ko } };
+}
 fs.writeFileSync(path.join(outDir, 'Localizable.xcstrings'), catalog(ui));
 
 const lv = {};

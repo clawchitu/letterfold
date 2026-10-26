@@ -37,7 +37,7 @@ final class GridChain: @unchecked Sendable {
 /// Brute-force solver: a port of fold-proto/tools/check.js.
 /// The hinge is sampled at a few angles; moving between two samples walks the angle in 5° steps,
 /// so a character standing on a shadow rides it (or falls) exactly as in the game.
-/// Cost = number of angle changes (0-1 BFS: steps are free).
+/// Cost = number of angle changes and page turns, priced by FoldTally (0-1 BFS: steps are free) — the game's 折数.
 public struct Solver: Sendable {
     public static let angles: [Double] = [0, 90, 100, 110, 120, 125, 130, 140, 150, 180]
     public static let steps15: [Double] = (0...12).map { Double($0 * 15) }
@@ -121,10 +121,10 @@ public struct Solver: Sendable {
                 return Solution(cost: cost, steps: chain.map(step))
             }
             var next: [(FoldState, Int)] = []
-            for a in angles where a != s.a {
-                if let to = turn(b, here, s.a, a) { next.append((FoldState(c: to.c, r: to.r, a: a, face: s.face, g: after(B, s, a)), 1)) }
+            for a in angles where FoldTally.cost(from: s.a, to: a) > 0 {
+                if let to = turn(b, here, s.a, a) { next.append((FoldState(c: to.c, r: to.r, a: a, face: s.face, g: after(B, s, a)), FoldTally.cost(from: s.a, to: a))) }
             }
-            if !noFlip, case let .to(f) = flipOf(B, s) { next.append((f, 1)) }
+            if !noFlip, case let .to(f) = flipOf(B, s) { next.append((f, FoldTally.turnCost)) }
             let sh = rules.shadows(b, s.a)
             for nb in rules.neighbours(b, here, p, sh) { next.append((FoldState(c: nb.c, r: nb.r, a: s.a, face: s.face, g: s.g), 0)) }
             for (nState, w) in next {
@@ -153,10 +153,10 @@ public struct Solver: Sendable {
                 return (cost / 1000, cost % 1000, chain.map(step))
             }
             var next: [(FoldState, Int)] = []
-            for a in angles where a != s.a {
-                if let to = turn(b, here, s.a, a) { next.append((FoldState(c: to.c, r: to.r, a: a, face: s.face, g: after(B, s, a)), 1000)) }
+            for a in angles where FoldTally.cost(from: s.a, to: a) > 0 {
+                if let to = turn(b, here, s.a, a) { next.append((FoldState(c: to.c, r: to.r, a: a, face: s.face, g: after(B, s, a)), 1000 * FoldTally.cost(from: s.a, to: a))) }
             }
-            if case let .to(f) = flipOf(B, s) { next.append((f, 1000)) }
+            if case let .to(f) = flipOf(B, s) { next.append((f, 1000 * FoldTally.turnCost)) }
             for nb in rules.neighbours(b, here, p, rules.shadows(b, s.a)) { next.append((FoldState(c: nb.c, r: nb.r, a: s.a, face: s.face, g: s.g), 1)) }
             for (n, w) in next where !done.contains(n) {
                 if let d = dist[n], d <= cost + w { continue }

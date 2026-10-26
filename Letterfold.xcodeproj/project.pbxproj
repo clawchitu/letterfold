@@ -18,15 +18,20 @@
 		34A798E0D5924075ECEA5944 /* FoldCore in Frameworks */ = {isa = PBXBuildFile; productRef = 88BED3A0FF644679AC1747FE /* FoldCore */; };
 		3C0775AFD33349CA0C055368 /* Paper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23DC96729D3FCEAF07A7743F /* Paper.swift */; };
 		41C9101008DFEE17CF0C3A91 /* PlanLevelUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011869BA3DC1C9873A1049D7 /* PlanLevelUITests.swift */; };
+		47335045E1361AE66BF22A79 /* Contents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31779719E8C773D36D2CFC1B /* Contents.swift */; };
 		4808A9C05E1935D6FFE4F8B2 /* PlaythroughUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661C1BE741FF0CB5D1E9EE51 /* PlaythroughUITests.swift */; };
 		4E042B49889CAFAFFA62FB4A /* Levels.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 93CA716983C6FD7D2F2CB18E /* Levels.xcstrings */; };
 		632B7BC5D43A1FE091458D59 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */; };
 		83E16CC195AEC3EC5512860E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B5BC6A962BF940695C18366 /* Assets.xcassets */; };
 		940B2DA1796BB58F3B8FCFAD /* Chapter3UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33328FA03A6FDAE3C9019CD5 /* Chapter3UITests.swift */; };
+		95BDB217EE07141E153788C9 /* SlipUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EBA74BD18A4CCAC6C76307B /* SlipUITests.swift */; };
 		99273F2D8C732350A8BCA85B /* Screens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CBDC31A0224AF98A0B8641 /* Screens.swift */; };
+		9B11B3E45713A193AA36B5AF /* Slip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0F961EF86FAC46A7C6FE8 /* Slip.swift */; };
 		A14167539C197C23C60606DD /* Chapter5UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59688079C7688C54335A73BD /* Chapter5UITests.swift */; };
 		AAC6885CD98A69713F89E05E /* Chapter4UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0494484CEC40B87ECCEA13 /* Chapter4UITests.swift */; };
 		ACE672D75211636A787E4B4A /* FoldDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */; };
+		B06253E7629EEE0DFA262540 /* ContentsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86874352C30014FFF456BE3E /* ContentsUITests.swift */; };
+		B1D32DD32E79E29D08463F20 /* MiniBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FCF925CDB8149AB521F8E2D /* MiniBook.swift */; };
 		C8A342F843413DC1FB323FDC /* PlaythroughPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2ACD110F34C4648B09D796 /* PlaythroughPlan.swift */; };
 		CDAFA5AA7DB1731BE06494F7 /* Petals.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF748F41958AB1E89B0C34D9 /* Petals.swift */; };
 		D8A70EB3F8BBE29228DA425A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 379A2157A36D86786F6D27BF /* PrivacyInfo.xcprivacy */; };
@@ -51,8 +56,11 @@
 
 /* Begin PBXFileReference section */
 		011869BA3DC1C9873A1049D7 /* PlanLevelUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanLevelUITests.swift; sourceTree = "<group>"; };
+		0EBA74BD18A4CCAC6C76307B /* SlipUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlipUITests.swift; sourceTree = "<group>"; };
 		23DC96729D3FCEAF07A7743F /* Paper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paper.swift; sourceTree = "<group>"; };
 		2991315D14E1D1169059EEE2 /* Hinge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hinge.swift; sourceTree = "<group>"; };
+		2BC0F961EF86FAC46A7C6FE8 /* Slip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slip.swift; sourceTree = "<group>"; };
+		31779719E8C773D36D2CFC1B /* Contents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contents.swift; sourceTree = "<group>"; };
 		33328FA03A6FDAE3C9019CD5 /* Chapter3UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter3UITests.swift; sourceTree = "<group>"; };
 		379A2157A36D86786F6D27BF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		4097B0AC06804266642AEB30 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -67,6 +75,8 @@
 		73CBDC31A0224AF98A0B8641 /* Screens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screens.swift; sourceTree = "<group>"; };
 		76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldDriver.swift; sourceTree = "<group>"; };
 		79DDBB77B419ABE4C00953E0 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
+		7FCF925CDB8149AB521F8E2D /* MiniBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniBook.swift; sourceTree = "<group>"; };
+		86874352C30014FFF456BE3E /* ContentsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentsUITests.swift; sourceTree = "<group>"; };
 		868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		93CA716983C6FD7D2F2CB18E /* Levels.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Levels.xcstrings; sourceTree = "<group>"; };
 		9649A387FE6D80E352CD3FC9 /* BookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookView.swift; sourceTree = "<group>"; };
@@ -104,11 +114,13 @@
 				CC0494484CEC40B87ECCEA13 /* Chapter4UITests.swift */,
 				59688079C7688C54335A73BD /* Chapter5UITests.swift */,
 				442751BD211723A6FF2D59D6 /* Chapter6UITests.swift */,
+				86874352C30014FFF456BE3E /* ContentsUITests.swift */,
 				76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */,
 				B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */,
 				011869BA3DC1C9873A1049D7 /* PlanLevelUITests.swift */,
 				AD2ACD110F34C4648B09D796 /* PlaythroughPlan.swift */,
 				661C1BE741FF0CB5D1E9EE51 /* PlaythroughUITests.swift */,
+				0EBA74BD18A4CCAC6C76307B /* SlipUITests.swift */,
 			);
 			path = UITests;
 			sourceTree = "<group>";
@@ -118,16 +130,19 @@
 			children = (
 				79DDBB77B419ABE4C00953E0 /* App.swift */,
 				9649A387FE6D80E352CD3FC9 /* BookView.swift */,
+				31779719E8C773D36D2CFC1B /* Contents.swift */,
 				45EBF8A2E746E16AE1153A20 /* GameModel.swift */,
 				578B23505A90DB23ECB3C2A4 /* Haptics.swift */,
 				2991315D14E1D1169059EEE2 /* Hinge.swift */,
 				9E9E382EAE32A5BCA3D71BC9 /* L10n.swift */,
 				B298358295F0A825501A00E9 /* LevelScreen.swift */,
+				7FCF925CDB8149AB521F8E2D /* MiniBook.swift */,
 				23DC96729D3FCEAF07A7743F /* Paper.swift */,
 				EF748F41958AB1E89B0C34D9 /* Petals.swift */,
 				73CBDC31A0224AF98A0B8641 /* Screens.swift */,
 				4097B0AC06804266642AEB30 /* Settings.swift */,
 				AD058B4451F306D134BBAF38 /* Skins.swift */,
+				2BC0F961EF86FAC46A7C6FE8 /* Slip.swift */,
 				A9AA4B7A8AA01181783D9B58 /* Sound.swift */,
 				AB5597D142A9CB8FB0E573B6 /* Theme.swift */,
 			);
@@ -291,16 +306,19 @@
 			files = (
 				11BE4B3530A847817165737B /* App.swift in Sources */,
 				23541C263217811CE7EE57A7 /* BookView.swift in Sources */,
+				47335045E1361AE66BF22A79 /* Contents.swift in Sources */,
 				F6517ABF6F79233473DE2C2F /* GameModel.swift in Sources */,
 				E814CEA6AE8D68A972F67039 /* Haptics.swift in Sources */,
 				2440B5FB027790D0976AF907 /* Hinge.swift in Sources */,
 				EC45A98D94C4BC1BBB07EF81 /* L10n.swift in Sources */,
 				E06BF6C6CF71DF946E87BED5 /* LevelScreen.swift in Sources */,
+				B1D32DD32E79E29D08463F20 /* MiniBook.swift in Sources */,
 				3C0775AFD33349CA0C055368 /* Paper.swift in Sources */,
 				CDAFA5AA7DB1731BE06494F7 /* Petals.swift in Sources */,
 				99273F2D8C732350A8BCA85B /* Screens.swift in Sources */,
 				287378E19EFCA32706FC4E35 /* Settings.swift in Sources */,
 				0ACF1846232647123A81BF6B /* Skins.swift in Sources */,
+				9B11B3E45713A193AA36B5AF /* Slip.swift in Sources */,
 				F82CD4AB1512484854127089 /* Sound.swift in Sources */,
 				E6F6C5E335E9922EBEEF96E7 /* Theme.swift in Sources */,
 			);
@@ -315,11 +333,13 @@
 				AAC6885CD98A69713F89E05E /* Chapter4UITests.swift in Sources */,
 				A14167539C197C23C60606DD /* Chapter5UITests.swift in Sources */,
 				F2F1AE66279EFC5F18207868 /* Chapter6UITests.swift in Sources */,
+				B06253E7629EEE0DFA262540 /* ContentsUITests.swift in Sources */,
 				ACE672D75211636A787E4B4A /* FoldDriver.swift in Sources */,
 				325A01DF0182BD81C710BC54 /* LetterfoldUITests.swift in Sources */,
 				41C9101008DFEE17CF0C3A91 /* PlanLevelUITests.swift in Sources */,
 				C8A342F843413DC1FB323FDC /* PlaythroughPlan.swift in Sources */,
 				4808A9C05E1935D6FFE4F8B2 /* PlaythroughUITests.swift in Sources */,
+				95BDB217EE07141E153788C9 /* SlipUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -425,7 +445,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -525,7 +545,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (

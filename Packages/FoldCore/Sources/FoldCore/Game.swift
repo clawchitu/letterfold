@@ -47,9 +47,17 @@ public final class FoldGame {
     public private(set) var trail: [Cell]
     private var rideSrc: Int?
 
-    private struct Snapshot { var board: Board; var char: Cell; var angle: Double; var trail: [Cell]; var closedOnce: Bool; var stuck: Bool }
+    private struct Snapshot {
+        var board: Board; var char: Cell; var angle: Double; var trail: [Cell]; var closedOnce: Bool; var stuck: Bool
+        /// Only on a restart's snapshot: the 折数 and resting angle before it, which undoing the restart brings back
+        /// (Codex review 18 #2).
+        var tally: FoldTally? = nil
+    }
     private var undoStack: [Snapshot] = []
     public var canUndo: Bool { !undoStack.isEmpty }
+    /// 折数 so far (the app notes rests and turns). A restart zeroes it and undoing the restart restores it (count and
+    /// resting angle); other undos leave it (a fold that was made and taken back was still made).
+    public var tally = FoldTally()
 
     /// The hinge is simulated in steps of at most this many degrees, so riding a shadow does not depend on frame rate.
     public static let subStep = 5.0
@@ -219,6 +227,7 @@ public final class FoldGame {
     public func undo() -> Bool {
         guard let s = undoStack.popLast() else { return false }
         board = s.board; char = s.char; angle = s.angle; trail = s.trail; closedOnce = s.closedOnce; stuck = s.stuck
+        if let t = s.tally { tally = t }
         posture = rules.posture(angle); shade = rules.shadows(board, angle); rideSrc = nil; won = false
         return true
     }
@@ -228,6 +237,8 @@ public final class FoldGame {
     /// older history is still there under it.
     public func restart() {
         pushUndo()
+        undoStack[undoStack.count - 1].tally = tally
+        tally = FoldTally(restAngle: 0)
         board = try! Board(level: level, columnsPerPage: config.columnsPerPage)
         char = board.start; trail = [board.start]; angle = 0; posture = rules.posture(0); shade = rules.shadows(board, 0)
         rideSrc = nil; won = false; closedOnce = false; stuck = false
@@ -236,6 +247,7 @@ public final class FoldGame {
     public func reset() {
         board = try! Board(level: level, columnsPerPage: config.columnsPerPage)
         char = board.start; trail = [board.start]; angle = 0; posture = .open; shade = [:]; rideSrc = nil; won = false; undoStack = []
+        tally = FoldTally()
         closedOnce = false; stuck = false
     }
 }

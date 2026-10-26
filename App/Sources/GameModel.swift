@@ -179,6 +179,43 @@ final class GameModel {
     private(set) var hintAvailable = false
     /// The 「?」 ladder (design-review-v2c1 §2): a level with a first hint (5-4's old line) shows it on the first press.
     @ObservationIgnored private var hintRung = 0
+    /// 折数 (design-review-onboarding §4 ②) lives in `game.tally` (FoldCore.FoldTally): counted as the solver counts
+    /// par — a rest at another angle than the last is one (a sweep through standing to shut is one; 0° → 130° on 3-1
+    /// is one though both are open), a turn is one; a crush home does not reset it, a restart does, undoing it restores it.
+    /// fold.bestFolds: the fewest posture changes each level was delivered in (the contents page's 折 n · 标准 m).
+    private(set) var bestFolds: [String: Int] = SavedProgress.loadBestFolds()
+    private func noteRest() { game.tally.rest(at: game.angle) }
+
+    // 物件笺 (fold-proto design-onboarding §2, §7): one slip per rule object, pulled out of the crease once per player
+    /// The slips already pulled out (fold.slipsSeen), by object.
+    @ObservationIgnored private(set) var slipsSeen: Set<String> = []
+    /// The level that introduces each slip (the first main-line level that uses its rule).
+    @ObservationIgnored let slipFirstLevels: [SlipID: String]
+    /// Due on this entry and not pulled out yet (at most two: one slip, two pages).
+    @ObservationIgnored private(set) var slipDue: [SlipID] = []
+    /// The pages of the slip this level has shown (empty: none yet on this entry, so no bookmark corner).
+    private(set) var slipPages: [SlipID] = []
+    private(set) var slipPage = 0
+    /// The slip lies over the top page.
+    private(set) var slipOut = false
+    /// Where the top page is on screen (BookView's coordinates), for the slip and its bookmark corner.
+    var slipAnchor: SlipAnchor?
+    @ObservationIgnored private var slipTask: Task<Void, Never>?
+    /// The 「?」 has already pulled the slip out again on this entry (its rung 0, §2.2).
+    @ObservationIgnored private var slipHintUsed = false
+    /// The timers that wait for a stuck player stop while the slip is out and start again when it is tucked (§2.2).
+    @ObservationIgnored private var slipPaused = (stuck: false, teach: false, ghost: false)
+    /// VoiceOver: the level's intro is still being read (the slip waits for it, §2.5). Cleared only by the
+    /// announcement callback for this level's intro (`introText`) — finished or cancelled — never by another
+    /// announcement's, nor by elapsed time while it is read (Codex review 18 #3).
+    @ObservationIgnored private var introPending = false
+    /// The current level's intro as posted (L10n.cap), matched against announcementDidFinish's string.
+    @ObservationIgnored private var introText: String?
+    /// When the intro is due to be posted: the slip's last-resort fallback counts from here.
+    @ObservationIgnored private var introPostedAt: Date?
+    /// The fallback if VoiceOver never reports on the intro at all (dropped announcement): generous, so a slow
+    /// speech rate is never cut off.
+    static let introFallback: TimeInterval = 30
     private(set) var inkPrintedAt: [Cell: Date] = [:]
     /// glue.pull (design-review-v2c1 §3): stones flying across the crease to the glue that took them, the faint mark
     /// each leaves where it was, and the glue square's flash. Times are CACurrentMediaTime().
@@ -261,11 +298,15 @@ final class GameModel {
 
     init(pack: LevelPack) {
         self.pack = pack
+        bestFolds = SavedProgress.sanitizeBestFolds(par: Dictionary(pack.levels.compactMap { l in l.expect?.changes.map { (l.id, $0) } }, uniquingKeysWith: { a, _ in a }))
         let first = try! FoldGame(level: pack.levels[0], config: pack.config)
         game = first
         board = first.board; original = first.board; char = first.char; trail = first.trail
         doneIDs = SavedProgress.load()
         done = Set(doneIDs.compactMap { id in pack.levels.firstIndex { $0.id == id } })
+        // after load's migration: an old save is seeded once, a new player starts with none seen (§7.3)
+        slipFirstLevels = Slips.firstLevels(pack.levels, order: Chapter.all.flatMap(\.levelIDs), columnsPerPage: pack.config.columnsPerPage)
+        slipsSeen = SavedProgress.loadSlips(done: doneIDs, firstLevels: slipFirstLevels)
         if #available(iOS 27.1, *) { device = UIHingeProvider() } else { device = nil }
         simulated.onAngle = { [weak self] a in self?.setAngle(a) }
         device?.onAngle = { [weak self] a in
@@ -286,6 +327,11 @@ final class GameModel {
             let id = (note.userInfo?[UIAccessibility.focusedElementUserInfoKey] as? UIAccessibilityIdentification)?.accessibilityIdentifier
             Task { @MainActor [weak self] in self?.focused(id) }
         }
+        NotificationCenter.default.addObserver(forName: UIAccessibility.announcementDidFinishNotification, object: nil, queue: .main) { note in
+            let said = note.userInfo?[UIAccessibility.announcementStringValueUserInfoKey] as? String
+            let ok = (note.userInfo?[UIAccessibility.announcementWasSuccessfulUserInfoKey] as? NSNumber)?.boolValue ?? false
+            Task { @MainActor [weak self] in self?.announcementFinished(said, successful: ok) }
+        }
     }
 
     /// Launch arguments (screenshots and UI tests): -resetProgress YES, -startLevel <1-based>, -startAngle <deg>,
@@ -293,7 +339,7 @@ final class GameModel {
     /// -cameraPitch <deg> (screenshots), -probe YES (UI tests: the drag's edge probe).
     static func launch() -> GameModel {
         let d = UserDefaults.standard
-        if d.bool(forKey: "resetProgress") { SavedProgress.reset(d); for k in [ruleBlockedKey, ruleUnderKey, layerRuleKey, shadowPaperKey] { d.removeObject(forKey: k) }; for k in 2...6 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
+        if d.bool(forKey: "resetProgress") { SavedProgress.resetAll(d); for k in [ruleBlockedKey, ruleUnderKey, layerRuleKey, shadowPaperKey] { d.removeObject(forKey: k) }; for k in 2...6 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
         var pack = try! LevelPack.bundled()
         let start = d.integer(forKey: "startLevel")
         // -levelMap "row|row|…" (UI tests only; gaps written "_", as a value starting with "-" would read as a flag): play the -startLevel level on another board, so a rule's regression test
@@ -433,6 +479,134 @@ final class GameModel {
         // 2-1: no text; the ghost hand stands the page after 8 s without a fold (or after a failed close, in tap())
         teachCount = 0
         if level.id == "stand" || level.id == "shadow" { startTeach(after: 8) }
+        game.tally = FoldTally(restAngle: game.angle)
+        // 物件笺: the unseen objects this level uses come out of the crease 1.2 s in (§2.2, §7.4)
+        slipTask?.cancel(); slipTask = nil
+        slipOut = false; slipPages = []; slipPage = 0; slipHintUsed = false
+        slipPaused = (false, false, false)
+        introPending = settings.voiceOver
+        introText = L10n.cap(intro); introPostedAt = Date().addingTimeInterval(0.6)
+        slipDue = UserDefaults.standard.bool(forKey: "noSlips") ? [] : orderedSlips(Slips.due(level, seen: slipsSeen, columnsPerPage: config.columnsPerPage))
+        armSlip()
+    }
+
+    // MARK: 物件笺 (design-onboarding §2, §7.4)
+
+    /// Two slips on one level: the object nearer the start first (§4); rules without a square of their own after.
+    private func orderedSlips(_ ids: [SlipID]) -> [SlipID] {
+        let start = game.board.start
+        func distance(_ id: SlipID) -> Int {
+            let tile: Tile? = switch id { case .stone, .press: .stone; case .door: .door; case .ink: .ink; case .tab: .tab; case .glue: .glue; default: nil }
+            guard let tile else { return .max }
+            var best = Int.max
+            for r in 0..<board.h { for c in 0..<board.w where board[c, r] == tile {
+                // 压: only a stone on the top page whose mirror the figure can stand on
+                if id == .press && !(rules.isRight(c) && board[rules.mirror(c), r].isFloor) { continue }
+                best = min(best, abs(rules.proj(c) - rules.proj(start.c)) + abs(r - start.r))
+            } }
+            return best
+        }
+        // a tie: the object this level introduces first (5-1 is glue's level), then the §1 table's order
+        func own(_ id: SlipID) -> Int { slipFirstLevels[id] == level.id ? 0 : 1 }
+        return ids.enumerated().sorted { (distance($0.element), own($0.element), $0.offset) < (distance($1.element), own($1.element), $1.offset) }.map(\.element)
+    }
+
+    /// announcementDidFinish: only this level's intro opens the slip's gate. Another announcement (a fold, a step,
+    /// an earlier level's intro still in the queue) leaves it shut.
+    func announcementFinished(_ said: String?, successful: Bool) {
+        guard introPending, let intro = introText, let said,
+              said.trimmingCharacters(in: .whitespacesAndNewlines) == intro.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
+        if successful {
+            introPending = false
+        } else {
+            // cancelled: VoiceOver cut the intro off (the player touched or swiped, or something else was spoken over
+            // it). It is no longer being read, so there is nothing for the slip to talk over: open the gate too, and
+            // do not post the intro again (the player chose to move on; 「?」 and the board still carry it).
+            introPending = false
+        }
+    }
+
+    /// The level's chapter opener is in front: the slip's 1.2 s count from when it leaves.
+    func holdSlip() { slipTask?.cancel(); slipTask = nil }
+
+    /// 1.2 s after the board is ready: VoiceOver first finishes the level's intro; never over a finger on the page, a
+    /// shut book or a won level (then it waits, or — won — waits for the next time the object turns up, unseen).
+    func armSlip(after delay: Double = 1.2) {
+        slipTask?.cancel(); slipTask = nil
+        guard !slipDue.isEmpty else { return }
+        slipTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(delay))
+            while let self, !Task.isCancelled {
+                if self.won || self.aha { return }
+                // no elapsed-time override while the intro is read: only its own callback opens the gate, or — if
+                // VoiceOver never reports on it — the generous fallback
+                let overdue = self.introPostedAt.map { Date().timeIntervalSince($0) > Self.introFallback } ?? true
+                let introDone = !self.introPending || !self.settings.voiceOver || overdue
+                if introDone && !self.dragging && !self.hingeActive && self.motionTarget == nil && !self.walking && !self.flipping && self.posture != .closed {
+                    self.riseSlip(self.slipDue, auto: true)
+                    return
+                }
+                try? await Task.sleep(for: .milliseconds(300))
+            }
+        }
+    }
+
+    /// Pull the slip out (auto: the first time, which records it as seen).
+    func riseSlip(_ pages: [SlipID], auto: Bool = false) {
+        guard !pages.isEmpty, !won else { return }
+        slipTask?.cancel(); slipTask = nil
+        if auto {
+            slipsSeen.formUnion(pages.map(\.rawValue))
+            SavedProgress.saveSlips(slipsSeen)
+            slipDue = []
+        }
+        slipPages = pages; slipPage = 0
+        // reading is not being stuck: the ghost hand, the 2-1 / 3-1 teaching and the 45 s 「?」 wait for the tuck
+        if stuckTask != nil && !hintAvailable { stuckTask?.cancel(); stuckTask = nil; slipPaused.stuck = true }
+        if teachTask != nil { teachTask?.cancel(); teachTask = nil; slipPaused.teach = true }
+        if ghostTask != nil { stopGhost(); slipPaused.ghost = true }
+        withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .spring(response: 0.36, dampingFraction: 0.78)) { slipOut = true }
+        haptics.tick()
+        sound.rub(volume: 0.18)
+        // -slipThen next|tuck (screenshots): turn to the second page, or tuck, 1.5 s after it comes out
+        if auto, let then = UserDefaults.standard.string(forKey: "slipThen") {
+            Task { [weak self] in
+                try? await Task.sleep(for: .seconds(1.5))
+                if then == "next" { self?.nextSlipPage() } else { self?.tuckSlip() }
+            }
+        }
+    }
+
+    /// 「下一张 ›」 on the first of two pages.
+    func nextSlipPage() {
+        guard slipOut, slipPage + 1 < slipPages.count else { tuckSlip(); return }
+        haptics.tick()
+        withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .easeInOut(duration: 0.25)) { slipPage += 1 }
+    }
+
+    /// Back into the crease, leaving the bookmark corner. Any touch on the board, any button, the hinge does this —
+    /// and still does what it does (the slip never swallows a gesture).
+    func tuckSlip() {
+        guard slipOut else { return }
+        withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .easeIn(duration: 0.22)) { slipOut = false }
+        haptics.tick()
+        let p = slipPaused
+        slipPaused = (false, false, false)
+        if p.stuck && !won && !hintAvailable {
+            stuckTask = Task { [weak self] in
+                try? await Task.sleep(for: .seconds(45))
+                if !Task.isCancelled, let self, !self.won { self.hintAvailable = true }
+            }
+        }
+        if p.teach { startTeach(after: 8) }
+        if p.ghost { startGhost(after: 3.5) }
+    }
+
+    /// The slip the 「?」 offers first: the one shown on this entry, else the ones this level introduces (§2.2 重看 ②).
+    var slipForHint: [SlipID] {
+        if UserDefaults.standard.bool(forKey: "noSlips") { return [] }
+        if !slipPages.isEmpty { return slipPages }
+        return Array(SlipID.allCases.filter { slipFirstLevels[$0] == level.id }.prefix(2))
     }
 
     /// The ghost hand (README "下一步", design-spec §5): loops until the player folds, never with reduce motion.
@@ -470,6 +644,7 @@ final class GameModel {
     /// confirmed: FoldGame pushes the state before, so one undo steps back to before the restart. Not a hint, and the
     /// 「?」 ladder and the stuck timer's progress are left as they were.
     func restart() {
+        tuckSlip()
         if aha { finishAhaNow(); return }
         guard canRestart else { return }
         stopAll()
@@ -517,6 +692,13 @@ final class GameModel {
 
     /// The web's hints talk about the right and left pages; on a portrait phone those are the top and bottom pages.
     func hint() {
+        // a level that introduces an object: rung 0 pulls its slip out again (design-onboarding §2.2, §7.4)
+        if !slipHintUsed, !slipOut, !won, !slipForHint.isEmpty {
+            slipHintUsed = true
+            riseSlip(slipForHint)
+            return
+        }
+        tuckSlip()
         defer { hintRung += 1 }
         if hintRung == 0, let first = L10n.levelHint1(level.id) { show(first); return }
         let key = "hint.portrait.\(level.id)", portrait = L10n.t(key)
@@ -538,6 +720,7 @@ final class GameModel {
         let events = game.setAngle(a)
         angle = game.angle
         sync()
+        if posture == .closed { tuckSlip() }   // the book shut (a hand on the hinge): the slip goes back (§2.2 ④)
         if paper.backlit { setLamp(posture == .closed ? 0 : 1, now: false) }   // reduce motion keeps the timed fade too
         if !quiet {
             handle(events, from: wasPosture, at: figure)
@@ -831,6 +1014,7 @@ final class GameModel {
 
     /// Buttons and VoiceOver: one undoable move to an angle.
     func foldTo(_ a: Double) {
+        tuckSlip()
         if aha { finishAhaNow(); return }
         finishFlipNow()
         if Int(a.rounded()) == Int(angle.rounded()) { settle(); return }
@@ -912,6 +1096,7 @@ final class GameModel {
         if !hingeActive {
             guard let first = hingeSamples.first, abs(physical - first.p) >= 8 else { return }
             finishFlipNow()
+            tuckSlip()   // the book moved by the hinge: the slip goes back (§2.2 ④)
             hingeActive = true
             freezeCamera()
             stopWalk(); stopGhost(); hasFolded = true
@@ -939,6 +1124,7 @@ final class GameModel {
     }
 
     func dragBegan() {
+        tuckSlip()
         if aha { finishAhaNow() }
         finishFlipNow()   // the turn lands before the finger takes the page (its undo snapshot must be the turned book)
         stopMotion(); stopWalk(); stopGhost(); hasFolded = true
@@ -1020,6 +1206,7 @@ final class GameModel {
     func canReach(_ cell: Cell) -> Bool { game.path(to: cell).map { !$0.isEmpty } ?? false }
 
     func tap(_ cell: Cell) {
+        tuckSlip()
         if aha { finishAhaNow(); return }
         if won { return }
         stopWalk()
@@ -1072,6 +1259,7 @@ final class GameModel {
 
     /// One step in a screen direction (the 「走」 bookmark, VoiceOver).
     func step(_ d: Spread.Direction) {
+        tuckSlip()
         if won { return }
         stopWalk()
         finishMotionNow()
@@ -1129,6 +1317,7 @@ final class GameModel {
     /// Turn the closed book over: refused with the reason as a toast, else one undoable move — the whole book flips,
     /// the press stamps as a close does, a stone on the new facing page over her square sends her home.
     func flipBook() {
+        tuckSlip()
         if aha { finishAhaNow(); return }
         if won || flipping { return }
         stopWalk()
@@ -1236,6 +1425,7 @@ final class GameModel {
     func pushUndo() { game.pushUndo(); canUndo = game.canUndo }
 
     func undo() {
+        tuckSlip()
         if aha { finishAhaNow(); return }
         if won { return }
         stopAll()
@@ -1322,7 +1512,7 @@ final class GameModel {
             case .blocked:
                 break
             case .flipped:
-                break   // said by flipBook, with what the press did
+                game.tally.turn()   // said by flipBook, with what the press did
             case .flipCrushed(let cause):
                 // the turned-to page has a stone over her square: the level starts again (flipBook turns the book back after)
                 stopWalk(); stopRideFeel()
@@ -1345,6 +1535,8 @@ final class GameModel {
         stopWalk()
         done.insert(index)
         doneIDs.insert(level.id); SavedProgress.save(doneIDs)
+        noteRest()
+        bestFolds[level.id] = SavedProgress.recordFolds(game.tally.count, for: level.id)
         if isFinale { finaleBank = trail.last { !rules.isRight($0.c) } ?? trail.first }
         startAha()
     }
@@ -1442,7 +1634,7 @@ final class GameModel {
     }
 
     /// The level screen went away (the map, another level): no letter arrives behind its back.
-    func leaveLevel() { letterTask?.cancel(); letterTask = nil }
+    func leaveLevel() { letterTask?.cancel(); letterTask = nil; slipTask?.cancel(); slipTask = nil; slipOut = false; slipPages = [] }
 
     private func finishAha() {
         aha = false; quiet = false
@@ -1484,6 +1676,7 @@ final class GameModel {
     // MARK: settle (one announcement when the hinge comes to rest, like the web's aria-live flush)
 
     func settle() {
+        noteRest()
         settleTask?.cancel(); settleTask = nil
         let a = Int(angle.rounded())
         let p = pending
@@ -1709,6 +1902,7 @@ final class GameModel {
 
     /// 「听一行」: every square of the character's row, low to high page by page.
     func hearRow() {
+        tuckSlip()
         let r = char.r
         var i = 0.0
         for c in 0..<(2 * config.columnsPerPage) {
@@ -1724,6 +1918,7 @@ final class GameModel {
 
     /// 「我在哪」
     func whereAmI() {
+        tuckSlip()
         let ways = Spread.Direction.allCases.filter { d in
             let page = posture == .closed ? Spread.Page.fixed : spread.page(of: char.c)
             let (dc, dr) = spread.delta(d, on: page)

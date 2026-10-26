@@ -1741,6 +1741,36 @@
         }
       }
     },
+    "contents.objects": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物件笺 · 已集 {n} / {total}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Object slips · {n} / {total} collected"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物の栞 · {n} / {total} 集めた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "물건 쪽지 · {n} / {total} 모음"
+          }
+        }
+      }
+    },
     "cover.begin": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -2011,6 +2041,36 @@
         }
       }
     },
+    "dark.afterChapter": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "章送完后开"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens once the chapter is delivered"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "章を届けたら開く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "장을 다 전하면 열려요"
+          }
+        }
+      }
+    },
     "dark.back": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -2037,6 +2097,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "장 목록으로"
+          }
+        }
+      }
+    },
+    "dark.code": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暗{n}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hidden {n}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隠{n}"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "숨은 {n}"
           }
         }
       }
@@ -6721,6 +6811,246 @@
         }
       }
     },
+    "lv.done": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已送达"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delivered"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "届いた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "도착"
+          }
+        }
+      }
+    },
+    "lv.locked": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未到"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not yet"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직"
+          }
+        }
+      }
+    },
+    "lv.lockedToast": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先送出上一封。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deliver the letter before it first."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先に前の手紙を届けて。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 앞 편지를 전하세요."
+          }
+        }
+      }
+    },
+    "lv.lockedValue": {
+      "comment": "VoiceOver. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未到，先送出上一封"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not yet: deliver the letter before it first"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだ。先に前の手紙を届けて"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직, 먼저 앞 편지를 전하세요"
+          }
+        }
+      }
+    },
+    "lv.next": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下一封"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next letter"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次の手紙"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음 편지"
+          }
+        }
+      }
+    },
+    "lv.par": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折 {n} · 标准 {par}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} folds · par {par}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折り {n} · 標準 {par}"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "접기 {n} · 기준 {par}"
+          }
+        }
+      }
+    },
+    "lv.parSpoken": {
+      "comment": "VoiceOver. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折 {n}，标准 {par}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} folds, par {par}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折り {n}、標準 {par}"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "접기 {n}, 기준 {par}"
+          }
+        }
+      }
+    },
+    "lv.why": {
+      "comment": "VoiceOver. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "为什么锁着"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Why it is tied shut"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "なぜ閉じているか"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "왜 묶여 있나요"
+          }
+        }
+      }
+    },
     "lvAria": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {n} {name}",
       "extractionState": "manual",
@@ -7047,6 +7377,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "제1권 《양안》으로, {total}통 중 {n}통 도착"
+          }
+        }
+      }
+    },
+    "map.vol2Back": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷二《翻页》"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Book Two: Turning the Page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第二巻『ページをめくる』"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제2권 《책장 넘기기》"
           }
         }
       }
@@ -7947,6 +8307,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "없음"
+          }
+        }
+      }
+    },
+    "objects.count": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已集 {n} / {total}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} / {total} collected"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} / {total} 集めた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} / {total} 모음"
+          }
+        }
+      }
+    },
+    "objects.title": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物件"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Objects"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "물건"
+          }
+        }
+      }
+    },
+    "objects.unseen": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没遇到"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not met yet"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだ出会っていない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직 못 만났어요"
+          }
+        }
+      }
+    },
+    "objects.unseenLabel": {
+      "comment": "VoiceOver. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物件笺，还没遇到"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Object slip, not met yet"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物の栞、まだ出会っていない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "물건 쪽지, 아직 못 만났어요"
           }
         }
       }
@@ -10081,6 +10561,66 @@
         }
       }
     },
+    "settings.bookGroup": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "书"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Book"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책"
+          }
+        }
+      }
+    },
+    "settings.objects": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物件笺"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Object slips"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物の栞"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "물건 쪽지"
+          }
+        }
+      }
+    },
     "settings.title": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -10257,6 +10797,1206 @@
           "stringUnit": {
             "state": "translated",
             "value": "그림자가 {pos:으로} 데려갔어요"
+          }
+        }
+      }
+    },
+    "slip.aria": {
+      "comment": "VoiceOver. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物件笺"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "object slip"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物の栞"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "물건 쪽지"
+          }
+        }
+      }
+    },
+    "slip.bookmark": {
+      "comment": "VoiceOver. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name}，物件笺"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name}, object slip"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name}、物の栞"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{name}, 물건 쪽지"
+          }
+        }
+      }
+    },
+    "slip.bookmarkHint": {
+      "comment": "VoiceOver. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "双击再读一遍"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double-tap to read it again"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ダブルタップでもう一度読む"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 번 탭하면 다시 읽어요"
+          }
+        }
+      }
+    },
+    "slip.door.body": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "门锁着，钥匙在对面那页。合上书，钥匙对上门，门就开了。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The door is locked; the key is on the facing page. Close the book: the key meets the door, and it opens."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扉は鍵がかかっていて、鍵は向かいのページにある。本を閉じると鍵が扉に重なり、扉が開く。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "문은 잠겨 있고, 열쇠는 맞은편 페이지에 있어요. 책을 닫으면 열쇠가 문에 닿아 문이 열려요."
+          }
+        }
+      }
+    },
+    "slip.door.title": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "门与钥匙"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Door and Key"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扉と鍵"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "문과 열쇠"
+          }
+        }
+      }
+    },
+    "slip.glue.body": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "胶。合上书，它把对面那格的石头粘过来——石头换了页，路也换了。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glue. Close the book and it pulls the stone facing it across — the stone changes page, and so does the road."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "糊。本を閉じると、向かいの枡の石をこちらに貼りつける。石がページを変え、道も変わる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "풀이에요. 책을 닫으면 맞은편 칸의 돌을 이쪽으로 붙여 와요. 돌이 페이지를 옮기면 길도 바뀌어요."
+          }
+        }
+      }
+    },
+    "slip.glue.title": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "胶"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glue"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "糊"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "풀"
+          }
+        }
+      }
+    },
+    "slip.hint": {
+      "comment": "VoiceOver. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "双击收起"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double-tap to tuck it in"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ダブルタップでしまう"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 번 탭하면 넣어요"
+          }
+        }
+      }
+    },
+    "slip.hintNext": {
+      "comment": "VoiceOver. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "双击看下一张"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double-tap for the next slip"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ダブルタップで次へ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 번 탭하면 다음 쪽지"
+          }
+        }
+      }
+    },
+    "slip.ink.body": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "湿墨。合上书，它印到对面那一格——那里就多出一格纸。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wet ink. Close the book and it prints onto the facing square — one more square of paper there."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "濡れた墨。本を閉じると向かいの枡に写り、そこが一枡ぶんの紙になる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "젖은 먹이에요. 책을 닫으면 맞은편 칸에 찍혀서, 그곳이 종이 한 칸이 돼요."
+          }
+        }
+      }
+    },
+    "slip.ink.title": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ink"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먹"
+          }
+        }
+      }
+    },
+    "slip.label": {
+      "comment": "VoiceOver. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物件笺，{name}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Object slip: {name}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物の栞、{name}"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "물건 쪽지, {name}"
+          }
+        }
+      }
+    },
+    "slip.next": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下一张"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次へ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음"
+          }
+        }
+      }
+    },
+    "slip.pageOf": {
+      "comment": "VoiceOver. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第 {n} 张，共 {total} 张"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slip {n} of {total}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{total} 枚中 {n} 枚目"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{total}장 중 {n}번째"
+          }
+        }
+      }
+    },
+    "slip.pic.door": {
+      "comment": "VoiceOver. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：书合上，钥匙碰到门，门开了；纸人穿过门口走到终点。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: the book closes, the key meets the door and it opens; she walks through to the letter."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：本を閉じると鍵が扉に重なって開き、扉を抜けて終点へ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 책을 닫으면 열쇠가 문에 닿아 열리고, 문을 지나 도착점으로 가요."
+          }
+        }
+      }
+    },
+    "slip.pic.glue": {
+      "comment": "VoiceOver. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：书合上，胶把对面的石头粘过来；石头换了页，纸人从空出来的路走到终点。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: the book closes and the glue pulls the stone across; the stone has changed page, and she walks the freed road to the letter."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：本を閉じると糊が向かいの石を貼りつけ、石がページを移り、空いた道を通って終点へ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 책을 닫으면 풀이 맞은편 돌을 붙여 오고, 돌이 페이지를 옮겨 비워진 길로 도착점에 가요."
+          }
+        }
+      }
+    },
+    "slip.pic.ink": {
+      "comment": "VoiceOver. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：书合上，墨印到对面的缺口上；打开后纸人踩着印出来的墨走到终点。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: the book closes and the ink prints onto the gap facing it; opened, she walks over the printed ink to the letter."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：本を閉じると墨が向かいのすき間に写り、開いてからその墨を踏んで終点へ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 책을 닫으면 먹이 맞은편 틈에 찍히고, 펼친 뒤 찍힌 먹을 밟고 도착점으로 가요."
+          }
+        }
+      }
+    },
+    "slip.pic.press": {
+      "comment": "VoiceOver. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：纸人站在石头正对面，合上时被压回起点；站开一格再合上，就没事。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: standing facing the stone, she is pressed back to the start when the book closes; one square aside, she is safe."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：石の真向かいに立っていると、閉じたとき押されて出発点に戻る。一枡ずれて閉じれば無事。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 돌 바로 맞은편에 서 있으면 책을 닫을 때 눌려 출발점으로 돌아가요. 한 칸 비켜서 닫으면 괜찮아요."
+          }
+        }
+      }
+    },
+    "slip.pic.ride": {
+      "comment": "VoiceOver. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：纸人站在影子上，页角慢慢变，影子带着她滑到另一格。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: she stands on a shadow; as the angle slowly changes, the shadow carries her to another square."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：影の上に立ち、角度がゆっくり変わると、影が別の枡まで運ぶ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 그림자 위에 서서 각도가 천천히 바뀌면, 그림자가 다른 칸으로 데려가요."
+          }
+        }
+      }
+    },
+    "slip.pic.shadow": {
+      "comment": "VoiceOver. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：上页斜起，石头的影子填住下页的缺口，纸人踩着影子走到终点。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: the top page leans, the stone's shadow fills the gap on the page below, and she walks over it to the letter."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：上のページを傾けると石の影が下のページのすき間を埋め、影を踏んで終点へ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 위 페이지를 기울이면 돌의 그림자가 아래 페이지의 틈을 메우고, 그림자를 밟고 도착점으로 가요."
+          }
+        }
+      }
+    },
+    "slip.pic.stone": {
+      "comment": "VoiceOver. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：纸人绕开石头那一叠，合着走到终点。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: closed, she walks round the stone's stack to the letter."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：閉じたまま、石の重なりを避けて終点まで歩く。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 닫은 채, 돌이 있는 겹을 피해 도착점까지 걸어가요."
+          }
+        }
+      }
+    },
+    "slip.pic.tab": {
+      "comment": "VoiceOver. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：书立到一半，两片纸片搭成桥，纸人从桥上走过中缝。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: the book stands half open, the two tabs make a bridge, and she walks across the crease."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：本を半分立てると二枚の紙片が橋になり、折り目を渡る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 책을 반쯤 세우면 두 종이 조각이 다리가 되어, 접는 선을 건너가요."
+          }
+        }
+      }
+    },
+    "slip.pic.turn": {
+      "comment": "VoiceOver. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：书合上，翻个面再打开，对面换成了第三页，终点就在那里。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: closed, the book turns over and opens on the third page, where the letter is."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：閉じて裏返して開くと、向かいが三枚目の頁になり、終点はそこにある。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 닫고 뒤집어 펼치면 맞은편이 세 번째 페이지가 되고, 도착점은 거기 있어요."
+          }
+        }
+      }
+    },
+    "slip.press.body": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上时，上页的石头会落下来。别站在它正对面的那一格。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When the book closes, a stone on the top page comes down. Don't stand on the square facing it."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じるとき、上のページの石が落ちてくる。その真向かいの枡に立たないこと。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책을 닫으면 위 페이지의 돌이 떨어져요. 그 바로 맞은편 칸에는 서지 마세요."
+          }
+        }
+      }
+    },
+    "slip.press.body.h": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上时，右页的石头会落下来。别站在它正对面的那一格。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When the book closes, a stone on the right page comes down. Don't stand on the square facing it."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じるとき、右のページの石が落ちてくる。その真向かいの枡に立たないこと。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책을 닫으면 오른쪽 페이지의 돌이 떨어져요. 그 바로 맞은편 칸에는 서지 마세요."
+          }
+        }
+      }
+    },
+    "slip.press.title": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "压"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Press"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "押す"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "누름"
+          }
+        }
+      }
+    },
+    "slip.ride.body": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "站在影子上，慢慢改变页角：影子会带着你走。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stand on a shadow and change the angle slowly: the shadow carries you with it."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影の上に立ってページの角度をゆっくり変えると、影があなたを運ぶ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자 위에 서서 페이지 각도를 천천히 바꾸면, 그림자가 당신을 데려가요."
+          }
+        }
+      }
+    },
+    "slip.ride.title": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "乘影"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ride the Shadow"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影に乗る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자 타기"
+          }
+        }
+      }
+    },
+    "slip.shadow.body": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "把上页斜起，灯在它背后：上页的石头把影子投到下页。影子，也是路。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lean the top page towards the lamp: its stone throws a shadow onto the page below. A shadow is a road too."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上のページを傾けると、灯が後ろにある。上のページの石が下のページに影を落とす。影も、道。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "위 페이지를 기울이면 등불이 그 뒤에 있어요. 위 페이지의 돌이 아래 페이지에 그림자를 드리워요. 그림자도 길이에요."
+          }
+        }
+      }
+    },
+    "slip.shadow.body.h": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "把右页斜起，灯在它背后：右页的石头把影子投到左页。影子，也是路。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lean the right page towards the lamp: its stone throws a shadow onto the left page. A shadow is a road too."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右のページを傾けると、灯が後ろにある。右のページの石が左のページに影を落とす。影も、道。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오른쪽 페이지를 기울이면 등불이 그 뒤에 있어요. 오른쪽 페이지의 돌이 왼쪽 페이지에 그림자를 드리워요. 그림자도 길이에요."
+          }
+        }
+      }
+    },
+    "slip.shadow.title": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影子"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shadow"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자"
+          }
+        }
+      }
+    },
+    "slip.stone.body": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石头挡路，开着合着都绕不过它。合上书，从别的一叠走。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A stone blocks the road, open or closed. Close the book and take another stack round it."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石は道をふさぐ。開いていても閉じていても越えられない。本を閉じて、別の重なりから回り込む。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌은 길을 막아요. 펼쳐도 닫아도 넘을 수 없어요. 책을 닫고 다른 겹으로 돌아가세요."
+          }
+        }
+      }
+    },
+    "slip.stone.title": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石头"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stone"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌"
+          }
+        }
+      }
+    },
+    "slip.tab.body": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "纸片在中缝两边成对。把书立到一半，它们站起来，搭成桥。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tabs sit in pairs across the crease. Stand the book half open and they rise into a bridge."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紙片は折り目の両側に対になっている。本を半分立てると起き上がり、橋になる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종이 조각은 접는 선 양쪽에 짝으로 있어요. 책을 반쯤 세우면 일어나 다리가 돼요."
+          }
+        }
+      }
+    },
+    "slip.tab.title": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "纸片"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tab"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紙片"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종이 조각"
+          }
+        }
+      }
+    },
+    "slip.tuck": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "收起"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tuck in"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "しまう"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "넣기"
+          }
+        }
+      }
+    },
+    "slip.turn.body": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这封信有第三页。合上书，翻个面再打开：下页没变，对面换成了第三页。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This letter has a third page. Close the book, turn it over and open it: the bottom page is the same, but it now faces the third page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この手紙には三枚目の頁がある。本を閉じ、裏返して開くと、下の頁はそのまま、向かいが三枚目の頁になる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 편지에는 세 번째 페이지가 있어요. 책을 닫고 뒤집어 펼치면, 아래 페이지는 그대로이고 맞은편이 세 번째 페이지로 바뀌어요."
+          }
+        }
+      }
+    },
+    "slip.turn.body.h": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这封信有第三页。合上书，翻个面再打开：左页没变，对面换成了第三页。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This letter has a third page. Close the book, turn it over and open it: the left page is the same, but it now faces the third page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この手紙には三枚目の頁がある。本を閉じ、裏返して開くと、左頁はそのまま、向かいが三枚目の頁になる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 편지에는 세 번째 페이지가 있어요. 책을 닫고 뒤집어 펼치면, 왼쪽 페이지는 그대로이고 맞은편이 세 번째 페이지로 바뀌어요."
+          }
+        }
+      }
+    },
+    "slip.turn.title": {
+      "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Third Page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三枚目の頁"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "세 번째 페이지"
+          }
+        }
+      }
+    },
+    "slips.introLine": {
+      "comment": "UI. Native app only. 章页 / 物件 (fold-proto design-onboarding §2.6, §3.5). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "书里夹了几张物件笺"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A few object slips are tucked in the book"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本に物の栞が何枚か挟まっている"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책에 물건 쪽지가 몇 장 끼워져 있어요"
           }
         }
       }
