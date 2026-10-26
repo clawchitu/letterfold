@@ -85,8 +85,11 @@ struct SlipLayer: View {
             .frame(width: size.width, height: size.height, alignment: .topLeading)
             .onChange(of: model.slipOut, initial: true) { _, out in
                 guard out, UIAccessibility.isVoiceOverRunning else { return }
-                focused = true
-                UIAccessibility.post(notification: .layoutChanged, argument: nil)
+                // VoiceOver moves to the slip once it is in the tree (design-onboarding §2.5: layoutChanged → the slip)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                    UIAccessibility.post(notification: .layoutChanged, argument: nil)
+                    focused = true
+                }
             }
         }
     }
