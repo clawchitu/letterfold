@@ -23,10 +23,57 @@ struct MiniBook: View {
     static let size = CGSize(width: page.width + 12, height: page.height * 2 + 8)
     static let rest = 700.0, fade = 200.0
 
+    /// The part of `size` the open book actually covers at rest (the camera leaves a margin round it): the slip and
+    /// the 物件 page lay it out by this, so the book fills its column instead of floating in empty paper.
+    static var visible: CGRect {
+        let W = Double(page.width), H = Double(page.height)
+        let cam = BookCamera.make(fold: 0, pitch: 14, page: page, container: size, reduceMotion: true, large: false)
+        let pts = [SIMD3(-W / 2, -H, 0), SIMD3(W / 2, -H, 0), SIMD3(-W / 2, H, 0), SIMD3(W / 2, H, 0)].map { cam.project($0) }
+        let xs = pts.map(\.x), ys = pts.map(\.y)
+        return CGRect(x: xs.min()!, y: ys.min()!, width: xs.max()! - xs.min()!, height: ys.max()! - ys.min()!).insetBy(dx: -3, dy: -3)
+    }
+
+    /// As the book shuts it rises by half its top page, so the shut book sits in the middle of its column, not low in it.
+    static func lift(_ th: Double) -> Double {
+        let W = Double(page.width), H = Double(page.height)
+        let cam = BookCamera.make(fold: 0, pitch: 14, page: page, container: size, reduceMotion: true, large: false)
+        let top = cam.project(SIMD3(-W / 2, -H, 0)).y, crease = cam.project(SIMD3(-W / 2, 0, 0)).y
+        return (crease - top) / 2 * (1 - cos(th * .pi / 180)) / 2
+    }
+
+    /// Where the still's story is, in `size` coordinates: the middle of her square and the object's (the 物件 page's
+    /// thumbnail window is centred here).
+    static func focus(_ film: SlipFilm) -> CGPoint {
+        let st = MiniTimeline(film).stillState(), b = st.board
+        let page = Self.page, W = Double(page.width), H = Double(page.height), th = st.angle
+        let hasTabs = b.grid.contains { $0.contains(.tab) }
+        let pitch = 14 + (hasTabs ? 22 * max(0, 1 - abs(th - 90) / 45) : 0)
+        let cam = BookCamera.make(fold: th, pitch: pitch, page: page, container: size, reduceMotion: true, large: false)
+        let t = th * .pi / 180
+        let g = MiniGeom(W: W, H: H, fold: SIMD3(0, -cos(t), sin(t)), edge0: SIMD3(-W / 2, 0, 0))
+        let all = (0..<b.h).flatMap { r in (0..<b.w).map { Cell($0, r) } }
+        let want: Set<Tile> = switch film.id {
+        case .stone, .press: [.stone]
+        case .door: [.door, .openDoor]
+        case .ink: [.ink]
+        case .tab: [.tab]
+        case .glue: [.glue, .stone]
+        default: []
+        }
+        var cells = all.filter { want.contains(b[$0]) || ((film.id == .shadow || film.id == .ride) && st.shade[$0] != nil) }
+        // an object on the top page of a closed book lies over its opposite square
+        cells = cells.map { $0.c >= 4 && th > 90 ? Cell(7 - $0.c, $0.r) : $0 }
+        cells.append(st.to)
+        let ps = cells.map { cam.project(g.point($0)) }
+        let xs = ps.map(\.x), ys = ps.map(\.y)
+        return CGPoint(x: (xs.min()! + xs.max()!) / 2, y: (ys.min()! + ys.max()!) / 2 - lift(th))
+    }
+
     var body: some View {
         let timeline = MiniTimeline(film)
         Group {
-            if animate {
+            // -slipStill YES (screenshots): every film holds its still, so a shot never lands on an in-between frame
+            if animate && !UserDefaults.standard.bool(forKey: "slipStill") {
                 // a 30 Hz clock rather than the display link: the app still goes idle between ticks (XCUITest waits for that)
                 TimelineView(.periodic(from: start, by: paused ? 3600 : 1.0 / 30)) { ctx in
                     let loop = timeline.total + Self.rest + Self.fade
@@ -193,17 +240,19 @@ private struct MiniScene: View {
         let geom = MiniGeom(W: W, H: H, fold: fold, edge0: edge0)
         let rise = max(0, 1 - abs(th - 90) / 30)
         let lamp = [.shadow, .press, .ride].contains(film.id) && !hc ? GameModel.lit(th) * (th < 165 ? 1 : 0) : 0
+        let b0 = film.frames.first?.board
+        let glued = Set((0..<(b0?.h ?? 0)).flatMap { r in (0..<(b0?.w ?? 0)).map { Cell($0, r) } }.filter { b0?[$0] == .glue })
         ZStack(alignment: .topLeading) {
-            MiniPage(state: state, paper: paper, side: .fixed, closed: th >= 155, sideways: sideways, lamp: 0)
+            MiniPage(state: state, paper: paper, side: .fixed, closed: th >= 155, sideways: sideways, lamp: 0, glued: glued)
                 .frame(width: page.width, height: page.height)
                 .projectionEffect(cam.transform(o: edge0, eu: ex, ev: SIMD3(0, 1, 0)))
             Group {
                 if showBack {
-                    MiniPage(state: state, paper: paper, side: .back, closed: th >= 155, sideways: sideways, lamp: lamp)
+                    MiniPage(state: state, paper: paper, side: .back, closed: th >= 155, sideways: sideways, lamp: lamp, glued: glued)
                         .frame(width: page.width, height: page.height)
                         .projectionEffect(cam.transform(o: edge0, eu: ex, ev: fold))
                 } else {
-                    MiniPage(state: state, paper: paper, side: .front, closed: false, sideways: sideways, lamp: 0)
+                    MiniPage(state: state, paper: paper, side: .front, closed: false, sideways: sideways, lamp: 0, glued: glued)
                         .frame(width: page.width, height: page.height)
                         .projectionEffect(cam.transform(o: edge0 + H * fold, eu: ex, ev: -fold))
                 }
@@ -222,6 +271,7 @@ private struct MiniScene: View {
                     .position(x: MiniBook.size.width - 9, y: 9)
             }
         }
+        .offset(y: -MiniBook.lift(th))
         .frame(width: MiniBook.size.width, height: MiniBook.size.height, alignment: .topLeading)
         .scaleEffect(x: state.turn > 0 && state.turn < 1 ? cos(.pi * state.turn) : 1, y: 1)
     }
@@ -362,6 +412,8 @@ private struct MiniPage: View {
     let sideways: Bool
     /// The lamp behind a leaning top page (chapter 3's three slips only, review F4).
     let lamp: Double
+    /// The film's glue squares: once a stone is glued onto one, the drop still shows under it.
+    var glued: Set<Cell> = []
     @Environment(\.highContrast) private var hc
 
     var body: some View {
@@ -443,7 +495,12 @@ private struct MiniPage: View {
                     if flash { frame.stroke(Tok.ink900.opacity(0.6), lineWidth: 1) }
                 }
             } else if t == .stone {
+                if glued.contains(c) && side != .back {
+                    // the glue holding the stone: its drop spreads out from under it
+                    GlueMark(size: MiniBook.tile * 1.5).offset(x: MiniBook.tile * 0.14, y: MiniBook.tile * 0.2)
+                }
                 if side == .back && lamp > 0 { StoneSilhouette(size: MiniBook.tile * 0.86, rim: true) }
+                else if glued.contains(c) && side != .back { PaperStone(size: MiniBook.tile * 0.95).offset(x: -MiniBook.tile * 0.1, y: -MiniBook.tile * 0.16) }
                 else { PaperStone(size: MiniBook.tile * 1.4) }
                 if flash { frame.stroke(edge, lineWidth: 1) }
             } else {

@@ -170,7 +170,8 @@ public struct SlipDemo: Sendable {
             .walk(Cell(1, 0)), .still, .walk(Cell(2, 0)), .win]),
         SlipDemo(id: .press, level: "3-2", map: ["S.----x-", "--------"], beats: [
             .walk(Cell(1, 0)), .pause(300), .angle(180, ms: 420, crushed: true), .pause(400), .angle(0, ms: 300),
-            .at(Cell(0, 0)), .pause(150), .angle(180, ms: 420, crushed: false), .still, .pause(300), .angle(0, ms: 300)]),
+            .at(Cell(0, 0)), .pause(150), .angle(140, ms: 330, crushed: false), .still, .pause(250),
+            .angle(180, ms: 120, crushed: false), .pause(300), .angle(0, ms: 300)]),
         SlipDemo(id: .ride, level: "3-4", map: ["G.-----x", "---S----"], beats: [
             .angle(110, ms: 500, shadowAt: Cell(3, 0)), .walk(Cell(3, 0)), .angle(130, ms: 1000), .at(Cell(1, 0)), .still,
             .pause(400), .walk(Cell(0, 0)), .win]),

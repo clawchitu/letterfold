@@ -98,7 +98,8 @@ struct SlipLayer: View {
     /// height less 16 (design-onboarding §2.1). Landscape: over the right page, the small book on its side above the text.
     private func slipBox(_ a: SlipAnchor) -> CGRect {
         if a.horizontal {
-            let w = min(size.width + 2 * margin - 64, 420)
+            // the page's own width at the crease, edge on edge with it (never wider than the board page)
+            let w = min(a.page.width, 420)
             // §2.1 caps it at the top page's height less 16; a short top page (a five-row board's 63 pt squares)
             // would shrink the small book to ~60 %, so the slip may rise past the page into the empty table above it
             let h = min(MiniBook.size.height + 24, max(a.page.height - 16, a.crease - 16))
@@ -135,7 +136,8 @@ private struct SlipPull: ViewModifier, Animatable {
                         let h = g.size.height, w = g.size.width
                         // the part already out of the crease, plus room for the shadow once it is all out
                         if horizontal {
-                            Rectangle().frame(width: w + 60, height: max(0, h * q + (q >= 1 ? 30 : 0) + 30)).offset(x: -30, y: -30)
+                            // wide enough whatever the reader is handed: only the cut at the crease moves
+                            Rectangle().frame(width: w + 2000, height: max(0, h * q + (q >= 1 ? 30 : 0) + 30)).offset(x: -1000, y: -30)
                         } else {
                             Rectangle().frame(width: max(0, w * q + (q >= 1 ? 30 : 0) + 30), height: h + 60).offset(x: w * (1 - q), y: -30)
                         }
@@ -164,6 +166,7 @@ struct SlipView: View {
     var onTuck: (() -> Void)? = nil
     @Environment(\.highContrast) private var hc
     @Environment(\.dynamicTypeSize) private var typeSize
+    @State private var linePitch: CGFloat = 29
 
     var body: some View {
         let paper = paperOverride ?? model.paper
@@ -198,19 +201,22 @@ struct SlipView: View {
         .accessibilitySortPriority(30_000)
     }
 
+    /// The small book laid out by the paper it covers (not the camera's margin round it), filling the slip's height.
     private func book(_ paper: PaperState, rotated: Bool) -> some View {
-        let s = MiniBook.size
+        let s = MiniBook.size, v = MiniBook.visible
         let room = rotated ? size.width - 18 : size.height - 24
-        let k = min(1, room / s.height)
+        let k = min(1.3, room / v.height)
         return Group {
             if let film = SlipFilms.film(id, config: model.config) {
                 MiniBook(film: film, paper: paper, animate: !AppSettings.shared.motionReduced, sideways: rotated)
             } else { Color.clear }
         }
         .frame(width: s.width, height: s.height)
+        .offset(x: s.width / 2 - v.midX, y: s.height / 2 - v.midY)
+        .frame(width: v.width, height: v.height)
         .scaleEffect(k)
         .rotationEffect(.degrees(rotated ? 90 : 0))
-        .frame(width: (rotated ? s.height : s.width) * k, height: (rotated ? s.width : s.height) * k)
+        .frame(width: (rotated ? v.height : v.width) * k, height: (rotated ? v.width : v.height) * k)
         .accessibilityHidden(true)
         .allowsHitTesting(false)
     }
@@ -231,18 +237,38 @@ struct SlipView: View {
             .padding(.top, 2).padding(.trailing, 8)
             .allowsHitTesting(false)   // the slip never takes a touch from the page under it (only 「收起」 does)
             // AX sizes: the text scrolls inside the slip, fading out over its last 12 pt above a fixed 「收起」
-            ScrollView {
-                Text(L10n.tight(text, size: 15)).font(SlipFont.font(.regular, 15, .subheadline))
-                    .lineSpacing(7)
-                    .foregroundStyle(ink)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.trailing, 8).padding(.bottom, 10)
+            // the window ends on a whole line (F4): the 12 pt fade falls in the gap under the last line shown, so a
+            // line is never cut through its glyphs; the rest scrolls up into it
+            GeometryReader { g in
+                let pitch = max(1, linePitch)
+                let lines = max(1, floor(g.size.height / pitch))
+                let shown = min(g.size.height, lines * pitch)
+                ScrollView {
+                    Text(L10n.tight(text, size: 15)).font(SlipFont.font(.regular, 15, .subheadline))
+                        .lineSpacing(7)
+                        .foregroundStyle(ink)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.trailing, 8).padding(.bottom, 12)
+                }
+                .scrollBounceBehavior(.basedOnSize)
+                .scrollIndicators(big ? .visible : .hidden)
+                .mask { VStack(spacing: 0) { Rectangle(); LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom).frame(height: 12) } }
+                .frame(height: shown, alignment: .top)
+                .allowsHitTesting(big)
+                .simultaneousGesture(TapGesture().onEnded { (onTuck ?? { model.tuckSlip() })() })
             }
-            .scrollBounceBehavior(.basedOnSize)
-            .scrollIndicators(big ? .visible : .hidden)
-            .mask { VStack(spacing: 0) { Rectangle(); LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom).frame(height: 12) } }
-            .allowsHitTesting(big)
-            .simultaneousGesture(TapGesture().onEnded { (onTuck ?? { model.tuckSlip() })() })
+            .background(alignment: .topLeading) {
+                // one line and two lines of the same type: their difference is the line pitch
+                ZStack {
+                    Text("国").background(GeometryReader { Color.clear.preference(key: SlipLineKey.self, value: [0: $0.size.height]) })
+                    Text("国\n国").background(GeometryReader { Color.clear.preference(key: SlipLineKey.self, value: [1: $0.size.height]) })
+                }
+                .font(SlipFont.font(.regular, 15, .subheadline)).lineSpacing(7)
+                .fixedSize().hidden().accessibilityHidden(true)
+            }
+            .onPreferenceChange(SlipLineKey.self) { v in
+                if let a = v[0], let b = v[1] { linePitch = b - a }
+            }
             HStack {
                 Spacer()
                 Button { (onNext ?? { model.nextSlipPage() })() } label: {
@@ -257,6 +283,11 @@ struct SlipView: View {
             .padding(.bottom, -10)
         }
     }
+}
+
+private struct SlipLineKey: PreferenceKey {
+    static var defaultValue: [Int: CGFloat] { [:] }
+    static func reduce(value: inout [Int: CGFloat], nextValue: () -> [Int: CGFloat]) { value.merge(nextValue()) { $1 } }
 }
 
 /// The letter's type, a size smaller (design-onboarding §2.1): Songti, New York, Hiragino Mincho, Apple SD Gothic Neo.
