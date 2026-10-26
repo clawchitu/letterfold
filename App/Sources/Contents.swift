@@ -502,18 +502,21 @@ struct ObjectsView: View {
             .accessibilityIdentifier("objects.unseen.\(SlipID.allCases.firstIndex(of: id) ?? 0)")
     }
 
-    /// The small book's reduce-motion still, a 64 × 56 window on the crease.
+    /// The small book's reduce-motion still through a 64 × 56 window, zoomed onto the object and her square (so every
+    /// row reads at a glance, not a corner of blank paper).
     private func still(_ id: SlipID, _ p: PaperState) -> some View {
-        let s = MiniBook.size, k = 56.0 / s.width
+        let s = MiniBook.size, k = 0.9
         return Group {
             if let film = SlipFilms.film(id, config: model.config) {
-                MiniBook(film: film, paper: p, animate: false, sideways: true)
+                let f = MiniBook.focus(film)
+                MiniBook(film: film, paper: p, animate: false)
                     .frame(width: s.width, height: s.height)
-                    .scaleEffect(k)
-                    .rotationEffect(.degrees(90))
-                    .frame(width: s.height * k, height: s.width * k)
+                    .scaleEffect(k, anchor: .topLeading)
+                    .offset(x: 32 - f.x * k, y: 28 - f.y * k)
+                    .frame(width: 64, height: 56, alignment: .topLeading)
             } else { Color.clear }
         }
+        .background(hc ? Color.white : p.color.mix(with: .white, by: 0.15))
         .frame(width: 64, height: 56)
         .clipped()
         .overlay(Rectangle().strokeBorder(hc ? Color.black : Tok.tileEdge.opacity(0.6), lineWidth: hc ? 1.5 : 1))

@@ -63,10 +63,11 @@ struct MiniBook: View {
         var cells = all.filter { want.contains(b[$0]) || ((film.id == .shadow || film.id == .ride) && st.shade[$0] != nil) }
         // an object on the top page of a closed book lies over its opposite square
         cells = cells.map { $0.c >= 4 && th > 90 ? Cell(7 - $0.c, $0.r) : $0 }
-        cells.append(st.to)
-        let ps = cells.map { cam.project(g.point($0)) }
-        let xs = ps.map(\.x), ys = ps.map(\.y)
-        return CGPoint(x: (xs.min()! + xs.max()!) / 2, y: (ys.min()! + ys.max()!) / 2 - lift(th))
+        // the object first; her square joins it only when both fit the window (else the middle is blank paper)
+        let me = cam.project(g.point(st.to))
+        var p = cells.first.map { cam.project(g.point($0)) } ?? me
+        if hypot(p.x - me.x, p.y - me.y) < 44 { p = CGPoint(x: (p.x + me.x) / 2, y: (p.y + me.y) / 2) }
+        return CGPoint(x: p.x, y: p.y - lift(th))
     }
 
     var body: some View {
