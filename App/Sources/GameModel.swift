@@ -205,8 +205,17 @@ final class GameModel {
     @ObservationIgnored private var slipHintUsed = false
     /// The timers that wait for a stuck player stop while the slip is out and start again when it is tucked (§2.2).
     @ObservationIgnored private var slipPaused = (stuck: false, teach: false, ghost: false)
-    /// VoiceOver: the level's intro is still being read (the slip waits for it, §2.5).
+    /// VoiceOver: the level's intro is still being read (the slip waits for it, §2.5). Cleared only by the
+    /// announcement callback for this level's intro (`introText`) — finished or cancelled — never by another
+    /// announcement's, nor by elapsed time while it is read (Codex review 18 #3).
     @ObservationIgnored private var introPending = false
+    /// The current level's intro as posted (L10n.cap), matched against announcementDidFinish's string.
+    @ObservationIgnored private var introText: String?
+    /// When the intro is due to be posted: the slip's last-resort fallback counts from here.
+    @ObservationIgnored private var introPostedAt: Date?
+    /// The fallback if VoiceOver never reports on the intro at all (dropped announcement): generous, so a slow
+    /// speech rate is never cut off.
+    static let introFallback: TimeInterval = 30
     private(set) var inkPrintedAt: [Cell: Date] = [:]
     /// glue.pull (design-review-v2c1 §3): stones flying across the crease to the glue that took them, the faint mark
     /// each leaves where it was, and the glue square's flash. Times are CACurrentMediaTime().
@@ -318,8 +327,10 @@ final class GameModel {
             let id = (note.userInfo?[UIAccessibility.focusedElementUserInfoKey] as? UIAccessibilityIdentification)?.accessibilityIdentifier
             Task { @MainActor [weak self] in self?.focused(id) }
         }
-        NotificationCenter.default.addObserver(forName: UIAccessibility.announcementDidFinishNotification, object: nil, queue: .main) { _ in
-            Task { @MainActor [weak self] in self?.introPending = false }
+        NotificationCenter.default.addObserver(forName: UIAccessibility.announcementDidFinishNotification, object: nil, queue: .main) { note in
+            let said = note.userInfo?[UIAccessibility.announcementStringValueUserInfoKey] as? String
+            let ok = (note.userInfo?[UIAccessibility.announcementWasSuccessfulUserInfoKey] as? NSNumber)?.boolValue ?? false
+            Task { @MainActor [weak self] in self?.announcementFinished(said, successful: ok) }
         }
     }
 
@@ -474,6 +485,7 @@ final class GameModel {
         slipOut = false; slipPages = []; slipPage = 0; slipHintUsed = false
         slipPaused = (false, false, false)
         introPending = settings.voiceOver
+        introText = L10n.cap(intro); introPostedAt = Date().addingTimeInterval(0.6)
         slipDue = UserDefaults.standard.bool(forKey: "noSlips") ? [] : orderedSlips(Slips.due(level, seen: slipsSeen, columnsPerPage: config.columnsPerPage))
         armSlip()
     }
@@ -499,6 +511,21 @@ final class GameModel {
         return ids.enumerated().sorted { (distance($0.element), own($0.element), $0.offset) < (distance($1.element), own($1.element), $1.offset) }.map(\.element)
     }
 
+    /// announcementDidFinish: only this level's intro opens the slip's gate. Another announcement (a fold, a step,
+    /// an earlier level's intro still in the queue) leaves it shut.
+    func announcementFinished(_ said: String?, successful: Bool) {
+        guard introPending, let intro = introText, let said,
+              said.trimmingCharacters(in: .whitespacesAndNewlines) == intro.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
+        if successful {
+            introPending = false
+        } else {
+            // cancelled: VoiceOver cut the intro off (the player touched or swiped, or something else was spoken over
+            // it). It is no longer being read, so there is nothing for the slip to talk over: open the gate too, and
+            // do not post the intro again (the player chose to move on; 「?」 and the board still carry it).
+            introPending = false
+        }
+    }
+
     /// The level's chapter opener is in front: the slip's 1.2 s count from when it leaves.
     func holdSlip() { slipTask?.cancel(); slipTask = nil }
 
@@ -509,16 +536,17 @@ final class GameModel {
         guard !slipDue.isEmpty else { return }
         slipTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(delay))
-            var waited = 0.0
             while let self, !Task.isCancelled {
                 if self.won || self.aha { return }
-                let introDone = !self.introPending || !self.settings.voiceOver || waited > 10
+                // no elapsed-time override while the intro is read: only its own callback opens the gate, or — if
+                // VoiceOver never reports on it — the generous fallback
+                let overdue = self.introPostedAt.map { Date().timeIntervalSince($0) > Self.introFallback } ?? true
+                let introDone = !self.introPending || !self.settings.voiceOver || overdue
                 if introDone && !self.dragging && !self.hingeActive && self.motionTarget == nil && !self.walking && !self.flipping && self.posture != .closed {
                     self.riseSlip(self.slipDue, auto: true)
                     return
                 }
                 try? await Task.sleep(for: .milliseconds(300))
-                waited += 0.3
             }
         }
     }
