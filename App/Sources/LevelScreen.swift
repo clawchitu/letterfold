@@ -34,6 +34,9 @@ struct LevelScreen: View {
             ZStack(alignment: .top) {
                 GeometryReader { g in
                     BookView(model: model, available: g.size)
+                        // 物件笺: the first touch on the board tucks the slip away and still lands (design-onboarding §2.2)
+                        .simultaneousGesture(DragGesture(minimumDistance: 0).onChanged { _ in model.tuckSlip() })
+                        .overlay(alignment: .topLeading) { SlipLayer(model: model, size: g.size, margin: settings.largeGrid ? 0 : 20) }
                 }
                 .padding(.horizontal, settings.largeGrid ? 0 : 20)
                 // 「信，送到了。」 in the space the top page left when it closed (frame v2-4); it steps aside as the book
@@ -94,12 +97,13 @@ struct LevelScreen: View {
             }
             .padding(.bottom, 6)
         }
-        .background(TableBackground())
+        .background(TableBackground().contentShape(Rectangle()).onTapGesture { model.tuckSlip() })
         .accessibilityHidden(opener)              // the opener is modal for VoiceOver and Switch Control
         .overlay {
             if opener {
                 ChapterOpener(chapter: model.chapter) {
                     withAnimation(.easeInOut(duration: AppSettings.shared.motionReduced ? 0.2 : 0.4)) { opener = false }
+                    model.armSlip()   // the slip's 1.2 s count from the opener's leaving (§2.2)
                 }
                 .transition(.opacity)
             }
@@ -119,6 +123,7 @@ struct LevelScreen: View {
         guard let key, !d.bool(forKey: key), !d.bool(forKey: "noOpener") else { return }
         d.set(true, forKey: key)
         opener = true
+        model.holdSlip()
     }
 
     /// level.name: fades in for 1.5 s, then rests at 40% grey (100% at AX sizes and in high contrast).

@@ -88,6 +88,7 @@ struct BookView: View {
             : max(0, book.height - available.height)
         let y0 = overflow > 0 ? 0 : (available.height - book.height) / 2
         let x0 = (available.width - book.width) / 2
+        let slipAnchor = SlipAnchor.make(geo: geo, container: book, origin: CGPoint(x: x0, y: y0))
         ZStack(alignment: .topLeading) {
             BookBody(model: model, geo: geo, rotorSpace: rotorSpace)
                 // 「翻」 (ch. 6): the whole closed book turns over about the vertical axis; past 90° the content is
@@ -133,6 +134,7 @@ struct BookView: View {
         .environment(\.skin, model.paper.skin)
         .environment(\.envelopeBack, model.isDark)
         .onChange(of: orientation, initial: true) { _, o in model.orientation = o }
+        .onChange(of: slipAnchor, initial: true) { _, a in model.slipAnchor = a }
         .onChange(of: model.index) { _, _ in scrollY = 0 }
         .accessibilityElement(children: .contain)
         .accessibilityLabel(L10n.t("gridLabel"))
