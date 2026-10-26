@@ -386,7 +386,7 @@ struct SlipIcon: View {
                 }
             case .ride:
                 ZStack { ShadeMark(size: size * 0.8).offset(y: size * 0.1); Circle().fill(hc ? Color.black : Tok.figure).frame(width: size * 0.32).overlay(Circle().stroke(.white, lineWidth: 1)).offset(y: -size * 0.12) }
-            case .glue: GlueMark(size: cell)
+            case .glue: GlueMark(size: cell).frame(width: size, height: size).clipShape(RoundedRectangle(cornerRadius: 3))
             case .turn: SlipGlyph(id: .turn).stroke(hc ? Color.black : Tok.ink700, style: StrokeStyle(lineWidth: 1.2, lineJoin: .round)).frame(width: size, height: size)
             }
         }
