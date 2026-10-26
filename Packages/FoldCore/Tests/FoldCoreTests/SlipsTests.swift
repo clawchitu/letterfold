@@ -36,7 +36,10 @@ final class SlipsTests: XCTestCase {
         XCTAssertTrue(glue.frames.last!.won)
         let press = try SlipDemo.demo(.press).film(config: pack.config)
         XCTAssertEqual(press.frames.filter { if case .crush = $0.kind { return true }; return false }.count, 1)
-        XCTAssertEqual(press.frames[press.still].angle, 180)
+        // the still is mid-fold (b18 polish): the stone still on the leaning top page, over the square beside hers
+        XCTAssertEqual(press.frames[press.still].angle, 140)
+        XCTAssertEqual(press.frames[press.still].char, Cell(0, 0))
+        XCTAssertEqual(press.frames[press.still].board[Cell(6, 0)], .stone)
         let stone = try SlipDemo.demo(.stone).film(config: pack.config)
         XCTAssertEqual(stone.frames[stone.still].char, Cell(0, 1))
         XCTAssertEqual(stone.frames[stone.still].angle, 180)
