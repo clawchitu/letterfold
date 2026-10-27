@@ -105,6 +105,17 @@ final class LampTests: XCTestCase {
         XCTAssertTrue(fell(play(h, to: 180)))
     }
 
+    /// Codex review 20 #1: a stone's shadow can land on a gate first (first come first served); the gate is still open
+    /// and walkable, so it must be drawn standing — the entry, not its source, decides.
+    func testAGateUnderAStoneShadowStillStands() throws {
+        let b = try board(["S.A----x"])
+        let lean = rules.shadows(b, 120)
+        XCTAssertEqual(lean[Cell(2, 0)], 7, "the right stone's shadow takes the gate's square")
+        XCTAssertNil(rules.cellBlock(b, 2, 0, .standing, lean), "walkable")
+        XCTAssertTrue(Rules.gateStands(lean, Cell(2, 0)), "drawn standing")
+        XCTAssertFalse(Rules.gateStands(rules.shadows(b, 0), Cell(2, 0)), "flat: lying down")
+    }
+
     /// Ink, glue and keys leave gates alone: the bleed only takes gaps and glue, prints only land on gaps, glue only pulls stones.
     func testGatesTakeNoInkNoPrintNoGlue() throws {
         var b = try board(["SIA-A--I", "g.I--A-A"])

@@ -46,6 +46,9 @@ public struct Rules: Sendable {
     public func lit(_ a: Double) -> Bool { a >= config.shadeMin && a < config.foldMin }
     /// The `shadows` value of an open angle gate (logic.js maps it to 'A'): no stone casts it.
     public static let gateSource = -1
+    /// Whether the angle gate at `c` stands open (walkable): any shadow entry does, a stone's shadow landing on it
+    /// (two lamps) as much as `gateSource` — the entry, not its source, is what makes it floor (Codex review 20 #1).
+    public static func gateStands(_ shadows: [Cell: Int], _ c: Cell) -> Bool { shadows[c] != nil }
 
     /// Everything that is floor only while the page leans (logic.js `shadows`): cell -> the column of the stone that
     /// shades it (right-page stones onto the left page under the right lamp, then left-page stones onto the facing page

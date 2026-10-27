@@ -201,7 +201,7 @@ struct LiftedPageThrough: View {
                 let shaded = src != nil && !t.isFloor && t != .gate
                 ZStack {
                     TileFace(tile: t, size: geo.tile, paper: model.paper, mirrorAxisVertical: geo.horizontal,
-                             inkVariant: model.inkVariant(c), gateStanding: src == Rules.gateSource, gateCreaseAtTop: geo.horizontal)
+                             inkVariant: model.inkVariant(c), gateStanding: Rules.gateStands(model.shade, c), gateCreaseAtTop: geo.horizontal)
                     if shaded { ShadeMark(size: geo.tile) }
                     if model.lockFlash.contains(c) {
                         RoundedRectangle(cornerRadius: 3, style: .continuous).strokeBorder(Tok.lockEdge, lineWidth: 2).frame(width: geo.tile, height: geo.tile)
