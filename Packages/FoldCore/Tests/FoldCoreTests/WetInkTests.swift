@@ -110,14 +110,14 @@ final class WetInkTests: XCTestCase {
             ["III--II.", "III..III", "x.x--.I.", "-xIS.I.-", "GIx.III-"],
             ["IIIIIII.", "III..III", "x.x--.I.", "-xIS.I.-", "GIx.IIII"],
             ["IIIIIII.", "III..III", "x.x--.I.", "IxIS.I.I", "GIx.IIII"]],
-        "pocket": [["G-----x-", "-.x--.--", "-x--..--", "x---.x-S", "-II-.II."],
-            ["G-----x-", "-.x--.--", "-x--..--", "xII-.xIS", "IIII.II."],
-            ["G-----x-", "-.x--.--", "-xI-..I-", "xIII.xIS", "IIII.II."],
-            ["G-----x-", "-.x--.I-", "IxII..II", "xIII.xIS", "IIII.II."]],
-        "through": [["----...SG.--", "----.-----..", ".x-II-------", "x.IIII..----"],
-            ["----...SG.--", "---I.---I-..", ".xIII---II--", "x.IIII..II--"],
-            ["---I...SG.--", "--II.---II..", ".xIII---III-", "x.IIII..III-"],
-            ["--II...SG.--", "-III.II-II..", ".xIIII--III-", "x.IIII..III-"]],
+        "pocket": [["..-.xx.-", "I.--.GxI", "I.-.--.I", ".-.---.I", ".-x-S.-."],
+            ["..-.xx.I", "I.--.GxI", "I.-.--.I", ".-.---.I", ".-x-S.-."],
+            ["..-.xx.I", "I.--.GxI", "I.-.--.I", ".-.---.I", ".-x-S.-."],
+            ["..-.xx.I", "I.--.GxI", "I.-.--.I", ".-.---.I", ".-x-S.-."]],
+        "through": [["..-.xG.-.--.", ".-xIIx-x.---", "..xII...-.--", ".x-.--.S-.--"],
+            ["..-.xG.-.--.", ".-xIIx-x.---", "..xII...I.--", ".x-.--.S-.--"],
+            ["..-.xG.-.--.", ".-xIIx-x.---", "..xII...I.--", ".x-.--.SI.--"],
+            ["..-.xG.-.--.", ".-xIIx-x.---", "..xII...I.--", ".x-.I-.SI.--"]]
     ]
     func testStampChainsMatchLogicJS() throws {
         for (id, chain) in Self.jsChains {
