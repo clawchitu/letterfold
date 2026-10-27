@@ -1574,6 +1574,8 @@ final class GameModel {
                 // a vol. 2 dead end: 「有的路断了」, the falling two-note, a warning tap; undo and restart still work
                 pending.dead = true
                 sound.lost(); haptics.warning()
+            case .rolled:   // vol. 3 ch. 9: drawn / announced by the ch. 9 rendering pass (Chapter9Marks.swift, step D)
+                break
             case .won:
                 win()
             }

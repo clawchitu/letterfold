@@ -144,6 +144,8 @@ struct TileFace: View {
                 }
             }
         case .stone: PaperStone(size: size)
+        // vol. 3 ch. 9: drawn as a stone until the ch. 9 placeholder (Chapter9Marks.swift, step D) gives it its own look
+        case .loose: PaperStone(size: size)
         case .key: SkinKeyGlyph(size: size, ring: paper.thread)
         case .door: ZStack { if !bare { PathTile(size: size, paper: paper) }; SkinDoor(open: false, size: size) }
         case .openDoor: ZStack { if !bare { PathTile(size: size, paper: paper) }; SkinDoor(open: true, size: size) }

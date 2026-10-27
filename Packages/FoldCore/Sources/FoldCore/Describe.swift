@@ -50,17 +50,17 @@ extension Rules {
         // board (a blot that covers glue spoils it, so the facing stone stays put; Codex review 19 #2)
         let (T, M) = closeTiles(b, cell, m)
         if !isRight(c) {
-            if T == .empty && (M.isFloor || M == .stone) { f.note = .fallsHere(M) }
+            if T == .empty && (M.isFloor || M.isOpaque) { f.note = .fallsHere(M) }
             else if T == .door && M == .key { f.note = .doorKey }
-            else if T == .glue && M == .stone { f.note = .glueTakes }
-            else if T == .stone && M == .glue { f.note = .stoneGlued(col: m + 1) }
-            else if T.isFloor && M == .stone { f.note = .crushedHere }
+            else if T == .glue && M.isOpaque { f.note = .glueTakes }
+            else if T.isOpaque && M == .glue { f.note = .stoneGlued(col: m + 1) }
+            else if T.isFloor && M.isOpaque { f.note = .crushedHere }
             else if (T == .ink || T == .wetInk) && M == .empty { f.note = .inkPrints }
             else if T == .tab && c == n - 1 && M == .tab { f.note = .tabBridge }
         } else {
-            if T == .stone && M == .glue { f.note = .stoneGlued(col: m + 1) }
-            else if T == .stone { f.note = .stoneShadow(col: m + 1) }
-            else if T == .glue && M == .stone { f.note = .glueTakes }
+            if T.isOpaque && M == .glue { f.note = .stoneGlued(col: m + 1) }
+            else if T.isOpaque { f.note = .stoneShadow(col: m + 1) }
+            else if T == .glue && M.isOpaque { f.note = .glueTakes }
             else if T == .key && M == .door { f.note = .keyOpens(col: m + 1) }
             else if (T == .ink || T == .wetInk) && M == .empty { f.note = .inkTo(col: m + 1) }
             else if T == .tab && c == n && M == .tab { f.note = .tabBridge }

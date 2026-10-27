@@ -26,6 +26,9 @@ public enum GameEvent: Sendable, Equatable {
     /// and face as they began, the figure on the start, the book still shut (logic.js restart). Sent after `.flipped`
     /// (which carries the face the turn came to); a crushing turn presses nothing, so no `.stamped`.
     case flipCrushed(Rules.CrushCause)
+    /// The lifted page passed upright (vol. 3 ch. 9 「滚」): these loose stones rolled one cell towards the crease, nearest
+    /// the crease first (logic.js roll events). Sent before the shadows of the same sub-step are read.
+    case rolled([Rules.Roll])
 }
 
 /// A level being played: the stateful half of main.js (angle, riding shadows, stamping, undo).
@@ -106,18 +109,29 @@ public final class FoldGame {
             if goalInReach && !goalBefore { events.append(.goalInReach) }
             else if now.count < before.count { events.append(.lost) }
             // the shut and the opening are where a vol. 2 dead end begins: a stone glued away, a road blocked
-            if !stuck && posture != wasPosture && (posture == .closed || wasPosture == .closed) { checkDeadEnd(&events) }
+            // vol. 3: a roll changes the board without a close (a stone rolled into the only gap you could cross on)
+            let rolled = events.contains { if case .rolled = $0 { return true } else { return false } }
+            if !stuck && (rolled || (posture != wasPosture && (posture == .closed || wasPosture == .closed))) { checkDeadEnd(&events) }
         }
         return events
     }
 
     private func apply(_ a: Double, _ events: inout [GameEvent]) {
+        let before = angle
         angle = a
         // won: the aha / finale shuts the book on the winning square; nothing moves, falls or is crushed any more
         // (Codex review 12: 5-7 is won leaning at (0,0) under the stone at (7,0), and the finale's close sent her home)
         if won { shade = rules.shadows(board, a); posture = rules.posture(a); return }
         // shadows move; a character standing on nothing but shadow goes with them
-        let previous = shade
+        var previous = shade
+        // vol. 3 ch. 9: the lifted page passed upright — the loose stones roll first (the figure holds the one she stands
+        // in front of), and the rest of this sub-step (shadows, a ride, the crush) is judged on the rolled board
+        // (check.js move: roll, then ride / fall / crush, then the press)
+        if rules.passes(before, a) {
+            let rolls = rules.roll(&board, fig: char)
+            if !rolls.isEmpty { events.append(.rolled(rolls)); previous = rules.shadows(board, before) }
+            rideSrc = nil
+        }
         shade = rules.shadows(board, a)
         // on nothing but a shadow, or (closing) under a stone: on the bottom page, or on top-page glue facing one
         if !board[char].isFloor || rules.crushed(board, char, a) {
@@ -154,7 +168,7 @@ public final class FoldGame {
     /// grew over the road or spoiled the glue) can end the level. Wet ink and turns change the board press by press, so
     /// those levels are checked against the live board, not "the start board stamped once" (Codex review 19 #1).
     private func checkDeadEnd(_ events: inout [GameEvent]) {
-        let all = level.map.joined(), wet = all.contains("I")
+        let all = level.map.joined(), wet = all.contains("I") || all.contains("r")   // wet ink and loose stones: the live board
         guard !stuck, !won, all.contains("g") || board.pages > 2 || wet else { return }
         let solver = Solver(config)
         let ok = board.pages > 2 || wet

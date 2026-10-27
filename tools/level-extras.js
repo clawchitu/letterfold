@@ -23,7 +23,10 @@ pack.levels.forEach((lv, i) => {
   if (!bp) throw new Error(`${lv.id}: no solution`);
   lv.len = bp.par + bp.steps;
   if (src.len != null && src.len !== lv.len) throw new Error(`${lv.id}: declared len ${src.len}, measured ${lv.len}`);
-  lv.solution = bp.path.map((k) => { const s = g.nodes.get(k); return [s.c, s.r, s.a, s.g > 0 ? 1 : 0, s.face]; });
+  // `stamped`: the book has been closed by this state. gen.js's g > 0 meant that until vol. 3 ch. 9, where a roll (the hinge
+  // passing 90°) also moves the grid chain on without a press, so the flag is read off the path: a close (or a turn) so far.
+  let closed = false;
+  lv.solution = bp.path.map((k) => { const s = g.nodes.get(k); closed = closed || s.a >= 155 || s.face !== 0; return [s.c, s.r, s.a, closed ? 1 : 0, s.face]; });
 });
 const ids = pack.levels.map((l) => l.id);
 if (new Set(ids).size !== ids.length) throw new Error('duplicate level ids: ' + ids.filter((x, i) => ids.indexOf(x) !== i));

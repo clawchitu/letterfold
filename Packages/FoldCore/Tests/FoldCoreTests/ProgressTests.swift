@@ -121,7 +121,9 @@ final class ProgressTests: XCTestCase {
         // vol. 2 chapter 7 「墨晕」 (fold-proto design-ch7.md)
         XCTAssertEqual(Array(ids[42..<48]), ["wet", "print", "ring", "spoiled", "pocket", "through"])
         // vol. 2 chapter 8 「灯位」 (fold-proto design-ch8.md)
-        XCTAssertEqual(Array(ids.suffix(6)), ["leftLamp", "lift", "banks", "gate", "taken", "twolamps"])
+        XCTAssertEqual(Array(ids[48..<54]), ["leftLamp", "lift", "banks", "gate", "taken", "twolamps"])
+        // vol. 3 chapter 9 「滚」 (fold-proto design-ch9.md)
+        XCTAssertEqual(Array(ids.suffix(7)), ["roll", "twice", "jump", "hold", "late", "order", "settle"])
         XCTAssertEqual(Set(ids).count, ids.count)
     }
 
@@ -146,10 +148,11 @@ final class ProgressTests: XCTestCase {
         let pack = try LevelPack.bundled()
         SavedProgress.save(Set(Self.build13), d)
         let done = SavedProgress.load(d)
-        // chapters 6, 7 and 8 did not exist in 0.1 (13): they stay to play
+        // chapters 6, 7, 8 and 9 did not exist in 0.1 (13): they stay to play
         let ch6: Set = ["turn", "overleaf", "twoFaces", "inlay", "bleed", "pressedFlower", "lastPage",
                         "wet", "print", "ring", "spoiled", "pocket", "through",
-                        "leftLamp", "lift", "banks", "gate", "taken", "twolamps"]
+                        "leftLamp", "lift", "banks", "gate", "taken", "twolamps",
+                        "roll", "twice", "jump", "hold", "late", "order", "settle"]
         for lv in pack.levels where !lv.isOptional && !ch6.contains(lv.id) { XCTAssertTrue(done.contains(lv.id), "\(lv.id) stays solved") }
         for id in ch6 { XCTAssertFalse(done.contains(id), id) }
         XCTAssertTrue(SavedProgress.chapterOpen(previous: ["glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps"], done: done), "chapter 6 opens after all of chapter 5")
