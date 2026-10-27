@@ -51,4 +51,10 @@ let playthroughPlan: [(id: String, acts: [PlanAct])] = [
     ("bleed", [.walk(1, 0, 8), .lean(55, tol: 4), .walk(2, 1, 2), .creep(75, tol: 6), .walk(3, 2, 1), .close, .flip, .walk(2, 2, 1), .walk(2, 1, 1), .walk(2, 0, 1)]),
     ("pressedFlower", [.walk(0, 4, 6), .lean(40, tol: 8), .walk(1, 4, 1), .creep(60, tol: 6), .walk(3, 1, 4), .close, .flip, .walk(3, 2, 1), .walk(3, 3, 1), .walk(3, 4, 1), .walk(2, 4, 1)]),
     ("lastPage", [.walk(7, 1, 1), .close, .walk(0, 0, 1), .walk(1, 0, 1), .walk(2, 0, 1), .walk(3, 0, 1), .walk(3, 1, 1), .walk(3, 2, 1), .walk(3, 3, 1), .walk(2, 3, 1), .walk(2, 4, 1), .walk(2, 3, 1), .flip, .flip, .lean(49, tol: 8), .walk(1, 1, 3)]),
+    ("wet", [.close, .walk(1, 0, 1), .lean(60, tol: 8), .walk(1, 1, 1)]),
+    ("print", [.walk(5, 1, 1), .close, .walk(1, 1, 1), .walk(1, 2, 1), .lean(40, tol: 8), .close, .walk(0, 2, 1), .walk(0, 3, 1)]),
+    ("ring", [.walk(6, 3, 2), .close, .walk(0, 3, 1), .walk(0, 2, 1), .walk(0, 1, 1), .walk(0, 0, 1), .walk(0, 1, 1), .walk(0, 2, 1), .lean(50, tol: 8), .walk(2, 2, 2), .creep(70, tol: 6), .walk(3, 1, 1)]),
+    ("spoiled", [.lean(75, tol: 7), .walk(3, 1, 2), .close, .walk(2, 1, 1), .walk(1, 1, 1), .walk(0, 1, 1), .walk(0, 0, 1), .walk(1, 0, 1), .walk(1, 1, 1), .walk(2, 1, 1), .lean(70, tol: 8), .walk(6, 3, 3), .close, .walk(1, 4, 1), .walk(0, 4, 1)]),
+    ("pocket", [.walk(7, 4, 1), .close, .walk(1, 4, 1), .walk(2, 4, 1), .walk(3, 4, 1), .walk(3, 3, 1), .walk(3, 2, 1), .walk(2, 2, 1), .lean(70, tol: 8), .walk(5, 1, 1), .close, .walk(1, 1, 1), .lean(30, tol: 4), .walk(0, 0, 2)]),
+    ("through", [.walk(4, 1, 4), .close, .walk(3, 2, 1), .walk(3, 3, 1), .walk(2, 3, 1), .walk(1, 3, 1), .lean(70, tol: 8), .walk(7, 3, 1), .close, .walk(0, 2, 1), .flip, .walk(0, 1, 1), .walk(1, 1, 1), .walk(2, 1, 1), .walk(3, 1, 1), .walk(3, 0, 1)]),
 ]

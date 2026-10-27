@@ -36,4 +36,31 @@ final class SlipUITests: XCTestCase {
         app.buttons["slip.bookmark"].tap()
         XCTAssertTrue(slip.waitForExistence(timeout: 3))
     }
+    /// A narrow board (7-1: two columns a page) must not squeeze the slip: it keeps ≥ 320 pt (or the screen less its
+    /// margins), centred on the crease, on screen — at the default size and at an accessibility text size, and the same
+    /// on a normal-width board (1-2).
+    func testSlipKeepsItsWidthOnNarrowBoards() {
+        for (level, lang, name) in [(43, "zh-Hans", "7-1"), (2, "en", "1-2")] {
+            for ax in [false, true] {
+                let app = XCUIApplication()
+                app.launchArguments = ["-resetProgress", "YES", "-noOpener", "YES", "-probe", "YES", "-startLevel", "\(level)",
+                                       "-AppleLanguages", "(\(lang))", "-AppleLocale", lang == "en" ? "en_US" : "zh_CN"]
+                    + (ax ? ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityL"] : [])
+                app.launch()
+                let slip = app.descendants(matching: .any)["slip"]
+                XCTAssertTrue(slip.waitForExistence(timeout: 8), "\(name): the slip is out")
+                sleep(1)
+                let shot = XCTAttachment(screenshot: app.screenshot())
+                shot.name = "slip-width-\(name)\(ax ? "-ax" : "")"; shot.lifetime = .keepAlways; add(shot)
+                if let dir = ProcessInfo.processInfo.environment["LF_SHOTS"], !dir.isEmpty {
+                    try? app.screenshot().pngRepresentation.write(to: URL(fileURLWithPath: dir).appendingPathComponent("\(shot.name).png"))
+                }
+                let fr = slip.frame, screen = app.windows.firstMatch.frame
+                XCTAssertGreaterThanOrEqual(fr.width, min(320, screen.width - 16) - 0.5, "\(name) ax=\(ax): \(fr)")
+                XCTAssertGreaterThanOrEqual(fr.minX, screen.minX, "\(name) ax=\(ax): on screen \(fr)")
+                XCTAssertLessThanOrEqual(fr.maxX, screen.maxX, "\(name) ax=\(ax): on screen \(fr)")
+                app.terminate()
+            }
+        }
+    }
 }

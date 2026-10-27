@@ -14,9 +14,12 @@ public enum Tile: Character, Sendable, Codable, CaseIterable {
     case door = "D", openDoor = "o", ink = "i", tab = "p"
     /// Glue (vol. 2, design-v2c1 §1): paper you can stand on; the first close pulls the stone facing it onto itself.
     case glue = "g"
+    /// Wet ink (vol. 2 ch. 7 「墨晕」, design-ch7.md §1): floor like ink, but every press first bleeds it one ring into
+    /// the gaps and glue beside it on its own page, then prints it (wet) onto the facing gap.
+    case wetInk = "I"
 
     /// Something you can stand on.
-    public var isFloor: Bool { [.paper, .start, .goal, .key, .ink, .openDoor, .tab, .glue].contains(self) }
+    public var isFloor: Bool { [.paper, .start, .goal, .key, .ink, .openDoor, .tab, .glue, .wetInk].contains(self) }
     /// Something that blocks the stacked cell when the book is closed.
     public var isBlock: Bool { self == .stone || self == .door }
     /// Stones block the light; paper and ink let it through.
@@ -67,6 +70,10 @@ public struct Expectation: Sendable, Codable, Equatable {
     public var glueFires: Bool?
     /// Vol. 2 ch. 6: unsolvable without turning the page (three-page levels only).
     public var needsFlip: Bool?
+    /// Vol. 2 ch. 7: unsolvable with the wet ink dried into plain paper.
+    public var needsWet: Bool?
+    /// Vol. 2 ch. 7: full closes (posture moves onto the closed book) in check.js's solution.
+    public var wetCloses: Int?
     public var stepped15: Bool
     /// tools/check.js `analyse()` (design-difficulty.md §2); the Swift `Difficulty` port must agree.
     public var difficulty: Difficulty.Summary?
@@ -83,6 +90,7 @@ public struct Expectation: Sendable, Codable, Equatable {
         case "needsGlue": return needsGlue
         case "glueFires": return glueFires
         case "needsFlip": return needsFlip
+        case "needsWet": return needsWet
         default: return nil
         }
     }

@@ -70,17 +70,23 @@ struct LevelScreen: View {
                 }
             }
             .frame(maxHeight: .infinity)
-            VStack(spacing: 8) {
-                if settings.soundMode, let a = model.lastAnnouncement { SoundCaption(text: a) }
+            // the toast floats over the board instead of taking layout space, so the board never moves when it
+            // appears (Shuai 10/27: 「出现时 别移动游戏棋盘」)
+            .overlay(alignment: .bottom) {
+                VStack(spacing: 8) {
+                if settings.soundMode, let a = model.lastAnnouncement { SoundCaption(text: a).allowsHitTesting(false) }
                 if let toast = model.toast {
                     Text(toast).font(.callout).foregroundStyle(Tok.paperNew).multilineTextAlignment(.center)
                         .padding(.horizontal, 16).padding(.vertical, 10)
                         .background(RoundedRectangle(cornerRadius: 14).fill(Tok.ink900.opacity(0.94)))
                         .padding(.horizontal, 24)
+                        .padding(.bottom, 8)
                         .transition(.opacity)
                         .accessibilityHidden(true)   // already announced
                         .allowsHitTesting(false)     // a rule line over the bottom row never eats a tap
                 }
+                // the win's 下一封 knot floats too, so it never lifts the board (b19: a footer kept at its height cost
+                // every board 26 pt instead)
                 if model.showNext {
                     NextKnot(title: model.isLastInChapter ? L10n.t("letter.read") : model.isDark && model.nextDark == nil ? L10n.t("dark.back") : L10n.t("next")) {
                         if model.isLastInChapter { router.go(.letter) }
@@ -88,11 +94,26 @@ struct LevelScreen: View {
                         // the next level, or (an older save with a gap) the first one not yet delivered: never past it
                         else { model.go(model.isLevelOpen(model.index + 1) ? model.index + 1 : model.chapterLevelIndices.first { !model.done.contains($0) } ?? model.index + 1); fadeName() }
                     }
+                    .padding(.bottom, 8)
                     .transition(.opacity)
-                } else if settings.showButtons {
-                    FooterButtons(model: model)
-                } else if model.canShowFlip {
-                    FlipButton(model: model).transition(.opacity)
+                }
+                }
+            }
+            VStack(spacing: 8) {
+                // the footer keeps the same height before and after the win (the 下一封 knot floats over the board
+                // above), so nothing here ever moves a square; what the win replaces stays as invisible space
+                if settings.showButtons {
+                    if model.showNext { FooterButtons(model: model).hidden().accessibilityHidden(true).allowsHitTesting(false) }
+                    else { FooterButtons(model: model) }
+                } else if model.hasThirdPage {
+                    // always laid out on three-page levels, only shown when a flip is possible, so the board never
+                    // jumps when the book closes or opens (Haoqiang 10/27: 其他提示也这样); out of the tree while
+                    // hidden (an invisible stand-in keeps its space), for VoiceOver and tests
+                    ZStack {
+                        FlipButton(model: model).hidden().accessibilityHidden(true).allowsHitTesting(false)
+                        if model.canShowFlip && !model.showNext { FlipButton(model: model).transition(.opacity) }
+                    }
+                    .animation(.easeInOut(duration: 0.2), value: model.canShowFlip)
                 }
             }
             .padding(.bottom, 6)

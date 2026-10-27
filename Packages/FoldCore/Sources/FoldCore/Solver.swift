@@ -10,7 +10,7 @@ struct FoldState: Hashable, Sendable {
 
 /// The board's grids as a chain of presses (check.js `grids`): press(g, face) is grid g after the left page is pressed
 /// against the page of `face` (a close, or a turn of the closed book). Pressed grids are deduplicated by content among
-/// themselves but never with grid 0. Two-page levels only ever see g 0 and 1.
+/// themselves but never with grid 0. Two-page levels without wet ink only ever see g 0 and 1; wet ink grows a ring per press until it saturates.
 final class GridChain: @unchecked Sendable {
     private(set) var table: [Board]
     private var sig: [[[Tile]]: Int] = [:]
@@ -202,6 +202,7 @@ public struct Solver: Sendable {
         }
         if all.contains("k") { e.needsKey = without("k") == nil }
         if all.contains("i") { e.needsInk = without("i") == nil }
+        if all.contains("I") { e.needsWet = without("I") == nil }   // the wet ink dried into plain paper
         if all.contains("g") {
             e.needsGlue = without("g") == nil
             if var b = try? Board(level: level, columnsPerPage: rules.n) { e.glueFires = rules.stamp(&b).contains { $0.kind == .glue } }

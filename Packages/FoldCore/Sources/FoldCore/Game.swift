@@ -45,10 +45,14 @@ public final class FoldGame {
     /// The cells walked so far, in order, starting at the start cell: the vermilion thread (design-spec §0.3).
     /// A fall starts it again; undo restores it.
     public private(set) var trail: [Cell]
+    /// The trail index the book was last shut at (0: never shut since the thread began): steps from here on are the
+    /// live thread, earlier ones the faded old stitches (thread-aging spec). A fall or a restart starts it again.
+    public private(set) var lastCloseStep = 0
     private var rideSrc: Int?
 
     private struct Snapshot {
         var board: Board; var char: Cell; var angle: Double; var trail: [Cell]; var closedOnce: Bool; var stuck: Bool
+        var lastCloseStep = 0
         /// Only on a restart's snapshot: the 折数 and resting angle before it, which undoing the restart brings back
         /// (Codex review 18 #2).
         var tally: FoldTally? = nil
@@ -124,7 +128,7 @@ public final class FoldGame {
                 // crushed only where the stone really comes down: on the figure's own square (design-review-ch4 §3.1:
                 // a shadow giving way under you at the shut is a fall, and only a crush gets the dent)
                 events.append(.fell(crushed: rules.crushed(board, char, a)))
-                char = board.start; trail = [board.start]; rideSrc = nil
+                char = board.start; trail = [board.start]; lastCloseStep = 0; rideSrc = nil
             }
         } else { rideSrc = nil }
         if Set(shade.keys) != Set(previous.keys) { events.append(.shadeChanged) }
@@ -133,16 +137,22 @@ public final class FoldGame {
             let prev = posture
             posture = next
             events.append(.postureChanged(from: prev, to: next))
-            if next == .closed { rules.stamp(&board).forEach { events.append(.stamped($0)) }; closedOnce = true }
+            if next == .closed {
+                rules.stamp(&board).forEach { events.append(.stamped($0)) }; closedOnce = true
+                lastCloseStep = trail.count - 1
+            }
             checkWin(&events)
         }
     }
 
-    /// Vol. 2 dead ends: glue (a stone glued away) or a third page (a turn that blocks a stack) can end the level.
+    /// Vol. 2 dead ends: glue (a stone glued away), a third page (a turn that blocks a stack) or wet ink (a blot that
+    /// grew over the road or spoiled the glue) can end the level. Wet ink and turns change the board press by press, so
+    /// those levels are checked against the live board, not "the start board stamped once" (Codex review 19 #1).
     private func checkDeadEnd(_ events: inout [GameEvent]) {
-        guard !stuck, !won, level.map.joined().contains("g") || board.pages > 2 else { return }
+        let all = level.map.joined(), wet = all.contains("I")
+        guard !stuck, !won, all.contains("g") || board.pages > 2 || wet else { return }
         let solver = Solver(config)
-        let ok = board.pages > 2
+        let ok = board.pages > 2 || wet
             ? solver.canStillWin(level, board: board, from: char, angle: posture == .closed ? 180 : angle)
             : solver.canStillWin(level, from: char, angle: posture == .closed ? 180 : angle, closedOnce: closedOnce)
         if !ok { stuck = true; events.append(.deadEnd) }
@@ -164,7 +174,7 @@ public final class FoldGame {
         if let crush {
             events.append(.flipCrushed(crush))
             board = try! Board(level: level, columnsPerPage: config.columnsPerPage)
-            char = board.start; trail = [board.start]; closedOnce = false; stuck = false
+            char = board.start; trail = [board.start]; lastCloseStep = 0; closedOnce = false; stuck = false
         } else {
             stamps.forEach { events.append(.stamped($0)) }
             closedOnce = true
@@ -209,7 +219,8 @@ public final class FoldGame {
     // MARK: undo
 
     public func pushUndo() {
-        undoStack.append(Snapshot(board: board, char: char, angle: angle, trail: trail, closedOnce: closedOnce, stuck: stuck))
+        undoStack.append(Snapshot(board: board, char: char, angle: angle, trail: trail, closedOnce: closedOnce, stuck: stuck,
+                                  lastCloseStep: lastCloseStep))
         if undoStack.count > 200 { undoStack.removeFirst() }
     }
 
@@ -227,6 +238,7 @@ public final class FoldGame {
     public func undo() -> Bool {
         guard let s = undoStack.popLast() else { return false }
         board = s.board; char = s.char; angle = s.angle; trail = s.trail; closedOnce = s.closedOnce; stuck = s.stuck
+        lastCloseStep = s.lastCloseStep
         if let t = s.tally { tally = t }
         posture = rules.posture(angle); shade = rules.shadows(board, angle); rideSrc = nil; won = false
         return true
@@ -240,13 +252,13 @@ public final class FoldGame {
         undoStack[undoStack.count - 1].tally = tally
         tally = FoldTally(restAngle: 0)
         board = try! Board(level: level, columnsPerPage: config.columnsPerPage)
-        char = board.start; trail = [board.start]; angle = 0; posture = rules.posture(0); shade = rules.shadows(board, 0)
+        char = board.start; trail = [board.start]; lastCloseStep = 0; angle = 0; posture = rules.posture(0); shade = rules.shadows(board, 0)
         rideSrc = nil; won = false; closedOnce = false; stuck = false
     }
 
     public func reset() {
         board = try! Board(level: level, columnsPerPage: config.columnsPerPage)
-        char = board.start; trail = [board.start]; angle = 0; posture = .open; shade = [:]; rideSrc = nil; won = false; undoStack = []
+        char = board.start; trail = [board.start]; lastCloseStep = 0; angle = 0; posture = .open; shade = [:]; rideSrc = nil; won = false; undoStack = []
         tally = FoldTally()
         closedOnce = false; stuck = false
     }

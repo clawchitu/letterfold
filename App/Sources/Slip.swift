@@ -36,7 +36,11 @@ enum SlipText {
         if !horizontalCrease, L10n.t(h) != h { return L10n.t(h) }
         return L10n.t("slip.\(id.rawValue).body")
     }
-    static func picture(_ id: SlipID) -> String { L10n.t("slip.pic.\(id.rawValue)") }
+    /// fold-proto names the tenth slip's picture `slip.wet.pic` (the first nine are native: `slip.pic.<id>`).
+    static func picture(_ id: SlipID) -> String {
+        let k = "slip.pic.\(id.rawValue)", v = L10n.t(k)
+        return v == k ? L10n.t("slip.\(id.rawValue).pic") : v
+    }
 }
 
 /// The nine films, played once on the real engine and kept.
@@ -98,18 +102,24 @@ struct SlipLayer: View {
     /// height less 16 (design-onboarding §2.1). Landscape: over the right page, the small book on its side above the text.
     private func slipBox(_ a: SlipAnchor) -> CGRect {
         if a.horizontal {
-            // the page's own width at the crease, edge on edge with it (never wider than the board page)
-            let w = min(a.page.width, 420)
+            // the page's own width at the crease, edge on edge with it; a narrow board (7-1's two columns) would squeeze
+            // the slip and push 「下一张 ›」 out of it, so it is never narrower than 320 pt (or the screen less its margins),
+            // centred on the crease and overhanging the page
+            let w = min(max(a.page.width, minWidth), 420)
             // §2.1 caps it at the top page's height less 16; a short top page (a five-row board's 63 pt squares)
             // would shrink the small book to ~60 %, so the slip may rise past the page into the empty table above it
             let h = min(MiniBook.size.height + 24, max(a.page.height - 16, a.crease - 16))
             let x = min(max(a.page.midX - w / 2, -margin + 8), size.width + margin - 8 - w)
             return CGRect(x: x, y: a.crease - 8 - h, width: w, height: h)
         }
-        let w = min(a.page.width - 24, 460)
+        let w = min(max(a.page.width - 24, minWidth), 460)
         let h = min(a.page.height - 24, MiniBook.size.width + 24 + 170)
-        return CGRect(x: a.page.minX + (a.page.width - w) / 2, y: a.page.minY + 12, width: w, height: h)
+        let x = min(max(a.page.minX + (a.page.width - w) / 2, -margin + 8), size.width + margin - 8 - w)
+        return CGRect(x: x, y: a.page.minY + 12, width: w, height: h)
     }
+
+    /// The slip's least width: 320 pt, or the whole screen less 8 pt each side where that is narrower.
+    private var minWidth: CGFloat { min(320, size.width + 2 * margin - 16) }
 
     /// The crease's right end, just outside the page (the 「?」 end): never on a square, never in the page's drag area.
     private func bookmarkPoint(_ a: SlipAnchor) -> CGPoint {
@@ -274,6 +284,7 @@ struct SlipView: View {
                 Button { (onNext ?? { model.nextSlipPage() })() } label: {
                     Text(L10n.t(last ? "slip.tuck" : "slip.next") + " ›")
                         .font(SlipFont.font(.regular, 13, .footnote)).foregroundStyle(hc ? .black : Tok.ink600)
+                        .lineLimit(1).fixedSize()
                         .padding(.horizontal, 8)
                         .frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
                 }
@@ -427,6 +438,7 @@ struct SlipIcon: View {
                 ZStack { ShadeMark(size: size * 0.8).offset(y: size * 0.1); Circle().fill(hc ? Color.black : Tok.figure).frame(width: size * 0.32).overlay(Circle().stroke(.white, lineWidth: 1)).offset(y: -size * 0.12) }
             case .glue: GlueMark(size: cell).frame(width: size, height: size).clipShape(RoundedRectangle(cornerRadius: 3))
             case .turn: SlipGlyph(id: .turn).stroke(hc ? Color.black : Tok.ink700, style: StrokeStyle(lineWidth: 1.2, lineJoin: .round)).frame(width: size, height: size)
+            case .wet: WetBlot(size: cell * 0.9)
             }
         }
         .frame(width: size, height: size)
@@ -470,6 +482,14 @@ nonisolated struct SlipGlyph: Shape {
         case .glue:
             p.addPath(GlueDrop().path(in: CGRect(x: r.minX + r.width * 0.3, y: r.minY, width: r.width * 0.4, height: r.height * 0.55)))
             p.addEllipse(in: CGRect(x: r.minX + r.width * 0.06, y: r.minY + r.height * 0.56, width: r.width * 0.88, height: r.height * 0.4))
+        case .wet:
+            // the blot and one ring round it, broken like the high-contrast dashed ring
+            p.addPath(InkBlot().path(in: r.insetBy(dx: r.width * 0.2, dy: r.height * 0.2)))
+            for k in 0..<8 {
+                let a0 = Double(k) * .pi / 4, a1 = a0 + .pi / 7
+                p.move(to: pt(0.5 + 0.46 * cos(a0), 0.5 + 0.46 * sin(a0)))
+                p.addArc(center: pt(0.5, 0.5), radius: r.width * 0.46, startAngle: .radians(a0), endAngle: .radians(a1), clockwise: false)
+            }
         case .turn:
             p.addRect(CGRect(x: r.minX + r.width * 0.3, y: r.minY + r.height * 0.04, width: r.width * 0.6, height: r.height * 0.74))
             p.move(to: pt(0.3, 0.2)); p.addLine(to: pt(0.12, 0.2)); p.addLine(to: pt(0.12, 0.94)); p.addLine(to: pt(0.72, 0.94)); p.addLine(to: pt(0.72, 0.78))

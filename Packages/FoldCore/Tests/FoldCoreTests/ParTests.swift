@@ -12,7 +12,7 @@ final class ParTests: XCTestCase {
             XCTAssertLessThanOrEqual(s.cost, Difficulty.parMax[lv.isOptional ? "dark" : lv.tier ?? ""] ?? 3, lv.id)
             var closes = 0, prev: Posture? = nil
             for st in s.steps { if st.posture == .closed && prev != .closed { closes += 1 }; prev = st.posture }
-            XCTAssertLessThanOrEqual(closes, Difficulty.closesMax(optional: lv.isOptional, tier: lv.tier), lv.id)
+            XCTAssertLessThanOrEqual(closes, Difficulty.closesMax(optional: lv.isOptional, tier: lv.tier, wet: Difficulty.isWetChapter(lv)), lv.id)
         }
     }
 
@@ -24,7 +24,9 @@ final class ParTests: XCTestCase {
         XCTAssertEqual(Array(ids[5...12]), ["stand", "twoBridges", "standClose", "doorBridge", "inkBridge", "inkTwice", "crease", "rightBank"])
         XCTAssertEqual(Array(ids[19..<25]), ["twoShades", "bridgeShade", "inkShore", "stoneRain", "shadeDoor", "twoFigures"])
         // vol. 2 chapter 1 「胶」: the save IDs are the level IDs (design-review-v2c1 §3 存档), never positions
-        XCTAssertEqual(Array(ids[35...]), ["turn", "overleaf", "twoFaces", "inlay", "bleed", "pressedFlower", "lastPage"])
+        XCTAssertEqual(Array(ids[35..<42]), ["turn", "overleaf", "twoFaces", "inlay", "bleed", "pressedFlower", "lastPage"])
+        // vol. 2 chapter 7 「墨晕」 (fold-proto design-ch7.md; 7-6 turned was cut, `through` is the sixth level)
+        XCTAssertEqual(Array(ids[42...]), ["wet", "print", "ring", "spoiled", "pocket", "through"])
         XCTAssertEqual(Array(ids[25..<35]), ["glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps",
                                        "darkBack", "darkDoor", "darkInk"])
     }

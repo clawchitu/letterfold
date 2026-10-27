@@ -28,6 +28,8 @@
 		99273F2D8C732350A8BCA85B /* Screens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CBDC31A0224AF98A0B8641 /* Screens.swift */; };
 		9B11B3E45713A193AA36B5AF /* Slip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0F961EF86FAC46A7C6FE8 /* Slip.swift */; };
 		A14167539C197C23C60606DD /* Chapter5UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59688079C7688C54335A73BD /* Chapter5UITests.swift */; };
+		A705642545DADEEE55649A53 /* Chapter7UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FF8C2C6BDE8074179A5B56 /* Chapter7UITests.swift */; };
+		A96D787350289A485576F1F0 /* LayoutStabilityUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3015C80653E030579E65FC8D /* LayoutStabilityUITests.swift */; };
 		AAC6885CD98A69713F89E05E /* Chapter4UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0494484CEC40B87ECCEA13 /* Chapter4UITests.swift */; };
 		ACE672D75211636A787E4B4A /* FoldDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */; };
 		B06253E7629EEE0DFA262540 /* ContentsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86874352C30014FFF456BE3E /* ContentsUITests.swift */; };
@@ -60,6 +62,7 @@
 		23DC96729D3FCEAF07A7743F /* Paper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paper.swift; sourceTree = "<group>"; };
 		2991315D14E1D1169059EEE2 /* Hinge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hinge.swift; sourceTree = "<group>"; };
 		2BC0F961EF86FAC46A7C6FE8 /* Slip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slip.swift; sourceTree = "<group>"; };
+		3015C80653E030579E65FC8D /* LayoutStabilityUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutStabilityUITests.swift; sourceTree = "<group>"; };
 		31779719E8C773D36D2CFC1B /* Contents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contents.swift; sourceTree = "<group>"; };
 		33328FA03A6FDAE3C9019CD5 /* Chapter3UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter3UITests.swift; sourceTree = "<group>"; };
 		379A2157A36D86786F6D27BF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -90,6 +93,7 @@
 		B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterfoldUITests.swift; sourceTree = "<group>"; };
 		CC0494484CEC40B87ECCEA13 /* Chapter4UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter4UITests.swift; sourceTree = "<group>"; };
 		D7F376A74B6D07769C3C7A89 /* LetterfoldUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LetterfoldUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8FF8C2C6BDE8074179A5B56 /* Chapter7UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter7UITests.swift; sourceTree = "<group>"; };
 		EABD85E9AF4932093EFF07E7 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		EF748F41958AB1E89B0C34D9 /* Petals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Petals.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -114,8 +118,10 @@
 				CC0494484CEC40B87ECCEA13 /* Chapter4UITests.swift */,
 				59688079C7688C54335A73BD /* Chapter5UITests.swift */,
 				442751BD211723A6FF2D59D6 /* Chapter6UITests.swift */,
+				D8FF8C2C6BDE8074179A5B56 /* Chapter7UITests.swift */,
 				86874352C30014FFF456BE3E /* ContentsUITests.swift */,
 				76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */,
+				3015C80653E030579E65FC8D /* LayoutStabilityUITests.swift */,
 				B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */,
 				011869BA3DC1C9873A1049D7 /* PlanLevelUITests.swift */,
 				AD2ACD110F34C4648B09D796 /* PlaythroughPlan.swift */,
@@ -333,8 +339,10 @@
 				AAC6885CD98A69713F89E05E /* Chapter4UITests.swift in Sources */,
 				A14167539C197C23C60606DD /* Chapter5UITests.swift in Sources */,
 				F2F1AE66279EFC5F18207868 /* Chapter6UITests.swift in Sources */,
+				A705642545DADEEE55649A53 /* Chapter7UITests.swift in Sources */,
 				B06253E7629EEE0DFA262540 /* ContentsUITests.swift in Sources */,
 				ACE672D75211636A787E4B4A /* FoldDriver.swift in Sources */,
+				A96D787350289A485576F1F0 /* LayoutStabilityUITests.swift in Sources */,
 				325A01DF0182BD81C710BC54 /* LetterfoldUITests.swift in Sources */,
 				41C9101008DFEE17CF0C3A91 /* PlanLevelUITests.swift in Sources */,
 				C8A342F843413DC1FB323FDC /* PlaythroughPlan.swift in Sources */,
@@ -445,7 +453,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 18;
+				CURRENT_PROJECT_VERSION = 19;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -545,7 +553,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 18;
+				CURRENT_PROJECT_VERSION = 19;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (

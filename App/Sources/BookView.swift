@@ -146,7 +146,7 @@ struct BookView: View {
             ForEach(rotorCells { $0 == .empty }, id: \.self) { c in AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace) }
         }
         .accessibilityRotor(Text(L10n.t("rotor.object"))) {
-            ForEach(rotorCells { [.stone, .key, .door, .openDoor, .ink, .goal, .tab, .glue].contains($0) }, id: \.self) { c in
+            ForEach(rotorCells { [.stone, .key, .door, .openDoor, .ink, .wetInk, .goal, .tab, .glue].contains($0) }, id: \.self) { c in
                 AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace)
             }
         }
@@ -526,7 +526,7 @@ private struct TileItem: View {
         let shaded = model.shade[c] != nil && !t.isFloor
         let face = TileFace(tile: t, size: geo.tile, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
                             mirrorAxisVertical: geo.horizontal, printedAt: model.inkPrintedAt[c], figureShift: model.meetShift(c, geo.tile),
-                            inkVariant: model.inkVariant(c))
+                            inkVariant: model.inkVariant(c), bledAt: model.bledAt(c))
         let r = RoundedRectangle(cornerRadius: 3, style: .continuous)
         ZStack {
             face
@@ -646,7 +646,7 @@ private struct PuppetLayer: View {
         // standing on wet ink, the black figure gets a paper rim so it does not vanish into the blot
         // and on a shadow it gets the backlit rim: the figure is only 2.76:1 on #6E604E (design-ch3 §5)
         let me = model.figureCell
-        let onInk = model.board[me] == .ink || (model.shade[me] != nil && !model.board[me].isFloor)
+        let onInk = model.board[me] == .ink || model.board[me] == .wetInk || (model.shade[me] != nil && !model.board[me].isFloor)
         Group {
             if model.walking && !AppSettings.shared.motionReduced {
                 // the two walking frames only tick while walking (no idle redraws)
@@ -705,7 +705,7 @@ private struct ThreadLayer: View {
     let end: CGPoint?
     var body: some View {
         let drawn = Double(model.trail.count - 1) * model.threadProgress
-        ThreadView(pieces: pieces, drawn: drawn, color: model.paper.thread, endKnot: model.won && model.threadProgress >= 1 ? end : nil)
+        ThreadView(pieces: pieces, drawn: drawn, color: model.paper.thread, liveFrom: model.threadLiveFrom, endKnot: model.won && model.threadProgress >= 1 ? end : nil)
             .animation(AppSettings.shared.motionReduced ? nil : .easeInOut(duration: 0.24), value: model.trail.count)
     }
 }
@@ -991,7 +991,7 @@ private struct StackTile: View {
         if t != .empty && t != .stone && t != .paper {
             TileFace(tile: t, size: size, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
                      mirrorAxisVertical: flipVertical, printedAt: model.inkPrintedAt[c], bare: true, figureShift: model.meetShift(c, size),
-                     inkVariant: model.inkVariant(c))
+                     inkVariant: model.inkVariant(c), bledAt: model.bledAt(c))
                 .frame(width: size, height: size)
         }
     }

@@ -37,29 +37,40 @@ extension Rules {
     public func facts(_ b: Board, _ cell: Cell, posture p: Posture, shade: [Cell: Int], figure: Cell) -> CellFacts {
         if p == .closed { return stackFacts(b, Cell(proj(cell.c), cell.r), figure: figure) }
         let c = cell.c, r = cell.r
-        let tl = b[cell], m = mirror(c), M = b[m, r]
+        let tl = b[cell], m = mirror(c)
         var f = CellFacts(tile: tl)
         f.shadow = shade[cell] != nil && !tl.isFloor
         f.tabUp = tl == .tab && p == .standing
         if figure == cell { f.here = .you(onTop: nil) }
+        // the notes predict the next close, and every press bleeds the wet ink first: read both squares off the bled
+        // board (a blot that covers glue spoils it, so the facing stone stays put; Codex review 19 #2)
+        let (T, M) = closeTiles(b, cell, m)
         if !isRight(c) {
-            if tl == .empty && (M.isFloor || M == .stone) { f.note = .fallsHere(M) }
-            else if tl == .door && M == .key { f.note = .doorKey }
-            else if tl == .glue && M == .stone { f.note = .glueTakes }
-            else if tl == .stone && M == .glue { f.note = .stoneGlued(col: m + 1) }
-            else if tl.isFloor && M == .stone { f.note = .crushedHere }
-            else if tl == .ink && M == .empty { f.note = .inkPrints }
-            else if tl == .tab && c == n - 1 && M == .tab { f.note = .tabBridge }
+            if T == .empty && (M.isFloor || M == .stone) { f.note = .fallsHere(M) }
+            else if T == .door && M == .key { f.note = .doorKey }
+            else if T == .glue && M == .stone { f.note = .glueTakes }
+            else if T == .stone && M == .glue { f.note = .stoneGlued(col: m + 1) }
+            else if T.isFloor && M == .stone { f.note = .crushedHere }
+            else if (T == .ink || T == .wetInk) && M == .empty { f.note = .inkPrints }
+            else if T == .tab && c == n - 1 && M == .tab { f.note = .tabBridge }
         } else {
-            if tl == .stone && M == .glue { f.note = .stoneGlued(col: m + 1) }
-            else if tl == .stone { f.note = .stoneShadow(col: m + 1) }
-            else if tl == .glue && M == .stone { f.note = .glueTakes }
-            else if tl == .key && M == .door { f.note = .keyOpens(col: m + 1) }
-            else if tl == .ink && M == .empty { f.note = .inkTo(col: m + 1) }
-            else if tl == .tab && c == n && M == .tab { f.note = .tabBridge }
-            else if tl.isFloor && M == .empty { f.note = .covers(col: m + 1) }
+            if T == .stone && M == .glue { f.note = .stoneGlued(col: m + 1) }
+            else if T == .stone { f.note = .stoneShadow(col: m + 1) }
+            else if T == .glue && M == .stone { f.note = .glueTakes }
+            else if T == .key && M == .door { f.note = .keyOpens(col: m + 1) }
+            else if (T == .ink || T == .wetInk) && M == .empty { f.note = .inkTo(col: m + 1) }
+            else if T == .tab && c == n && M == .tab { f.note = .tabBridge }
+            else if T.isFloor && M == .empty { f.note = .covers(col: m + 1) }
         }
         return f
+    }
+
+    /// This square and its facing square as the next press finds them: after the wet ink has bled one ring.
+    func closeTiles(_ b: Board, _ cell: Cell, _ m: Int) -> (Tile, Tile) {
+        guard b.grid.contains(where: { $0.contains(.wetInk) }) else { return (b[cell], b[m, cell.r]) }
+        var pb = b
+        _ = bleed(&pb)
+        return (pb[cell], pb[m, cell.r])
     }
 
     /// The shut book: the stack at bottom-page column q. The right page lies on top of the left.
