@@ -142,7 +142,7 @@ final class LampTests: XCTestCase {
         }
         XCTAssertEqual(pack.levels.filter { $0.lamp != nil }.map(\.id), Self.ch8)
         XCTAssertEqual(try level("gate").expect?.needsGate, true)
-        XCTAssertEqual(try level("twolamps").expect?.needsGate, true)
+        XCTAssertEqual(try level("twolamps").expect?.needsGate, false, "8-7 v2: the gate only lengthens (design-ch8 §8.2)")
         XCTAssertEqual(try level("lamp").lamp, nil, "3-6 keeps its id and the right lamp")
     }
 }

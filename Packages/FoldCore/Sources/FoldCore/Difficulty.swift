@@ -233,7 +233,8 @@ public struct Difficulty: Sendable {
         // twist: something must happen before the first close (it takes it away); the walked shadow was built
         let before = solver.solve(level, angles: angles, from: State(c: start.c, r: start.r, a: 0, face: 0, g: B.press(0, 0)), chain: B) == nil
         let made = path.contains { s in
-            guard s.g != 0, feel(s.a) == .lean, !rules.isRight(s.c), !board(s)[cell(s)].isFloor,
+            // either page (fold-proto 15c073d: under the left lamp a glued stone shades the lifted page, ch. 8)
+            guard s.g != 0, feel(s.a) == .lean, !board(s)[cell(s)].isFloor,
                   let src = rules.shadows(board(s), s.a)[cell(s)] else { return false }
             return base.grid[s.r][s.face == 1 && src >= rules.n ? src + rules.n : src] != .stone
         }
