@@ -35,6 +35,7 @@
 		ACE672D75211636A787E4B4A /* FoldDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */; };
 		B06253E7629EEE0DFA262540 /* ContentsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86874352C30014FFF456BE3E /* ContentsUITests.swift */; };
 		B1D32DD32E79E29D08463F20 /* MiniBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FCF925CDB8149AB521F8E2D /* MiniBook.swift */; };
+		BD62CB81468AD08351DF824C /* Chapter8UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F02AD93FA8DB47DA0A3261F /* Chapter8UITests.swift */; };
 		C8A342F843413DC1FB323FDC /* PlaythroughPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2ACD110F34C4648B09D796 /* PlaythroughPlan.swift */; };
 		CDAFA5AA7DB1731BE06494F7 /* Petals.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF748F41958AB1E89B0C34D9 /* Petals.swift */; };
 		D8A70EB3F8BBE29228DA425A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 379A2157A36D86786F6D27BF /* PrivacyInfo.xcprivacy */; };
@@ -80,6 +81,7 @@
 		73CBDC31A0224AF98A0B8641 /* Screens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screens.swift; sourceTree = "<group>"; };
 		76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldDriver.swift; sourceTree = "<group>"; };
 		79DDBB77B419ABE4C00953E0 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
+		7F02AD93FA8DB47DA0A3261F /* Chapter8UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter8UITests.swift; sourceTree = "<group>"; };
 		7FCF925CDB8149AB521F8E2D /* MiniBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniBook.swift; sourceTree = "<group>"; };
 		86874352C30014FFF456BE3E /* ContentsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentsUITests.swift; sourceTree = "<group>"; };
 		868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 				59688079C7688C54335A73BD /* Chapter5UITests.swift */,
 				442751BD211723A6FF2D59D6 /* Chapter6UITests.swift */,
 				D8FF8C2C6BDE8074179A5B56 /* Chapter7UITests.swift */,
+				7F02AD93FA8DB47DA0A3261F /* Chapter8UITests.swift */,
 				86874352C30014FFF456BE3E /* ContentsUITests.swift */,
 				76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */,
 				3015C80653E030579E65FC8D /* LayoutStabilityUITests.swift */,
@@ -344,6 +347,7 @@
 				A14167539C197C23C60606DD /* Chapter5UITests.swift in Sources */,
 				F2F1AE66279EFC5F18207868 /* Chapter6UITests.swift in Sources */,
 				A705642545DADEEE55649A53 /* Chapter7UITests.swift in Sources */,
+				BD62CB81468AD08351DF824C /* Chapter8UITests.swift in Sources */,
 				B06253E7629EEE0DFA262540 /* ContentsUITests.swift in Sources */,
 				ACE672D75211636A787E4B4A /* FoldDriver.swift in Sources */,
 				A96D787350289A485576F1F0 /* LayoutStabilityUITests.swift in Sources */,

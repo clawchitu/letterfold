@@ -48,6 +48,7 @@ final class UIPlanTests: XCTestCase {
     /// ProjectedTargets / FrontFace): leaning over, it shows its back. Shut, every square is a stack target.
     func tappable(_ cell: Cell, _ g: FoldGame) -> Bool {
         !g.rules.isRight(cell.c) || g.posture == .closed || g.angle < 20 || g.posture == .standing
+            || (g.board.liftedPageLive && g.rules.lit(g.angle))   // ch. 8: the lifted page through the lean (BookView)
     }
 
     /// Turn the hinge a degree at a time (a drag), as the app feeds it.
@@ -124,7 +125,7 @@ final class UIPlanTests: XCTestCase {
             while nextEnd + 1 < sol.count && sol[nextEnd + 1].a == a && sol[nextEnd + 1].face == sol[k].face { nextEnd += 1 }
             // the tap that follows goes to the end of the next walk (shut: its first stack)
             let next: Cell? = k + 1 < sol.count && sol[k + 1].a == a && sol[k + 1].face == sol[k].face ? (a >= 180 ? sol[k + 1].cell : sol[nextEnd].cell) : nil
-            let riding = !g.rules.isRight(g.char.c) && !g.board[g.char].isFloor
+            let riding = !g.board[g.char].isFloor   // a shadow on either page (ch. 8), or a gate
             func ok(_ phys: Int) -> Bool {
                 guard let h = run(lv, acts + [riding ? .creep(phys: phys, tol: 0) : .lean(phys: phys, tol: 0)], detents: d) else { return false }
                 if h.won { return true }
