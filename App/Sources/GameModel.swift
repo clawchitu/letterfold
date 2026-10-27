@@ -172,6 +172,9 @@ final class GameModel {
     var spread: Spread { Spread(orientation, columnsPerPage: config.columnsPerPage, rows: board.h) }
 
     private(set) var toast: String?
+    /// Where the drawn book's squares are on screen (global coordinates): the toast floats in the larger empty band
+    /// above or below it and never covers a square.
+    var boardRect: CGRect = .zero
 
     // 「翻」 (vol. 2 ch. 6, design-ch6.md §2): turning the closed book over. BookView rotates the whole book by `flipTurn`
     // (0 → 180°, 0.6 s ease-in-out, around the vertical axis) and draws `shownFace`, which switches at the midpoint.

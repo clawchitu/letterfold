@@ -361,7 +361,9 @@ private struct BookBody: View {
 
     var body: some View {
         // portrait phones: the camera book (design-review-2 §4.1); Duo / landscape keep the side-on turn
-        if geo.horizontal { CameraBook(model: model, geo: geo, rotorSpace: rotorSpace) } else { legacyBody }
+        if geo.horizontal { CameraBook(model: model, geo: geo, rotorSpace: rotorSpace) } else {
+            legacyBody.onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { model.boardRect = $0 }
+        }
     }
 
     /// The side-on turn (Duo / landscape, vertical crease): the top page turns about the crease towards the viewer
@@ -1371,6 +1373,14 @@ private struct CameraBook: View {
                     .position(cam.project((model.ghost >= 2 ? 0.2 : 0.68) * H * fold))
                     .transition(.opacity).allowsHitTesting(false).accessibilityHidden(true)
             }
+            // the squares' extent on screen, both pages (the toast stays out of it)
+            let ey = SIMD3<Double>(0, 1, 0)
+            let ext = [edge0, edge0 + W * ex, edge0 + W * ex + H * ey, edge0 + H * ey, edge0 + H * fold, edge0 + W * ex + H * fold].map(cam.project)
+            let x0 = ext.map(\.x).min()!, x1 = ext.map(\.x).max()!, y0 = ext.map(\.y).min()!, y1 = ext.map(\.y).max()!
+            Color.clear.frame(width: x1 - x0, height: y1 - y0)
+                .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { model.boardRect = $0 }
+                .position(x: (x0 + x1) / 2, y: (y0 + y1) / 2)
+                .allowsHitTesting(false).accessibilityHidden(true)
             ProjectedTargets(model: model, geo: geo, rotorSpace: rotorSpace, cam: cam, fold: fold, th: th)
             FoldControl(model: model)
                 .frame(width: page.width, height: 24)
