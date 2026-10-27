@@ -58,22 +58,26 @@ final class Chapter8UITests: XCTestCase {
         shot("ch8-8-4-fell")
     }
 
-    /// Art review shots (design-review-ch8-art): 8-1 leaning ('L': lamp lower-left, empty hook upper-right, the shadow on
-    /// the lifted page), the gate standing at 40° and lying flat on 8-4, 8-7 mid-lean (both lamps), and HC on 8-4.
-    func testShotsArt() {
+    /// Final visual check shots for build 20 (the retuned levels; mid-solution states via -replayTo): 7-5 pocket leaning
+    /// on its shadow, 7-6 through leaning on the third page, 8-1 leaning, 8-4's gate standing at 40° and lying flat,
+    /// 8-5 taken riding the lean, 8-6 twolamps mid-lean (design 8-7, both lamps) and the same in high contrast.
+    func testShotsFinal() {
+        launch(47, ["-replayTo", "12", "-noSlips", "YES"]); Thread.sleep(forTimeInterval: 0.6)
+        shot("final-7-5")
+        launch(48, ["-replayTo", "10", "-noSlips", "YES"]); Thread.sleep(forTimeInterval: 0.6)
+        shot("final-7-6")
         launch(49, ["-noSlips", "YES"])
         f.lean(to: 60, tol: 6); Thread.sleep(forTimeInterval: 1)
-        shot("b20-8-1-lean")
+        shot("final-8-1")
         launch(52, ["-noSlips", "YES"])
-        shot("b20-8-4-gate-lying")
+        shot("final-8-4-gate-lying")
         f.lean(to: 40, tol: 6); Thread.sleep(forTimeInterval: 1)
-        shot("b20-8-4-gate-standing")
-        launch(54, ["-noSlips", "YES"])
-        f.lean(to: 55, tol: 8); Thread.sleep(forTimeInterval: 1)
-        shot("b20-8-7-lean")
-        launch(52, ["-highContrast", "YES", "-noSlips", "YES"])
-        shot("b20-hc-8-4-lying")
-        f.lean(to: 40, tol: 6); Thread.sleep(forTimeInterval: 1)
-        shot("b20-hc-8-4-standing")
+        shot("final-8-4-gate-standing")
+        launch(53, ["-replayTo", "14", "-noSlips", "YES"]); Thread.sleep(forTimeInterval: 0.6)
+        shot("final-8-6-taken")
+        launch(54, ["-replayTo", "5", "-noSlips", "YES"]); Thread.sleep(forTimeInterval: 0.6)
+        shot("final-8-7-lean")
+        launch(54, ["-highContrast", "YES", "-replayTo", "5", "-noSlips", "YES"]); Thread.sleep(forTimeInterval: 0.6)
+        shot("final-hc-8-7-lean")
     }
 }
