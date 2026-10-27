@@ -493,7 +493,8 @@ private struct ChapterOpener: View {
             withAnimation(.easeOut(duration: 0.4).delay(rm ? 0.2 : 1.0)) { lineShown = true }
             UIAccessibility.post(notification: .screenChanged, argument: nil)
             // VoiceOver users dismiss it themselves (activate), so it is never missed
-            if !UIAccessibility.isVoiceOverRunning { DispatchQueue.main.asyncAfter(deadline: .now() + 2.6) { done() } }
+            // -openerHold YES (screenshots): it stays until tapped
+            if !UIAccessibility.isVoiceOverRunning && !UserDefaults.standard.bool(forKey: "openerHold") { DispatchQueue.main.asyncAfter(deadline: .now() + 2.6) { done() } }
         }
     }
 }
@@ -635,7 +636,7 @@ private struct ToastBand: View {
 /// Under `-probe YES` the toast's bubble is an element `toast.bubble` (the UI tests check it covers no square).
 private struct ToastProbe: ViewModifier {
     func body(content: Content) -> some View {
-        if UserDefaults.standard.bool(forKey: "probe") { content.accessibilityElement().accessibilityIdentifier("toast.bubble").accessibilityHidden(false) }
+        if UserDefaults.standard.bool(forKey: "probe") { content.accessibilityElement(children: .combine).accessibilityIdentifier("toast.bubble").accessibilityHidden(false) }
         else { content }
     }
 }
