@@ -145,11 +145,14 @@ public final class FoldGame {
         }
     }
 
-    /// Vol. 2 dead ends: glue (a stone glued away) or a third page (a turn that blocks a stack) can end the level.
+    /// Vol. 2 dead ends: glue (a stone glued away), a third page (a turn that blocks a stack) or wet ink (a blot that
+    /// grew over the road or spoiled the glue) can end the level. Wet ink and turns change the board press by press, so
+    /// those levels are checked against the live board, not "the start board stamped once" (Codex review 19 #1).
     private func checkDeadEnd(_ events: inout [GameEvent]) {
-        guard !stuck, !won, level.map.joined().contains("g") || board.pages > 2 else { return }
+        let all = level.map.joined(), wet = all.contains("I")
+        guard !stuck, !won, all.contains("g") || board.pages > 2 || wet else { return }
         let solver = Solver(config)
-        let ok = board.pages > 2
+        let ok = board.pages > 2 || wet
             ? solver.canStillWin(level, board: board, from: char, angle: posture == .closed ? 180 : angle)
             : solver.canStillWin(level, from: char, angle: posture == .closed ? 180 : angle, closedOnce: closedOnce)
         if !ok { stuck = true; events.append(.deadEnd) }

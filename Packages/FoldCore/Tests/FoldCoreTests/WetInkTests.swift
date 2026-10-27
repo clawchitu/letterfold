@@ -157,4 +157,50 @@ final class WetInkTests: XCTestCase {
         XCTAssertNil(pack.levels.first { $0.id == "turned" }, "7-6 is cut")
         XCTAssertEqual(pack.levels.filter(Difficulty.isWetChapter).map(\.id), ids)
     }
+    // MARK: Codex review 19
+
+    /// #1: wet-ink levels get the dead-end check, against the live board. 7-3: shutting at the start grows the blot
+    /// over the road; 7-4: after the first close, a second close without walking spoils the glue the route needs.
+    func testWetInkDeadEnds() throws {
+        let ring = try FoldGame(level: try level("ring"), config: pack.config)
+        XCTAssertTrue(play(ring, to: 180).contains(.deadEnd), "7-3 closed on the start is a dead end")
+        XCTAssertTrue(ring.stuck)
+
+        let sp = try FoldGame(level: try level("spoiled"), config: pack.config)
+        var ev = play(sp, to: 110)
+        for c in [Cell(3, 2), Cell(3, 1)] { ev += sp.step(to: c) }
+        ev += play(sp, to: 180)
+        XCTAssertFalse(ev.contains(.deadEnd), "7-4's first close on the route is fine")
+        ev = play(sp, to: 0) + play(sp, to: 180)
+        XCTAssertTrue(ev.contains(.deadEnd), "7-4: a second close in place is a dead end")
+    }
+
+    /// #1, the other way: no shipped ch. 7 solution ever trips the dead-end check.
+    func testWetInkSolutionsNeverDeadEnd() throws {
+        for id in ["wet", "print", "ring", "spoiled", "pocket", "through"] {
+            let lv = try level(id), g = try FoldGame(level: lv, config: pack.config)
+            var ev: [GameEvent] = []
+            for s in try XCTUnwrap(lv.solution).dropFirst() {
+                let a = Double(s[2])
+                if s[4] != g.face { ev += g.flip() } else if a != g.angle { ev += play(g, to: a) } else { ev += g.step(to: Cell(s[0], s[1])) }
+            }
+            XCTAssertTrue(g.won, id)
+            XCTAssertFalse(ev.contains(.deadEnd), "\(id): the solution is never a dead end")
+        }
+    }
+
+    /// #2: VoiceOver's close predictions read the board after the bleed. In 7-4 the wet ink at (5,3) spoils the glue
+    /// (5,4) before the press, so neither the glue nor its facing stone (2,4) promises a pull.
+    func testCloseNotesFollowTheBleed() throws {
+        let g = try FoldGame(level: try level("spoiled"), config: pack.config)
+        let glue = rules.facts(g.board, Cell(5, 4), posture: g.posture, shade: g.shade, figure: g.char)
+        let stone = rules.facts(g.board, Cell(2, 4), posture: g.posture, shade: g.shade, figure: g.char)
+        XCTAssertEqual(glue.tile, .glue, "the square still reads as glue now")
+        XCTAssertNotEqual(glue.note, .glueTakes)
+        XCTAssertNotEqual(stone.note, .stoneGlued(col: 6))
+        // a dry board keeps its glue prediction
+        let dry = try board(["S-x--g--"])
+        XCTAssertEqual(rules.facts(dry, Cell(5, 0), posture: .open, shade: [:], figure: dry.start).note, .glueTakes)
+        XCTAssertEqual(rules.facts(dry, Cell(2, 0), posture: .open, shade: [:], figure: dry.start).note, .stoneGlued(col: 6))
+    }
 }

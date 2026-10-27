@@ -146,7 +146,7 @@ struct BookView: View {
             ForEach(rotorCells { $0 == .empty }, id: \.self) { c in AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace) }
         }
         .accessibilityRotor(Text(L10n.t("rotor.object"))) {
-            ForEach(rotorCells { [.stone, .key, .door, .openDoor, .ink, .goal, .tab, .glue].contains($0) }, id: \.self) { c in
+            ForEach(rotorCells { [.stone, .key, .door, .openDoor, .ink, .wetInk, .goal, .tab, .glue].contains($0) }, id: \.self) { c in
                 AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace)
             }
         }
@@ -646,7 +646,7 @@ private struct PuppetLayer: View {
         // standing on wet ink, the black figure gets a paper rim so it does not vanish into the blot
         // and on a shadow it gets the backlit rim: the figure is only 2.76:1 on #6E604E (design-ch3 §5)
         let me = model.figureCell
-        let onInk = model.board[me] == .ink || (model.shade[me] != nil && !model.board[me].isFloor)
+        let onInk = model.board[me] == .ink || model.board[me] == .wetInk || (model.shade[me] != nil && !model.board[me].isFloor)
         Group {
             if model.walking && !AppSettings.shared.motionReduced {
                 // the two walking frames only tick while walking (no idle redraws)
