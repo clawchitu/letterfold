@@ -274,6 +274,7 @@ extension GameModel {
         guard !stuck.isEmpty else { return }
         let tc = inkFirst ? 0.56 : 0.34
         for c in stuck { craneFX[c] = CraneFX(kind: .shrug, t0: .now, tc: tc) }
+        craneStuckToSay = true
         scheduleCraneFeel(tc: tc, flew: false, stuck: true)
     }
 
@@ -332,6 +333,13 @@ extension GameModel {
         if s.inked { return L10n.t("craneSoaked") }
         if s.glued { return L10n.t("craneGlued") }
         return L10n.t("craneFlew", ["col": L10n.t("col", ["c": (s.to ?? s.cells[0]).c + 1])])
+    }
+
+    /// `craneStuck` once per press, if a crane could not fly (consumed by stampWords).
+    func craneStuckWords() -> [String] {
+        guard craneStuckToSay else { return [] }
+        craneStuckToSay = false
+        return [L10n.t("craneStuck")]
     }
 }
 

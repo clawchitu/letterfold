@@ -1933,7 +1933,7 @@ final class GameModel {
             case .glue, .bleed: break
             }
         }
-        return out
+        return out + craneStuckWords()
     }
     /// When the wet ink reached this square at the last press (the bleed ring), for its grow-in.
     func bledAt(_ c: Cell) -> Date? { inkBledAt[c] }
