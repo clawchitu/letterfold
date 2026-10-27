@@ -3,11 +3,13 @@ import Foundation
 /// 物件笺 (fold-proto design-onboarding.md §1, §7): one slip per rule object, shown once per player, keyed by object.
 public enum SlipID: String, CaseIterable, Sendable, Codable {
     case stone, door, ink, tab, shadow, press, ride, glue, turn
+    /// Ch. 7 「墨晕」 (fold-proto design-ch7 §6, tools/slips.js): wet ink, first in 7-1. The tenth slip.
+    case wet
 }
 
 /// The slips' triggers and the save logic around them (design-onboarding §7.2–7.3), pure so they are tested here.
 public enum Slips {
-    static let floorChars: Set<Character> = [".", "S", "G", "k", "i", "o", "p", "g"]
+    static let floorChars: Set<Character> = [".", "S", "G", "k", "i", "o", "p", "g", "I"]
 
     /// 压: a right-page stone whose mirror square is paper the figure can stand on (check.js `crushable`).
     public static func crushable(_ level: Level, columnsPerPage n: Int = 4) -> Bool {
@@ -32,6 +34,7 @@ public enum Slips {
             case .ride: return needs.contains("needsRide")
             case .glue: return s.contains("g")
             case .turn: return pages == 3
+            case .wet: return s.contains("I")
             }
         }
     }
@@ -192,6 +195,12 @@ public struct SlipDemo: Sendable {
         SlipDemo(id: .turn, level: "6-1", map: ["S.------.G--", "------------"], beats: [
             .walk(Cell(1, 0)), .bump(1, 0, .gap), .pause(400), .angle(180, ms: 420), .flip,
             .walkStack(Cell(2, 0)), .win, .angle(0, ms: 300), .still]),
+        // 墨晕: one close grows one ring — still a square short; a second close joins the road (design-ch7 §6). The
+        // still: opened after the second ring, standing on (1,0)
+        SlipDemo(id: .wet, level: "7-1", map: ["S--I----", "-G------"], beats: [
+            .bump(1, 0, .gap), .pause(400), .angle(180, ms: 500, stamp: .bleed), .pause(300), .angle(0, ms: 300),
+            .bump(1, 0, .gap), .pause(400), .angle(180, ms: 500, stamp: .bleed), .pause(300), .angle(0, ms: 300),
+            .walk(Cell(1, 0)), .still, .walk(Cell(1, 1)), .win]),
     ]
 
     public static func demo(_ id: SlipID) -> SlipDemo { all.first { $0.id == id }! }

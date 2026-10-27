@@ -36,7 +36,11 @@ enum SlipText {
         if !horizontalCrease, L10n.t(h) != h { return L10n.t(h) }
         return L10n.t("slip.\(id.rawValue).body")
     }
-    static func picture(_ id: SlipID) -> String { L10n.t("slip.pic.\(id.rawValue)") }
+    /// fold-proto names the tenth slip's picture `slip.wet.pic` (the first nine are native: `slip.pic.<id>`).
+    static func picture(_ id: SlipID) -> String {
+        let k = "slip.pic.\(id.rawValue)", v = L10n.t(k)
+        return v == k ? L10n.t("slip.\(id.rawValue).pic") : v
+    }
 }
 
 /// The nine films, played once on the real engine and kept.
@@ -427,6 +431,7 @@ struct SlipIcon: View {
                 ZStack { ShadeMark(size: size * 0.8).offset(y: size * 0.1); Circle().fill(hc ? Color.black : Tok.figure).frame(width: size * 0.32).overlay(Circle().stroke(.white, lineWidth: 1)).offset(y: -size * 0.12) }
             case .glue: GlueMark(size: cell).frame(width: size, height: size).clipShape(RoundedRectangle(cornerRadius: 3))
             case .turn: SlipGlyph(id: .turn).stroke(hc ? Color.black : Tok.ink700, style: StrokeStyle(lineWidth: 1.2, lineJoin: .round)).frame(width: size, height: size)
+            case .wet: WetBlot(size: cell * 0.9)
             }
         }
         .frame(width: size, height: size)
@@ -470,6 +475,14 @@ nonisolated struct SlipGlyph: Shape {
         case .glue:
             p.addPath(GlueDrop().path(in: CGRect(x: r.minX + r.width * 0.3, y: r.minY, width: r.width * 0.4, height: r.height * 0.55)))
             p.addEllipse(in: CGRect(x: r.minX + r.width * 0.06, y: r.minY + r.height * 0.56, width: r.width * 0.88, height: r.height * 0.4))
+        case .wet:
+            // the blot and one ring round it, broken like the high-contrast dashed ring
+            p.addPath(InkBlot().path(in: r.insetBy(dx: r.width * 0.2, dy: r.height * 0.2)))
+            for k in 0..<8 {
+                let a0 = Double(k) * .pi / 4, a1 = a0 + .pi / 7
+                p.move(to: pt(0.5 + 0.46 * cos(a0), 0.5 + 0.46 * sin(a0)))
+                p.addArc(center: pt(0.5, 0.5), radius: r.width * 0.46, startAngle: .radians(a0), endAngle: .radians(a1), clockwise: false)
+            }
         case .turn:
             p.addRect(CGRect(x: r.minX + r.width * 0.3, y: r.minY + r.height * 0.04, width: r.width * 0.6, height: r.height * 0.74))
             p.move(to: pt(0.3, 0.2)); p.addLine(to: pt(0.12, 0.2)); p.addLine(to: pt(0.12, 0.94)); p.addLine(to: pt(0.72, 0.94)); p.addLine(to: pt(0.72, 0.78))
