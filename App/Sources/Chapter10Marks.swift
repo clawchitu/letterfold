@@ -108,7 +108,8 @@ struct CraneGlyph: View {
     let size: CGFloat
     var hc = false
     var fx: CraneFX? = nil
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// The app's Reduce Motion (its own switch or the system's; Codex review 22 #2).
+    private var reduceMotion: Bool { AppSettings.shared.motionReduced }
     var body: some View {
         if let fx, fx.kind == .hop || fx.kind == .shrug {
             TimelineView(.animation) { ctx in frame(fx.pose(at: ctx.date, rm: reduceMotion, hc: hc)) }
@@ -203,9 +204,12 @@ struct CraneFXOverlay: View {
     var hc = false
     /// The closed stack draws its own squares.
     var bare = false
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// The app's Reduce Motion (its own switch or the system's; Codex review 22 #2).
+    private var reduceMotion: Bool { AppSettings.shared.motionReduced }
     var body: some View {
-        if fx.kind == .soak || fx.kind == .glue || fx.kind == .ghost {
+        // a ghost waiting for the book to open draws nothing — and runs no timeline, so a closed book goes idle
+        // (an endless TimelineView kept the app busy and the UI tests' waits timed out)
+        if fx.kind == .soak || fx.kind == .glue || (fx.kind == .ghost && fx.t0 != .distantFuture) {
             TimelineView(.animation) { ctx in
                 let p = fx.pose(at: ctx.date, rm: reduceMotion, hc: hc)
                 switch fx.kind {
@@ -242,10 +246,11 @@ struct CraneFXOverlay: View {
 struct CraneCarry: ViewModifier {
     let fx: CraneFX?
     let size: CGFloat
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// The app's Reduce Motion (its own switch or the system's; Codex review 22 #2).
+    private var reduceMotion: Bool { AppSettings.shared.motionReduced }
     @Environment(\.highContrast) private var hc
     func body(content: Content) -> some View {
-        if let fx, fx.carries, fx.kind == .hop || fx.kind == .glue, !reduceMotion {
+        if let fx, fx.carries, fx.kind == .hop || fx.kind == .glue, !AppSettings.shared.motionReduced {
             TimelineView(.animation) { ctx in
                 let p = CraneFX(kind: .hop, t0: fx.t0, tc: fx.tc).pose(at: ctx.date, rm: false, hc: hc)
                 content.offset(y: -0.10 * size * p.lift)
@@ -258,8 +263,20 @@ struct CraneCarry: ViewModifier {
 
 // MARK: - the flight (GameModel's side: the engine said where; here it is felt, shown and said)
 
+private extension Array {
+    func appending(_ e: Element) -> [Element] { self + [e] }
+}
+
 extension GameModel {
     /// A crane's event at the press (§3.4): hop to its landing, soak where it stands, hop onto the glue and fade.
+    /// A new press: the last press's effects and timer end here, so its timer never drops this press's hop
+    /// (Codex review 22 #4). Ghosts still waiting for the book to open are kept.
+    func beginCranePress() {
+        craneFXTask?.cancel(); craneFXTask = nil
+        craneFlewThisPress = false; craneShrugThisPress = false; craneCarriedTo = nil
+        craneFX = craneFX.filter { $0.value.kind == .ghost }
+    }
+
     func noteCrane(_ s: Rules.Stamp, inkFirst: Bool, carrying: Bool) {
         let now = Date.now, tc = inkFirst ? 0.56 : 0.34
         if s.inked {
@@ -326,18 +343,23 @@ extension GameModel {
 
     func clearCraneFX() {
         craneFXTask?.cancel(); craneFXTask = nil; craneGhostTask?.cancel(); craneGhostTask = nil
-        craneFX = [:]; craneStuckToSay = false; craneFlewThisPress = false; craneShrugThisPress = false
+        craneFX = [:]; craneStuckToSay = false; craneFlewThisPress = false; craneShrugThisPress = false; craneCarriedTo = nil
     }
 
     /// The crane she stood on carried her to its landing on the other page (logic.js `carried`, main.js toast `carried`).
+    /// On screen now; said in the press's one announcement, in place of 「鹤飞到了…」 (Codex review 22 #3: a separate
+    /// announcement was cut off by it).
     func noteCarried(_ to: Cell) {
-        show(L10n.t("carried", ["col": L10n.t("col", ["c": to.c + 1])]))
+        show(L10n.t("carried", ["col": L10n.t("col", ["c": to.c + 1])]), speak: false)
+        craneCarriedTo = to
     }
 
     /// What a crane did at the press, in words (VoiceOver): flew to its landing, soaked by wet ink, stuck on glue.
     func craneWords(_ s: Rules.Stamp) -> String {
         if s.inked { return L10n.t("craneSoaked") }
-        if s.glued { return L10n.t("craneGlued") }
+        let carried = s.to != nil && s.to == craneCarriedTo ? L10n.t("carried", ["col": L10n.t("col", ["c": s.to!.c + 1])]) : nil
+        if s.glued { return (carried.map { [$0] } ?? []).appending(L10n.t("craneGlued")).joined(separator: L10n.t("sep")) }
+        if let carried { return carried }
         return L10n.t("craneFlew", ["col": L10n.t("col", ["c": (s.to ?? s.cells[0]).c + 1])])
     }
 

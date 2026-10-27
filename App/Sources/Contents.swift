@@ -545,7 +545,11 @@ struct ObjectsView: View {
         if let id = openSlip {
             let rm = AppSettings.shared.motionReduced
             GeometryReader { g in
-                let w = min(g.size.width - 32, 460), h = min(g.size.height * 0.62, MiniBook.size.height + 24)
+                // the two-beat slips (松石, 纸鹤) carry their beats above the text: as tall as the level's (Codex review 22 #1)
+                let w = min(g.size.width - 32, 460)
+                let h = id == .crane ? min(g.size.height - 24, CraneSlipPicture.height + 24 + 10 + 290)
+                    : id == .roll ? min(g.size.height - 24, RollSlipPicture.height + 24 + 10 + 200)
+                    : min(g.size.height * 0.62, MiniBook.size.height + 24)
                 ZStack(alignment: .bottom) {
                     // no backdrop (§0): a touch anywhere outside tucks it back
                     Color.clear.contentShape(Rectangle()).onTapGesture { tuck() }.accessibilityHidden(true)

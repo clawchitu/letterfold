@@ -258,6 +258,8 @@ final class GameModel {
     @ObservationIgnored var craneShrugThisPress = false
     /// A crane could not fly at the last close: `craneStuck` goes into that close's announcement.
     @ObservationIgnored var craneStuckToSay = false
+    /// The landing the crane she stood on carried her to at the last press (said in its announcement).
+    @ObservationIgnored var craneCarriedTo: Cell?
     /// glue.pull (design-review-v2c1 §3): stones flying across the crease to the glue that took them, the faint mark
     /// each leaves where it was, and the glue square's flash. Times are CACurrentMediaTime().
     struct GluePull: Equatable { var from: Cell; var to: Cell; var start: Double }
@@ -1535,7 +1537,7 @@ final class GameModel {
         var pulled: [(Cell, Cell)] = []
         defer { if !pulled.isEmpty { startGlue(pulled) } }
         // ch. 10: the crane moves last — after the ink, the doors and the glue of the same press (T_c 560, else 340)
-        var inkFirst = false, closedNow = false, landed: Set<Cell> = []
+        var inkFirst = false, closedNow = false, cranePress = false, landed: Set<Cell> = []
         for e in events {
             switch e {
             case .postureChanged(let was, let to):
@@ -1566,6 +1568,7 @@ final class GameModel {
                 }
                 if s.kind == .glue, s.cells.count == 2 { pulled.append((s.cells[0], s.cells[1])) }
                 if s.kind == .crane {
+                    if !cranePress { beginCranePress(); cranePress = true }
                     if let to = s.to { landed.insert(to) }
                     noteCrane(s, inkFirst: inkFirst, carrying: s.cells[0] == here)
                 } else { inkFirst = true }
@@ -1621,7 +1624,10 @@ final class GameModel {
                 win()
             }
         }
-        if closedNow && board.first(.crane) != nil { noteCranesStuck(landed: landed, inkFirst: inkFirst) }
+        if closedNow && board.first(.crane) != nil {
+            if !cranePress { beginCranePress() }
+            noteCranesStuck(landed: landed, inkFirst: inkFirst)
+        }
     }
 
     private func win() {
@@ -1921,6 +1927,7 @@ final class GameModel {
     /// What a press did, in words (VoiceOver): 「胶把石头粘到了对页」 is said by the caller; here the wet ink's ring once
     /// (ch. 7 `inkBled`), each door, each dry print, and the wet prints once (a ring prints several squares at a time).
     func stampWords(_ stamps: [Rules.Stamp]) -> [String] {
+        defer { craneCarriedTo = nil }
         var out: [String] = []
         if stamps.contains(where: { $0.kind == .bleed }) { out.append(L10n.t("inkBled")) }
         var wetSaid = false
