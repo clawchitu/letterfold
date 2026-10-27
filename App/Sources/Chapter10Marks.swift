@@ -157,10 +157,14 @@ struct CraneFX: Equatable {
     /// When everything but the ghost is over, from T0 (the model drops the effects then).
     static let over = 0.56 + rise + fall + max(flashFor, fade) + 0.05
 
+    /// -craneFreeze <s> (screenshots): hold every crane effect at s seconds after its T0 (the ghost: after the opening).
+    static var freeze: Double? { UserDefaults.standard.object(forKey: "craneFreeze") != nil ? UserDefaults.standard.double(forKey: "craneFreeze") : nil }
+
     struct Pose { var lift = 0.0, wings = 0.0, flash = 0.0, alpha = 1.0, soak = 0.0 }
 
     func pose(at now: Date, rm: Bool, hc: Bool) -> Pose {
-        let s = now.timeIntervalSince(t0) - tc
+        let el = Self.freeze.map { t0 == .distantFuture ? -1 : $0 } ?? now.timeIntervalSince(t0)
+        let s = el - tc
         var p = Pose()
         let quick = rm || hc
         switch kind {
@@ -182,7 +186,7 @@ struct CraneFX: Equatable {
         case .shrug:
             if !rm && s > 0 && s < Self.shrugFor { p.wings = 0.4 * sin(.pi * s / Self.shrugFor) }
         case .ghost:
-            let g = now.timeIntervalSince(t0)
+            let g = el
             p.alpha = g < 0 ? 0 : max(0, 1 - g / Self.ghostFor)
         }
         return p
@@ -282,7 +286,7 @@ extension GameModel {
     /// 0.4. Once per press however many cranes. The effects are dropped when they are over.
     private func scheduleCraneFeel(tc: Double, flew: Bool, stuck: Bool) {
         if flew { craneFlewThisPress = true } else if stuck { craneShrugThisPress = true }
-        guard craneFXTask == nil else { return }
+        guard craneFXTask == nil, CraneFX.freeze == nil else { return }
         let rm = settings.motionReduced
         craneFXTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(tc))
@@ -309,7 +313,7 @@ extension GameModel {
         var next: [Cell: CraneFX] = [:]
         for (c, f) in craneFX where f.kind == .ghost && f.t0 == .distantFuture { next[c] = CraneFX(kind: .ghost, t0: now) }
         craneFX = next
-        guard !next.isEmpty else { return }
+        guard !next.isEmpty, CraneFX.freeze == nil else { return }
         craneGhostTask?.cancel()
         craneGhostTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(CraneFX.ghostFor + 0.05))
