@@ -29,6 +29,9 @@ public enum GameEvent: Sendable, Equatable {
     /// The lifted page passed upright (vol. 3 ch. 9 「滚」): these loose stones rolled one cell towards the crease, nearest
     /// the crease first (logic.js roll events). Sent before the shadows of the same sub-step are read.
     case rolled([Rules.Roll])
+    /// The crane the figure stood on flew at the press (vol. 3 ch. 10 「鹤」, logic.js `carried`): she is on its landing, on
+    /// the other page (closed, the same stack — the open book shows it). Sent after the press's `.stamped` events.
+    case carried(to: Cell)
 }
 
 /// A level being played: the stateful half of main.js (angle, riding shadows, stamping, undo).
@@ -157,18 +160,27 @@ public final class FoldGame {
             posture = next
             events.append(.postureChanged(from: prev, to: next))
             if next == .closed {
-                rules.stamp(&board).forEach { events.append(.stamped($0)) }; closedOnce = true
+                let stamps = rules.stamp(&board)
+                stamps.forEach { events.append(.stamped($0)) }; closedOnce = true
+                carry(stamps, &events)
                 lastCloseStep = trail.count - 1
             }
             checkWin(&events)
         }
     }
 
+    /// Vol. 3 ch. 10: after a press, the figure goes where the crane it stood on flew (logic.js `carried`).
+    private func carry(_ stamps: [Rules.Stamp], _ events: inout [GameEvent]) {
+        let to = rules.carried(stamps, char)
+        guard to != char else { return }
+        char = to; trail.append(to); events.append(.carried(to: to))
+    }
+
     /// Vol. 2 dead ends: glue (a stone glued away), a third page (a turn that blocks a stack) or wet ink (a blot that
     /// grew over the road or spoiled the glue) can end the level. Wet ink and turns change the board press by press, so
     /// those levels are checked against the live board, not "the start board stamped once" (Codex review 19 #1).
     private func checkDeadEnd(_ events: inout [GameEvent]) {
-        let all = level.map.joined(), wet = all.contains("I") || all.contains("r")   // wet ink and loose stones: the live board
+        let all = level.map.joined(), wet = all.contains("I") || all.contains("r") || all.contains("h")   // wet ink, loose stones, cranes: the live board
         guard !stuck, !won, all.contains("g") || board.pages > 2 || wet else { return }
         let solver = Solver(config)
         let ok = board.pages > 2 || wet
@@ -197,6 +209,7 @@ public final class FoldGame {
         } else {
             stamps.forEach { events.append(.stamped($0)) }
             closedOnce = true
+            carry(stamps, &events)   // vol. 3 ch. 10: a crane under your feet flies to the page you turned to, with you
         }
         shade = rules.shadows(board, angle); rideSrc = nil
         checkWin(&events)

@@ -253,7 +253,7 @@ public struct Rules: Sendable {
     // MARK: pressing the pages together
 
     public struct Stamp: Sendable, Equatable {
-        public enum Kind: String, Sendable { case door, ink, glue, bleed }
+        public enum Kind: String, Sendable { case door, ink, glue, bleed, crane }
         public var kind: Kind
         /// door / ink: [source, target]. glue: [the stone's old cell, the glue cell it lands on]. bleed: every square the
         /// wet ink spread onto in this press (one ring).
@@ -262,8 +262,14 @@ public struct Rules: Sendable {
         public var wet: Bool = false
         /// bleed: what each of `cells` was before the ink covered it (`.empty` or `.glue`), logic.js `cells[].was`.
         public var was: [Tile] = []
-        public init(kind: Kind, cells: [Cell], wet: Bool = false, was: [Tile] = []) {
-            self.kind = kind; self.cells = cells; self.wet = wet; self.was = was
+        /// crane (vol. 3 ch. 10): `cells` = [the crane, its landing] — or [the crane] alone when it was soaked (`inked`).
+        /// `glued`: it landed on glue — it carried over one last time and both squares are plain paper.
+        public var inked: Bool = false
+        public var glued: Bool = false
+        /// crane: where whoever stood on `cells[0]` is carried (logic.js crane event `to`), nil when soaked.
+        public var to: Cell? { kind == .crane && !inked && cells.count == 2 ? cells[1] : nil }
+        public init(kind: Kind, cells: [Cell], wet: Bool = false, was: [Tile] = [], inked: Bool = false, glued: Bool = false) {
+            self.kind = kind; self.cells = cells; self.wet = wet; self.was = was; self.inked = inked; self.glued = glued
         }
     }
 
@@ -313,7 +319,37 @@ public struct Rules: Sendable {
                 }
             }
         }
+        events += fly(&b)   // vol. 3 ch. 10: last of all, the cranes fly (after the roll of the sweep, the bleed, the keys, the ink, the glue)
         return events
+    }
+
+    /// Paper crane (vol. 3 ch. 10 「鹤」, logic.js `fly`): at every press each crane flies to its mirror cell, all of them
+    /// listed on the board as it is after the glue and judged one by one in reading order. Paper or a gap: it lands there
+    /// (its old square is paper). Wet ink: it is soaked — it stays, as wet ink, and never flies again. Glue: it is stuck —
+    /// it carries over one last time and both squares are plain paper. Anything else (a stone, a loose stone, a door, a
+    /// key, dry ink, her square, the start, another crane): it cannot fly. Mutates the board.
+    public func fly(_ b: inout Board) -> [Stamp] {
+        var cranes: [Cell] = [], events: [Stamp] = []
+        for r in 0..<b.h { for c in 0..<b.w where b[c, r] == .crane { cranes.append(Cell(c, r)) } }
+        for x in cranes {
+            let m = mirror(x.c), t = b[m, x.r]
+            if t == .empty || t == .paper {
+                b[m, x.r] = .crane; b[x.c, x.r] = .paper
+                events.append(Stamp(kind: .crane, cells: [x, Cell(m, x.r)]))
+            } else if t == .wetInk {
+                b[x.c, x.r] = .wetInk
+                events.append(Stamp(kind: .crane, cells: [x], inked: true))
+            } else if t == .glue {
+                b[m, x.r] = .paper; b[x.c, x.r] = .paper
+                events.append(Stamp(kind: .crane, cells: [x, Cell(m, x.r)], glued: true))
+            }
+        }
+        return events
+    }
+
+    /// Where the figure stands after a press (logic.js `carried`): carried by the crane it stood on, or where it was.
+    public func carried(_ events: [Stamp], _ fig: Cell) -> Cell {
+        events.first { $0.kind == .crane && $0.cells[0] == fig }?.to ?? fig
     }
 
     // MARK: loose stones (vol. 3 ch. 9 「滚」, logic.js STAND / standing / passes / roll)
@@ -368,7 +404,7 @@ public struct Rules: Sendable {
     public func flip(_ b: inout Board, _ char: Cell) -> (stamps: [Stamp], crush: CrushCause?) {
         b.face ^= 1
         let crush = crushCause(b, char, config.foldMin)
-        return (stamp(&b), crush)
+        return (crush == nil ? stamp(&b) : [], crush)
     }
 
     // MARK: the shadow lock (design-review-ch3 §3, judged as rewritten in design-review-ch4 §2 / design-spec §5)

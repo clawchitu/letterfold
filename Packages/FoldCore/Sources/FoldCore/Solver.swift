@@ -23,12 +23,20 @@ final class GridChain: @unchecked Sendable {
         let k = g * 2 + face
         if let m = memo[k] { return m }
         var b = table[g]; b.face = face
-        rules.stamp(&b)
+        let ev = rules.stamp(&b)
+        flights[k] = Dictionary(ev.compactMap { e in e.to.map { (e.cells[0], $0) } }, uniquingKeysWith: { a, _ in a })
         b.face = 0
         let idx: Int
         if let i = sig[b.grid] { idx = i } else { idx = table.count; table.append(b); sig[b.grid] = idx }
         memo[k] = idx
         return idx
+    }
+    /// Vol. 3 ch. 10 (check.js grids().carry): the figure's cell after press(g, face) — carried by the crane it stood on,
+    /// or unchanged. The grid a press makes does not depend on where the figure stands, so flights sit beside the memo.
+    private var flights: [Int: [Cell: Cell]] = [:]
+    func carry(_ g: Int, _ face: Int, _ fig: Cell) -> Cell {
+        _ = press(g, face)
+        return flights[g * 2 + face]?[fig] ?? fig
     }
     /// The lifted page passed upright (vol. 3 ch. 9, check.js grids().roll): grid g with the loose stones on the page of
     /// `face` rolled, unless the figure holds one. Keyed on the figure's cell only when it stands on the facing page —
@@ -119,7 +127,7 @@ public struct Solver: Sendable {
             cur = to
             a += step
         }
-        if a1 >= rules.config.foldMin { g = B.press(g, s.face) }
+        if a1 >= rules.config.foldMin { cur = B.carry(g, s.face, cur); g = B.press(g, s.face) }   // vol. 3 ch. 10: the crane you stand on carries you across
         return FoldState(c: cur.c, r: cur.r, a: a1, face: s.face, g: g)
     }
 
@@ -139,7 +147,8 @@ public struct Solver: Sendable {
         if rules.flipBlock(w, here, s.a) != nil { return .notAllowed }
         var turned = w; turned.face ^= 1
         if rules.crushed(turned, here, s.a) { return .crushed }
-        return .to(FoldState(c: s.c, r: s.r, a: s.a, face: s.face ^ 1, g: B.press(s.g, s.face ^ 1)))
+        let to = B.carry(s.g, s.face ^ 1, here)   // a crane under your feet flies to the page you turned to, with you
+        return .to(FoldState(c: to.c, r: to.r, a: s.a, face: s.face ^ 1, g: B.press(s.g, s.face ^ 1)))
     }
     func step(_ s: FoldState) -> Step { Step(posture: rules.posture(s.a), angle: s.a, cell: Cell(s.c, s.r), st: s.st, face: s.face) }
 
@@ -251,6 +260,7 @@ public struct Solver: Sendable {
         if all.contains("r") {   // vol. 3 ch. 9: unsolvable with the loose stones glued down
             e.needsRoll = solve(Level(id: level.id, map: level.map.map { String($0.map { $0 == "r" ? "x" : $0 }) }, lamp: level.lamp)) == nil
         }
+        if all.contains("h") { e.needsCrane = without("h") == nil }   // vol. 3 ch. 10: the cranes unfolded into plain paper
         if all.contains("A") { e.needsGate = without("A") == nil }   // the angle gate laid down as paper
         if all.contains("k") { e.needsKey = without("k") == nil }
         if all.contains("i") { e.needsInk = without("i") == nil }

@@ -24,9 +24,12 @@ public enum Tile: Character, Sendable, Codable, CaseIterable {
     /// a stone, but each time the lifted page passes upright (the hinge crosses 90°) it rolls one cell towards the crease
     /// (`Rules.roll`). Glue that pulls it holds it: it arrives as a `.stone`.
     case loose = "r"
+    /// Paper crane (vol. 3 ch. 10 「鹤」, design-ch10.md §1): a square of paper folded into a crane — floor, like any paper.
+    /// At every press (a close, a turn) it flies to its mirror cell and carries whoever stands on it (`Rules.fly`).
+    case crane = "h"
 
     /// Something you can stand on.
-    public var isFloor: Bool { [.paper, .start, .goal, .key, .ink, .openDoor, .tab, .glue, .wetInk].contains(self) }
+    public var isFloor: Bool { [.paper, .start, .goal, .key, .ink, .openDoor, .tab, .glue, .wetInk, .crane].contains(self) }
     /// Something that blocks the stacked cell when the book is closed.
     public var isBlock: Bool { self == .stone || self == .loose || self == .door }
     /// Stones (fixed or loose) block the light; paper and ink let it through.
@@ -87,6 +90,8 @@ public struct Expectation: Sendable, Codable, Equatable {
     public var needsGate: Bool?
     /// Vol. 3 ch. 9: unsolvable with the loose stones glued down (r -> x).
     public var needsRoll: Bool?
+    /// Vol. 3 ch. 10: unsolvable with the cranes unfolded into plain paper (h -> .).
+    public var needsCrane: Bool?
     public var stepped15: Bool
     /// tools/check.js `analyse()` (design-difficulty.md §2); the Swift `Difficulty` port must agree.
     public var difficulty: Difficulty.Summary?
@@ -107,6 +112,7 @@ public struct Expectation: Sendable, Codable, Equatable {
         case "needsLamp": return needsLamp
         case "needsGate": return needsGate
         case "needsRoll": return needsRoll
+        case "needsCrane": return needsCrane
         default: return nil
         }
     }
