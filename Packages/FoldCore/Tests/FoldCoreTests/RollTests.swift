@@ -92,6 +92,21 @@ final class RollTests: XCTestCase {
                                              FoldState(c: 2, r: 0, a: 0), 180) == nil, "the solver agrees")
     }
 
+    /// VoiceOver predicts the close on the board the coming pass leaves (Codex review 21 #3): on 9-3 (1,3) faces paper
+    /// at (6,3) now, but closing first rolls (7,3) -> (6,3), so closing there crushes. Past upright, nothing rolls.
+    func testCloseNotesReadTheRolledBoard() throws {
+        let g = try FoldGame(level: level("jump"), config: pack.config)
+        XCTAssertEqual(g.board[7, 3], .loose)
+        XCTAssertNotEqual(rules.facts(g.board, Cell(1, 3), posture: g.posture, shade: g.shade, figure: g.char).note, .crushedHere,
+                          "the stale board: no warning")
+        XCTAssertEqual(rules.facts(g.board, Cell(1, 3), posture: g.posture, shade: g.shade, figure: g.char, angle: 0).note, .crushedHere)
+        XCTAssertEqual(rules.facts(g.board, Cell(6, 3), posture: g.posture, shade: g.shade, figure: g.char, angle: 0).note,
+                       .stoneShadow(col: 2), "the stone that will be at (6,3) shades column 2")
+        XCTAssertNotEqual(rules.facts(g.board, Cell(1, 3), posture: g.posture, shade: g.shade, figure: g.char, angle: 120).note,
+                          .crushedHere, "past upright the pass has happened (or not): the board as it is")
+        XCTAssertEqual(g.board[7, 3], .loose, "the board itself is untouched")
+    }
+
     /// In one close the roll comes before the glue (9-6): the stone rolls onto the square the glue faces, then is taken.
     func testRollBeforeGlue() throws {
         let g = try FoldGame(level: Level(id: "t", map: ["S-g-..r.", "G-------"]))

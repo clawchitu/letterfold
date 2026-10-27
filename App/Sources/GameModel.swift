@@ -1956,7 +1956,7 @@ final class GameModel {
     // MARK: VoiceOver labels (port of a11y.js label())
 
     func label(_ c: Int, _ r: Int) -> String {
-        let f = rules.facts(board, Cell(c, r), posture: posture, shade: shade, figure: figureCell)
+        let f = rules.facts(board, Cell(c, r), posture: posture, shade: shade, figure: figureCell, angle: angle)
         let figure = goalIsFigure
         // the chapter's skin name first, the rule's name in brackets (design-skins §4): 「缆桩（石头）」; `kind.x.ch4` falls
         // back to `kind.x` where the skin keeps the plain object (chapter 1, chapter 3's stone)
