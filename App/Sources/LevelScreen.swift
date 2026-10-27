@@ -101,11 +101,11 @@ struct LevelScreen: View {
                 } else if model.hasThirdPage {
                     // always laid out on three-page levels, only shown when a flip is possible, so the board never
                     // jumps when the book closes or opens (Haoqiang 10/27: 其他提示也这样)
-                    FlipButton(model: model)
-                        .opacity(model.canShowFlip ? 1 : 0)
-                        .allowsHitTesting(model.canShowFlip)
-                        .accessibilityHidden(!model.canShowFlip)
-                        .animation(.easeInOut(duration: 0.2), value: model.canShowFlip)
+                    // (the footer's minimum height keeps its space; out of the tree while hidden, for VoiceOver and tests)
+                    ZStack {
+                        if model.canShowFlip { FlipButton(model: model).transition(.opacity) }
+                    }
+                    .animation(.easeInOut(duration: 0.2), value: model.canShowFlip)
                 }
             }
             // the footer keeps the 下一封 knot's height (52) before the win too, so the knot appearing never lifts the
