@@ -523,10 +523,10 @@ private struct TileItem: View {
     var body: some View {
         let c = cell
         let t = model.shownTile(c)
-        let shaded = model.shade[c] != nil && !t.isFloor
+        let shaded = model.shade[c] != nil && !t.isFloor && t != .gate
         let face = TileFace(tile: t, size: geo.tile, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
                             mirrorAxisVertical: geo.horizontal, printedAt: model.inkPrintedAt[c], figureShift: model.meetShift(c, geo.tile),
-                            inkVariant: model.inkVariant(c), bledAt: model.bledAt(c))
+                            inkVariant: model.inkVariant(c), bledAt: model.bledAt(c), gateStanding: model.shade[c] == Rules.gateSource)
         let r = RoundedRectangle(cornerRadius: 3, style: .continuous)
         ZStack {
             face
@@ -565,7 +565,7 @@ private struct TileEdges: View {
     var body: some View {
         ForEach(cells, id: \.cell) { item in
             let c = item.cell, t = model.board[c]
-            let shaded = model.shade[c] != nil && !t.isFloor
+            let shaded = model.shade[c] != nil && !t.isFloor && t != .gate
             ZStack {
                 if !hc && (t.isFloor || shaded) {
                     RoundedRectangle(cornerRadius: 3, style: .continuous).strokeBorder(Tok.edgeLower, lineWidth: 1)
@@ -748,6 +748,7 @@ private struct FixedPage: View {
             PageSheet(horizontal: geo.horizontal, isFixed: true, color: model.paper.color)
             if model.paper.ruled && !hc { RuledGrid(tile: geo.tile, gap: geo.gap, pad: geo.pad, across: s.slotsAcross, down: s.slotsDown) }
             MarginLayer(model: model, geo: geo, page: .fixed)
+            if model.board.lamp.contains("L") { LampCorner(geo: geo, fixed: true) }
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: !covered && targets)
             // kept in the tree while the book is closed (hidden, not removed): re-inserting it mid-aha lost the
             // thread's redraw and left this page without its thread after the book reopened
@@ -788,9 +789,10 @@ private struct FrontFace: View {
             PageSheet(horizontal: geo.horizontal, isFixed: false, color: model.paper.color)
             if model.paper.ruled && !hc { RuledGrid(tile: geo.tile, gap: geo.gap, pad: geo.pad, across: s.slotsAcross, down: s.slotsDown) }
             MarginLayer(model: model, geo: geo, page: .folding)
+            if model.board.lamp == "LR" { LampCorner(geo: geo, fixed: false) }
             if model.shownFace == 1 { TurnedFace(model: model, geo: geo, bleed: true) }
             // the top page stays tappable (and in VoiceOver) while it lies flat or stands: 2-1's goal is up there
-            TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: targets && (angle < 20 || model.posture == .standing))
+            TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: targets && (angle < 20 || model.posture == .standing || (model.liftedPageLive && model.rules.lit(model.angle))))
             ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .folding),
                         end: model.trail.last.flatMap { s.page(of: $0.c) == .folding ? geo.center($0) : nil })
             if !model.puppetOnRamp && s.page(of: model.figureCell.c) == .folding { PuppetLayer(model: model, geo: geo, at: geo.center(model.figureCell)) }
@@ -869,6 +871,8 @@ private struct BackFace: View {
             // chapter 3 leaning: the hanging lantern shows through the lit page, where the glow starts (review-skins §4.4)
             if backlit { MarginLayer(model: model, geo: geo, page: .folding, back: true, only: .lantern) }
             if backlit && lit > 0 && stones { CanopyStones(model: model, geo: geo, lit: lit) }
+            // ch. 8: past 90° the lifted page's walkable face is turned away; draw it through the sheet (Chapter8Marks)
+            if !closed && angle > 90 && model.liftedPageLive { LiftedPageThrough(model: model, geo: geo) }
             if closed {
                 // chapter 3 shut: the lamp goes out over 350 ms from the moment the book closed (design-review-ch3 §6.7)
                 if model.paper.backlit && !hc && !rt && model.lampLevel > 0.001 {
@@ -1479,7 +1483,8 @@ private struct ProjectedTargets: View {
             return (r, ps.map { CGPoint(x: $0.x - r.minX, y: $0.y - r.minY) })
         }
         func target(_ cell: Cell, _ q: (CGRect, [CGPoint])) -> Target { Target(cell: cell, rect: q.0, quad: q.1) }
-        let closed = th >= 160, showFolding = th < 20 || model.posture == .standing
+        // ch. 8: on a left-lamp (or gate) level the lifted page is walked on all through the lean
+        let closed = th >= 160, showFolding = th < 20 || model.posture == .standing || (model.liftedPageLive && model.rules.lit(model.angle))
         var out: [Target] = [], upper: [Target] = []
         for x in 0..<s.slotsAcross { for y in 0..<s.slotsDown {
             let c = geo.center(x: x, y: y), fc = s.cell(page: .fixed, x: x, y: y)

@@ -1832,6 +1832,8 @@ final class GameModel {
     /// A stone is still on its way to `c`: the square does not draw it yet.
     func stoneInFlight(_ c: Cell) -> Bool { inFlight.contains(c) }
     /// What a square shows: a glue square keeps its glue until the stone it pulls lands on it.
+    /// Ch. 8 「灯位」: the lifted page carries shadows (left lamp) or angle gates, so it is walked on while it leans.
+    var liftedPageLive: Bool { board.liftedPageLive }
     func shownTile(_ c: Cell) -> Tile { inFlight.contains(c) ? .glue : board[c] }
 
     /// 5-7's seal 「胶」 on her square (design-review-v2c1 ④): 24 pt, its centre 6 pt in from the square's top-right

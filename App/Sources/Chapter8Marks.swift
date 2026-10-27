@@ -59,3 +59,53 @@ struct LampMark: View {
     }
 }
 
+/// The lamp at a page's outer top corner (ch. 8 `lamp`): the fixed (left) page for 'L' / 'LR', the folding page for
+/// 'LR'. Drawn in the page's own coordinates, so it rides with the page; never takes a tap.
+struct LampCorner: View {
+    let geo: BookGeometry
+    let fixed: Bool
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        let page = geo.pageSize, sz = max(12, min(20, geo.pad * 1.4))
+        // the outer edge is the one away from the crease: portrait (horizontal crease) the fixed page's bottom and the
+        // folding page's top; landscape the fixed page's leading edge and the folding page's trailing edge
+        let x = geo.horizontal ? sz * 0.6 : fixed ? sz * 0.6 : page.width - sz * 0.6
+        let y = geo.horizontal ? (fixed ? page.height - sz * 0.6 : sz * 0.6) : sz * 0.6
+        LampMark(size: sz, hc: hc)
+            .position(x: x, y: y)
+            .frame(width: page.width, height: page.height, alignment: .topLeading)
+            .allowsHitTesting(false)
+            .accessibilityIdentifier(fixed ? "lamp.left" : "lamp.right")
+    }
+}
+
+/// Ch. 8: the lifted page's squares seen through the sheet while it leans past 90° (its walkable face is turned away
+/// from the reader). Laid out like CanopyStones — each square over the fixed-page square it stacks on — and counter-
+/// flipped so objects read upright. Placeholder: tiles at 70 %, shadows, the figure as a puppet.
+struct LiftedPageThrough: View {
+    let model: GameModel
+    let geo: BookGeometry
+    var body: some View {
+        let n = model.config.columnsPerPage, rules = model.rules
+        let cells = (0..<model.board.h).flatMap { r in (n..<2 * n).map { Cell($0, r) } }
+        let me = model.figureCell
+        ZStack(alignment: .topLeading) {
+            ForEach(cells, id: \.self) { c in
+                let t = model.shownTile(c)
+                let shaded = model.shade[c] != nil && !t.isFloor && t != .gate
+                ZStack {
+                    TileFace(tile: t, size: geo.tile, paper: model.paper, mirrorAxisVertical: geo.horizontal,
+                             gateStanding: model.shade[c] == Rules.gateSource)
+                        .opacity(t == .gate ? 1 : 0.7)
+                    if shaded { ShadeMark(size: geo.tile) }
+                    if c == me { Puppet(frame: 0, facingLeft: false, rim: true).frame(width: geo.tile * 0.62, height: geo.tile * 0.84) }
+                }
+                .frame(width: geo.tile, height: geo.tile)
+                .scaleEffect(x: geo.horizontal ? 1 : -1, y: geo.horizontal ? -1 : 1)
+                .position(geo.center(Cell(rules.mirror(c.c), c.r)))
+            }
+        }
+        .frame(width: geo.pageSize.width, height: geo.pageSize.height, alignment: .topLeading)
+        .allowsHitTesting(false).accessibilityHidden(true)
+    }
+}
