@@ -878,7 +878,7 @@ private struct ChapterCard: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(L10n.t("ch.label", ["n": chapter.inVolume, "name": chapter.name]))
+        .accessibilityLabel(L10n.t("ch.label", ["n": chapter.cardNumber, "name": chapter.name]))
         .accessibilityValue([idx.isEmpty || chapter.soon ? nil : L10n.t("ch.count", ["n": n, "total": idx.count]), status].compactMap { $0 }.joined(separator: L10n.t("sep")))
         .accessibilityAddTraits(.isButton)
         .accessibilityIdentifier("chapter-\(chapter.id)")
@@ -979,7 +979,7 @@ private struct UnwrittenCard: View {
         .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(Tok.ink600.opacity(0.6), style: StrokeStyle(lineWidth: 1, dash: [4, 3])))
         .padding(.top, 70)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(chapter.nextBook ? L10n.t("map.book3") + L10n.t("sep") + chapter.name : L10n.t("ch.label", ["n": chapter.inVolume, "name": chapter.name]))
+        .accessibilityLabel(chapter.nextBook ? L10n.t("map.book3") + L10n.t("sep") + chapter.name : L10n.t("ch.label", ["n": chapter.cardNumber, "name": chapter.name]))
         .accessibilityValue(L10n.t("ch.unwritten"))
         .accessibilityIdentifier("chapter-\(chapter.id)")
     }

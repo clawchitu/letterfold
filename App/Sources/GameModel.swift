@@ -26,8 +26,11 @@ struct Chapter: Identifiable {
     }
     /// 一 … 五 through the book in Chinese and Japanese; the reader's own digits elsewhere (one language on screen at a time).
     var numeral: String { Self.numeral(id) }
-    /// 一, 二 … inside the volume (the map's cards).
-    var volumeNumeral: String { Self.numeral(inVolume) }
+    /// The number on the chapter's card: inside the volume for 卷一 / 卷二; 卷三's cards count on through the book
+    /// (九 · 滚, 十 … 十二: design-review-vol3-art §3.9, V6).
+    var cardNumber: Int { volume == 3 ? id : inVolume }
+    /// 一, 二 … on the map's cards (卷三: 九 …).
+    var volumeNumeral: String { Self.numeral(cardNumber) }
     var name: String { L10n.t("ch.\(id)") }
     /// The chapter's seal on its map card and (vol. 2) on the finale: 达 · 通 · 影 · 成 · 胶 (design-v2c1 §2 章印).
     /// Ch. 9: 「落」 (design-review-vol3-art §4, Fable: the stone settles, the letter lands on the far bank).

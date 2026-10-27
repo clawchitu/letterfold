@@ -108,6 +108,14 @@ struct SlipLayer: View {
             let w = min(max(a.page.width, minWidth), 420)
             // §2.1 caps it at the top page's height less 16; a short top page (a five-row board's 63 pt squares)
             // would shrink the small book to ~60 %, so the slip may rise past the page into the empty table above it
+            // 松石笺: the two beats stand above the text (§3.7), so it is the beats' height plus the text's
+            // and where the table above the page is too short for that its foot comes down over the bottom page (9-1's
+            // is all gaps), never cutting the text
+            if model.slipPages.contains(.roll) {
+                let h = min(RollSlipPicture.height + 24 + 10 + 200, size.height - 16)
+                let x = min(max(a.page.midX - w / 2, -margin + 8), size.width + margin - 8 - w)
+                return CGRect(x: x, y: max(8, a.crease - 8 - h), width: w, height: h)
+            }
             let h = min(MiniBook.size.height + 24, max(a.page.height - 16, a.crease - 16))
             let x = min(max(a.page.midX - w / 2, -margin + 8), size.width + margin - 8 - w)
             return CGRect(x: x, y: a.crease - 8 - h, width: w, height: h)
@@ -183,7 +191,13 @@ struct SlipView: View {
         let text = SlipText.body(id, horizontalCrease: horizontal)
         let last = page + 1 >= pages
         Group {
-            if horizontal {
+            if id == .roll {
+                // 松石笺 (design-review-vol3-art §3.7): two still beats side by side above the text, not a film
+                VStack(alignment: .leading, spacing: 10) {
+                    RollSlipPicture().frame(maxWidth: .infinity)
+                    column(text, last: last)
+                }
+            } else if horizontal {
                 HStack(alignment: .top, spacing: 14) {
                     book(paper, rotated: false)
                     column(text, last: last)

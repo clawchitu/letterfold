@@ -791,6 +791,7 @@ private struct FrontFace: View {
     /// false: taps and VoiceOver go to ProjectedTargets instead (camera book)
     var targets = true
     @Environment(\.highContrast) private var hc
+    @Environment(\.looseUpright) private var looseUpright
 
     var body: some View {
         let s = geo.spread, page = geo.pageSize
@@ -807,7 +808,8 @@ private struct FrontFace: View {
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: targets && (angle < 20 || model.posture == .standing || (model.liftedPageLive && model.rules.lit(model.angle))))
             ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .folding),
                         end: model.trail.last.flatMap { s.page(of: $0.c) == .folding ? geo.center($0) : nil })
-            if !model.puppetOnRamp && s.page(of: model.figureCell.c) == .folding { PuppetLayer(model: model, geo: geo, at: geo.center(model.figureCell)) }
+            // ch. 9: she is drawn over the upright balls instead (CameraBook, design-review-vol3-art §3.4: balls, then her)
+            if !model.puppetOnRamp && !looseUpright && s.page(of: model.figureCell.c) == .folding { PuppetLayer(model: model, geo: geo, at: geo.center(model.figureCell)) }
             if model.finaleSeal && model.finaleGlyph != "成", let g = model.goal, s.page(of: g.c) == .folding {
                 GoalSeal(model: model).position(geo.center(g)).offset(model.goalSealOffset(tile: geo.tile))
             }
@@ -1318,6 +1320,13 @@ private struct CameraBook: View {
             if model.paper.card && !showBack {
                 LooseBallsLayer(model: model, tile: geo.tile, scale: cam.k) { c in cam.project(center3D(c, fold: fold, W: W, H: H)) }
                     .frame(width: geo.bookSize.width, height: geo.bookSize.height, alignment: .topLeading)
+                // §3.4: the figure over the balls (FrontFace leaves her out under looseUpright), on the page's projection
+                if !model.puppetOnRamp && geo.spread.page(of: model.figureCell.c) == .folding {
+                    ZStack(alignment: .topLeading) { PuppetLayer(model: model, geo: geo, at: geo.center(model.figureCell)) }
+                        .frame(width: page.width, height: page.height, alignment: .topLeading)
+                        .projectionEffect(cam.transform(o: edge0 + H * fold, eu: ex, ev: -fold))
+                        .allowsHitTesting(false)
+                }
             }
             // chapter 3 leaning: what lies under the lit top page is drawn over it, veiled, only where it is covered
             // chapter 3 leaning: what lies under the lit top page is drawn over it, veiled, only where it is covered.

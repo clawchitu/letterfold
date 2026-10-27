@@ -13381,6 +13381,66 @@
         }
       }
     },
+    "slip.roll.flat": {
+      "comment": "UI. design-review-vol3-art §3.7: the roll slip's captions. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "放平"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flat again"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "平らに"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다시 펴면"
+          }
+        }
+      }
+    },
+    "slip.roll.lean": {
+      "comment": "UI. design-review-vol3-art §3.7: the roll slip's captions. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "斜起"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leaning"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "傾ける"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기울이면"
+          }
+        }
+      }
+    },
     "slip.roll.pic": {
       "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",

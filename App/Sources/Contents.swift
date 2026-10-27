@@ -175,7 +175,7 @@ struct ContentsPage: View {
         }
         .padding(.bottom, 16)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(L10n.t("ch.label", ["n": chapter.inVolume, "name": chapter.name]) + L10n.t("sep") + L10n.t("ch.count", ["n": n, "total": total]))
+        .accessibilityLabel(L10n.t("ch.label", ["n": chapter.cardNumber, "name": chapter.name]) + L10n.t("sep") + L10n.t("ch.count", ["n": n, "total": total]))
         .accessibilityAddTraits(.isHeader)
         .accessibilityIdentifier("contents.title")
         .accessibilityFocused($titleFocus)

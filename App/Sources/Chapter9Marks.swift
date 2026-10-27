@@ -310,3 +310,87 @@ struct LooseBallsLayer: View {
         .accessibilityHidden(true)
     }
 }
+
+// MARK: - the roll slip's picture (§3.7)
+
+/// 松石笺's picture (design-review-vol3-art §3.7, V4 re-laid): two beats side by side above the text, each the top page
+/// of slips.js `--G--.rS` as a 2 × 4 (columns 7 → 4 top to bottom; map row 0 left, row 1 right: all gaps, bare card),
+/// squares 30 pt, gap 3, the beats 16 apart, a 12 pt `ink.600` caption under each. 「斜起」: the page leaning (a
+/// trapezoid, top 86 %), the ball already on column 5, column 4 still a gap, her on column 7. 「放平」: flat, column 4
+/// pressed paper now, the ball gone, her on column 4 with the thread from column 7's ring (three stitches).
+struct RollSlipPicture: View {
+    @Environment(\.highContrast) private var hc
+    static let cell = 30.0, gap = 3.0, pad = 6.0
+    static var pageSize: CGSize { CGSize(width: 2 * cell + gap + 2 * pad, height: 4 * cell + 3 * gap + 2 * pad) }
+    static var height: Double { pageSize.height + 4 + 16 }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 16) {
+            beat(leaning: true, caption: L10n.t("slip.roll.lean"))
+            beat(leaning: false, caption: L10n.t("slip.roll.flat"))
+        }
+        .accessibilityHidden(true)
+        .allowsHitTesting(false)
+    }
+
+    private func beat(leaning: Bool, caption: String) -> some View {
+        VStack(spacing: 4) {
+            page(leaning: leaning)
+            Text(caption).font(.custom("Songti SC", size: 12)).foregroundStyle(hc ? Color.black : Tok.ink600)
+                .lineLimit(1).minimumScaleFactor(0.6)
+        }
+    }
+
+    /// y of the square for column `c` (7 at the top) on the page.
+    private func y(_ c: Int) -> Double { Self.pad + Double(7 - c) * (Self.cell + Self.gap) + Self.cell / 2 }
+    private var x0: Double { Self.pad + Self.cell / 2 }
+
+    /// The leaning page (LampBook's drawing): foreshortened to `lean` of its height about its crease (bottom) edge,
+    /// its far (outer, top) edge 86 % wide. A flat-page point -> the leaning page.
+    private static let lean = 0.74
+    private func lp(_ x: Double, _ y: Double, leaning: Bool) -> CGPoint {
+        guard leaning else { return CGPoint(x: x, y: y) }
+        let s = Self.pageSize, t = (s.height - y) / s.height        // 0 at the crease, 1 at the far edge
+        return CGPoint(x: s.width / 2 + (x - s.width / 2) * (1 - 0.14 * t), y: s.height - (s.height - y) * Self.lean)
+    }
+
+    private func page(leaning: Bool) -> some View {
+        let s = Self.pageSize, cell = Self.cell
+        let k = leaning ? Self.lean : 1
+        let outline = Path { p in
+            p.addLines([lp(0, 0, leaning: leaning), lp(s.width, 0, leaning: leaning), lp(s.width, s.height, leaning: leaning), lp(0, s.height, leaning: leaning)])
+            p.closeSubpath()
+        }
+        return ZStack(alignment: .topLeading) {
+            outline.fill(hc ? Color.white : PaperState.card.color)
+            outline.stroke(hc ? Color.black : Tok.edgeLower.opacity(0.5), lineWidth: hc ? 1.5 : 1)
+            ForEach([7, 6, 5, 4], id: \.self) { c in
+                if !leaning || c != 4 {
+                    let p = lp(x0, y(c), leaning: leaning), sc = 1 - 0.14 * (s.height - y(c)) / s.height
+                    square.frame(width: cell, height: cell).scaleEffect(x: leaning ? sc : 1, y: k).position(p)
+                }
+            }
+            if !leaning {
+                // the thread: the start ring on column 7, three stitches down to her on column 4
+                Path { p in p.move(to: CGPoint(x: x0, y: y(7))); p.addLine(to: CGPoint(x: x0, y: y(4))) }
+                    .stroke(hc ? Color.black : Tok.threadAged, style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [6, 4]))
+                Circle().stroke(hc ? Color.black : Tok.threadAged, lineWidth: 1.5).frame(width: 7, height: 7).position(x: x0, y: y(7))
+            }
+            // what stands on the page is drawn upright over it: the ball, then her (§3.4)
+            if leaning { LooseBall(size: cell, shadowSquash: k, hc: hc).frame(width: cell, height: cell).position(lp(x0, y(5), leaning: true)) }
+            let me = lp(x0, y(leaning ? 7 : 4), leaning: leaning)
+            figure.position(x: me.x, y: me.y - cell * 0.12)
+        }
+        .frame(width: s.width, height: s.height)
+        .shadow(color: .black.opacity(hc ? 0 : 0.10), radius: 2, y: 1)
+    }
+
+    private var figure: some View {
+        Puppet(frame: 0, facingLeft: false, rim: false).frame(width: Self.cell * 0.62, height: Self.cell * 0.84)
+    }
+
+    @ViewBuilder private var square: some View {
+        if hc { RoundedRectangle(cornerRadius: 3).fill(.white).overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(.black, lineWidth: 1.5)) }
+        else { CardPathTile(size: Self.cell) }
+    }
+}
