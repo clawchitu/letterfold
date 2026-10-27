@@ -120,7 +120,7 @@ public final class FoldGame {
         let previous = shade
         shade = rules.shadows(board, a)
         // on nothing but a shadow, or (closing) under a stone: on the bottom page, or on top-page glue facing one
-        if (!rules.isRight(char.c) && !board[char].isFloor) || rules.crushed(board, char, a) {
+        if !board[char].isFloor || rules.crushed(board, char, a) {
             if rideSrc == nil { rideSrc = previous[char] ?? shade[char] }
             if let to = rules.ride(board, char, rideSrc, a) {
                 if to.c != char.c { char = to; trail.append(to); events.append(.slid(to: to)) }

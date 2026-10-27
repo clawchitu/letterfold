@@ -36,15 +36,38 @@ public struct Rules: Sendable {
         let e = shadowOffset(c - n + 1, a)
         return e < 1 ? -1 : n - e
     }
-    /// Shadowed left-page cells -> the source stone's column. Empty unless shadeMin <= a < foldMin.
+    /// Lamp on the left bank (logic.js `shadowColumnL`): a left-page stone d cells from the hinge shades the lifted
+    /// page's cell round(d * -cos a) from the hinge — the mirror of shadowColumn; closed, the stone's mirror cell.
+    public func shadowColumnL(_ c: Int, _ a: Double) -> Int {
+        let e = shadowOffset(n - c, a)
+        return e < 1 ? -1 : n - 1 + e
+    }
+    /// The lean window (logic.js `lit`): shadows are cast and angle gates stand open.
+    public func lit(_ a: Double) -> Bool { a >= config.shadeMin && a < config.foldMin }
+    /// The `shadows` value of an open angle gate (logic.js maps it to 'A'): no stone casts it.
+    public static let gateSource = -1
+
+    /// Everything that is floor only while the page leans (logic.js `shadows`): cell -> the column of the stone that
+    /// shades it (right-page stones onto the left page under the right lamp, then left-page stones onto the facing page
+    /// under the left lamp, first come first served), then each open angle gate -> `Rules.gateSource`. Empty unless lit.
     public func shadows(_ b: Board, _ a: Double) -> [Cell: Int] {
         var out: [Cell: Int] = [:]
-        if a < config.shadeMin || a >= config.foldMin { return out }
+        if !lit(a) { return out }
+        let right = b.lamp.contains("R"), left = b.lamp.contains("L")
         for r in 0..<b.h {
-            for c in n..<(2 * n) where b[c, r].isOpaque {
-                let q = shadowColumn(c, a)
-                if q >= 0 && out[Cell(q, r)] == nil { out[Cell(q, r)] = c }
+            if right {
+                for c in n..<(2 * n) where b[c, r].isOpaque {
+                    let q = shadowColumn(c, a)
+                    if q >= 0 && out[Cell(q, r)] == nil { out[Cell(q, r)] = c }
+                }
             }
+            if left {
+                for c in stride(from: n - 1, through: 0, by: -1) where b[c, r].isOpaque {
+                    let q = shadowColumnL(c, a)
+                    if q >= 0 && out[Cell(q, r)] == nil { out[Cell(q, r)] = c }
+                }
+            }
+            for c in 0..<(2 * n) where b[c, r] == .gate && out[Cell(c, r)] == nil { out[Cell(c, r)] = Rules.gateSource }
         }
         return out
     }
@@ -117,12 +140,12 @@ public struct Rules: Sendable {
             if foldOpen(b, q, r) { return nil }
             if R == .stone || (L == .stone && !R.isFloor) { return .stone }
             if L == .stone { return .card }
-            if L == .door || R == .door { return .door }
+            if L == .door || R == .door || L == .gate || R == .gate { return .door }
             return .gap
         }
         let t = b[c, r]
         if t == .stone { return .stone }
-        if t == .door { return .door }
+        if t == .door || (t == .gate && sh[Cell(c, r)] == nil) { return .door }
         if t.isFloor || sh[Cell(c, r)] != nil { return nil }
         return .gap
     }
@@ -163,11 +186,14 @@ public struct Rules: Sendable {
     }
 
     /// Standing on nothing but a shadow? The shadow carries the character. nil means it falls (or is crushed).
+    /// On an angle gate the figure stays while the lean lasts and falls when it ends (the flap lies down). The formula
+    /// follows the page the source stone is on (ch. 8: left-page stones shade the lifted page).
     public func ride(_ b: Board, _ from: Cell, _ src: Int?, _ a: Double) -> Cell? {
         if crushed(b, from, a) { return nil }
         if b[from].isFloor { return from }
-        guard let src else { return nil }
-        let q = shadowColumn(src, a)
+        if b[from] == .gate { return lit(a) ? from : nil }
+        guard let src, src != Rules.gateSource else { return nil }
+        let q = isRight(src) ? shadowColumn(src, a) : shadowColumnL(src, a)
         if q < 0 || a >= config.foldMin || b[q, from.r].isBlock { return nil }
         return Cell(q, from.r)
     }
