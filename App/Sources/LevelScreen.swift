@@ -108,6 +108,9 @@ struct LevelScreen: View {
                         .animation(.easeInOut(duration: 0.2), value: model.canShowFlip)
                 }
             }
+            // the footer keeps the 下一封 knot's height (52) before the win too, so the knot appearing never lifts the
+            // board (b19: it moved every square up 26 pt on two-page levels)
+            .frame(minHeight: 52, alignment: .bottom)
             .padding(.bottom, 6)
         }
         .background(TableBackground().contentShape(Rectangle()).onTapGesture { model.tuckSlip() })
