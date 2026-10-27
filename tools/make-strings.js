@@ -167,7 +167,8 @@ const NATIVE = {
   // 0.1 (16): chapter 6 「翻」 (fold-proto design-ch6.md): the turn's VoiceOver action / hint, the carry message at the
   // final position (playtest-ch6 §2 #6), skinned kinds (ch. 6 reuses ch. 5's 信笺 objects). ja / ko: TODO-native-check.
   'ch.6': ['翻', 'Turn', 'めくる', '넘김'],
-  carried: ['影子把你从第{from}列带到第{to}列（你现在在这里）', 'The shadow carried you from column {from} to column {to} (you are there now)', '影がきみを{from}列目から{to}列目へ運んだ（いまはそこにいる）', '그림자가 당신을 {from}열에서 {to}열로 옮겼어요(지금 거기 있어요)'],
+  // 0.1 (22): renamed from `carried` — fold-proto ch. 10 uses `carried` for the crane (「鹤带你飞到了{col}」)
+  shadowCarried: ['影子把你从第{from}列带到第{to}列（你现在在这里）', 'The shadow carried you from column {from} to column {to} (you are there now)', '影がきみを{from}列目から{to}列目へ運んだ（いまはそこにいる）', '그림자가 당신을 {from}열에서 {to}열로 옮겼어요(지금 거기 있어요)'],
   // the next chapter, not yet written (map card)
   'ch.7': ['墨晕', 'Bleed', '滲み', '번짐'],
   'ch.8': ['灯位', 'The Lamp', '灯', '등불'],
@@ -225,7 +226,7 @@ function catalog(entries) {
 
 // 0.1 (16): ch. 6 strings fold-proto has only in zh / en (or in an older form) for ja / ko. Marked TODO-native-check in
 // the catalog comments until a native speaker has read them.
-const CH6_NATIVE = ['ch.6', 'ch.7', 'ch.8', 'ch.9', 'ch.10', 'ch.11', 'ch.12', 'vol.3', 'map.toBook3', 'map.vol3Back', 'map.vol2BackLabel', 'gate.state.open', 'gate.state.down', 'map.book3', 'kind.A', 'noun.A', 'kind.I', 'noun.I', 'kind.i.ch7', 'carried', 'flip.action', 'flip.hint', 'restart', 'restartLabel', 'restartHint', 'restarted'];
+const CH6_NATIVE = ['ch.6', 'ch.7', 'ch.8', 'ch.9', 'ch.10', 'ch.11', 'ch.12', 'vol.3', 'map.toBook3', 'map.vol3Back', 'map.vol2BackLabel', 'gate.state.open', 'gate.state.down', 'map.book3', 'kind.A', 'noun.A', 'kind.I', 'noun.I', 'kind.i.ch7', 'shadowCarried', 'flip.action', 'flip.hint', 'restart', 'restartLabel', 'restartHint', 'restarted'];
 const STRING_FIX = {
   ja: {
     'chHead.6': '六 · めくる',
@@ -257,7 +258,11 @@ const CH8_DRAFTS = ['ch.8.line', 'chHead.8', 'paper.ch8', 'pre.lamp', 'gate', 'g
 // 0.1 (21): ch. 9 「滚」 strings — fold-proto 42c5c62 has zh / en final and ja / ko drafts (design-ch9.md §4–5, TODO review there).
 const CH9_DRAFTS = ['ch.9.line', 'chHead.9', 'paper.ch9', 'pre.roll', 'kind.r', 'noun.r', 'rolled', 'rolledIn', 'rollHeld',
   'letter.9.title', 'letter.9.body', 'letter.9.sign', 'letter.9.end', 'letter.8.end', 'slip.roll.title', 'slip.roll.body', 'slip.roll.pic'];
-const CHECKED = new Set(['help', ...Object.keys(STRING_FIX.ja), ...Object.keys(STRING_FIX.ko), ...CH7_DRAFTS, ...CH8_DRAFTS, ...CH9_DRAFTS]);
+// 0.1 (22): ch. 10 「鹤」 strings — fold-proto 350e9f5 has zh / en final and ja / ko drafts (design-ch10.md §4–5, TODO review there).
+const CH10_DRAFTS = ['ch.10.line', 'chHead.10', 'paper.ch10', 'pre.crane', 'kind.h', 'noun.h', 'carried', 'craneFlew', 'craneStuck',
+  'craneSoaked', 'craneGlued', 'letter.10.title', 'letter.10.body', 'letter.10.sign', 'letter.10.end', 'letter.9.end',
+  'slip.crane.title', 'slip.crane.body', 'slip.crane.pic'];
+const CHECKED = new Set(['help', ...Object.keys(STRING_FIX.ja), ...Object.keys(STRING_FIX.ko), ...CH7_DRAFTS, ...CH8_DRAFTS, ...CH9_DRAFTS, ...CH10_DRAFTS]);
 for (const [l, table] of Object.entries(STRING_FIX)) Object.assign(src.strings[l], table);
 for (const [l, [from, to]] of Object.entries(HELP_ADD)) {
   if (!src.strings[l].help.includes(to)) src.strings[l].help = src.strings[l].help.replace(from, to);
@@ -430,7 +435,8 @@ const oldText = (id, l) => ['name', 'line', 'hint', 'hint1'].map((part) => oldLe
 for (const id of LEVEL_KEEP) if (oldLevels[`${id}.name`]) for (const l of Object.keys(LANG)) src.levelTexts[l][id] = oldText(id, l);
 // 0.1 (21): ch. 9 「滚」 likewise (design-ch9.md §3)
 const LEVEL_CH9 = ['roll', 'twice', 'jump', 'hold', 'late', 'order', 'settle'];
-const LEVEL_CHECKED = new Set([...Object.keys(LEVEL_CH6.ja), ...Object.keys(LEVEL_V17.ja), ...LEVEL_CH7, ...LEVEL_CH8, ...LEVEL_CH9]);
+const LEVEL_CH10 = ['crane', 'land', 'cross', 'ground', 'soak', 'over'];   // 0.1 (22): ch. 10 「鹤」, ja / ko drafts
+const LEVEL_CHECKED = new Set([...Object.keys(LEVEL_CH6.ja), ...Object.keys(LEVEL_V17.ja), ...LEVEL_CH7, ...LEVEL_CH8, ...LEVEL_CH9, ...LEVEL_CH10]);
 
 for (const id of Object.keys(src.levelTexts.en).filter((x) => !LEVEL_CUT.has(x))) {
   // an optional 4th entry: the first rung of the 「?」 ladder (design-review-v2c1 §2), shown before the hint

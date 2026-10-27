@@ -33,8 +33,9 @@ struct Chapter: Identifiable {
     var volumeNumeral: String { Self.numeral(cardNumber) }
     var name: String { L10n.t("ch.\(id)") }
     /// The chapter's seal on its map card and (vol. 2) on the finale: 达 · 通 · 影 · 成 · 胶 (design-v2c1 §2 章印).
+    /// Ch. 10: 「载」 (design-review-ch10-art §2.7: what carried you across; 渡 is two level names).
     /// Ch. 9: 「落」 (design-review-vol3-art §4, Fable: the stone settles, the letter lands on the far bank).
-    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "灯", "落"][min(8, id - 1)] }
+    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "灯", "落", "载"][min(9, id - 1)] }
     static func volumeChapters(_ v: Int) -> [Chapter] { all.filter { $0.volume == v } }
 
     static let all: [Chapter] = [
@@ -63,7 +64,8 @@ struct Chapter: Identifiable {
         // 卷三《倾》 chapter 1 「滚」 (fold-proto design-ch9.md): the loose stone; opens once chapter 8 is all delivered
         Chapter(id: 9, levelIDs: ["roll", "twice", "jump", "hold", "late", "order", "settle"], unlocked: true, soon: false),
         // 卷三's next three chapters are not written yet: dashed 「未写」 cards (design-review-vol3-art §2.7)
-        Chapter(id: 10, levelIDs: [], unlocked: false, soon: true),
+        // 卷三 chapter 2 「鹤」 (fold-proto design-ch10.md): the paper crane; opens once chapter 9 is all delivered
+        Chapter(id: 10, levelIDs: ["crane", "land", "cross", "ground", "soak", "over"], unlocked: true, soon: false),
         Chapter(id: 11, levelIDs: [], unlocked: false, soon: true),
         Chapter(id: 12, levelIDs: [], unlocked: false, soon: true),
     ]
@@ -248,6 +250,16 @@ final class GameModel {
     private(set) var inkPrintedAt: [Cell: Date] = [:]
     /// Ch. 7 「墨晕」: the squares wet ink bled onto at the last press, and when (the ring grows out of its neighbour).
     private(set) var inkBledAt: [Cell: Date] = [:]
+    /// Ch. 10 「鹤」: the last press's crane effects by square — hop, soak, glue, shrug, ghost (Chapter10Marks.swift).
+    var craneFX: [Cell: CraneFX] = [:]
+    @ObservationIgnored var craneFXTask: Task<Void, Never>?
+    @ObservationIgnored var craneGhostTask: Task<Void, Never>?
+    @ObservationIgnored var craneFlewThisPress = false
+    @ObservationIgnored var craneShrugThisPress = false
+    /// A crane could not fly at the last close: `craneStuck` goes into that close's announcement.
+    @ObservationIgnored var craneStuckToSay = false
+    /// The landing the crane she stood on carried her to at the last press (said in its announcement).
+    @ObservationIgnored var craneCarriedTo: Cell?
     /// glue.pull (design-review-v2c1 §3): stones flying across the crease to the glue that took them, the faint mark
     /// each leaves where it was, and the glue square's flash. Times are CACurrentMediaTime().
     struct GluePull: Equatable { var from: Cell; var to: Cell; var start: Double }
@@ -372,7 +384,7 @@ final class GameModel {
     /// -cameraPitch <deg> (screenshots), -probe YES (UI tests: the drag's edge probe).
     static func launch() -> GameModel {
         let d = UserDefaults.standard
-        if d.bool(forKey: "resetProgress") { SavedProgress.resetAll(d); for k in [ruleBlockedKey, ruleUnderKey, layerRuleKey, shadowPaperKey] { d.removeObject(forKey: k) }; for k in 2...9 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
+        if d.bool(forKey: "resetProgress") { SavedProgress.resetAll(d); for k in [ruleBlockedKey, ruleUnderKey, layerRuleKey, shadowPaperKey] { d.removeObject(forKey: k) }; for k in 2...10 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
         var pack = try! LevelPack.bundled()
         let start = d.integer(forKey: "startLevel")
         // -levelMap "row|row|…" (UI tests only; gaps written "_", as a value starting with "-" would read as a flag): play the -startLevel level on another board, so a rule's regression test
@@ -539,7 +551,7 @@ final class GameModel {
     private func orderedSlips(_ ids: [SlipID]) -> [SlipID] {
         let start = game.board.start
         func distance(_ id: SlipID) -> Int {
-            let tile: Tile? = switch id { case .stone, .press: .stone; case .door: .door; case .ink: .ink; case .tab: .tab; case .glue: .glue; case .wet: .wetInk; case .gate: .gate; case .roll: .loose; default: nil }
+            let tile: Tile? = switch id { case .stone, .press: .stone; case .door: .door; case .ink: .ink; case .tab: .tab; case .glue: .glue; case .wet: .wetInk; case .gate: .gate; case .roll: .loose; case .crane: .crane; default: nil }
             guard let tile else { return .max }
             var best = Int.max
             for r in 0..<board.h { for c in 0..<board.w where board[c, r] == tile {
@@ -718,7 +730,7 @@ final class GameModel {
     private func clearTransient() {
         cancelFlip()
         quiet = false; dragging = false; angleHint = false; walking = false
-        threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]; inkBledAt = [:]
+        threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]; inkBledAt = [:]; clearCraneFX()
         pending = Pending(); nopes = 0
         rollFlight = nil; fillRings = [:]   // a roll belongs to the board it happened on (Codex review 21 #1)
         toastTask?.cancel(); toastTask = nil; toast = nil
@@ -1488,6 +1500,7 @@ final class GameModel {
 
     func undo() {
         tuckSlip()
+        clearCraneFX()
         if aha { finishAhaNow(); return }
         if won { return }
         stopAll()
@@ -1523,10 +1536,13 @@ final class GameModel {
         var here = figure ?? char
         var pulled: [(Cell, Cell)] = []
         defer { if !pulled.isEmpty { startGlue(pulled) } }
+        // ch. 10: the crane moves last — after the ink, the doors and the glue of the same press (T_c 560, else 340)
+        var inkFirst = false, closedNow = false, cranePress = false, landed: Set<Cell> = []
         for e in events {
             switch e {
-            case .postureChanged(_, let to):
+            case .postureChanged(let was, let to):
                 pending.mode = true
+                if to == .closed { closedNow = true } else if was == .closed { noteCraneOpened() }
                 if to == .closed && !game.won {
                     // three-page books: how the layers work, once (playtest-ch6 §2 #1); else the gap rule
                     if board.pages > 2 && teachRule(Self.layerRuleKey, "layerRule") {} else { teachUnderOnClose() }
@@ -1551,6 +1567,11 @@ final class GameModel {
                     sound.blot()
                 }
                 if s.kind == .glue, s.cells.count == 2 { pulled.append((s.cells[0], s.cells[1])) }
+                if s.kind == .crane {
+                    if !cranePress { beginCranePress(); cranePress = true }
+                    if let to = s.to { landed.insert(to) }
+                    noteCrane(s, inkFirst: inkFirst, carrying: s.cells[0] == here)
+                } else { inkFirst = true }
             case .connected:
                 pending.connected = true; pending.lost = false
                 haptics.connect()
@@ -1594,11 +1615,18 @@ final class GameModel {
                 // a vol. 2 dead end: 「有的路断了」, the falling two-note, a warning tap; undo and restart still work
                 pending.dead = true
                 sound.lost(); haptics.warning()
+            case .carried(let to):   // vol. 3 ch. 10: the crane she stood on flew, with her (Chapter10Marks.swift)
+                here = to
+                noteCarried(to)
             case .rolled(let rolls):   // vol. 3 ch. 9: drawn by LooseBallsLayer, announced and felt here (Chapter9Marks.swift)
                 noteRolled(rolls)
             case .won:
                 win()
             }
+        }
+        if closedNow && board.first(.crane) != nil {
+            if !cranePress { beginCranePress() }
+            noteCranesStuck(landed: landed, inkFirst: inkFirst)
         }
     }
 
@@ -1790,7 +1818,7 @@ final class GameModel {
         parts += stampWords(p.stamps)
         // a ridden shadow: where it took her, said once at the end of the ride (playtest-ch6 §2 #6)
         if let c0 = p.carryFrom, c0.c != char.c {
-            let text = L10n.t("carried", ["from": c0.c + 1, "to": char.c + 1, "pos": pos(char)])
+            let text = L10n.t("shadowCarried", ["from": c0.c + 1, "to": char.c + 1, "pos": pos(char)])
             show(text, speak: false); parts.append(text)
         }
         if p.shade {
@@ -1899,6 +1927,7 @@ final class GameModel {
     /// What a press did, in words (VoiceOver): 「胶把石头粘到了对页」 is said by the caller; here the wet ink's ring once
     /// (ch. 7 `inkBled`), each door, each dry print, and the wet prints once (a ring prints several squares at a time).
     func stampWords(_ stamps: [Rules.Stamp]) -> [String] {
+        defer { craneCarriedTo = nil }
         var out: [String] = []
         if stamps.contains(where: { $0.kind == .bleed }) { out.append(L10n.t("inkBled")) }
         var wetSaid = false
@@ -1907,10 +1936,11 @@ final class GameModel {
             case .door: out.append(L10n.t("doorOpened"))
             case .ink where s.wet: if !wetSaid { out.append(L10n.t("inkPrinted")); wetSaid = true }
             case .ink: out.append(L10n.t("inkPrinted"))
+            case .crane: out.append(craneWords(s))   // ch. 10 (Chapter10Marks.swift)
             case .glue, .bleed: break
             }
         }
-        return out
+        return out + craneStuckWords()
     }
     /// When the wet ink reached this square at the last press (the bleed ring), for its grow-in.
     func bledAt(_ c: Cell) -> Date? { inkBledAt[c] }

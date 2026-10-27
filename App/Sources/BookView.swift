@@ -529,7 +529,8 @@ private struct TileItem: View {
         let shaded = model.shade[c] != nil && !t.isFloor && t != .gate
         let face = TileFace(tile: t, size: geo.tile, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
                             mirrorAxisVertical: geo.horizontal, printedAt: model.inkPrintedAt[c], figureShift: model.meetShift(c, geo.tile),
-                            inkVariant: model.inkVariant(c), bledAt: model.bledAt(c), gateStanding: Rules.gateStands(model.shade, c))
+                            inkVariant: model.inkVariant(c), bledAt: model.bledAt(c), gateStanding: Rules.gateStands(model.shade, c),
+                            craneFX: model.craneFX[c])
         let r = RoundedRectangle(cornerRadius: 3, style: .continuous)
         ZStack {
             face
@@ -657,15 +658,16 @@ private struct PuppetLayer: View {
         // standing on wet ink, the black figure gets a paper rim so it does not vanish into the blot
         // and on a shadow it gets the backlit rim: the figure is only 2.76:1 on #6E604E (design-ch3 §5)
         let me = model.figureCell
+        let onCrane = model.board[me] == .crane
         let onInk = model.board[me] == .ink || model.board[me] == .wetInk || (model.shade[me] != nil && !model.board[me].isFloor)
         Group {
             if model.walking && !AppSettings.shared.motionReduced {
                 // the two walking frames only tick while walking (no idle redraws)
                 TimelineView(.periodic(from: .now, by: 0.24)) { ctx in
-                    Puppet(frame: Int(ctx.date.timeIntervalSinceReferenceDate / 0.24) % 2, facingLeft: facingLeft, rim: onInk)
+                    Puppet(frame: Int(ctx.date.timeIntervalSinceReferenceDate / 0.24) % 2, facingLeft: facingLeft, rim: onInk, hcRim: onCrane)
                 }
             } else {
-                Puppet(frame: 0, facingLeft: facingLeft, rim: onInk)
+                Puppet(frame: 0, facingLeft: facingLeft, rim: onInk, hcRim: onCrane)
             }
         }
         .frame(width: geo.tile * 0.62, height: geo.tile * 0.84)
@@ -673,6 +675,8 @@ private struct PuppetLayer: View {
         .scaleEffect(x: 1 + 0.5 * model.squash, y: 1 - 0.86 * model.squash, anchor: .bottom)
         // in her square (4-6) the two stand side by side: his cane and her bun both show (design-ch4 §4)
         .position(x: at.x - model.meetShift(model.figureCell, geo.tile), y: at.y - geo.tile * 0.12)
+        // ch. 10: carried, she rides the crane's hop (design-review-ch10-art §3.4)
+        .modifier(CraneCarry(fx: model.craneFX[model.figureCell], size: geo.tile))
         .allowsHitTesting(false)
         // the UI tests' probe sees the drawn figure (VoiceOver never does: the square says 「你在这里」)
         .modifier(FigureProbe())
@@ -1012,10 +1016,10 @@ private struct StackTile: View {
     }
 
     @ViewBuilder private func glyph(_ t: Tile, cell c: Cell) -> some View {
-        if t != .empty && t != .stone && t != .paper {
+        if (t != .empty && t != .stone && t != .paper) || (t == .paper && model.craneFX[c] != nil) {
             TileFace(tile: t, size: size, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
                      mirrorAxisVertical: flipVertical, printedAt: model.inkPrintedAt[c], bare: true, figureShift: model.meetShift(c, size),
-                     inkVariant: model.inkVariant(c), bledAt: model.bledAt(c))
+                     inkVariant: model.inkVariant(c), bledAt: model.bledAt(c), craneFX: model.craneFX[c])
                 .frame(width: size, height: size)
         }
     }

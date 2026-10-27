@@ -30,7 +30,9 @@ final class ParTests: XCTestCase {
         // vol. 2 chapter 8 「灯位」 (fold-proto design-ch8.md; 8-5 was cut; 8-1 is `leftLamp`: the proto reuses 3-6's `lamp`)
         XCTAssertEqual(Array(ids[48..<54]), ["leftLamp", "lift", "banks", "gate", "taken", "twolamps"])
         // vol. 3 chapter 9 「滚」 (fold-proto design-ch9.md)
-        XCTAssertEqual(Array(ids[54...]), ["roll", "twice", "jump", "hold", "late", "order", "settle"])
+        XCTAssertEqual(Array(ids[54..<61]), ["roll", "twice", "jump", "hold", "late", "order", "settle"])
+        // vol. 3 chapter 10 「鹤」 (fold-proto design-ch10.md)
+        XCTAssertEqual(Array(ids[61...]), ["crane", "land", "cross", "ground", "soak", "over"])
         XCTAssertEqual(Array(ids[25..<35]), ["glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps",
                                        "darkBack", "darkDoor", "darkInk"])
     }

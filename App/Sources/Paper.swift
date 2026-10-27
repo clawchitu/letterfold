@@ -112,6 +112,8 @@ struct TileFace: View {
     var bledAt: Date? = nil
     /// Ch. 8: an angle gate stands (the page leans: it is floor) or lies down (Chapter8Marks.swift).
     var gateStanding = false
+    /// Ch. 10: what a crane did on this square at the last press — hop, soak, glue, shrug, ghost (Chapter10Marks.swift).
+    var craneFX: CraneFX? = nil
     /// The gate's crease-side edge is the top of this drawing (the lifted page seen from behind)
     var gateCreaseAtTop = false
     @Environment(\.highContrast) private var hc
@@ -122,6 +124,14 @@ struct TileFace: View {
     @Environment(\.looseUpright) private var looseUpright
 
     var body: some View {
+        if let fx = craneFX, tile != .crane {
+            ZStack { face; CraneFXOverlay(fx: fx, size: size, hc: hc, bare: bare) }
+        } else {
+            face
+        }
+    }
+
+    @ViewBuilder private var face: some View {
         switch tile {
         case .empty: EmptyView()
         case .paper: if !bare { PathTile(size: size, paper: paper) }
@@ -150,6 +160,12 @@ struct TileFace: View {
             ZStack {
                 if !bare { PathTile(size: size, paper: paper) }
                 if !looseUpright { LooseBall(size: size, hc: hc) }
+            }
+        // ch. 10 「鹤」 (Chapter10Marks.swift): a paper crane folded on a path square
+        case .crane:
+            ZStack {
+                if !bare { PathTile(size: size, paper: paper) }
+                CraneGlyph(size: size, hc: hc, fx: craneFX)
             }
         case .key: SkinKeyGlyph(size: size, ring: paper.thread)
         case .door: ZStack { if !bare { PathTile(size: size, paper: paper) }; SkinDoor(open: false, size: size) }
@@ -639,9 +655,16 @@ struct Puppet: View {
     var facingLeft = false
     /// A paper-coloured rim, for standing on wet ink.
     var rim = false
+    /// High contrast, standing on a paper crane: a 2 pt white outline so the crane's black lines never run through her
+    /// (design-review-ch10-art §3.7).
+    var hcRim = false
     @Environment(\.highContrast) private var hc
     var body: some View {
         ZStack {
+            if hc && hcRim {
+                PuppetShape(frame: frame).stroke(.white, style: StrokeStyle(lineWidth: 4, lineJoin: .round))
+                PuppetCane(frame: frame).stroke(.white, style: StrokeStyle(lineWidth: 6.2, lineCap: .round))
+            }
             if rim && !hc {
                 PuppetShape(frame: frame).stroke(Tok.paperNew, style: StrokeStyle(lineWidth: 3, lineJoin: .round))
                 PuppetCane(frame: frame).stroke(Tok.paperNew, style: StrokeStyle(lineWidth: 4.5, lineCap: .round))

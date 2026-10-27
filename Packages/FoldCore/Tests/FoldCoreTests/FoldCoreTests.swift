@@ -8,7 +8,7 @@ final class SolverTests: XCTestCase {
     override func setUpWithError() throws { pack = try LevelPack.bundled() }
 
     func testPackDecodes() throws {
-        XCTAssertEqual(pack.levels.count, 61)
+        XCTAssertEqual(pack.levels.count, 67)
         XCTAssertEqual(pack.levels.filter(\.isOptional).map(\.id), ["darkBack", "darkDoor", "darkInk"])
         XCTAssertEqual(pack.config, .standard)
         for lv in pack.levels { XCTAssertNoThrow(try Board(level: lv), lv.id) }
@@ -125,7 +125,8 @@ final class DifficultyTests: XCTestCase {
                         6, 6, 10, 17, 17, 18, 20, 20, 19, 22, 6, 9, 16, 16, 18, 19, 18,
                         4, 8, 14, 18, 17, 18,
                         3, 8, 12, 11, 18, 19,
-                        4, 7, 14, 13, 15, 19, 21])
+                        4, 7, 14, 13, 15, 19, 21,
+                        5, 6, 16, 18, 19, 19])
         let vol1 = pack.levels.prefix(25).compactMap(\.len)
         XCTAssertGreaterThanOrEqual(Double(vol1.reduce(0, +)) / Double(vol1.count), 15)
         for range in [0..<5, 5..<13, 13..<19, 19..<25, 25..<32, 35..<42, 42..<48, 48..<54, 54..<61] {

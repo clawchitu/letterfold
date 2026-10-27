@@ -978,7 +978,10 @@ private struct UnwrittenCard: View {
         HStack(alignment: .top, spacing: 8) {
             // 卷三's card names the book, not a chapter number (0.1 (20))
             Text(chapter.nextBook ? L10n.t("map.book3") : chapter.volumeNumeral).font(fonts.songti(.bold, chapter.nextBook ? 20 : 24, relativeTo: .title)).foregroundStyle(Tok.ink700)
-            Text(chapter.name).font(fonts.songti(.semibold, 15, relativeTo: .headline)).foregroundStyle(Tok.ink700).padding(.top, 5)
+            // an unwritten 卷三 chapter has no name yet: it is named when it is written (design-review-ch10-art §2.8 ①)
+            if chapter.nextBook || chapter.volume < 3 {
+                Text(chapter.name).font(fonts.songti(.semibold, 15, relativeTo: .headline)).foregroundStyle(Tok.ink700).padding(.top, 5)
+            }
             Spacer(minLength: 0)
         }
         .padding(.horizontal, 14).padding(.top, 14).padding(.bottom, 44)
@@ -986,7 +989,9 @@ private struct UnwrittenCard: View {
         .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(Tok.ink600.opacity(0.6), style: StrokeStyle(lineWidth: 1, dash: [4, 3])))
         .padding(.top, 70)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(chapter.nextBook ? L10n.t("map.book3") + L10n.t("sep") + chapter.name : L10n.t("ch.label", ["n": chapter.cardNumber, "name": chapter.name]))
+        .accessibilityLabel(chapter.nextBook ? L10n.t("map.book3") + L10n.t("sep") + chapter.name
+                            : chapter.volume >= 3 ? L10n.t("ch.number", ["n": chapter.cardNumber])
+                            : L10n.t("ch.label", ["n": chapter.cardNumber, "name": chapter.name]))
         .accessibilityValue(L10n.t("ch.unwritten"))
         .accessibilityIdentifier("chapter-\(chapter.id)")
     }
