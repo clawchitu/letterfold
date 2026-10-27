@@ -250,6 +250,8 @@ final class GameModel {
     private(set) var inkPrintedAt: [Cell: Date] = [:]
     /// Ch. 7 「墨晕」: the squares wet ink bled onto at the last press, and when (the ring grows out of its neighbour).
     private(set) var inkBledAt: [Cell: Date] = [:]
+    /// Ch. 10 「鹤」: where a crane landed at the last press, and when (its square flashes, Chapter10Marks.swift).
+    var craneLandedAt: [Cell: Date] = [:]
     /// glue.pull (design-review-v2c1 §3): stones flying across the crease to the glue that took them, the faint mark
     /// each leaves where it was, and the glue square's flash. Times are CACurrentMediaTime().
     struct GluePull: Equatable { var from: Cell; var to: Cell; var start: Double }
@@ -541,7 +543,7 @@ final class GameModel {
     private func orderedSlips(_ ids: [SlipID]) -> [SlipID] {
         let start = game.board.start
         func distance(_ id: SlipID) -> Int {
-            let tile: Tile? = switch id { case .stone, .press: .stone; case .door: .door; case .ink: .ink; case .tab: .tab; case .glue: .glue; case .wet: .wetInk; case .gate: .gate; case .roll: .loose; default: nil }
+            let tile: Tile? = switch id { case .stone, .press: .stone; case .door: .door; case .ink: .ink; case .tab: .tab; case .glue: .glue; case .wet: .wetInk; case .gate: .gate; case .roll: .loose; case .crane: .crane; default: nil }
             guard let tile else { return .max }
             var best = Int.max
             for r in 0..<board.h { for c in 0..<board.w where board[c, r] == tile {
@@ -720,7 +722,7 @@ final class GameModel {
     private func clearTransient() {
         cancelFlip()
         quiet = false; dragging = false; angleHint = false; walking = false
-        threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]; inkBledAt = [:]
+        threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]; inkBledAt = [:]; craneLandedAt = [:]
         pending = Pending(); nopes = 0
         rollFlight = nil; fillRings = [:]   // a roll belongs to the board it happened on (Codex review 21 #1)
         toastTask?.cancel(); toastTask = nil; toast = nil
@@ -1553,6 +1555,7 @@ final class GameModel {
                     sound.blot()
                 }
                 if s.kind == .glue, s.cells.count == 2 { pulled.append((s.cells[0], s.cells[1])) }
+                if s.kind == .crane { noteCraneFlew(s) }
             case .connected:
                 pending.connected = true; pending.lost = false
                 haptics.connect()
@@ -1596,6 +1599,9 @@ final class GameModel {
                 // a vol. 2 dead end: 「有的路断了」, the falling two-note, a warning tap; undo and restart still work
                 pending.dead = true
                 sound.lost(); haptics.warning()
+            case .carried(let to):   // vol. 3 ch. 10: the crane she stood on flew, with her (Chapter10Marks.swift)
+                here = to
+                noteCarried(to)
             case .rolled(let rolls):   // vol. 3 ch. 9: drawn by LooseBallsLayer, announced and felt here (Chapter9Marks.swift)
                 noteRolled(rolls)
             case .won:
@@ -1909,6 +1915,7 @@ final class GameModel {
             case .door: out.append(L10n.t("doorOpened"))
             case .ink where s.wet: if !wetSaid { out.append(L10n.t("inkPrinted")); wetSaid = true }
             case .ink: out.append(L10n.t("inkPrinted"))
+            case .crane: out.append(craneWords(s))   // ch. 10 (Chapter10Marks.swift)
             case .glue, .bleed: break
             }
         }

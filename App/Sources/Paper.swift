@@ -112,6 +112,8 @@ struct TileFace: View {
     var bledAt: Date? = nil
     /// Ch. 8: an angle gate stands (the page leans: it is floor) or lies down (Chapter8Marks.swift).
     var gateStanding = false
+    /// Ch. 10: when a crane landed on this square at the last press (it flashes once, Chapter10Marks.swift).
+    var craneLandedAt: Date? = nil
     /// The gate's crease-side edge is the top of this drawing (the lifted page seen from behind)
     var gateCreaseAtTop = false
     @Environment(\.highContrast) private var hc
@@ -150,6 +152,12 @@ struct TileFace: View {
             ZStack {
                 if !bare { PathTile(size: size, paper: paper) }
                 if !looseUpright { LooseBall(size: size, hc: hc) }
+            }
+        // ch. 10 「鹤」 (Chapter10Marks.swift): a paper crane folded on a path square
+        case .crane:
+            ZStack {
+                if !bare { PathTile(size: size, paper: paper) }
+                CraneGlyph(size: size, hc: hc, landedAt: craneLandedAt)
             }
         case .key: SkinKeyGlyph(size: size, ring: paper.thread)
         case .door: ZStack { if !bare { PathTile(size: size, paper: paper) }; SkinDoor(open: false, size: size) }

@@ -529,7 +529,8 @@ private struct TileItem: View {
         let shaded = model.shade[c] != nil && !t.isFloor && t != .gate
         let face = TileFace(tile: t, size: geo.tile, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
                             mirrorAxisVertical: geo.horizontal, printedAt: model.inkPrintedAt[c], figureShift: model.meetShift(c, geo.tile),
-                            inkVariant: model.inkVariant(c), bledAt: model.bledAt(c), gateStanding: Rules.gateStands(model.shade, c))
+                            inkVariant: model.inkVariant(c), bledAt: model.bledAt(c), gateStanding: Rules.gateStands(model.shade, c),
+                            craneLandedAt: model.craneLandedAt[c])
         let r = RoundedRectangle(cornerRadius: 3, style: .continuous)
         ZStack {
             face
@@ -1015,7 +1016,7 @@ private struct StackTile: View {
         if t != .empty && t != .stone && t != .paper {
             TileFace(tile: t, size: size, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
                      mirrorAxisVertical: flipVertical, printedAt: model.inkPrintedAt[c], bare: true, figureShift: model.meetShift(c, size),
-                     inkVariant: model.inkVariant(c), bledAt: model.bledAt(c))
+                     inkVariant: model.inkVariant(c), bledAt: model.bledAt(c), craneLandedAt: model.craneLandedAt[c])
                 .frame(width: size, height: size)
         }
     }
