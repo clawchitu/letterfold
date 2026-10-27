@@ -705,7 +705,7 @@ private struct ThreadLayer: View {
     let end: CGPoint?
     var body: some View {
         let drawn = Double(model.trail.count - 1) * model.threadProgress
-        ThreadView(pieces: pieces, drawn: drawn, color: model.paper.thread, endKnot: model.won && model.threadProgress >= 1 ? end : nil)
+        ThreadView(pieces: pieces, drawn: drawn, color: model.paper.thread, liveFrom: model.threadLiveFrom, endKnot: model.won && model.threadProgress >= 1 ? end : nil)
             .animation(AppSettings.shared.motionReduced ? nil : .easeInOut(duration: 0.24), value: model.trail.count)
     }
 }

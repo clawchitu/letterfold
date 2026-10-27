@@ -765,19 +765,25 @@ struct ThreadView: View {
     let pieces: [ThreadPiece]
     let drawn: Double
     var color: Color = Tok.thread
+    /// Steps before this are the old thread (before the last close): 2pt, 5 / 5, 40% colour, no shadow — old
+    /// stitches. High contrast never ages it.
+    var liveFrom: Int = 0
     var endKnot: CGPoint? = nil
     @Environment(\.highContrast) private var hc
 
     var body: some View {
         let shape = ThreadShape(pieces: pieces, drawn: drawn)
+        let old = ThreadShape(pieces: pieces.filter { $0.step < liveFrom }, drawn: drawn)
+        let live = ThreadShape(pieces: pieces.filter { $0.step >= liveFrom }, drawn: drawn)
         ZStack {
             if hc {
                 shape.stroke(.white, style: StrokeStyle(lineWidth: 8, lineCap: .round))
                 shape.stroke(Tok.hcLine, style: StrokeStyle(lineWidth: 4, lineCap: .round, dash: [9, 4]))
             } else {
-                shape.stroke(Color.black.opacity(0.22), style: StrokeStyle(lineWidth: 3, lineCap: .round, dash: [8, 5]))
+                old.stroke(color.opacity(0.4), style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [5, 5]))
+                live.stroke(Color.black.opacity(0.22), style: StrokeStyle(lineWidth: 3, lineCap: .round, dash: [8, 5]))
                     .offset(x: 0.7, y: 1.3).blur(radius: 0.6)
-                shape.stroke(color, style: StrokeStyle(lineWidth: 3, lineCap: .round, dash: [8, 5]))
+                live.stroke(color, style: StrokeStyle(lineWidth: 3, lineCap: .round, dash: [8, 5]))
             }
             ForEach(Array(shape.knots().enumerated()), id: \.offset) { _, k in
                 Knot(color: hc ? Tok.hcLine : color, small: true).position(k)

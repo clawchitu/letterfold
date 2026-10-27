@@ -93,6 +93,11 @@ final class GameModel {
     private(set) var original: Board
     private(set) var char: Cell
     private(set) var trail: [Cell]
+    /// The trail index of the last close (FoldGame.lastCloseStep; in the undo and restart snapshots there).
+    private(set) var lastCloseStep = 0
+    /// The first step of the live thread: steps since the last close, at least the last two; all of it once won
+    /// (the win's redraw makes every segment live again). Earlier steps are drawn as faded old stitches.
+    var threadLiveFrom: Int { won ? 0 : max(0, min(lastCloseStep, trail.count - 3)) }
     private(set) var posture: Posture = .open
     private(set) var shade: [Cell: Int] = [:]
     /// Gaps outlined for 400 ms when the shadows lock onto them (design-review-ch3 §3).
@@ -301,7 +306,7 @@ final class GameModel {
         bestFolds = SavedProgress.sanitizeBestFolds(par: Dictionary(pack.levels.compactMap { l in l.expect?.changes.map { (l.id, $0) } }, uniquingKeysWith: { a, _ in a }))
         let first = try! FoldGame(level: pack.levels[0], config: pack.config)
         game = first
-        board = first.board; original = first.board; char = first.char; trail = first.trail
+        board = first.board; original = first.board; char = first.char; trail = first.trail; lastCloseStep = first.lastCloseStep
         doneIDs = SavedProgress.load()
         done = Set(doneIDs.compactMap { id in pack.levels.firstIndex { $0.id == id } })
         // after load's migration: an old save is seeded once, a new player starts with none seen (§7.3)
@@ -1448,7 +1453,7 @@ final class GameModel {
     // MARK: events -> haptics, sound, VoiceOver
 
     private func sync() {
-        board = game.board; char = game.char; trail = game.trail; posture = game.posture; shade = game.shade; canUndo = game.canUndo
+        board = game.board; char = game.char; trail = game.trail; lastCloseStep = game.lastCloseStep; posture = game.posture; shade = game.shade; canUndo = game.canUndo
         // mid-turn the tiles stay on the face still showing; they swap at 90° (flipBook sets shownFace at the midpoint)
         if flipping { board.face = shownFace } else { shownFace = game.face }
         if stuck != game.stuck { stuck = game.stuck }
