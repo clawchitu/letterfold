@@ -91,6 +91,24 @@ final class Chapter9UITests: XCTestCase {
         XCTAssertTrue(held, "toast: \(said)")
     }
 
+    /// Codex review 21 #1: an undo inside the roll window puts the stone back and drops the flight that fell from the
+    /// discarded board (else the ball is drawn twice, the stale flight and the restored stone). From fold 80° (phys
+    /// 100°, in the window, nothing rolled) one 15° step crosses upright and stops at 90°, still in the window; undo.
+    func testUndoInTheWindowDropsTheRoll() {
+        launch(55, ["-noSlips", "YES", "-startAngle", "80", "-buttonControl", "YES"])
+        XCTAssertEqual(f.probe("flight"), "0")
+        app.buttons["fold.more"].tap()                         // fold one step: 80 -> 90, the stone rolls into the gap
+        Thread.sleep(forTimeInterval: 1)
+        XCTAssertEqual(f.phys(), 90)
+        XCTAssertEqual(f.probe("flight"), "1", "in flight at 90°")
+        app.buttons["undo"].tap()
+        Thread.sleep(forTimeInterval: 1)
+        XCTAssertEqual(f.phys(), 100)
+        XCTAssertTrue(kind(6, 0).contains("松石"), "the stone is back: \(label(6, 0))")
+        XCTAssertEqual(f.probe("flight"), "0", "no flight from the discarded board")
+        XCTAssertEqual(f.probe("balls"), "1", "one ball drawn, not the stale flight beside the restored stone")
+    }
+
     /// Visual check shots for build 21 (LF_SHOTS): the roll mid-window (before the crossing and after it, angle-driven
     /// so a start angle freezes it), 9-6 mid-solution, high contrast, and the roll slip.
     func testShotsCh9() {

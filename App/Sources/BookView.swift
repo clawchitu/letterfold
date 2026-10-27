@@ -127,7 +127,7 @@ struct BookView: View {
                 // UI tests: the shadow lock, the camera's pose and the finale's seal (design-review-ch4 §4.3–4.5)
                 Color.clear.frame(width: 2, height: 2)
                     .accessibilityElement().accessibilityIdentifier("probe.state")
-                    .accessibilityValue("lock=\(model.lockedCells.map { "\($0.c),\($0.r)" }.joined(separator: " "));cam=\(Int(model.cameraPitch.rounded()));seal=\(model.finaleSeal ? 1 : 0);split=\(model.finaleSealSplit ? 1 : 0);aha=\(model.aha ? 1 : 0);me=\(model.figureCell.c),\(model.figureCell.r);stuck=\(model.stuck ? 1 : 0);glued=\(model.gluePulls.count);face=\(model.shownFace);said=\(model.lastAnnouncement ?? "");toast=\(model.toast ?? "")")
+                    .accessibilityValue("lock=\(model.lockedCells.map { "\($0.c),\($0.r)" }.joined(separator: " "));cam=\(Int(model.cameraPitch.rounded()));seal=\(model.finaleSeal ? 1 : 0);split=\(model.finaleSealSplit ? 1 : 0);aha=\(model.aha ? 1 : 0);me=\(model.figureCell.c),\(model.figureCell.r);stuck=\(model.stuck ? 1 : 0);glued=\(model.gluePulls.count);face=\(model.shownFace);said=\(model.lastAnnouncement ?? "");toast=\(model.toast ?? "");flight=\(model.rollFlight?.rolls.count ?? 0);balls=\(model.loosePoses().count)")
             }
         }
         .environment(\.goalIsFigure, model.goalIsFigure)

@@ -720,6 +720,7 @@ final class GameModel {
         quiet = false; dragging = false; angleHint = false; walking = false
         threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]; inkBledAt = [:]
         pending = Pending(); nopes = 0
+        rollFlight = nil; fillRings = [:]   // a roll belongs to the board it happened on (Codex review 21 #1)
         toastTask?.cancel(); toastTask = nil; toast = nil
         clearGlue()
         cameraTask?.cancel(); cameraTask = nil
@@ -1236,6 +1237,7 @@ final class GameModel {
         stopMotion()
         if game.undo() {
             clearGlue()
+            rollFlight = nil   // the board the roll fell on is gone (Codex review 21 #1)
             withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .easeOut(duration: 0.16)) {
                 angle = game.angle; rubber = 0; sync()
             }
@@ -1488,6 +1490,7 @@ final class GameModel {
         stopAll()
         guard game.undo() else { announce(L10n.t("nothingToUndo")); haptics.nope(); return }
         clearGlue()
+        rollFlight = nil   // the board the roll fell on is gone (Codex review 21 #1)
         haptics.undo()
         sound.rub(volume: 0.3)
         withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .easeInOut(duration: 0.25)) {
