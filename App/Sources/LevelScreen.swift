@@ -73,6 +73,8 @@ struct LevelScreen: View {
             // the toast floats over the board instead of taking layout space, so the board never moves when it
             // appears (Shuai 10/27: 「出现时 别移动游戏棋盘」)
             .overlay(alignment: .bottom) {
+                VStack(spacing: 8) {
+                if settings.soundMode, let a = model.lastAnnouncement { SoundCaption(text: a).allowsHitTesting(false) }
                 if let toast = model.toast {
                     Text(toast).font(.callout).foregroundStyle(Tok.paperNew).multilineTextAlignment(.center)
                         .padding(.horizontal, 16).padding(.vertical, 10)
@@ -83,9 +85,9 @@ struct LevelScreen: View {
                         .accessibilityHidden(true)   // already announced
                         .allowsHitTesting(false)     // a rule line over the bottom row never eats a tap
                 }
+                }
             }
             VStack(spacing: 8) {
-                if settings.soundMode, let a = model.lastAnnouncement { SoundCaption(text: a) }
                 if model.showNext {
                     NextKnot(title: model.isLastInChapter ? L10n.t("letter.read") : model.isDark && model.nextDark == nil ? L10n.t("dark.back") : L10n.t("next")) {
                         if model.isLastInChapter { router.go(.letter) }
@@ -96,8 +98,14 @@ struct LevelScreen: View {
                     .transition(.opacity)
                 } else if settings.showButtons {
                     FooterButtons(model: model)
-                } else if model.canShowFlip {
-                    FlipButton(model: model).transition(.opacity)
+                } else if model.hasThirdPage {
+                    // always laid out on three-page levels, only shown when a flip is possible, so the board never
+                    // jumps when the book closes or opens (Haoqiang 10/27: 其他提示也这样)
+                    FlipButton(model: model)
+                        .opacity(model.canShowFlip ? 1 : 0)
+                        .allowsHitTesting(model.canShowFlip)
+                        .accessibilityHidden(!model.canShowFlip)
+                        .animation(.easeInOut(duration: 0.2), value: model.canShowFlip)
                 }
             }
             .padding(.bottom, 6)
