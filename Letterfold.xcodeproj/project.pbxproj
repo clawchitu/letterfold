@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		081963E1758A65BB7EEF708D /* Chapter9UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B2C966B3DCE7BA4E158633 /* Chapter9UITests.swift */; };
+		A10C0DE10C0DE10C0DE10C03 /* Chapter10UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10C0DE10C0DE10C0DE10C04 /* Chapter10UITests.swift */; };
 		089C73E24BB02BF7002C67DC /* Chapter8Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAF188A41CB92A6FB2A0D7D /* Chapter8Marks.swift */; };
 		0ACF1846232647123A81BF6B /* Skins.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD058B4451F306D134BBAF38 /* Skins.swift */; };
 		11BE4B3530A847817165737B /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDBB77B419ABE4C00953E0 /* App.swift */; };
@@ -66,6 +67,7 @@
 		0EBA74BD18A4CCAC6C76307B /* SlipUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlipUITests.swift; sourceTree = "<group>"; };
 		23DC96729D3FCEAF07A7743F /* Paper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paper.swift; sourceTree = "<group>"; };
 		25B2C966B3DCE7BA4E158633 /* Chapter9UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter9UITests.swift; sourceTree = "<group>"; };
+		A10C0DE10C0DE10C0DE10C04 /* Chapter10UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter10UITests.swift; sourceTree = "<group>"; };
 		2991315D14E1D1169059EEE2 /* Hinge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hinge.swift; sourceTree = "<group>"; };
 		2BC0F961EF86FAC46A7C6FE8 /* Slip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slip.swift; sourceTree = "<group>"; };
 		3015C80653E030579E65FC8D /* LayoutStabilityUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutStabilityUITests.swift; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 				D8FF8C2C6BDE8074179A5B56 /* Chapter7UITests.swift */,
 				7F02AD93FA8DB47DA0A3261F /* Chapter8UITests.swift */,
 				25B2C966B3DCE7BA4E158633 /* Chapter9UITests.swift */,
+				A10C0DE10C0DE10C0DE10C04 /* Chapter10UITests.swift */,
 				86874352C30014FFF456BE3E /* ContentsUITests.swift */,
 				76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */,
 				3015C80653E030579E65FC8D /* LayoutStabilityUITests.swift */,
@@ -360,6 +363,7 @@
 				A705642545DADEEE55649A53 /* Chapter7UITests.swift in Sources */,
 				BD62CB81468AD08351DF824C /* Chapter8UITests.swift in Sources */,
 				081963E1758A65BB7EEF708D /* Chapter9UITests.swift in Sources */,
+				A10C0DE10C0DE10C0DE10C03 /* Chapter10UITests.swift in Sources */,
 				B06253E7629EEE0DFA262540 /* ContentsUITests.swift in Sources */,
 				ACE672D75211636A787E4B4A /* FoldDriver.swift in Sources */,
 				A96D787350289A485576F1F0 /* LayoutStabilityUITests.swift in Sources */,
