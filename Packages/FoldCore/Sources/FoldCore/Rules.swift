@@ -338,10 +338,10 @@ public struct Rules: Sendable {
 
     // MARK: the shadow lock (design-review-ch3 §3, judged as rewritten in design-review-ch4 §2 / design-spec §5)
 
-    /// The shadows that lie on gaps (bare squares of the bottom page) at fold angle `a`. Shadows on paper or on a
-    /// stone do not count.
+    /// The shadows that lie on gaps (bare squares) at fold angle `a`, on either page: the right lamp shades the bottom
+    /// page, the left lamp the lifted one (Codex review 20 #3). Shadows on paper, a stone or a gate do not count.
     public func gapShadows(_ b: Board, _ a: Double) -> [Cell] {
-        shadows(b, a).keys.filter { !isRight($0.c) && b[$0] == .empty }.sorted { ($0.r, $0.c) < ($1.r, $1.c) }
+        shadows(b, a).keys.filter { b[$0] == .empty }.sorted { ($0.r, $0.c) < ($1.r, $1.c) }
     }
 
     /// Locked = at least one shadow lies on a gap, and every such shadow is connected to what the figure standing at
