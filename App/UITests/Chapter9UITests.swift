@@ -124,6 +124,31 @@ final class Chapter9UITests: XCTestCase {
         XCTAssertEqual(f.probe("flight"), "0", "the jump left the window: no flight left over")
     }
 
+    /// Codex review 21 #4: one swipe on the map turns one page (卷三 down -> 卷二, not 卷一; 卷一 up -> 卷二, not 卷三).
+    func testOneMapSwipeTurnsOnePage() {
+        app = XCUIApplication()
+        app.launchArguments = ["-screen", "map", "-fold.doneIDs", "(\(Self.vol12))", "-noOpener", "YES",
+                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
+        app.launch()
+        let title = app.descendants(matching: .any)["map.title"]
+        XCTAssertTrue(title.waitForExistence(timeout: 8))
+        Thread.sleep(forTimeInterval: 2.5)
+        func swipe(down: Bool) {
+            let y = title.frame.maxY + 40
+            let from = app.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: title.frame.midX + 60, dy: down ? y : y + 360))
+            from.press(forDuration: 0.05, thenDragTo: from.withOffset(CGVector(dx: 0, dy: down ? 300 : -300)), withVelocity: 900,
+                       thenHoldForDuration: 0.05)
+            Thread.sleep(forTimeInterval: 1.2)
+        }
+        XCTAssertEqual(title.label, "倾")
+        swipe(down: true)
+        XCTAssertEqual(title.label, "翻页", "卷三 down: one page")
+        swipe(down: true)
+        XCTAssertEqual(title.label, "两岸")
+        swipe(down: false)
+        XCTAssertEqual(title.label, "翻页", "卷一 up: one page")
+    }
+
     /// Visual check shots for build 21 (LF_SHOTS): the roll mid-window (before the crossing and after it, angle-driven
     /// so a start angle freezes it), 9-6 mid-solution, high contrast, and the roll slip.
     func testShotsCh9() {

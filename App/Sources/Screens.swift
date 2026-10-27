@@ -615,11 +615,18 @@ struct ChapterMapView: View {
                 }
                 .clipped()
                 // a swipe up past the last card turns to the next page (only once book one is done)
+                // one swipe turns one page: the page it started on decides (Codex review 21 #4)
                 .simultaneousGesture(DragGesture(minimumDistance: 30).onEnded { v in
-                    if shown == 1 && volumeTwoOpen && v.translation.height < -90 && abs(v.translation.height) > abs(v.translation.width) * 1.5 { turn(to: 2) }
-                    if shown == 2 && volumeThreeOpen && v.translation.height < -90 && abs(v.translation.height) > abs(v.translation.width) * 1.5 { turn(to: 3) }
-                    if shown == 3 && v.translation.height > 120 && abs(v.translation.height) > abs(v.translation.width) * 1.5 && v.startLocation.y < 140 { turn(to: 2) }
-                    if shown == 2 && v.translation.height > 120 && abs(v.translation.height) > abs(v.translation.width) * 1.5 && v.startLocation.y < 140 { turn(to: 1) }
+                    let h = v.translation.height, vertical = abs(h) > abs(v.translation.width) * 1.5
+                    guard vertical else { return }
+                    let up = h < -90, down = h > 120 && v.startLocation.y < 140
+                    switch shown {
+                    case 1 where up && volumeTwoOpen: turn(to: 2)
+                    case 2 where up && volumeThreeOpen: turn(to: 3)
+                    case 2 where down: turn(to: 1)
+                    case 3 where down: turn(to: 2)
+                    default: break
+                    }
                 })
             }
             .id(shown)
