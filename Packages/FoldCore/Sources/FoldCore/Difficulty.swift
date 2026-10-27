@@ -18,14 +18,17 @@ public struct Difficulty: Sendable {
     /// check.js PAR_MAX / CLOSES_MAX (postmortem §1.4): posture changes and full closes per tier; 「暗信」 = dark.
     /// final par 4 → 5 and final closes 2 → 3 (fold-proto c4b9d48 / 82e0990, difficulty-v3.md §6).
     public static let parMax: [String: Int] = ["teach": 3, "easy": 3, "mid": 3, "hard": 4, "final": 5, "dark": 6]
-    public static let closesMax: [String: Int] = ["main": 2, "final": 3, "dark": 3]
-    /// The full-close budget of a level: 「暗信」 3, a main-path final 3, everything else 2.
-    public static func closesMax(optional: Bool, tier: String?) -> Int {
-        closesMax[optional ? "dark" : tier == "final" ? "final" : "main"]!
+    /// wet: chapter 7 「墨晕」's main path, where closes are the chapter's resource (check.js CLOSES_MAX.wet, WET_CHAPTER).
+    public static let closesMax: [String: Int] = ["main": 2, "final": 3, "dark": 3, "wet": 3]
+    /// The full-close budget of a level: 「暗信」 3, a main-path final 3, chapter 7 (`wet`) 3, everything else 2.
+    public static func closesMax(optional: Bool, tier: String?, wet: Bool = false) -> Int {
+        closesMax[optional ? "dark" : tier == "final" ? "final" : wet ? "wet" : "main"]!
     }
+    /// check.js gates chapter 7 by its chapter number; FoldCore has no chapters, and wet ink is chapter 7's tile.
+    public static func isWetChapter(_ level: Level) -> Bool { level.map.contains { $0.contains("I") } }
     public static func range(of tier: String) -> ClosedRange<Int>? { tiers.first { $0.name == tier }?.range }
     /// The mechanics `combo` counts (check.js MECHANICS).
-    static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue", "needsFlip"]
+    static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue", "needsFlip", "needsWet"]
 
     /// What levels.json ships under `expect.difficulty`.
     public struct Summary: Sendable, Codable, Equatable {

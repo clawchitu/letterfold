@@ -224,17 +224,48 @@ public struct Rules: Sendable {
     // MARK: pressing the pages together
 
     public struct Stamp: Sendable, Equatable {
-        public enum Kind: String, Sendable { case door, ink, glue }
+        public enum Kind: String, Sendable { case door, ink, glue, bleed }
         public var kind: Kind
-        /// door / ink: [source, target]. glue: [the stone's old cell, the glue cell it lands on].
+        /// door / ink: [source, target]. glue: [the stone's old cell, the glue cell it lands on]. bleed: every square the
+        /// wet ink spread onto in this press (one ring).
         public var cells: [Cell]
+        /// ink: the print is wet ink (logic.js `{ type: 'ink', wet: true }`).
+        public var wet: Bool = false
+        /// bleed: what each of `cells` was before the ink covered it (`.empty` or `.glue`), logic.js `cells[].was`.
+        public var was: [Tile] = []
+        public init(kind: Kind, cells: [Cell], wet: Bool = false, was: [Tile] = []) {
+            self.kind = kind; self.cells = cells; self.wet = wet; self.was = was
+        }
     }
 
-    /// Keys open the door they touch; wet ink prints onto bare paper; glue pulls the stone it touches onto itself (the
-    /// stone changes page, its old square becomes paper, the glue is used up). Mutates the board.
+    /// Wet ink (vol. 2 ch. 7 「墨晕」, logic.js `bleed`): each wet square on the two pressed pages (a snapshot taken
+    /// first) spreads into the gap and glue squares beside it on its own page — paper, stones, doors, the hinge and the
+    /// page edge stop it; glue it covers is spoiled. One ring per press: new squares do not spread again this press.
+    /// Returns the new squares in logic.js order, with what they were. Mutates the board.
+    @discardableResult
+    public func bleed(_ b: inout Board) -> (cells: [Cell], was: [Tile]) {
+        var wet: [Cell] = []
+        for r in 0..<b.h { for c in 0..<b.w where b[c, r] == .wetInk { wet.append(Cell(c, r)) } }
+        var cells: [Cell] = [], was: [Tile] = [], seen: Set<Cell> = []
+        for w in wet {
+            for (dc, dr) in Rules.dirs {
+                let nc = w.c + dc, nr = w.r + dr, k = Cell(nc, nr)
+                if nc < 0 || nc >= b.w || nr < 0 || nr >= b.h || isRight(nc) != isRight(w.c) || seen.contains(k) { continue }
+                let t = b[nc, nr]
+                if t == .empty || t == .glue { seen.insert(k); b[nc, nr] = .wetInk; cells.append(k); was.append(t) }
+            }
+        }
+        return (cells, was)
+    }
+
+    /// Wet ink bleeds a ring first (a `.bleed` event before all others); then keys open the door they touch, ink (dry or
+    /// wet) prints itself onto the gap it touches, glue pulls the stone it touches onto itself (the stone changes page,
+    /// its old square becomes paper, the glue is used up). Mutates the board.
     @discardableResult
     public func stamp(_ b: inout Board) -> [Stamp] {
         var events: [Stamp] = []
+        let bled = bleed(&b)
+        if !bled.cells.isEmpty { events.append(Stamp(kind: .bleed, cells: bled.cells, was: bled.was)) }
         for r in 0..<b.h {
             for q in 0..<n {
                 let m = mirror(q)
@@ -243,9 +274,9 @@ public struct Rules: Sendable {
                     if A == .key && B == .door {
                         b[a, r] = .paper; b[c, r] = .openDoor
                         events.append(Stamp(kind: .door, cells: [Cell(a, r), Cell(c, r)]))
-                    } else if A == .ink && B == .empty {
-                        b[c, r] = .ink
-                        events.append(Stamp(kind: .ink, cells: [Cell(a, r), Cell(c, r)]))
+                    } else if (A == .ink || A == .wetInk) && B == .empty {
+                        b[c, r] = A
+                        events.append(Stamp(kind: .ink, cells: [Cell(a, r), Cell(c, r)], wet: A == .wetInk))
                     } else if A == .glue && B == .stone {
                         b[a, r] = .stone; b[c, r] = .paper
                         events.append(Stamp(kind: .glue, cells: [Cell(c, r), Cell(a, r)]))

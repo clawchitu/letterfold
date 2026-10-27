@@ -8,7 +8,7 @@ final class SolverTests: XCTestCase {
     override func setUpWithError() throws { pack = try LevelPack.bundled() }
 
     func testPackDecodes() throws {
-        XCTAssertEqual(pack.levels.count, 42)
+        XCTAssertEqual(pack.levels.count, 48)
         XCTAssertEqual(pack.levels.filter(\.isOptional).map(\.id), ["darkBack", "darkDoor", "darkInk"])
         XCTAssertEqual(pack.config, .standard)
         for lv in pack.levels { XCTAssertNoThrow(try Board(level: lv), lv.id) }
@@ -30,6 +30,9 @@ final class SolverTests: XCTestCase {
         for lv in pack.levels {
             var expect = try XCTUnwrap(lv.expect, lv.id)
             expect.difficulty = nil   // the metric is compared once, in DifficultyTests (analyse is the slow part)
+            // check.js `wetCloses` counts 'fold' labels along its own tie-broken path (an authoring diagnostic, not a
+            // rule); the close budget it feeds is checked in testSolutionLengthGates on the Swift shortest solution
+            expect.wetCloses = nil
             XCTAssertEqual(solver.report(lv, withDifficulty: false), expect, lv.id)
         }
     }
@@ -109,7 +112,7 @@ final class DifficultyTests: XCTestCase {
             if let hi = Difficulty.lenMax[tier] { XCTAssertLessThanOrEqual(len, hi, "\(lv.id): too long for \(tier)") }
             XCTAssertLessThanOrEqual(s.par, Difficulty.parMax[tier] ?? 3, "\(lv.id): over par for \(tier)")
             let closes = s.path.indices.dropFirst().filter { s.path[$0].posture == .closed && s.path[$0 - 1].posture != .closed }.count
-            XCTAssertLessThanOrEqual(closes, Difficulty.closesMax(optional: lv.isOptional, tier: lv.tier), "\(lv.id): too many full closes")
+            XCTAssertLessThanOrEqual(closes, Difficulty.closesMax(optional: lv.isOptional, tier: lv.tier, wet: Difficulty.isWetChapter(lv)), "\(lv.id): too many full closes")
             XCTAssertEqual(s.par, lv.expect?.changes, lv.id)
         }
     }
@@ -119,7 +122,8 @@ final class DifficultyTests: XCTestCase {
     func testTheCurve() throws {
         XCTAssertEqual(pack.levels.map { $0.len ?? -1 },
                        [5, 13, 16, 16, 17, 10, 16, 17, 17, 18, 18, 19, 20, 5, 13, 16, 17, 16, 18, 11, 12, 18, 19, 20, 18,
-                        6, 6, 10, 17, 17, 18, 20, 20, 19, 22, 6, 9, 16, 16, 18, 19, 18])
+                        6, 6, 10, 17, 17, 18, 20, 20, 19, 22, 6, 9, 16, 16, 18, 19, 18,
+                        4, 8, 14, 18, 15, 19])
         let vol1 = pack.levels.prefix(25).compactMap(\.len)
         XCTAssertGreaterThanOrEqual(Double(vol1.reduce(0, +)) / Double(vol1.count), 15)
         for range in [0..<5, 5..<13, 13..<19, 19..<25, 25..<32, 35..<42] {

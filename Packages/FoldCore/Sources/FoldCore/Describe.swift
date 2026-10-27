@@ -48,14 +48,14 @@ extension Rules {
             else if tl == .glue && M == .stone { f.note = .glueTakes }
             else if tl == .stone && M == .glue { f.note = .stoneGlued(col: m + 1) }
             else if tl.isFloor && M == .stone { f.note = .crushedHere }
-            else if tl == .ink && M == .empty { f.note = .inkPrints }
+            else if (tl == .ink || tl == .wetInk) && M == .empty { f.note = .inkPrints }
             else if tl == .tab && c == n - 1 && M == .tab { f.note = .tabBridge }
         } else {
             if tl == .stone && M == .glue { f.note = .stoneGlued(col: m + 1) }
             else if tl == .stone { f.note = .stoneShadow(col: m + 1) }
             else if tl == .glue && M == .stone { f.note = .glueTakes }
             else if tl == .key && M == .door { f.note = .keyOpens(col: m + 1) }
-            else if tl == .ink && M == .empty { f.note = .inkTo(col: m + 1) }
+            else if (tl == .ink || tl == .wetInk) && M == .empty { f.note = .inkTo(col: m + 1) }
             else if tl == .tab && c == n && M == .tab { f.note = .tabBridge }
             else if tl.isFloor && M == .empty { f.note = .covers(col: m + 1) }
         }
