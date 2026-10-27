@@ -402,7 +402,7 @@ private struct WalkPanel: View {
                 .background(RoundedRectangle(cornerRadius: 10).fill(Color(hex: 0xF1EDE5)))
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(label)
+        .accessibilityLabel(L10n.spokenText(label))   // 听一行: 行 read háng (IPA hint)
         .accessibilityIdentifier(id)
     }
 }

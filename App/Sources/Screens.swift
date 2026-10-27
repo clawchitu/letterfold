@@ -1251,6 +1251,7 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title).font(.body).foregroundStyle(Tok.ink900)
                 Text(detail).font(.subheadline).foregroundStyle(Tok.ink600)
+                    .accessibilityLabel(L10n.spokenText(detail))   // 音高 = 行: read háng
             }
         }
         .toggleStyle(PaperSwitch())
