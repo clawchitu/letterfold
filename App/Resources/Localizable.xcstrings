@@ -3391,6 +3391,66 @@
         }
       }
     },
+    "gate.state.down": {
+      "comment": "VoiceOver. Native app only: the gate's state on its square (Codex review 20 #2). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "现在趴着"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lying down now"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "いま倒れている"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금 누워 있음"
+          }
+        }
+      }
+    },
+    "gate.state.open": {
+      "comment": "VoiceOver. Native app only: the gate's state on its square (Codex review 20 #2). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "现在立着，可以走"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "standing now, walkable"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "いま立っている、歩ける"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금 서 있음, 걸을 수 있음"
+          }
+        }
+      }
+    },
     "gateDown": {
       "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",

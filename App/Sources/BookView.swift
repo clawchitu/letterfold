@@ -147,12 +147,12 @@ struct BookView: View {
             ForEach(rotorCells { $0 == .empty }, id: \.self) { c in AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace) }
         }
         .accessibilityRotor(Text(L10n.t("rotor.object"))) {
-            ForEach(rotorCells { [.stone, .key, .door, .openDoor, .ink, .wetInk, .goal, .tab, .glue].contains($0) }, id: \.self) { c in
+            ForEach(rotorCells { [.stone, .key, .door, .openDoor, .ink, .wetInk, .goal, .tab, .glue, .gate].contains($0) }, id: \.self) { c in
                 AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace)
             }
         }
         .accessibilityRotor(Text(L10n.t("rotor.shadow"))) {
-            ForEach(model.shade.keys.sorted { ($0.r, $0.c) < ($1.r, $1.c) }, id: \.self) { c in
+            ForEach(model.shade.keys.filter { model.board[$0] != .gate }.sorted { ($0.r, $0.c) < ($1.r, $1.c) }, id: \.self) { c in
                 AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace)
             }
         }

@@ -1945,6 +1945,7 @@ final class GameModel {
         // shut: the stack is named by its bottom-page square (the one the stack sits on)
         let at = posture == .closed ? Cell(rules.proj(c), r) : Cell(c, r)
         var parts = [pos(at), f.shadow ? L10n.t("kindShadow") : f.tabUp ? L10n.t("kindTabUp") : kind(f.tile)]
+        if let open = f.gateOpen { parts.append(L10n.t(open ? "gate.state.open" : "gate.state.down")) }
         if f.goalInStack { parts.append(kind(.goal)) }
         if case .you(let onTop)? = f.here {
             parts.append(onTop.map { L10n.t("hereOnPage", ["page": L10n.t($0 ? "page.folding" : "page.fixed")]) } ?? L10n.t("hereYou"))

@@ -23,6 +23,9 @@ public struct CellFacts: Sendable, Equatable {
     public var tile: Tile
     /// Open: a gap with a shadow on it (walkable).
     public var shadow = false
+    /// Open: an angle gate — true while it stands (walkable), false while it lies down; nil elsewhere. A gate is never
+    /// `shadow`: it stays put, a shadow moves (Codex review 20 #2).
+    public var gateOpen: Bool?
     /// Standing tabs (the bridge is up).
     public var tabUp = false
     /// Shut: the goal lies in this stack under or over what is named.
@@ -39,7 +42,8 @@ extension Rules {
         let c = cell.c, r = cell.r
         let tl = b[cell], m = mirror(c)
         var f = CellFacts(tile: tl)
-        f.shadow = shade[cell] != nil && !tl.isFloor
+        f.shadow = shade[cell] != nil && !tl.isFloor && tl != .gate
+        if tl == .gate { f.gateOpen = Rules.gateStands(shade, cell) }
         f.tabUp = tl == .tab && p == .standing
         if figure == cell { f.here = .you(onTop: nil) }
         // the notes predict the next close, and every press bleeds the wet ink first: read both squares off the bled

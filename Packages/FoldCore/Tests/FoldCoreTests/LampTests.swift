@@ -116,6 +116,20 @@ final class LampTests: XCTestCase {
         XCTAssertFalse(Rules.gateStands(rules.shadows(b, 0), Cell(2, 0)), "flat: lying down")
     }
 
+    /// Codex review 20 #2: a gate is never described as a shadow; its facts carry whether it stands.
+    func testAGateIsNeverSaidToBeAShadow() throws {
+        let b = try board(["S.A----x", "-.A-----"])
+        for (a, p) in [(120.0, Posture.standing), (0, .open)] {
+            let sh = rules.shadows(b, a)
+            for c in [Cell(2, 0), Cell(2, 1)] {
+                let f = rules.facts(b, c, posture: p, shade: sh, figure: Cell(0, 0))
+                XCTAssertFalse(f.shadow, "\(c) at \(a)")
+                XCTAssertEqual(f.gateOpen, a == 120, "\(c) at \(a)")
+            }
+        }
+        XCTAssertNil(rules.facts(b, Cell(1, 0), posture: .open, shade: [:], figure: Cell(0, 0)).gateOpen)
+    }
+
     /// Ink, glue and keys leave gates alone: the bleed only takes gaps and glue, prints only land on gaps, glue only pulls stones.
     func testGatesTakeNoInkNoPrintNoGlue() throws {
         var b = try board(["SIA-A--I", "g.I--A-A"])
