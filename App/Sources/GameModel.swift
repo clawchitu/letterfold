@@ -15,12 +15,14 @@ struct Chapter: Identifiable {
     /// they are outside the strict chapter unlock, the chapter's count and 「继续」; they open once the chapter is
     /// delivered, from the sealed letter under its card on the map.
     var darkIDs: [String] = []
+    /// The dashed card after 卷二's finale: 「卷三 · 待续」, the next book, not yet written (0.1 (20)).
+    var nextBook = false
     /// 卷一《两岸》 = chapters 1–4, 卷二《翻页》 = 5 on (roadmap §1).
     var volume: Int { id <= 4 ? 1 : 2 }
     /// The chapter's number inside its volume (the map cards).
     var inVolume: Int { volume == 1 ? id : id - 4 }
     static func numeral(_ n: Int) -> String {
-        L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("ja") ? ["一", "二", "三", "四", "五", "六", "七", "八"][n - 1] : "\(n)"
+        L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("ja") ? ["一", "二", "三", "四", "五", "六", "七", "八", "九"][n - 1] : "\(n)"
     }
     /// 一 … 五 through the book in Chinese and Japanese; the reader's own digits elsewhere (one language on screen at a time).
     var numeral: String { Self.numeral(id) }
@@ -28,7 +30,7 @@ struct Chapter: Identifiable {
     var volumeNumeral: String { Self.numeral(inVolume) }
     var name: String { L10n.t("ch.\(id)") }
     /// The chapter's seal on its map card and (vol. 2) on the finale: 达 · 通 · 影 · 成 · 胶 (design-v2c1 §2 章印).
-    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "页"][min(7, id - 1)] }
+    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "灯", "页"][min(8, id - 1)] }
     static func volumeChapters(_ v: Int) -> [Chapter] { all.filter { $0.volume == v } }
 
     static let all: [Chapter] = [
@@ -50,8 +52,12 @@ struct Chapter: Identifiable {
         // vol. 2 chapter 3 「墨晕」 (fold-proto design-ch7.md): wet ink; opens once chapter 6 is all delivered (the strict
         // rule). Six levels: 7-6 turned was cut, `through` is the sixth
         Chapter(id: 7, levelIDs: ["wet", "print", "ring", "spoiled", "pocket", "through"], unlocked: true, soon: false),
-        // vol. 2 chapter 4 is not written yet: a dashed card, never a sealed chapter that looks openable
-        Chapter(id: 8, levelIDs: [], unlocked: false, soon: true),
+        // vol. 2 chapter 4 「灯位」, 卷二's finale (fold-proto design-ch8.md): the lamp on the left bank and the angle gate;
+        // opens once chapter 7 is all delivered (the strict rule). Six levels: 8-5 was cut; 8-1 is `leftLamp` (the proto
+        // reuses 3-6's id `lamp`)
+        Chapter(id: 8, levelIDs: ["leftLamp", "lift", "banks", "gate", "taken", "twolamps"], unlocked: true, soon: false),
+        // 卷三 is not written yet: a dashed card after the finale, never a sealed chapter that looks openable
+        Chapter(id: 9, levelIDs: [], unlocked: false, soon: true, nextBook: true),
     ]
 }
 
@@ -349,7 +355,7 @@ final class GameModel {
     /// -cameraPitch <deg> (screenshots), -probe YES (UI tests: the drag's edge probe).
     static func launch() -> GameModel {
         let d = UserDefaults.standard
-        if d.bool(forKey: "resetProgress") { SavedProgress.resetAll(d); for k in [ruleBlockedKey, ruleUnderKey, layerRuleKey, shadowPaperKey] { d.removeObject(forKey: k) }; for k in 2...6 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
+        if d.bool(forKey: "resetProgress") { SavedProgress.resetAll(d); for k in [ruleBlockedKey, ruleUnderKey, layerRuleKey, shadowPaperKey] { d.removeObject(forKey: k) }; for k in 2...8 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
         var pack = try! LevelPack.bundled()
         let start = d.integer(forKey: "startLevel")
         // -levelMap "row|row|…" (UI tests only; gaps written "_", as a value starting with "-" would read as a flag): play the -startLevel level on another board, so a rule's regression test

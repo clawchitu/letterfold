@@ -786,7 +786,7 @@ private struct ChapterCard: View {
         let n = idx.filter { model.done.contains($0) }.count
         let delivered = model.isUnlocked(chapter) && n == idx.count && !idx.isEmpty
         let paper: Color = [PaperState.chapter1.color, PaperState.chapter2.color, PaperState.chapter3.color, PaperState.chapter4.color,
-                            Tok.paperLetter, Tok.paperLetter, Tok.paperLetter, Tok.paperLetter][min(7, chapter.id - 1)]
+                            Tok.paperLetter, Tok.paperLetter, Tok.paperLetter, Tok.paperLetter, Tok.paperLetter][min(8, chapter.id - 1)]
         let status = chapter.soon ? L10n.t(chapter.volume == 2 ? "ch.unwritten" : "ch.soon") : !model.isUnlocked(chapter) ? L10n.t("ch.sealed") : delivered ? L10n.t("ch.delivered") : L10n.t("ch.inProgress")
         let sealed = !chapter.soon && !model.isUnlocked(chapter)
         // each chapter's seal on its card (frame ch4-map): 达 · 通 · 影 · 成; 「成」 is the finale's cinnabar seal
@@ -928,7 +928,8 @@ private struct UnwrittenCard: View {
     let fonts = FontBook.shared
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
-            Text(chapter.volumeNumeral).font(fonts.songti(.bold, 24, relativeTo: .title)).foregroundStyle(Tok.ink700)
+            // 卷三's card names the book, not a chapter number (0.1 (20))
+            Text(chapter.nextBook ? L10n.t("map.book3") : chapter.volumeNumeral).font(fonts.songti(.bold, chapter.nextBook ? 20 : 24, relativeTo: .title)).foregroundStyle(Tok.ink700)
             Text(chapter.name).font(fonts.songti(.semibold, 15, relativeTo: .headline)).foregroundStyle(Tok.ink700).padding(.top, 5)
             Spacer(minLength: 0)
         }
@@ -937,7 +938,7 @@ private struct UnwrittenCard: View {
         .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(Tok.ink600.opacity(0.6), style: StrokeStyle(lineWidth: 1, dash: [4, 3])))
         .padding(.top, 70)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(L10n.t("ch.label", ["n": chapter.inVolume, "name": chapter.name]))
+        .accessibilityLabel(chapter.nextBook ? L10n.t("map.book3") + L10n.t("sep") + chapter.name : L10n.t("ch.label", ["n": chapter.inVolume, "name": chapter.name]))
         .accessibilityValue(L10n.t("ch.unwritten"))
         .accessibilityIdentifier("chapter-\(chapter.id)")
     }
