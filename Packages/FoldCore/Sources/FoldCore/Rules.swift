@@ -358,11 +358,15 @@ public struct Rules: Sendable {
     /// for a figure standing at `from`. Consecutive samples with the same gaps merge into one window.
     public func lockWindows(_ b: Board, from: Cell, step: Double = 0.25) -> [LockWindow] {
         var out: [LockWindow] = []
-        var a = config.shadeMin
+        var a = config.shadeMin, lastSources: [Int?] = []
         while a < config.foldMin {
             if let cells = lockCells(b, from: from, a) {
-                if let last = out.last, last.cells == cells, abs(last.hi - (a - step)) < 1e-6 { out[out.count - 1].hi = a }
+                // the same gaps shaded by other stones are another lock: under two lamps a gap can change hands inside
+                // one stretch, and resting at the merged middle put 8-7's figure on the wrong stone's shadow
+                let sh = shadows(b, a), sources = cells.map { sh[$0] }
+                if let last = out.last, last.cells == cells, sources == lastSources, abs(last.hi - (a - step)) < 1e-6 { out[out.count - 1].hi = a }
                 else { out.append(LockWindow(lo: a, hi: a, cells: cells)) }
+                lastSources = sources
             }
             a += step
         }
