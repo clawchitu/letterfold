@@ -373,6 +373,15 @@ final class GameModel {
                 m.game.walk(to: target); m.sync()
             }
         }
+        // -replayTo N (screenshots, UI tests): play the level's shipped solution up to its state N (turns included)
+        if d.integer(forKey: "replayTo") > 0, let sol = m.level.solution {
+            for st in sol.prefix(d.integer(forKey: "replayTo") + 1).dropFirst() {
+                if st.count > 4 && st[4] != m.game.face { _ = m.game.flip() }
+                else if Double(st[2]) != m.game.angle { m.setAngle(Double(st[2])) }
+                else { _ = m.game.step(to: Cell(st[0], st[1])) }
+            }
+            m.sync(); m.clearGlue(); m.pending = Pending()
+        }
         if d.object(forKey: "startAngle") != nil {
             m.setAngle(d.double(forKey: "startAngle")); m.pending = Pending(); m.saidAngle = Int(m.angle)
             m.cameraPitch = m.looksAtWall(m.angle) ? wallPitch : handPitch
