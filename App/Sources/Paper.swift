@@ -655,9 +655,16 @@ struct Puppet: View {
     var facingLeft = false
     /// A paper-coloured rim, for standing on wet ink.
     var rim = false
+    /// High contrast, standing on a paper crane: a 2 pt white outline so the crane's black lines never run through her
+    /// (design-review-ch10-art §3.7).
+    var hcRim = false
     @Environment(\.highContrast) private var hc
     var body: some View {
         ZStack {
+            if hc && hcRim {
+                PuppetShape(frame: frame).stroke(.white, style: StrokeStyle(lineWidth: 4, lineJoin: .round))
+                PuppetCane(frame: frame).stroke(.white, style: StrokeStyle(lineWidth: 6.2, lineCap: .round))
+            }
             if rim && !hc {
                 PuppetShape(frame: frame).stroke(Tok.paperNew, style: StrokeStyle(lineWidth: 3, lineJoin: .round))
                 PuppetCane(frame: frame).stroke(Tok.paperNew, style: StrokeStyle(lineWidth: 4.5, lineCap: .round))

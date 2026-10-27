@@ -90,8 +90,10 @@ struct CraneBody: View {
             CranePart(pts: CraneParts.leftWing(wings)).fill(light)
             CranePart(pts: CraneParts.baseLeft).fill(light)
             CranePart(pts: CraneParts.baseRight).fill(dark)
-            CraneFold().stroke(ink, style: StrokeStyle(lineWidth: 1.4 * u, lineCap: .round, lineJoin: .round))
-            CraneOutline(wings: wings).stroke(ink, style: StrokeStyle(lineWidth: (hc ? 3 : 2.2) * u, lineCap: .round, lineJoin: .round))
+            // §3.2 asks 2.2 / 1.4 units (HC 3); on device the wings' 3.5-unit roots filled in and the crane read as a black
+            // crown (b22 shots), so the lines are a step lighter, as in frame C1: 1.6 / 1.1 units, HC 2.4
+            CraneFold().stroke(ink, style: StrokeStyle(lineWidth: 1.1 * u, lineCap: .round, lineJoin: .round))
+            CraneOutline(wings: wings).stroke(ink, style: StrokeStyle(lineWidth: (hc ? 2.4 : 1.6) * u, lineCap: .round, lineJoin: .round))
         }
         .frame(width: g, height: g)
         // centred across the square (bbox x 1.5–36), the base's foot 0.14 of the cell below its centre
@@ -377,12 +379,13 @@ struct CraneSlipPicture: View {
         VStack(spacing: 4) {
             VStack(spacing: Self.between) {
                 page(b, cols: [7, 6, 5, 4], landed: landed)
-                Rectangle().fill(hc ? Color.black : Tok.edgeLower).frame(height: 1).padding(.vertical, -Self.between / 2 - 0.5)
+                Rectangle().fill(hc ? Color.black : Tok.edgeLower).frame(width: Self.pageSize.width, height: 1).padding(.vertical, -Self.between / 2 - 0.5)
                 page(b, cols: [3, 2, 1, 0], landed: landed)
             }
             Text(caption).font(.custom("Songti SC", size: 12)).foregroundStyle(hc ? Color.black : Tok.ink600)
-                .lineLimit(1).minimumScaleFactor(0.6)
+                .lineLimit(1).fixedSize()
         }
+        .fixedSize()
     }
 
     private func page(_ b: Beat, cols: [Int], landed: Cell?) -> some View {

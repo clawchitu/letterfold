@@ -112,8 +112,10 @@ struct SlipLayer: View {
             // and where the table above the page is too short for that its foot comes down over the bottom page (9-1's
             // is all gaps), never cutting the text
             if model.slipPages.contains(.roll) || model.slipPages.contains(.crane) {
-                let pic = model.slipPages.contains(.crane) ? CraneSlipPicture.height : RollSlipPicture.height
-                let h = min(pic + 24 + 10 + 200, size.height - 16)
+                // 纸鹤笺's beats are a whole book tall each (frame C4): the slip may run past the book's frame into the
+                // table below it rather than cut the text
+                let crane = model.slipPages.contains(.crane)
+                let h = crane ? min(CraneSlipPicture.height + 24 + 10 + 290, size.height + 140) : min(RollSlipPicture.height + 24 + 10 + 200, size.height - 16)
                 let x = min(max(a.page.midX - w / 2, -margin + 8), size.width + margin - 8 - w)
                 return CGRect(x: x, y: max(8, a.crease - 8 - h), width: w, height: h)
             }

@@ -658,15 +658,16 @@ private struct PuppetLayer: View {
         // standing on wet ink, the black figure gets a paper rim so it does not vanish into the blot
         // and on a shadow it gets the backlit rim: the figure is only 2.76:1 on #6E604E (design-ch3 §5)
         let me = model.figureCell
+        let onCrane = model.board[me] == .crane
         let onInk = model.board[me] == .ink || model.board[me] == .wetInk || (model.shade[me] != nil && !model.board[me].isFloor)
         Group {
             if model.walking && !AppSettings.shared.motionReduced {
                 // the two walking frames only tick while walking (no idle redraws)
                 TimelineView(.periodic(from: .now, by: 0.24)) { ctx in
-                    Puppet(frame: Int(ctx.date.timeIntervalSinceReferenceDate / 0.24) % 2, facingLeft: facingLeft, rim: onInk)
+                    Puppet(frame: Int(ctx.date.timeIntervalSinceReferenceDate / 0.24) % 2, facingLeft: facingLeft, rim: onInk, hcRim: onCrane)
                 }
             } else {
-                Puppet(frame: 0, facingLeft: facingLeft, rim: onInk)
+                Puppet(frame: 0, facingLeft: facingLeft, rim: onInk, hcRim: onCrane)
             }
         }
         .frame(width: geo.tile * 0.62, height: geo.tile * 0.84)
