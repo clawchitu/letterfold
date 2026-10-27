@@ -26,7 +26,7 @@ public struct Difficulty: Sendable {
     }
     /// check.js gates chapter 7 by its chapter number; FoldCore has no chapters, and wet ink is chapter 7's tile (8-7
     /// reuses it under the lamp: chapter 8 carries `lamp`).
-    public static func isWetChapter(_ level: Level) -> Bool { level.lamp == nil && level.map.contains { $0.contains("I") } }
+    public static func isWetChapter(_ level: Level) -> Bool { level.lamp == nil && level.map.contains { $0.contains("I") } && !level.map.contains { $0.contains("h") } }   // ch. 10-5 soak has wet ink and cranes: not the wet chapter (check.js WET_CHAPTER = 7)
     public static func range(of tier: String) -> ClosedRange<Int>? { tiers.first { $0.name == tier }?.range }
     /// The mechanics `combo` counts (check.js MECHANICS).
     static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue", "needsFlip", "needsWet", "needsLamp", "needsGate", "needsRoll", "needsCrane"]
