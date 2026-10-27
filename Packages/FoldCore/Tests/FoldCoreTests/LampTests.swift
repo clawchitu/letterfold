@@ -69,9 +69,15 @@ final class LampTests: XCTestCase {
         XCTAssertEqual(g.char, Cell(5, 0))
         play(g, to: 135)
         XCTAssertEqual(g.char, Cell(6, 0), "carried onto her square")
-        // a ride onto her square is not a delivery by itself (FoldGame checks the win on steps and posture changes, as
-        // fold-proto main.js does); one more posture change delivers it
-        XCTAssertFalse(g.won)
+        // a ride onto her square delivers it (Codex review 20 #4: the 8-1 hint — step onto (5,0) at 60°, close to 45°)
+        XCTAssertTrue(g.won)
+        let lv = try level("leftLamp")
+        let h = try FoldGame(level: lv, config: pack.config)
+        play(h, to: 120)
+        XCTAssertNotNil(h.walk(to: Cell(5, 0)))
+        let ev = play(h, to: 135)
+        XCTAssertEqual(h.char, Cell(6, 0))
+        XCTAssertTrue(h.won && ev.contains(.won), "8-1: the ride lands on the goal and wins")
     }
 
     func testAngleGate() throws {
@@ -128,6 +134,15 @@ final class LampTests: XCTestCase {
             }
         }
         XCTAssertNil(rules.facts(b, Cell(1, 0), posture: .open, shade: [:], figure: Cell(0, 0)).gateOpen)
+    }
+
+    /// Codex review 20 #3: the left lamp's shadows land on the lifted page's gaps and lock there too.
+    func testLeftLampShadowsLock() throws {
+        let lv = try level("leftLamp")
+        let g = try FoldGame(level: lv, config: pack.config)
+        XCTAssertTrue(rules.gapShadows(g.board, 120).contains(Cell(5, 0)))
+        XCTAssertEqual(rules.lockCells(g.board, from: g.char, 120), [Cell(5, 0)])
+        XCTAssertFalse(rules.lockWindows(g.board, from: g.char).isEmpty, "8-1 has a lock window")
     }
 
     /// Ink, glue and keys leave gates alone: the bleed only takes gaps and glue, prints only land on gaps, glue only pulls stones.
