@@ -8,6 +8,8 @@ public enum SlipID: String, CaseIterable, Sendable, Codable {
     /// Ch. 8 「灯位」 (fold-proto design-ch8 §5, tools/slips.js): the lamp on the left bank (first in 8-1) and the angle
     /// gate (first in 8-4). Slips eleven and twelve.
     case lamp, gate
+    /// Ch. 9 「滚」 (fold-proto design-ch9 §5, tools/slips.js 42c5c62): the loose stone (first in 9-1). Slip thirteen.
+    case roll
 }
 
 /// The slips' triggers and the save logic around them (design-onboarding §7.2–7.3), pure so they are tested here.
@@ -40,6 +42,7 @@ public enum Slips {
             case .wet: return s.contains("I")
             case .lamp: return (level.lamp ?? "R").contains("L")
             case .gate: return s.contains("A")
+            case .roll: return s.contains("r")
             }
         }
     }
@@ -157,7 +160,9 @@ public struct SlipFilm: Sendable {
 public struct SlipDemo: Sendable {
     public enum Beat: Sendable {
         case bump(Int, Int, Rules.Block)
-        case angle(Double, ms: Int, stamp: Rules.Stamp.Kind? = nil, crushed: Bool? = nil, shadowAt: Cell? = nil, falls: Bool = false)
+        /// `rolled`: a loose stone must roll from → to on the way (tools/slips.js `rolled`, vol. 3 ch. 9).
+        case angle(Double, ms: Int, stamp: Rules.Stamp.Kind? = nil, crushed: Bool? = nil, shadowAt: Cell? = nil, falls: Bool = false,
+                   rolled: [Cell]? = nil)
         case walk(Cell), walkStack(Cell), flip, at(Cell), win, pause(Int), still
     }
     public enum Failure: Error, CustomStringConvertible {
@@ -219,6 +224,13 @@ public struct SlipDemo: Sendable {
             .walk(Cell(1, 0)), .bump(1, 0, .door), .pause(300), .angle(120, ms: 400), .pause(150),
             .walk(Cell(2, 0)), .pause(250), .angle(0, ms: 500, falls: true), .at(Cell(0, 0)), .pause(300),
             .walk(Cell(1, 1)), .angle(120, ms: 400), .walk(Cell(3, 1)), .still, .win]),
+        // 松石: a wall like any stone; lean past upright (physical 80°) and it rolls one square towards the crease; back
+        // flat it passes upright again and drops into the gap, which is paper now; cross the bridge it made, close, and
+        // walk the stack to her (tools/slips.js `roll`). The still: flat again, the gap filled
+        SlipDemo(id: .roll, level: "9-1", map: ["--G--.rS", "--------"], beats: [
+            .bump(-1, 0, .stone), .pause(300), .angle(100, ms: 500, rolled: [Cell(6, 0), Cell(5, 0)]), .pause(250),
+            .angle(0, ms: 500, rolled: [Cell(5, 0), Cell(4, 0)]), .still, .pause(300), .walk(Cell(4, 0)),
+            .angle(180, ms: 420), .walkStack(Cell(2, 0)), .win]),
     ]
 
     public static func demo(_ id: SlipID) -> SlipDemo { all.first { $0.id == id }! }
@@ -240,14 +252,15 @@ public struct SlipDemo: Sendable {
                 let b = game.rules.stepBlock(game.board, game.char, dc, dr, game.posture, game.shade)
                 guard let b, b.why == why else { throw fail("step \(dc),\(dr) expected blocked by \(why), got \(String(describing: b?.why))") }
                 add(.bump(dc: dc, dr: dr, at: Cell(b.c, b.r)), 120)
-            case let .angle(target, ms, stamp, crushed, shadowAt, falls):
+            case let .angle(target, ms, stamp, crushed, shadowAt, falls, rolled):
                 let from = game.angle
                 let n = max(1, Int((abs(target - from) / FoldGame.subStep).rounded(.up)))
-                var wasCrushed = false, fell = false, stamps: [Rules.Stamp] = []
+                var wasCrushed = false, fell = false, stamps: [Rules.Stamp] = [], rolls: [Rules.Roll] = []
                 for k in 1...n {
                     let before = game.char
                     let a = from + (target - from) * Double(k) / Double(n)
                     let events = game.setAngle(a)
+                    for e in events { if case let .rolled(r) = e { rolls += r } }
                     let s = events.compactMap { e -> Rules.Stamp? in if case let .stamped(x) = e { return x }; return nil }
                     stamps += s
                     if events.contains(.fell(crushed: true)) { wasCrushed = true; add(.sweep, ms / n, s); add(.crush(at: before), 260) }
@@ -255,6 +268,7 @@ public struct SlipDemo: Sendable {
                     if events.contains(.fell(crushed: false)) { fell = true }
                 }
                 if fell != falls { throw fail("at fold \(target) fell=\(fell), expected \(falls)") }
+                if let rolled, !rolls.contains(where: { $0.from == rolled[0] && $0.to == rolled[1] }) { throw fail("expected a loose stone to roll \(rolled[0]) → \(rolled[1]) on the way to fold \(target)") }
                 if let crushed, crushed != wasCrushed { throw fail("at fold \(target) crushed=\(wasCrushed), expected \(crushed)") }
                 if let stamp, !stamps.contains(where: { $0.kind == stamp }) { throw fail("expected a \(stamp) stamp at fold \(target)") }
                 if let shadowAt, game.shade[shadowAt] == nil { throw fail("no shadow at \(shadowAt) at fold \(target)") }

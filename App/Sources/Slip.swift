@@ -441,6 +441,7 @@ struct SlipIcon: View {
             case .wet: WetBlot(size: cell * 0.9)
             case .lamp: LampMark(hc: hc).scaleEffect(size * 0.8 / LampMark.size.height)
             case .gate: GateMark(standing: true, size: size * 0.9, hc: hc)
+            case .roll: LooseBall(size: size, hc: hc)
             }
         }
         .frame(width: size, height: size)
@@ -494,6 +495,7 @@ nonisolated struct SlipGlyph: Shape {
             }
         case .lamp: p.addPath(LampFrame().path(in: r))
         case .gate: p.addPath(GateFrame().path(in: r))
+        case .roll: p.addEllipse(in: r.insetBy(dx: r.width * 0.18, dy: r.height * 0.18))
         case .turn:
             p.addRect(CGRect(x: r.minX + r.width * 0.3, y: r.minY + r.height * 0.04, width: r.width * 0.6, height: r.height * 0.74))
             p.move(to: pt(0.3, 0.2)); p.addLine(to: pt(0.12, 0.2)); p.addLine(to: pt(0.12, 0.94)); p.addLine(to: pt(0.72, 0.94)); p.addLine(to: pt(0.72, 0.78))

@@ -8,7 +8,7 @@ import FoldCore
 
 extension Chapter {
     /// The chapter's paper (the map cards, the contents page, a slip on the 「物件」 page).
-    var paperState: PaperState { id >= 5 ? .letter : [PaperState.chapter1, .chapter2, .chapter3, .chapter4][max(0, id - 1)] }
+    var paperState: PaperState { id >= 9 ? .card : id >= 5 ? .letter : [PaperState.chapter1, .chapter2, .chapter3, .chapter4][max(0, id - 1)] }
     /// Its one line (ch.N.line), if it has one (chapter 1 has none).
     var line: String? { let k = "ch.\(id).line", v = L10n.t(k); return v == k ? nil : v }
     static func of(level id: String) -> Chapter? { all.first { $0.levelIDs.contains(id) || $0.darkIDs.contains(id) } }
