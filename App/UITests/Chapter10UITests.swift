@@ -61,13 +61,23 @@ final class Chapter10UITests: XCTestCase {
         f.walk(2, 0, wait: 1.5)
         XCTAssertTrue(f.isHere(2, 0))
         app.buttons["fold.close"].tap()
-        let toast = app.descendants(matching: .any)["toast.bubble"]
-        let said = toast.waitForExistence(timeout: 4) ? toast.label : "none"
+        // the carry through the probe, not a transient bubble: she is on the crane's landing (5,0), and the toast and
+        // the close's one announcement both say where the crane took her (polled: they land after the close.snap)
+        var toast = "", said = "", me = ""
+        let until = Date().addingTimeInterval(5)
+        repeat {
+            toast = f.probe("toast"); said = f.probe("said"); me = f.probe("me")
+            if toast.contains("鹤带你") && said.contains("鹤带你") && me == "5,0" { break }
+            Thread.sleep(forTimeInterval: 0.25)
+        } while Date() < until
         shot("ch10-carry-closed")
+        XCTAssertEqual(me, "5,0", "carried to the crane's landing")
+        XCTAssertTrue(toast.contains("鹤带你"), "toast: \(toast)")
+        XCTAssertTrue(said.contains("鹤带你飞到了第6列"), "announced: \(said)")
         app.buttons["fold.open"].tap()
         Thread.sleep(forTimeInterval: 1.2)
-        XCTAssertTrue(said.contains("鹤带你"), "toast: \(said)")
         XCTAssertTrue(f.isHere(5, 0), label(5, 0))
+        XCTAssertTrue(kind(5, 0).contains("纸鹤"), "the crane on its landing: \(label(5, 0))")
         XCTAssertFalse(kind(2, 0).contains("纸鹤"), "flown: \(label(2, 0))")
         app.buttons["undo"].tap()                    // the opening
         Thread.sleep(forTimeInterval: 0.8)
