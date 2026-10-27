@@ -85,9 +85,8 @@ struct LevelScreen: View {
                         .accessibilityHidden(true)   // already announced
                         .allowsHitTesting(false)     // a rule line over the bottom row never eats a tap
                 }
-                }
-            }
-            VStack(spacing: 8) {
+                // the win's 下一封 knot floats too, so it never lifts the board (b19: a footer kept at its height cost
+                // every board 26 pt instead)
                 if model.showNext {
                     NextKnot(title: model.isLastInChapter ? L10n.t("letter.read") : model.isDark && model.nextDark == nil ? L10n.t("dark.back") : L10n.t("next")) {
                         if model.isLastInChapter { router.go(.letter) }
@@ -95,22 +94,28 @@ struct LevelScreen: View {
                         // the next level, or (an older save with a gap) the first one not yet delivered: never past it
                         else { model.go(model.isLevelOpen(model.index + 1) ? model.index + 1 : model.chapterLevelIndices.first { !model.done.contains($0) } ?? model.index + 1); fadeName() }
                     }
+                    .padding(.bottom, 8)
                     .transition(.opacity)
-                } else if settings.showButtons {
-                    FooterButtons(model: model)
+                }
+                }
+            }
+            VStack(spacing: 8) {
+                // the footer keeps the same height before and after the win (the 下一封 knot floats over the board
+                // above), so nothing here ever moves a square; what the win replaces stays as invisible space
+                if settings.showButtons {
+                    if model.showNext { FooterButtons(model: model).hidden().accessibilityHidden(true).allowsHitTesting(false) }
+                    else { FooterButtons(model: model) }
                 } else if model.hasThirdPage {
                     // always laid out on three-page levels, only shown when a flip is possible, so the board never
-                    // jumps when the book closes or opens (Haoqiang 10/27: 其他提示也这样)
-                    // (the footer's minimum height keeps its space; out of the tree while hidden, for VoiceOver and tests)
+                    // jumps when the book closes or opens (Haoqiang 10/27: 其他提示也这样); out of the tree while
+                    // hidden (an invisible stand-in keeps its space), for VoiceOver and tests
                     ZStack {
-                        if model.canShowFlip { FlipButton(model: model).transition(.opacity) }
+                        FlipButton(model: model).hidden().accessibilityHidden(true).allowsHitTesting(false)
+                        if model.canShowFlip && !model.showNext { FlipButton(model: model).transition(.opacity) }
                     }
                     .animation(.easeInOut(duration: 0.2), value: model.canShowFlip)
                 }
             }
-            // the footer keeps the 下一封 knot's height (52) before the win too, so the knot appearing never lifts the
-            // board (b19: it moved every square up 26 pt on two-page levels)
-            .frame(minHeight: 52, alignment: .bottom)
             .padding(.bottom, 6)
         }
         .background(TableBackground().contentShape(Rectangle()).onTapGesture { model.tuckSlip() })
