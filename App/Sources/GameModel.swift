@@ -521,7 +521,7 @@ final class GameModel {
     private func orderedSlips(_ ids: [SlipID]) -> [SlipID] {
         let start = game.board.start
         func distance(_ id: SlipID) -> Int {
-            let tile: Tile? = switch id { case .stone, .press: .stone; case .door: .door; case .ink: .ink; case .tab: .tab; case .glue: .glue; case .wet: .wetInk; default: nil }
+            let tile: Tile? = switch id { case .stone, .press: .stone; case .door: .door; case .ink: .ink; case .tab: .tab; case .glue: .glue; case .wet: .wetInk; case .gate: .gate; default: nil }
             guard let tile else { return .max }
             var best = Int.max
             for r in 0..<board.h { for c in 0..<board.w where board[c, r] == tile {

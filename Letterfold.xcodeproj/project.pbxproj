@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		089C73E24BB02BF7002C67DC /* Chapter8Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAF188A41CB92A6FB2A0D7D /* Chapter8Marks.swift */; };
 		0ACF1846232647123A81BF6B /* Skins.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD058B4451F306D134BBAF38 /* Skins.swift */; };
 		11BE4B3530A847817165737B /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDBB77B419ABE4C00953E0 /* App.swift */; };
 		23541C263217811CE7EE57A7 /* BookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9649A387FE6D80E352CD3FC9 /* BookView.swift */; };
@@ -75,6 +76,7 @@
 		59688079C7688C54335A73BD /* Chapter5UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter5UITests.swift; sourceTree = "<group>"; };
 		5DCB74D3A0DCC9D491D54DCD /* FoldCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FoldCore; path = Packages/FoldCore; sourceTree = SOURCE_ROOT; };
 		661C1BE741FF0CB5D1E9EE51 /* PlaythroughUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaythroughUITests.swift; sourceTree = "<group>"; };
+		6DAF188A41CB92A6FB2A0D7D /* Chapter8Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter8Marks.swift; sourceTree = "<group>"; };
 		73CBDC31A0224AF98A0B8641 /* Screens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screens.swift; sourceTree = "<group>"; };
 		76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldDriver.swift; sourceTree = "<group>"; };
 		79DDBB77B419ABE4C00953E0 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 			children = (
 				79DDBB77B419ABE4C00953E0 /* App.swift */,
 				9649A387FE6D80E352CD3FC9 /* BookView.swift */,
+				6DAF188A41CB92A6FB2A0D7D /* Chapter8Marks.swift */,
 				31779719E8C773D36D2CFC1B /* Contents.swift */,
 				45EBF8A2E746E16AE1153A20 /* GameModel.swift */,
 				578B23505A90DB23ECB3C2A4 /* Haptics.swift */,
@@ -312,6 +315,7 @@
 			files = (
 				11BE4B3530A847817165737B /* App.swift in Sources */,
 				23541C263217811CE7EE57A7 /* BookView.swift in Sources */,
+				089C73E24BB02BF7002C67DC /* Chapter8Marks.swift in Sources */,
 				47335045E1361AE66BF22A79 /* Contents.swift in Sources */,
 				F6517ABF6F79233473DE2C2F /* GameModel.swift in Sources */,
 				E814CEA6AE8D68A972F67039 /* Haptics.swift in Sources */,

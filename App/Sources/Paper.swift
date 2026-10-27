@@ -110,6 +110,8 @@ struct TileFace: View {
     var inkVariant = 0
     /// Ch. 7: when wet ink reached this square at the last press (its ring grows in).
     var bledAt: Date? = nil
+    /// Ch. 8: an angle gate stands (the page leans: it is floor) or lies down (Chapter8Marks.swift).
+    var gateStanding = false
     @Environment(\.highContrast) private var hc
     @Environment(\.goalIsFigure) private var goalIsFigure
     @Environment(\.skin) private var skin
@@ -142,6 +144,7 @@ struct TileFace: View {
         case .key: SkinKeyGlyph(size: size, ring: paper.thread)
         case .door: ZStack { if !bare { PathTile(size: size, paper: paper) }; SkinDoor(open: false, size: size) }
         case .openDoor: ZStack { if !bare { PathTile(size: size, paper: paper) }; SkinDoor(open: true, size: size) }
+        case .gate: GateMark(standing: gateStanding, size: size, hc: hc)
         case .ink:
             // wet ink is walkable: it sits on a path square like every other floor (frame v2-1)
             ZStack {
