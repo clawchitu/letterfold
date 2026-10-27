@@ -598,7 +598,7 @@ private struct TileAccessibility: ViewModifier {
         content
             .accessibilityElement()
             .accessibilityHidden(hidden)
-            .accessibilityLabel(model.label(c.c, c.r))
+            .accessibilityLabel(L10n.spokenText(model.label(c.c, c.r)))
             .accessibilityIdentifier(hidden ? "" : "tile-\(c.c)-\(c.r)")
             .accessibilityAddTraits(.isButton)
             .accessibilityAction { model.tap(c) }
@@ -1023,7 +1023,7 @@ private struct StackTargets: View {
                 .onTapGesture { model.tap(c) }
                 .position(item.slot)
                 .accessibilityElement()
-                .accessibilityLabel(model.label(c.c, c.r))
+                .accessibilityLabel(L10n.spokenText(model.label(c.c, c.r)))
                 .accessibilityIdentifier("tile-\(c.c)-\(c.r)")
                 .accessibilityAddTraits(.isButton)
                 .accessibilityAction { model.tap(c) }

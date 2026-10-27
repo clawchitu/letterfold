@@ -2019,11 +2019,11 @@ final class GameModel {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
             if UIAccessibility.isVoiceOverRunning {
                 UIAccessibility.post(notification: .announcement,
-                                     argument: NSAttributedString(string: s, attributes: [.accessibilitySpeechLanguage: L10n.lang]))
+                                     argument: L10n.speech(s))
             } else if AppSettings.shared.speak, let self {
                 // 语音朗读: no screen reader running, so speak in the system voice of the app's language
                 self.speech.stopSpeaking(at: .word)
-                let u = AVSpeechUtterance(string: s)
+                let u = AVSpeechUtterance(attributedString: L10n.speech(s))   // 第5行 read háng (IPA hint)
                 u.voice = AVSpeechSynthesisVoice(language: L10n.lang == "zh-Hans" ? "zh-CN" : L10n.lang)
                 self.speech.speak(u)
             }
