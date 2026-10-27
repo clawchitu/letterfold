@@ -102,18 +102,24 @@ struct SlipLayer: View {
     /// height less 16 (design-onboarding §2.1). Landscape: over the right page, the small book on its side above the text.
     private func slipBox(_ a: SlipAnchor) -> CGRect {
         if a.horizontal {
-            // the page's own width at the crease, edge on edge with it (never wider than the board page)
-            let w = min(a.page.width, 420)
+            // the page's own width at the crease, edge on edge with it; a narrow board (7-1's two columns) would squeeze
+            // the slip and push 「下一张 ›」 out of it, so it is never narrower than 320 pt (or the screen less its margins),
+            // centred on the crease and overhanging the page
+            let w = min(max(a.page.width, minWidth), 420)
             // §2.1 caps it at the top page's height less 16; a short top page (a five-row board's 63 pt squares)
             // would shrink the small book to ~60 %, so the slip may rise past the page into the empty table above it
             let h = min(MiniBook.size.height + 24, max(a.page.height - 16, a.crease - 16))
             let x = min(max(a.page.midX - w / 2, -margin + 8), size.width + margin - 8 - w)
             return CGRect(x: x, y: a.crease - 8 - h, width: w, height: h)
         }
-        let w = min(a.page.width - 24, 460)
+        let w = min(max(a.page.width - 24, minWidth), 460)
         let h = min(a.page.height - 24, MiniBook.size.width + 24 + 170)
-        return CGRect(x: a.page.minX + (a.page.width - w) / 2, y: a.page.minY + 12, width: w, height: h)
+        let x = min(max(a.page.minX + (a.page.width - w) / 2, -margin + 8), size.width + margin - 8 - w)
+        return CGRect(x: x, y: a.page.minY + 12, width: w, height: h)
     }
+
+    /// The slip's least width: 320 pt, or the whole screen less 8 pt each side where that is narrower.
+    private var minWidth: CGFloat { min(320, size.width + 2 * margin - 16) }
 
     /// The crease's right end, just outside the page (the 「?」 end): never on a square, never in the page's drag area.
     private func bookmarkPoint(_ a: SlipAnchor) -> CGPoint {
@@ -278,6 +284,7 @@ struct SlipView: View {
                 Button { (onNext ?? { model.nextSlipPage() })() } label: {
                     Text(L10n.t(last ? "slip.tuck" : "slip.next") + " ›")
                         .font(SlipFont.font(.regular, 13, .footnote)).foregroundStyle(hc ? .black : Tok.ink600)
+                        .lineLimit(1).fixedSize()
                         .padding(.horizontal, 8)
                         .frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
                 }
