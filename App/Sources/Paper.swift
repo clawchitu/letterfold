@@ -108,6 +108,8 @@ struct TileFace: View {
     var figureShift: Double = 0
     /// Which of the three splat forms wet ink takes here (design-skins §2.1: `(c*7 + r*13) % 3`, a print its source's)
     var inkVariant = 0
+    /// Ch. 7: when wet ink reached this square at the last press (its ring grows in).
+    var bledAt: Date? = nil
     @Environment(\.highContrast) private var hc
     @Environment(\.goalIsFigure) private var goalIsFigure
     @Environment(\.skin) private var skin
@@ -145,6 +147,12 @@ struct TileFace: View {
             ZStack {
                 if !bare { PathTile(size: size, paper: paper) }
                 WetInk(size: size, paper: paper, mirrored: inkPrint, spent: inkSpent, verticalMirror: mirrorAxisVertical, printedAt: inkPrint ? printedAt : nil, variant: inkVariant)
+            }
+        case .wetInk:
+            // ch. 7 「墨晕」: ink that has not dried — walkable, bigger and softer than dry ink, with a faint halo
+            ZStack {
+                if !bare { PathTile(size: size, paper: paper) }
+                WetBlot(size: size, variant: inkVariant, grewAt: bledAt ?? (inkPrint ? printedAt : nil), printed: bledAt == nil && inkPrint)
             }
         case .tab:
             ZStack {
@@ -431,6 +439,53 @@ struct WetInk: View {
             guard let t = printedAt, Date.now.timeIntervalSince(t) < 1 else { return }
             bleed = 0
             withAnimation(.easeOut(duration: 0.6)) { bleed = 1 }
+        }
+    }
+}
+
+/// Wet ink `I` (fold-proto design-ch7 §2): the ink primitive one size up (96 % of the square), a soft 1.5 pt edge, a
+/// radial ink (centre 100 %, edge 70 %) and a faint halo (ink at 12 %, inside the square) — dry ink's edge is hard, so
+/// the two read apart at a glance. A square the last press bled onto grows in (scale 0 → 1, 300 ms ease-out); a wet
+/// print appears 120 ms after the ring. Reduce Motion: it is simply there, with one flash. High contrast: the solid
+/// blot plus a 2 pt dashed ring round it (dry ink has no ring); no blur, no colour.
+struct WetBlot: View {
+    let size: Double
+    var variant = 0
+    var grewAt: Date? = nil
+    var printed = false
+    @Environment(\.highContrast) private var hc
+    @Environment(\.skin) private var skin
+    @State private var grow: Double = 1
+    @State private var flash: Double = 0
+
+    var body: some View {
+        let s = size * 0.96
+        ZStack {
+            if hc {
+                SkinInkBlot(skin: skin, variant: variant).fill(.black).frame(width: s * 0.66, height: s * 0.66)
+                Circle().strokeBorder(.black, style: StrokeStyle(lineWidth: 2, dash: [4, 3])).frame(width: s * 0.94, height: s * 0.94)
+            } else {
+                Circle().fill(Tok.ink900.opacity(0.12)).frame(width: s, height: s).blur(radius: 2)
+                SkinInkBlot(skin: skin, variant: variant)
+                    .fill(RadialGradient(colors: [Tok.ink900.opacity(0.96), Tok.ink900.opacity(0.70)], center: .center, startRadius: 0, endRadius: s * 0.42))
+                    .frame(width: s * 0.84, height: s * 0.84)
+                    .blur(radius: 1.5)
+                Ellipse().fill(.white.opacity(0.14)).frame(width: s * 0.28, height: s * 0.14).offset(x: -s * 0.14, y: -s * 0.18).blur(radius: 1.5)
+            }
+            Circle().fill(.white).frame(width: s, height: s).opacity(flash).blendMode(.screen)
+        }
+        .scaleEffect(grow)
+        .frame(width: size, height: size)
+        .accessibilityHidden(true)
+        .onAppear {
+            guard let t = grewAt, Date.now.timeIntervalSince(t) < 1 else { return }
+            if AppSettings.shared.motionReduced {
+                flash = 0.6
+                withAnimation(.linear(duration: 0.25).delay(printed ? 0.12 : 0)) { flash = 0 }
+            } else {
+                grow = 0
+                withAnimation(.easeOut(duration: 0.3).delay(printed ? 0.12 : 0)) { grow = 1 }
+            }
         }
     }
 }

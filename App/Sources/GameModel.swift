@@ -28,7 +28,7 @@ struct Chapter: Identifiable {
     var volumeNumeral: String { Self.numeral(inVolume) }
     var name: String { L10n.t("ch.\(id)") }
     /// The chapter's seal on its map card and (vol. 2) on the finale: 达 · 通 · 影 · 成 · 胶 (design-v2c1 §2 章印).
-    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "页"][min(6, id - 1)] }
+    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "页"][min(7, id - 1)] }
     static func volumeChapters(_ v: Int) -> [Chapter] { all.filter { $0.volume == v } }
 
     static let all: [Chapter] = [
@@ -47,8 +47,11 @@ struct Chapter: Identifiable {
         // vol. 2 chapter 2 「翻」 (fold-proto design-ch6.md): a third page; opens once chapter 5's seven main levels are
         // delivered (the strict rule; its 暗信 are not required — they are not in `levelIDs`)
         Chapter(id: 6, levelIDs: ["turn", "overleaf", "twoFaces", "inlay", "bleed", "pressedFlower", "lastPage"], unlocked: true, soon: false),
-        // vol. 2 chapter 3 is not written yet: a dashed card, never a sealed chapter that looks openable
-        Chapter(id: 7, levelIDs: [], unlocked: false, soon: true),
+        // vol. 2 chapter 3 「墨晕」 (fold-proto design-ch7.md): wet ink; opens once chapter 6 is all delivered (the strict
+        // rule). Six levels: 7-6 turned was cut, `through` is the sixth
+        Chapter(id: 7, levelIDs: ["wet", "print", "ring", "spoiled", "pocket", "through"], unlocked: true, soon: false),
+        // vol. 2 chapter 4 is not written yet: a dashed card, never a sealed chapter that looks openable
+        Chapter(id: 8, levelIDs: [], unlocked: false, soon: true),
     ]
 }
 
@@ -222,6 +225,8 @@ final class GameModel {
     /// speech rate is never cut off.
     static let introFallback: TimeInterval = 30
     private(set) var inkPrintedAt: [Cell: Date] = [:]
+    /// Ch. 7 「墨晕」: the squares wet ink bled onto at the last press, and when (the ring grows out of its neighbour).
+    private(set) var inkBledAt: [Cell: Date] = [:]
     /// glue.pull (design-review-v2c1 §3): stones flying across the crease to the glue that took them, the faint mark
     /// each leaves where it was, and the glue square's flash. Times are CACurrentMediaTime().
     struct GluePull: Equatable { var from: Cell; var to: Cell; var start: Double }
@@ -680,7 +685,7 @@ final class GameModel {
     private func clearTransient() {
         cancelFlip()
         quiet = false; dragging = false; angleHint = false; walking = false
-        threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]
+        threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]; inkBledAt = [:]
         pending = Pending(); nopes = 0
         toastTask?.cancel(); toastTask = nil; toast = nil
         clearGlue()
@@ -1420,7 +1425,7 @@ final class GameModel {
             else if p.lost { parts.append(L10n.t("lost")) }
         }
         if p.stamps.contains(where: { $0.kind == .glue }) { parts.append(L10n.t("glued")) }
-        for s in p.stamps where s.kind != .glue { parts.append(L10n.t(s.kind == .door ? "doorOpened" : "inkPrinted")) }
+        parts += stampWords(p.stamps)
         if !p.fell.isEmpty { if p.dead { parts.append(L10n.t("lost")) }; parts.append(p.fell) }
         announce(parts.joined(separator: L10n.t("sep")))
     }
@@ -1485,6 +1490,13 @@ final class GameModel {
             case .stamped(let s):
                 pending.stamps.append(s)
                 if s.kind == .ink, let to = s.cells.last { inkPrintedAt[to] = .now }
+                if s.kind == .bleed {
+                    // one ring per press (design-ch7 §2): a soft puff and a light tap, once however many squares it took
+                    let now = Date.now
+                    for c in s.cells { inkBledAt[c] = now }
+                    haptics.blot()
+                    sound.blot()
+                }
                 if s.kind == .glue, s.cells.count == 2 { pulled.append((s.cells[0], s.cells[1])) }
             case .connected:
                 pending.connected = true; pending.lost = false
@@ -1704,7 +1716,7 @@ final class GameModel {
         if !p.fell.isEmpty {
             // crushed / fell: what the shut did, then the reason, last (nothing about paths: you are back at the start)
             if p.stamps.contains(where: { $0.kind == .glue }) { parts.append(L10n.t("glued")) }
-            for s in p.stamps where s.kind != .glue { parts.append(L10n.t(s.kind == .door ? "doorOpened" : "inkPrinted")) }
+            parts += stampWords(p.stamps)
             if p.dead { parts.append(L10n.t("lost")) }   // said once (game.stuck): a crush that ends the level must still say so (Codex review 15)
             parts.append(p.fell)
             announce(parts.joined(separator: L10n.t("sep")))
@@ -1719,7 +1731,7 @@ final class GameModel {
         else if p.lost { parts.append(L10n.t("lost")) }
         // the shut: 「胶把石头粘到了对页」 once however many stones moved, then the door (design-review-v2c1 §3)
         if p.stamps.contains(where: { $0.kind == .glue }) { parts.append(L10n.t("glued")) }
-        for s in p.stamps where s.kind != .glue { parts.append(L10n.t(s.kind == .door ? "doorOpened" : "inkPrinted")) }
+        parts += stampWords(p.stamps)
         // a ridden shadow: where it took her, said once at the end of the ride (playtest-ch6 §2 #6)
         if let c0 = p.carryFrom, c0.c != char.c {
             let text = L10n.t("carried", ["from": c0.c + 1, "to": char.c + 1, "pos": pos(char)])
@@ -1826,8 +1838,29 @@ final class GameModel {
 
     // MARK: ink
 
+    /// What a press did, in words (VoiceOver): 「胶把石头粘到了对页」 is said by the caller; here the wet ink's ring once
+    /// (ch. 7 `inkBled`), each door, each dry print, and the wet prints once (a ring prints several squares at a time).
+    func stampWords(_ stamps: [Rules.Stamp]) -> [String] {
+        var out: [String] = []
+        if stamps.contains(where: { $0.kind == .bleed }) { out.append(L10n.t("inkBled")) }
+        var wetSaid = false
+        for s in stamps {
+            switch s.kind {
+            case .door: out.append(L10n.t("doorOpened"))
+            case .ink where s.wet: if !wetSaid { out.append(L10n.t("inkPrinted")); wetSaid = true }
+            case .ink: out.append(L10n.t("inkPrinted"))
+            case .glue, .bleed: break
+            }
+        }
+        return out
+    }
+    /// When the wet ink reached this square at the last press (the bleed ring), for its grow-in.
+    func bledAt(_ c: Cell) -> Date? { inkBledAt[c] }
+    /// A wet print on the facing page (the source bled or was wet before the press): drawn mirrored like a dry print.
+    func isWetPrint(_ c: Cell) -> Bool { board[c] == .wetInk && original[c] == .empty && inkPrintedAt[c] != nil }
+
     /// A cell holding a print of wet ink from the facing page (its mirror image, design-spec v2-①).
-    func isInkPrint(_ c: Cell) -> Bool { board[c] == .ink && original[c] == .empty }
+    func isInkPrint(_ c: Cell) -> Bool { (board[c] == .ink || board[c] == .wetInk) && original[c] == .empty }
     /// The splat form of the ink drawn here (design-skins §2.1): `(c*7 + r*13) % 3`; a print is its source's mirror image,
     /// so it takes the source's form.
     func inkVariant(_ c: Cell) -> Int {

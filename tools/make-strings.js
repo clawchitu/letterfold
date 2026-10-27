@@ -169,7 +169,13 @@ const NATIVE = {
   'ch.6': ['翻', 'Turn', 'めくる', '넘김'],
   carried: ['影子把你从第{from}列带到第{to}列（你现在在这里）', 'The shadow carried you from column {from} to column {to} (you are there now)', '影がきみを{from}列目から{to}列目へ運んだ（いまはそこにいる）', '그림자가 당신을 {from}열에서 {to}열로 옮겼어요(지금 거기 있어요)'],
   // the next chapter, not yet written (map card)
-  'ch.7': ['待续', 'To Be Continued', 'つづく', '다음 이야기'],
+  'ch.7': ['墨晕', 'Bleed', '滲み', '번짐'],
+  'ch.8': ['待续', 'To Be Continued', 'つづく', '다음 이야기'],
+  // 0.1 (19) ch. 7 「墨晕」: fold-proto names only `i` (「湿墨」); the native board also reads `I` aloud, so the two inks
+  // need different names when they share a page (7-3). Not in fold-proto yet (reported upstream). ja/ko: TODO-native-check.
+  'kind.I': ['未干的墨，每合一次洇一圈', 'undried ink, bleeds a ring each close', '乾いていない墨、閉じるたびにひとまわり滲む', '마르지 않은 먹, 닫을 때마다 한 겹 번짐'],
+  'noun.I': ['未干的墨', 'undried ink', '乾いていない墨', '마르지 않은 먹'],
+  'kind.i.ch7': ['墨，已干，只印不洇', 'ink, dry: it prints but never bleeds', '墨、乾いている：写るが滲まない', '먹, 말라 있음: 찍히지만 번지지 않음'],
   'flip.action': ['翻过来', 'Turn over', '裏返す', '뒤집기'],
   'flip.hint': ['合上时把书翻个面', 'Turns the closed book over', '閉じた本を裏返す', '닫힌 책을 뒤집어요'],
   'kind.x.ch6': ['镇石（石头）', 'paperweight (stone)', '文鎮石（石）', '문진돌(돌)'],
@@ -202,7 +208,7 @@ function catalog(entries) {
 
 // 0.1 (16): ch. 6 strings fold-proto has only in zh / en (or in an older form) for ja / ko. Marked TODO-native-check in
 // the catalog comments until a native speaker has read them.
-const CH6_NATIVE = ['ch.6', 'ch.7', 'carried', 'flip.action', 'flip.hint', 'restart', 'restartLabel', 'restartHint', 'restarted'];
+const CH6_NATIVE = ['ch.6', 'ch.7', 'ch.8', 'kind.I', 'noun.I', 'kind.i.ch7', 'carried', 'flip.action', 'flip.hint', 'restart', 'restartLabel', 'restartHint', 'restarted'];
 const STRING_FIX = {
   ja: {
     'chHead.6': '六 · めくる',
@@ -224,7 +230,10 @@ const HELP_ADD = {
   ja: ['O：開く。', 'O：開く。T：めくる（閉じているとき）。閉じたまま歩くとき、両方の頁が紙なら同じ頁にとどまり、片方だけが紙なら頁を移る。紙の上の影は、ただの紙。'],
   ko: ['O: 열기.', 'O: 열기. T: 넘기기(닫혀 있을 때). 닫은 채 걸을 때 두 페이지가 모두 종이면 그 페이지에 머물고, 한쪽만 종이일 때만 페이지를 옮겨요. 종이 위 그림자는 그냥 종이예요.'],
 };
-const CHECKED = new Set(['help', ...Object.keys(STRING_FIX.ja), ...Object.keys(STRING_FIX.ko)]);
+// 0.1 (19): ch. 7 「墨晕」 strings — fold-proto has zh / en final and ja / ko drafts (design-ch7.md §5–6, TODO review there).
+const CH7_DRAFTS = ['ch.7.line', 'chHead.7', 'paper.ch7', 'inkBled', 'letter.7.title', 'letter.7.body', 'letter.7.sign', 'letter.7.end',
+  'slip.wet.title', 'slip.wet.body', 'slip.wet.pic'];
+const CHECKED = new Set(['help', ...Object.keys(STRING_FIX.ja), ...Object.keys(STRING_FIX.ko), ...CH7_DRAFTS]);
 for (const [l, table] of Object.entries(STRING_FIX)) Object.assign(src.strings[l], table);
 for (const [l, [from, to]] of Object.entries(HELP_ADD)) {
   if (!src.strings[l].help.includes(to)) src.strings[l].help = src.strings[l].help.replace(from, to);
@@ -249,7 +258,7 @@ const SLIPS = {
   'slip.door.title': ["门与钥匙", "Door and Key", "扉と鍵", "문과 열쇠"],
   'slip.door.body': ["门锁着，钥匙在对面那页。合上书，钥匙对上门，门就开了。", "The door is locked; the key is on the facing page. Close the book: the key meets the door, and it opens.", "扉は鍵がかかっていて、鍵は向かいのページにある。本を閉じると鍵が扉に重なり、扉が開く。", "문은 잠겨 있고, 열쇠는 맞은편 페이지에 있어요. 책을 닫으면 열쇠가 문에 닿아 문이 열려요."],
   'slip.ink.title': ["墨", "Ink", "墨", "먹"],
-  'slip.ink.body': ["湿墨。合上书，它印到对面那一格——那里就多出一格纸。", "Wet ink. Close the book and it prints onto the facing square — one more square of paper there.", "濡れた墨。本を閉じると向かいの枡に写り、そこが一枡ぶんの紙になる。", "젖은 먹이에요. 책을 닫으면 맞은편 칸에 찍혀서, 그곳이 종이 한 칸이 돼요."],
+  'slip.ink.body': ["墨。合上书，它印到对面那一格——那里就多出一格纸。", "Ink. Close the book and it prints onto the facing square — one more square of paper there.", "墨。本を閉じると向かいの枡に写り、そこが一枡ぶんの紙になる。", "먹이에요. 책을 닫으면 맞은편 칸에 찍혀서, 그곳이 종이 한 칸이 돼요."],
   'slip.tab.title': ["纸片", "Tab", "紙片", "종이 조각"],
   'slip.tab.body': ["纸片在中缝两边成对。把书立到一半，它们站起来，搭成桥。", "Tabs sit in pairs across the crease. Stand the book half open and they rise into a bridge.", "紙片は折り目の両側に対になっている。本を半分立てると起き上がり、橋になる。", "종이 조각은 접는 선 양쪽에 짝으로 있어요. 책을 반쯤 세우면 일어나 다리가 돼요."],
   'slip.shadow.title': ["影子", "Shadow", "影", "그림자"],
@@ -361,9 +370,13 @@ const LEVEL_V17 = {
   },
 };
 for (const [l, table] of Object.entries(LEVEL_V17)) Object.assign(src.levelTexts[l], table);
-const LEVEL_CHECKED = new Set([...Object.keys(LEVEL_CH6.ja), ...Object.keys(LEVEL_V17.ja)]);
+// 0.1 (19): ch. 7 「墨晕」 ja / ko are fold-proto's drafts (TODO review there). 7-6 turned was cut (design-ch7.md §3): no
+// level, no strings.
+const LEVEL_CH7 = ['wet', 'print', 'ring', 'spoiled', 'pocket', 'through'];
+const LEVEL_CUT = new Set(['turned']);
+const LEVEL_CHECKED = new Set([...Object.keys(LEVEL_CH6.ja), ...Object.keys(LEVEL_V17.ja), ...LEVEL_CH7]);
 
-for (const id of Object.keys(src.levelTexts.en)) {
+for (const id of Object.keys(src.levelTexts.en).filter((x) => !LEVEL_CUT.has(x))) {
   // an optional 4th entry: the first rung of the 「?」 ladder (design-review-v2c1 §2), shown before the hint
   ['name', 'line', 'hint', 'hint1'].forEach((part, i) => {
     if (i === 3 && !(src.levelTexts.en[id] || [])[3]) return;

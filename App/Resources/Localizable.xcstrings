@@ -1058,6 +1058,66 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
+            "value": "墨晕"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bleed"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "滲み"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "번짐"
+          }
+        }
+      }
+    },
+    "ch.7.line": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨还没干，每合一次洇一圈。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The ink is wet: every close bleeds one ring."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨はまだ乾いていない。閉じるたび、ひとまわり滲む。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먹이 아직 마르지 않았다. 닫을 때마다 한 겹 번진다."
+          }
+        }
+      }
+    },
+    "ch.8": {
+      "comment": "UI. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
             "value": "待续"
           }
         },
@@ -1497,6 +1557,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "6장 · 넘김"
+          }
+        }
+      }
+    },
+    "chHead.7": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "七 · 墨晕"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7 · Bleed"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "七 · 滲み"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7장 · 번짐"
           }
         }
       }
@@ -4291,6 +4381,36 @@
         }
       }
     },
+    "inkBled": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨往外洇了一圈"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the wet ink bled one ring outward"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨がひとまわり滲んだ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먹이 한 겹 더 번졌어요"
+          }
+        }
+      }
+    },
     "inkPrinted": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -4801,6 +4921,36 @@
         }
       }
     },
+    "kind.I": {
+      "comment": "VoiceOver. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未干的墨，每合一次洇一圈"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "undried ink, bleeds a ring each close"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "乾いていない墨、閉じるたびにひとまわり滲む"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "마르지 않은 먹, 닫을 때마다 한 겹 번짐"
+          }
+        }
+      }
+    },
     "kind.figure": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -4947,6 +5097,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "먹물 웅덩이(젖은 먹)"
+          }
+        }
+      }
+    },
+    "kind.i.ch7": {
+      "comment": "VoiceOver. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨，已干，只印不洇"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ink, dry: it prints but never bleeds"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨、乾いている：写るが滲まない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먹, 말라 있음: 찍히지만 번지지 않음"
           }
         }
       }
@@ -6417,6 +6597,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "오른쪽 강가에서 온 편지"
+          }
+        }
+      }
+    },
+    "letter.7.body": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨还没干。\n我每合一次书，字就往你那边洇一圈——\n洇到页边，洇到背面。\n别等它干。合上来。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The ink is not dry.\nEach time I close the book the words bleed a ring towards you —\nto the margin, through to the back.\nDon’t wait for it to dry. Close the book."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨はまだ乾いていない。\n本を閉じるたび、字はきみのほうへひとまわり滲む——\n頁の端まで、裏まで。\n乾くのを待たないで。閉じて。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먹이 아직 마르지 않았다.\n책을 닫을 때마다 글이 네 쪽으로 한 겹 번진다.\n여백까지, 뒷면까지.\n마르기를 기다리지 마. 닫아 줘."
+          }
+        }
+      }
+    },
+    "letter.7.end": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷二《翻页》第三章完。\n下一章，灯换了岸。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of Book Two, chapter three.\nNext, the lamp changes banks."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第二巻『頁をめくる』第三章 了。\n次の章で、灯が岸を変える。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제2권 《페이지를 넘기다》 제3장 끝.\n다음 장에서 등불이 강가를 바꾼다."
+          }
+        }
+      }
+    },
+    "letter.7.sign": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——左岸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— the Left Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——左岸より"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— 왼쪽 강가에서"
+          }
+        }
+      }
+    },
+    "letter.7.title": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左岸来信"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A Letter from the Left Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左岸からの手紙"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "왼쪽 강가에서 온 편지"
           }
         }
       }
@@ -8101,6 +8401,36 @@
         }
       }
     },
+    "noun.I": {
+      "comment": "VoiceOver. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未干的墨"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "undried ink"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "乾いていない墨"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "마르지 않은 먹"
+          }
+        }
+      }
+    },
     "noun.g": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -9031,6 +9361,36 @@
         }
       }
     },
+    "paper.ch7": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "信笺，墨迹未干。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Letter paper, the ink still wet."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "便箋。墨が乾いていない。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "편지지, 먹이 아직 마르지 않았다."
+          }
+        }
+      }
+    },
     "paper.letter": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -9387,6 +9747,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "세우기"
+          }
+        }
+      }
+    },
+    "pre.wet": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "湿墨"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wet ink"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "濡れた墨"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "젖은 먹"
           }
         }
       }
@@ -11078,25 +11468,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "湿墨。合上书，它印到对面那一格——那里就多出一格纸。"
+            "value": "墨。合上书，它印到对面那一格——那里就多出一格纸。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wet ink. Close the book and it prints onto the facing square — one more square of paper there."
+            "value": "Ink. Close the book and it prints onto the facing square — one more square of paper there."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "濡れた墨。本を閉じると向かいの枡に写り、そこが一枡ぶんの紙になる。"
+            "value": "墨。本を閉じると向かいの枡に写り、そこが一枡ぶんの紙になる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "젖은 먹이에요. 책을 닫으면 맞은편 칸에 찍혀서, 그곳이 종이 한 칸이 돼요."
+            "value": "먹이에요. 책을 닫으면 맞은편 칸에 찍혀서, 그곳이 종이 한 칸이 돼요."
           }
         }
       }
@@ -11967,6 +12357,96 @@
           "stringUnit": {
             "state": "translated",
             "value": "세 번째 페이지"
+          }
+        }
+      }
+    },
+    "slip.wet.body": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这滴墨还没干。每合一次书，它往四周洇一格，也印到对面——印过去的也是湿的。合几次，墨就长几圈。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This blot has not dried. Every time the book closes it bleeds one square outward and prints onto the facing page — and the print is wet too. Close twice, it grows two rings."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この墨はまだ乾いていない。本を閉じるたびに四方へ一枡滲み、向かいにも写る——写ったほうも濡れている。閉じた回数だけ、墨は広がる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 먹은 아직 마르지 않았어요. 책을 닫을 때마다 사방으로 한 칸 번지고, 맞은편에도 찍혀요. 찍힌 쪽도 젖어 있어요. 닫은 횟수만큼 먹이 자라요."
+          }
+        }
+      }
+    },
+    "slip.wet.pic": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：合一次，墨洇一圈，还差一格；再合一次，路接上了。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: one close, one ring, one square short; a second close, and the road joins."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：一度閉じるとひとまわり滲み、あと一枡届かない。もう一度閉じると道がつながる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 한 번 닫으면 한 겹 번지고 한 칸이 모자라요. 한 번 더 닫으면 길이 이어져요."
+          }
+        }
+      }
+    },
+    "slip.wet.title": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "墨晕"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wet Ink"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "滲み"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "번짐"
           }
         }
       }

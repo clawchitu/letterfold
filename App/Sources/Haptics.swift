@@ -120,6 +120,8 @@ final class Haptics {
     }
 
     /// Stepping onto glue: a soft give (design-review-v2c1 §3).
+    /// Ch. 7 「墨晕」: the wet ink bleeds a ring (design-ch7 §2: [15] — one light, dull tap).
+    func blot() { if !play([tap(0, 0.3, 0.1)]) { impactSoft.impactOccurred(intensity: 0.3 * scale) } }
     func soft() { if !play([tap(0, 0.45, 0.1)]) { impactSoft.impactOccurred(intensity: 0.45 * scale) } }
     /// glue.pull: one rigid tap per stone that changes page, `stagger` apart (design-review-v2c1 §3).
     func glue(count: Int, stagger: Double) {
