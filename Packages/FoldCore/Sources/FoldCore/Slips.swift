@@ -10,11 +10,13 @@ public enum SlipID: String, CaseIterable, Sendable, Codable {
     case lamp, gate
     /// Ch. 9 「滚」 (fold-proto design-ch9 §5, tools/slips.js 42c5c62): the loose stone (first in 9-1). Slip thirteen.
     case roll
+    /// Ch. 10 「鹤」 (fold-proto design-ch10 §5, tools/slips.js 'crane'): the paper crane (first in 10-1). Slip fourteen.
+    case crane
 }
 
 /// The slips' triggers and the save logic around them (design-onboarding §7.2–7.3), pure so they are tested here.
 public enum Slips {
-    static let floorChars: Set<Character> = [".", "S", "G", "k", "i", "o", "p", "g", "I"]
+    static let floorChars: Set<Character> = [".", "S", "G", "k", "i", "o", "p", "g", "I", "h"]
 
     /// 压: a right-page stone whose mirror square is paper the figure can stand on (check.js `crushable`).
     public static func crushable(_ level: Level, columnsPerPage n: Int = 4) -> Bool {
@@ -43,6 +45,7 @@ public enum Slips {
             case .lamp: return (level.lamp ?? "R").contains("L")
             case .gate: return s.contains("A")
             case .roll: return s.contains("r")
+            case .crane: return s.contains("h")
             }
         }
     }
@@ -231,6 +234,12 @@ public struct SlipDemo: Sendable {
             .bump(-1, 0, .stone), .pause(300), .angle(100, ms: 500, rolled: [Cell(6, 0), Cell(5, 0)]), .pause(250),
             .angle(0, ms: 500, rolled: [Cell(5, 0), Cell(4, 0)]), .still, .pause(300), .walk(Cell(4, 0)),
             .angle(180, ms: 420), .walkStack(Cell(2, 0)), .win]),
+        // 纸鹤: walk onto it (it is paper); close — at the press it flies to its mirror square on the facing page, with
+        // her; open: she is on the right page; one step down to her (her stack is blocked by the left stone: only the
+        // crane gets her there; tools/slips.js `crane`). The still: open again, on the crane's landing
+        SlipDemo(id: .crane, level: "10-1", map: ["S.h.....", "--x--G--"], beats: [
+            .walk(Cell(2, 0)), .pause(300), .angle(180, ms: 500, stamp: .crane), .at(Cell(5, 0)), .pause(250),
+            .angle(0, ms: 500), .at(Cell(5, 0)), .still, .pause(300), .walk(Cell(5, 1)), .win]),
     ]
 
     public static func demo(_ id: SlipID) -> SlipDemo { all.first { $0.id == id }! }
