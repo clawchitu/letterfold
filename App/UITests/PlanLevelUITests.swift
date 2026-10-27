@@ -21,7 +21,7 @@ final class PlanLevelUITests: PlaythroughUITests {
         for k in acts.indices {
             play(id, [acts[k]], keepShut: true)
             shot("\(id)-act\(k)")
-            print("PLAN \(id) act \(k) \(acts[k]) fold=\(fold.value as? String ?? "")")
+            print("PLAN \(id) act \(k) \(acts[k]) fold=\(fold.value as? String ?? "") figure=\(app.descendants(matching: .any)["figure"].exists)")
         }
         XCTAssertTrue(app.buttons["win.next"].waitForExistence(timeout: 8), "\(id) is won")
     }

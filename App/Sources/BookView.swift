@@ -639,6 +639,14 @@ private struct GhostFinger: View {
     }
 }
 
+/// Under `-probe YES` the drawn figure is an element `figure` the UI tests can find; otherwise hidden from VoiceOver.
+struct FigureProbe: ViewModifier {
+    func body(content: Content) -> some View {
+        if UserDefaults.standard.bool(forKey: "probe") { content.accessibilityElement().accessibilityIdentifier("figure") }
+        else { content.accessibilityHidden(true) }
+    }
+}
+
 private struct PuppetLayer: View {
     let model: GameModel
     let geo: BookGeometry
@@ -664,7 +672,8 @@ private struct PuppetLayer: View {
         // in her square (4-6) the two stand side by side: his cane and her bun both show (design-ch4 §4)
         .position(x: at.x - model.meetShift(model.figureCell, geo.tile), y: at.y - geo.tile * 0.12)
         .allowsHitTesting(false)
-        .accessibilityHidden(true)
+        // the UI tests' probe sees the drawn figure (VoiceOver never does: the square says 「你在这里」)
+        .modifier(FigureProbe())
     }
     /// Face the way of the last step on screen.
     private var facingLeft: Bool {
@@ -1324,6 +1333,16 @@ private struct CameraBook: View {
                             .offset(y: model.press * 2)
                     }
                 }
+            }
+            // past 90° the folding page shows its back: a figure standing on it (a third page, a lean) is drawn upright
+            // where her square is, every chapter (ch. 8's LiftedPageThrough draws its own; b20: on 7-6 she vanished)
+            if showBack && th < 160 && !model.liftedPageLive && !model.puppetOnRamp && geo.spread.page(of: model.figureCell.c) == .folding {
+                let p = cam.project(center3D(model.figureCell, fold: fold, W: W, H: H))
+                Puppet(frame: 0, facingLeft: false, rim: true)
+                    .frame(width: geo.tile * 0.62 * cam.k, height: geo.tile * 0.84 * cam.k)
+                    .position(x: p.x, y: p.y - geo.tile * 0.40 * cam.k)
+                    .allowsHitTesting(false)
+                    .modifier(FigureProbe())
             }
             CreaseLine(a: cam.project(edge0), b: cam.project(SIMD3(W / 2, 0, 0)), glow: model.glow, white: model.paper.creaseWhite)
             if rise > 0 { ramps(cam, fold: fold, rise: rise, W: W, H: H) }
