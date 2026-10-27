@@ -196,3 +196,117 @@ struct StandBook: View {
         func path(in r: CGRect) -> Path { Path { p in p.move(to: from); p.addLine(to: to) } }
     }
 }
+
+// MARK: - the roll on the board (§3.5)
+
+extension EnvironmentValues {
+    /// The folding page's balls are drawn upright in screen space (LooseBallsLayer), not on the page (the ball keeps
+    /// its full circle at 90° while the page squashes, §2.5): the page's TileFace draws only the square under it.
+    @Entry var looseUpright = false
+}
+
+/// Where a ball is drawn: on `cell`, moved `k` of the way towards `toward` (the crease side), sinking `sink` 0…1 into a
+/// filled gap, squeezed `squeeze` 0…1 on landing.
+struct BallPose: Hashable {
+    let cell: Cell
+    var toward: Cell? = nil
+    var k = 0.0, sink = 0.0, squeeze = 0.0
+}
+
+extension GameModel {
+    /// The roll's in-flight state: the rolls the engine committed at the crossing, and which side the hinge came in from.
+    struct RollFlight { let rolls: [Rules.Roll]; let fromBelow: Bool }
+
+    /// The engine rolled stones at the crossing (§3.5): keep them flying through the rest of the window, announce, feel.
+    func noteRolled(_ rolls: [Rules.Roll]) {
+        rollFlight = RollFlight(rolls: rolls, fromBelow: rules.standing(angle))
+        // spoken / shown once: the stone nearest the crease (main.js rollStones)
+        guard let near = rolls.min(by: { $0.to.c < $1.to.c }) else { return }
+        show(near.filled ? L10n.t("rolledIn") : L10n.t("rolled", ["col": L10n.t("col", ["c": near.to.c + 1])]))
+        if rolls.contains(where: \.filled) { haptics.rollDrop(); sound.blot() } else { haptics.rollLand() }
+        sound.rub(volume: 0.35)
+    }
+
+    /// The hinge passed upright with her standing crease-side of a loose stone on paper: she holds it (§3.5 held).
+    func noteHeldIfAny() {
+        let n = config.columnsPerPage, c = char
+        guard c.c >= n, c.c + 1 < 2 * n, board[c] == .paper || board[c] == .glue, board[Cell(c.c + 1, c.r)] == .loose else { return }
+        show(L10n.t("rollHeld")); haptics.rollHeld()
+    }
+
+    /// Called on every angle change: the flight ends when the hinge leaves the window; a filled gap gets its ring then.
+    func settleRollFlight(crossed: Bool) {
+        if crossed && rollFlight == nil { noteHeldIfAny() }
+        guard let f = rollFlight, angle <= RollCurve.lo || angle >= RollCurve.hi else { return }
+        for r in f.rolls where r.filled { fillRings[r.to] = Date() }
+        rollFlight = nil
+    }
+
+    /// Every loose stone on the lifted page as drawn now (§3.5): the flight after a crossing, the lean towards the
+    /// crease before one (what `Rules.roll` would do — the engine's answer, not a second rule), the held stone's rock.
+    /// Reduce Motion: no angle-driven motion, the balls sit on their squares (the view cross-fades them).
+    func loosePoses() -> [BallPose] {
+        let n = config.columnsPerPage, a = angle
+        let rm = AppSettings.shared.motionReduced
+        let inWin = !rm && a > RollCurve.lo && a < RollCurve.hi
+        var out: [BallPose] = [], flying: Set<Cell> = []
+        if inWin, let f = rollFlight {
+            let u = RollCurve.u(a, fromBelow: f.fromBelow), s = RollCurve.s(u)
+            for r in f.rolls {
+                flying.insert(r.to)
+                out.append(BallPose(cell: r.from, toward: r.to, k: s, sink: r.filled ? max(0, (u - 0.85) / 0.15) : 0,
+                                    squeeze: !r.filled && u > 0.9 ? sin(.pi * (u - 0.9) / 0.1) : 0))
+            }
+        }
+        var next: [Cell: Cell] = [:]
+        if inWin && rollFlight == nil {
+            var b = board
+            for r in rules.roll(&b, fig: char) { next[r.from] = r.to }
+        }
+        let u = RollCurve.u(a, fromBelow: !rules.standing(a))
+        for r in 0..<board.h {
+            for c in n..<(2 * n) where board[c, r] == .loose && !flying.contains(Cell(c, r)) {
+                let cell = Cell(c, r)
+                if let to = next[cell] { out.append(BallPose(cell: cell, toward: to, k: RollCurve.s(u))) }
+                else if inWin && char == Cell(c - 1, r) {
+                    // held: a ±0.12-square rock, largest at 90°, none at the window's edges
+                    let w = 0.12 * max(0, 1 - abs(a - 90) / 15)
+                    out.append(BallPose(cell: cell, toward: Cell(c - 1, r), k: w * sin((a - RollCurve.lo) / 30 * 2 * .pi)))
+                } else { out.append(BallPose(cell: cell)) }
+            }
+        }
+        return out
+    }
+}
+
+/// The lifted page's balls, upright in screen space over the projected page (camera book). `point` projects a cell's
+/// centre; `scale` is the camera's size factor.
+struct LooseBallsLayer: View {
+    let model: GameModel
+    let tile: Double
+    let scale: Double
+    let point: (Cell) -> CGPoint
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        let poses = model.loosePoses()
+        let size = tile * scale
+        ZStack(alignment: .topLeading) {
+            ForEach(poses, id: \.cell) { p in
+                let a = point(p.cell), b = p.toward.map(point) ?? a
+                let pos = CGPoint(x: a.x + (b.x - a.x) * p.k, y: a.y + (b.y - a.y) * p.k)
+                // the page's foreshortening along the roll: the contact shadow squashes with it, the ball never does
+                let nb = point(Cell(max(model.config.columnsPerPage, p.cell.c - 1), p.cell.r))
+                let squash = p.cell.c > model.config.columnsPerPage ? min(1, max(0.05, hypot(nb.x - a.x, nb.y - a.y) / max(1, size + 4 * scale))) : 1
+                LooseBall(size: size, shadowSquash: squash, squeeze: hc ? 0 : p.squeeze, sink: p.sink, hc: hc)
+                    .position(pos)
+                    .transition(.opacity)
+            }
+            ForEach(Array(model.fillRings.keys), id: \.self) { c in
+                if !hc, let at = model.fillRings[c], Date().timeIntervalSince(at) < 0.6 { FillRing(size: size, at: at).position(point(c)) }
+            }
+        }
+        .animation(AppSettings.shared.motionReduced ? .easeInOut(duration: 0.2) : nil, value: poses)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+}

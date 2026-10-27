@@ -1308,11 +1308,17 @@ private struct CameraBook: View {
                         .overlay { if model.finaleSealSplit, let g = model.goalStackSlot {
                             FinaleSealHalf(edge: .top, at: CGPoint(x: geo.center(x: g.x, y: 0).x, y: page.height))
                         } }
+                        .environment(\.looseUpright, model.paper.card)
                         .projectionEffect(cam.transform(o: edge0 + H * fold, eu: ex, ev: -fold))
                 }
             }
             .offset(y: showBack ? model.press * 2 : 0)
             .shadow(color: .black.opacity(hc ? 0 : 0.12 * max(0, sin(t))), radius: 6, x: 0, y: 3)
+            // ch. 9: the lifted page's loose stones, upright over the projected page (they roll; the page squashes, they do not)
+            if model.paper.card && !showBack {
+                LooseBallsLayer(model: model, tile: geo.tile, scale: cam.k) { c in cam.project(center3D(c, fold: fold, W: W, H: H)) }
+                    .frame(width: geo.bookSize.width, height: geo.bookSize.height, alignment: .topLeading)
+            }
             // chapter 3 leaning: what lies under the lit top page is drawn over it, veiled, only where it is covered
             // chapter 3 leaning: what lies under the lit top page is drawn over it, veiled, only where it is covered.
             // Order (design-review-ch3 §4 ②, 0.1 (8)): the squares and shadows, then the top page's stones (they hang

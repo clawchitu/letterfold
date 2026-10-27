@@ -128,6 +128,10 @@ final class GameModel {
     /// flattening where the stone came down (`squash` 0 → 1), then it reappears at the start. Reduce motion: no squash.
     private(set) var crushAt: Cell?
     private(set) var squash: Double = 0
+    /// Ch. 9: the stones the last crossing rolled, flying through the rest of the 75°–105° window (Chapter9Marks.swift).
+    var rollFlight: RollFlight?
+    /// Ch. 9: a filled gap's one-off ring, from when the ball finished sinking.
+    var fillRings: [Cell: Date] = [:]
     @ObservationIgnored private var crushTask: Task<Void, Never>?
     /// The rigid impact waits for the slap so the two land as one (a held drag that never reaches it: 150 ms).
     @ObservationIgnored private var crushWaiting = false
@@ -755,6 +759,7 @@ final class GameModel {
         let before = angle, figure = char
         let events = game.setAngle(a)
         angle = game.angle
+        if paper.card { settleRollFlight(crossed: rules.passes(before, angle)) }
         sync()
         if posture == .closed { tuckSlip() }   // the book shut (a hand on the hinge): the slip goes back (§2.2 ④)
         if paper.backlit { setLamp(posture == .closed ? 0 : 1, now: false) }   // reduce motion keeps the timed fade too
@@ -1580,8 +1585,8 @@ final class GameModel {
                 // a vol. 2 dead end: 「有的路断了」, the falling two-note, a warning tap; undo and restart still work
                 pending.dead = true
                 sound.lost(); haptics.warning()
-            case .rolled:   // vol. 3 ch. 9: drawn / announced by the ch. 9 rendering pass (Chapter9Marks.swift, step D)
-                break
+            case .rolled(let rolls):   // vol. 3 ch. 9: drawn by LooseBallsLayer, announced and felt here (Chapter9Marks.swift)
+                noteRolled(rolls)
             case .won:
                 win()
             }
