@@ -1118,6 +1118,66 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
+            "value": "灯位"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Lamp"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "등불"
+          }
+        }
+      }
+    },
+    "ch.8.line": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯挪到你那岸了。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The lamp is on your bank now."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯をきみの岸へ移した。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "등불을 네 강가로 옮겼어."
+          }
+        }
+      }
+    },
+    "ch.9": {
+      "comment": "UI. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
             "value": "待续"
           }
         },
@@ -1587,6 +1647,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "7장 · 번짐"
+          }
+        }
+      }
+    },
+    "chHead.8": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "八 · 灯位"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "8 · The Lamp"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "八 · 灯"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "8장 · 등불"
           }
         }
       }
@@ -3271,6 +3361,156 @@
         }
       }
     },
+    "gate": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "活页门"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "paper gate"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紙の扉"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종이 문"
+          }
+        }
+      }
+    },
+    "gate.state.down": {
+      "comment": "VoiceOver. Native app only: the gate's state on its square (Codex review 20 #2). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "现在趴着"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lying down now"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "いま倒れている"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금 누워 있음"
+          }
+        }
+      }
+    },
+    "gate.state.open": {
+      "comment": "VoiceOver. Native app only: the gate's state on its square (Codex review 20 #2). ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "现在立着，可以走"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "standing now, walkable"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "いま立っている、歩ける"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금 서 있음, 걸을 수 있음"
+          }
+        }
+      }
+    },
+    "gateDown": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "门趴下了"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the gate lies down"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扉が倒れた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "문이 누웠어요"
+          }
+        }
+      }
+    },
+    "gateOpen": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "门立起来了"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the gate stands"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扉が立った"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "문이 섰어요"
+          }
+        }
+      }
+    },
     "glueTakes": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -4651,6 +4891,36 @@
         }
       }
     },
+    "kind.A": {
+      "comment": "VoiceOver. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "活页门，斜起时开着"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "paper gate, open while the page leans"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紙の扉、傾けているあいだ開く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종이 문, 기울이는 동안 열림"
+          }
+        }
+      }
+    },
     "kind.D": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -5731,6 +6001,66 @@
         }
       }
     },
+    "lampSide.L": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯在左岸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lamp on the left bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯は左岸に"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "등불은 왼쪽 강가에"
+          }
+        }
+      }
+    },
+    "lampSide.LR": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两盏灯都亮着"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "both lamps lit"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二つの灯がともる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 등불이 켜져 있어요"
+          }
+        }
+      }
+    },
     "lang.system": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -6721,6 +7051,126 @@
         }
       }
     },
+    "letter.8.body": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我把灯挪到你那岸了。\n这样你每举起一页，落在上面的都是我这边的影子。\n两盏灯一起亮的时候，影子会在同一页上遇见。\n信翻完了。灯留给你。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I have moved the lamp to your bank.\nNow every page you lift carries a shadow from my side.\nWhen both lamps are lit, the shadows meet on the same page.\nThe letter is turned to its last page. Keep the lamp."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯をきみの岸へ移した。\nこれで、きみが頁を持ち上げるたび、そこに落ちるのはこちら側の影。\n二つの灯がともるとき、影は同じ頁で出会う。\n手紙は最後の頁までめくった。灯は、きみに。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "등불을 네 강가로 옮겼어.\n이제 네가 페이지를 들어 올릴 때마다, 거기 떨어지는 건 내 쪽의 그림자야.\n두 등불이 함께 켜질 때, 그림자는 같은 페이지에서 만나.\n편지는 마지막 장까지 넘겼어. 등불은 네게 둘게."
+          }
+        }
+      }
+    },
+    "letter.8.end": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷二《翻页》完。\n卷三，把纸举到灯前。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of Book Two, Turning the Page.\nBook Three: hold the paper up to the lamp."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第二巻『頁をめくる』 了。\n第三巻、紙を灯にかざして。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제2권 《페이지를 넘기다》 끝.\n제3권, 종이를 등불에 비추어."
+          }
+        }
+      }
+    },
+    "letter.8.sign": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——右岸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— the Right Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——右岸より"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— 오른쪽 강가에서"
+          }
+        }
+      }
+    },
+    "letter.8.title": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右岸来信"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A Letter from the Right Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右岸からの手紙"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오른쪽 강가에서 온 편지"
+          }
+        }
+      }
+    },
     "letter.next": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -7467,6 +7917,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "제2권"
+          }
+        }
+      }
+    },
+    "map.book3": {
+      "comment": "UI. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷三"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Book Three"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三巻"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제3권"
           }
         }
       }
@@ -8337,6 +8817,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "종이판"
+          }
+        }
+      }
+    },
+    "noun.A": {
+      "comment": "VoiceOver. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "活页门"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "paper gate"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紙の扉"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종이 문"
           }
         }
       }
@@ -9391,6 +9901,36 @@
         }
       }
     },
+    "paper.ch8": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "信笺。灯在左边。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Letter paper. The lamp is on the left."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "便箋。灯は左に。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "편지지. 등불은 왼쪽에."
+          }
+        }
+      }
+    },
     "paper.letter": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -9627,6 +10167,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "반쯤"
+          }
+        }
+      }
+    },
+    "pre.lamp": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯位"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the lamp"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯の位置"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "등불의 자리"
           }
         }
       }
@@ -11341,6 +11911,96 @@
         }
       }
     },
+    "slip.gate.body": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一片纸折的门。页斜起来它才立着，能走；放平或合上，它就趴回缺口里。站在上面的时候别让它趴下。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A door folded from paper. It stands only while the page leans — then it is floor. Flat or closed, it lies back down into the gap. Do not be standing on it when it does."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紙を折った扉。頁を傾けているあいだだけ立ち、歩ける。平らにするか閉じると、隙間へ倒れる。その上に立ったまま倒さないこと。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종이를 접어 만든 문. 페이지를 기울이는 동안에만 서 있고, 그때만 걸을 수 있어요. 평평하게 펴거나 닫으면 틈으로 다시 누워요. 그 위에 서 있을 때 눕히지 마세요."
+          }
+        }
+      }
+    },
+    "slip.gate.pic": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：斜起，门立起来；站在门上放平，人掉下去；再斜起，走过门到她。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: leaning, the gate stands; flattening while standing on it, she falls; leaning again, she walks through to the letter."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：傾けると扉が立つ。扉の上で平らにすると落ちる。もう一度傾け、扉を抜けて彼女へ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 기울이면 문이 서요. 문 위에서 펴면 떨어져요. 다시 기울여 문을 지나 그녀에게."
+          }
+        }
+      }
+    },
+    "slip.gate.title": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "活页门"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paper Gate"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紙の扉"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종이 문"
+          }
+        }
+      }
+    },
     "slip.glue.body": {
       "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
       "extractionState": "manual",
@@ -11547,6 +12207,96 @@
           "stringUnit": {
             "state": "translated",
             "value": "물건 쪽지, {name}"
+          }
+        }
+      }
+    },
+    "slip.lamp.body": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯挪到左边了。现在是平放那页的石头，把影子投到你举起来的页上——贴着铰链起，越合越往外。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The lamp has moved to the left. Now the stones on the flat page throw their shadows onto the page you lift — starting at the hinge, sliding outward as you close."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯が左へ移った。いまは平らな頁の石が、持ち上げた頁に影を落とす——綴じ目から始まり、閉じるほど外へ滑る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "등불이 왼쪽으로 옮겨 갔어요. 이제 평평한 페이지의 돌이, 들어 올린 페이지에 그림자를 드리워요. 경첩에서 시작해 닫을수록 바깥으로 미끄러져요."
+          }
+        }
+      }
+    },
+    "slip.lamp.pic": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：斜起，左页石头的影子落在右页缺口上；再合一点，影子往外滑，把人带到她那格。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: leaning, the left page’s stone shades a gap on the right page; closing a little more, the shadow slides outward and carries her to the letter."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：傾けると左頁の石の影が右頁の隙間に落ちる。さらに閉じると影が外へ滑り、彼女の枡へ運ぶ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 기울이면 왼쪽 면 돌의 그림자가 오른쪽 면 틈에 떨어져요. 조금 더 닫으면 그림자가 바깥으로 미끄러져 그녀를 편지까지 데려가요."
+          }
+        }
+      }
+    },
+    "slip.lamp.title": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯位"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Lamp"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "灯の位置"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "등불의 자리"
           }
         }
       }

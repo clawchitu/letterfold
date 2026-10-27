@@ -133,6 +133,7 @@ struct BookView: View {
         .environment(\.goalIsFigure, model.goalIsFigure)
         .environment(\.skin, model.paper.skin)
         .environment(\.envelopeBack, model.isDark)
+        .environment(\.envelopeOpened, model.level.id == "twolamps")
         .onChange(of: orientation, initial: true) { _, o in model.orientation = o }
         .onChange(of: slipAnchor, initial: true) { _, a in model.slipAnchor = a }
         .onChange(of: model.index) { _, _ in scrollY = 0 }
@@ -146,12 +147,12 @@ struct BookView: View {
             ForEach(rotorCells { $0 == .empty }, id: \.self) { c in AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace) }
         }
         .accessibilityRotor(Text(L10n.t("rotor.object"))) {
-            ForEach(rotorCells { [.stone, .key, .door, .openDoor, .ink, .wetInk, .goal, .tab, .glue].contains($0) }, id: \.self) { c in
+            ForEach(rotorCells { [.stone, .key, .door, .openDoor, .ink, .wetInk, .goal, .tab, .glue, .gate].contains($0) }, id: \.self) { c in
                 AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace)
             }
         }
         .accessibilityRotor(Text(L10n.t("rotor.shadow"))) {
-            ForEach(model.shade.keys.sorted { ($0.r, $0.c) < ($1.r, $1.c) }, id: \.self) { c in
+            ForEach(model.shade.keys.filter { model.board[$0] != .gate }.sorted { ($0.r, $0.c) < ($1.r, $1.c) }, id: \.self) { c in
                 AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace)
             }
         }
@@ -360,7 +361,9 @@ private struct BookBody: View {
 
     var body: some View {
         // portrait phones: the camera book (design-review-2 §4.1); Duo / landscape keep the side-on turn
-        if geo.horizontal { CameraBook(model: model, geo: geo, rotorSpace: rotorSpace) } else { legacyBody }
+        if geo.horizontal { CameraBook(model: model, geo: geo, rotorSpace: rotorSpace) } else {
+            legacyBody.onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { model.boardRect = $0 }
+        }
     }
 
     /// The side-on turn (Duo / landscape, vertical crease): the top page turns about the crease towards the viewer
@@ -523,10 +526,10 @@ private struct TileItem: View {
     var body: some View {
         let c = cell
         let t = model.shownTile(c)
-        let shaded = model.shade[c] != nil && !t.isFloor
+        let shaded = model.shade[c] != nil && !t.isFloor && t != .gate
         let face = TileFace(tile: t, size: geo.tile, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
                             mirrorAxisVertical: geo.horizontal, printedAt: model.inkPrintedAt[c], figureShift: model.meetShift(c, geo.tile),
-                            inkVariant: model.inkVariant(c), bledAt: model.bledAt(c))
+                            inkVariant: model.inkVariant(c), bledAt: model.bledAt(c), gateStanding: Rules.gateStands(model.shade, c))
         let r = RoundedRectangle(cornerRadius: 3, style: .continuous)
         ZStack {
             face
@@ -565,7 +568,7 @@ private struct TileEdges: View {
     var body: some View {
         ForEach(cells, id: \.cell) { item in
             let c = item.cell, t = model.board[c]
-            let shaded = model.shade[c] != nil && !t.isFloor
+            let shaded = model.shade[c] != nil && !t.isFloor && t != .gate
             ZStack {
                 if !hc && (t.isFloor || shaded) {
                     RoundedRectangle(cornerRadius: 3, style: .continuous).strokeBorder(Tok.edgeLower, lineWidth: 1)
@@ -597,7 +600,7 @@ private struct TileAccessibility: ViewModifier {
         content
             .accessibilityElement()
             .accessibilityHidden(hidden)
-            .accessibilityLabel(model.label(c.c, c.r))
+            .accessibilityLabel(L10n.spokenText(model.label(c.c, c.r)))
             .accessibilityIdentifier(hidden ? "" : "tile-\(c.c)-\(c.r)")
             .accessibilityAddTraits(.isButton)
             .accessibilityAction { model.tap(c) }
@@ -638,6 +641,14 @@ private struct GhostFinger: View {
     }
 }
 
+/// Under `-probe YES` the drawn figure is an element `figure` the UI tests can find; otherwise hidden from VoiceOver.
+struct FigureProbe: ViewModifier {
+    func body(content: Content) -> some View {
+        if UserDefaults.standard.bool(forKey: "probe") { content.accessibilityElement().accessibilityIdentifier("figure") }
+        else { content.accessibilityHidden(true) }
+    }
+}
+
 private struct PuppetLayer: View {
     let model: GameModel
     let geo: BookGeometry
@@ -663,7 +674,8 @@ private struct PuppetLayer: View {
         // in her square (4-6) the two stand side by side: his cane and her bun both show (design-ch4 §4)
         .position(x: at.x - model.meetShift(model.figureCell, geo.tile), y: at.y - geo.tile * 0.12)
         .allowsHitTesting(false)
-        .accessibilityHidden(true)
+        // the UI tests' probe sees the drawn figure (VoiceOver never does: the square says 「你在这里」)
+        .modifier(FigureProbe())
     }
     /// Face the way of the last step on screen.
     private var facingLeft: Bool {
@@ -748,6 +760,7 @@ private struct FixedPage: View {
             PageSheet(horizontal: geo.horizontal, isFixed: true, color: model.paper.color)
             if model.paper.ruled && !hc { RuledGrid(tile: geo.tile, gap: geo.gap, pad: geo.pad, across: s.slotsAcross, down: s.slotsDown) }
             MarginLayer(model: model, geo: geo, page: .fixed)
+            if model.board.lamp.contains("L") { LampCorner(geo: geo, fixed: true, lamp: model.board.lamp) }
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: !covered && targets)
             // kept in the tree while the book is closed (hidden, not removed): re-inserting it mid-aha lost the
             // thread's redraw and left this page without its thread after the book reopened
@@ -788,9 +801,10 @@ private struct FrontFace: View {
             PageSheet(horizontal: geo.horizontal, isFixed: false, color: model.paper.color)
             if model.paper.ruled && !hc { RuledGrid(tile: geo.tile, gap: geo.gap, pad: geo.pad, across: s.slotsAcross, down: s.slotsDown) }
             MarginLayer(model: model, geo: geo, page: .folding)
+            if model.board.lamp.contains("L") { LampCorner(geo: geo, fixed: false, lamp: model.board.lamp) }
             if model.shownFace == 1 { TurnedFace(model: model, geo: geo, bleed: true) }
             // the top page stays tappable (and in VoiceOver) while it lies flat or stands: 2-1's goal is up there
-            TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: targets && (angle < 20 || model.posture == .standing))
+            TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: targets && (angle < 20 || model.posture == .standing || (model.liftedPageLive && model.rules.lit(model.angle))))
             ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .folding),
                         end: model.trail.last.flatMap { s.page(of: $0.c) == .folding ? geo.center($0) : nil })
             if !model.puppetOnRamp && s.page(of: model.figureCell.c) == .folding { PuppetLayer(model: model, geo: geo, at: geo.center(model.figureCell)) }
@@ -845,9 +859,12 @@ private struct BackFace: View {
                 // chapter 3: the top page held up to the lamp (design-ch3 §4): warm, translucent, fibres showing; the
                 // lamp is on the viewer's side above the book, never under the canopy (design-review-ch3 §5.1)
                 // old paper is thicker and lets less through (design-ch4 §4: backlight 0.45 against 0.60)
-                PaperSurface(color: model.paper.color, back: true).opacity(rt ? 1 : 1 - 0.14 * model.paper.lampScale * (1 - max(0, min(1, (angle - 154) / 6))))
+                PaperSurface(color: model.paper.color, back: true).opacity(rt || model.liftedPageLive ? 1 : 1 - 0.14 * model.paper.lampScale * (1 - max(0, min(1, (angle - 154) / 6))))
                 if rt { Rectangle().strokeBorder(Tok.edgeLower, lineWidth: 1.5) }
-                else {
+                else if model.liftedPageLive {
+                    // ch. 8: the light comes from the margin lamps (LampCorner), not a glow over the whole sheet
+                    Color.black.opacity(0.04).allowsHitTesting(false)
+                } else {
                     RadialGradient(colors: [Tok.lamp.opacity(0.62 * lit * model.paper.lampScale), Tok.lamp.opacity(0.22 * lit * model.paper.lampScale), .clear],
                                    center: model.lampCenter(geo, page: .fixed), startRadius: 0, endRadius: page.width * 0.75)
                         .allowsHitTesting(false)
@@ -868,7 +885,12 @@ private struct BackFace: View {
             if closed && model.shownFace == 1 { TurnedFace(model: model, geo: geo, bleed: false) }
             // chapter 3 leaning: the hanging lantern shows through the lit page, where the glow starts (review-skins §4.4)
             if backlit { MarginLayer(model: model, geo: geo, page: .folding, back: true, only: .lantern) }
-            if backlit && lit > 0 && stones { CanopyStones(model: model, geo: geo, lit: lit) }
+            if backlit && lit > 0 && stones && !model.liftedPageLive { CanopyStones(model: model, geo: geo, lit: lit) }
+            // ch. 8: past 90° the lifted page's walkable face is turned away; draw it through the sheet (Chapter8Marks)
+            if !closed && angle > 90 && model.liftedPageLive {
+                if model.board.lamp.contains("L") && geo.horizontal { LampCorner(geo: geo, fixed: false, lamp: model.board.lamp, back: true) }
+                LiftedPageThrough(model: model, geo: geo)
+            }
             if closed {
                 // chapter 3 shut: the lamp goes out over 350 ms from the moment the book closed (design-review-ch3 §6.7)
                 if model.paper.backlit && !hc && !rt && model.lampLevel > 0.001 {
@@ -1012,7 +1034,7 @@ private struct StackTargets: View {
                 .onTapGesture { model.tap(c) }
                 .position(item.slot)
                 .accessibilityElement()
-                .accessibilityLabel(model.label(c.c, c.r))
+                .accessibilityLabel(L10n.spokenText(model.label(c.c, c.r)))
                 .accessibilityIdentifier("tile-\(c.c)-\(c.r)")
                 .accessibilityAddTraits(.isButton)
                 .accessibilityAction { model.tap(c) }
@@ -1297,7 +1319,8 @@ private struct CameraBook: View {
             // in front of their shadows, so drawn under them they vanished at ~40°), then the thread and the figure.
             if model.paper.backlit && showBack && th < 160 {
                 let quad = [edge0, edge0 + W * ex, edge0 + W * ex + H * fold, edge0 + H * fold].map(cam.project)
-                ForEach([FixedPage.OverlayPart.squares, .walker], id: \.self) { part in
+                // ch. 8: the lifted page is walked on and drawn opaque (LiftedPageThrough); only her and the thread show through
+                ForEach(model.liftedPageLive ? [FixedPage.OverlayPart.walker] : [.squares, .walker], id: \.self) { part in
                     ZStack(alignment: .topLeading) {
                         FixedPage(model: model, geo: geo, rotorSpace: rotorSpace, angle: th, targets: false, overlay: part)
                             .frame(width: page.width, height: page.height)
@@ -1312,6 +1335,16 @@ private struct CameraBook: View {
                             .offset(y: model.press * 2)
                     }
                 }
+            }
+            // past 90° the folding page shows its back: a figure standing on it (a third page, a lean) is drawn upright
+            // where her square is, every chapter (ch. 8's LiftedPageThrough draws its own; b20: on 7-6 she vanished)
+            if showBack && th < 160 && !model.liftedPageLive && !model.puppetOnRamp && geo.spread.page(of: model.figureCell.c) == .folding {
+                let p = cam.project(center3D(model.figureCell, fold: fold, W: W, H: H))
+                Puppet(frame: 0, facingLeft: false, rim: true)
+                    .frame(width: geo.tile * 0.62 * cam.k, height: geo.tile * 0.84 * cam.k)
+                    .position(x: p.x, y: p.y - geo.tile * 0.40 * cam.k)
+                    .allowsHitTesting(false)
+                    .modifier(FigureProbe())
             }
             CreaseLine(a: cam.project(edge0), b: cam.project(SIMD3(W / 2, 0, 0)), glow: model.glow, white: model.paper.creaseWhite)
             if rise > 0 { ramps(cam, fold: fold, rise: rise, W: W, H: H) }
@@ -1340,6 +1373,14 @@ private struct CameraBook: View {
                     .position(cam.project((model.ghost >= 2 ? 0.2 : 0.68) * H * fold))
                     .transition(.opacity).allowsHitTesting(false).accessibilityHidden(true)
             }
+            // the squares' extent on screen, both pages (the toast stays out of it)
+            let ey = SIMD3<Double>(0, 1, 0)
+            let ext = [edge0, edge0 + W * ex, edge0 + W * ex + H * ey, edge0 + H * ey, edge0 + H * fold, edge0 + W * ex + H * fold].map(cam.project)
+            let x0 = ext.map(\.x).min()!, x1 = ext.map(\.x).max()!, y0 = ext.map(\.y).min()!, y1 = ext.map(\.y).max()!
+            Color.clear.frame(width: x1 - x0, height: y1 - y0)
+                .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { model.boardRect = $0 }
+                .position(x: (x0 + x1) / 2, y: (y0 + y1) / 2)
+                .allowsHitTesting(false).accessibilityHidden(true)
             ProjectedTargets(model: model, geo: geo, rotorSpace: rotorSpace, cam: cam, fold: fold, th: th)
             FoldControl(model: model)
                 .frame(width: page.width, height: 24)
@@ -1479,7 +1520,8 @@ private struct ProjectedTargets: View {
             return (r, ps.map { CGPoint(x: $0.x - r.minX, y: $0.y - r.minY) })
         }
         func target(_ cell: Cell, _ q: (CGRect, [CGPoint])) -> Target { Target(cell: cell, rect: q.0, quad: q.1) }
-        let closed = th >= 160, showFolding = th < 20 || model.posture == .standing
+        // ch. 8: on a left-lamp (or gate) level the lifted page is walked on all through the lean
+        let closed = th >= 160, showFolding = th < 20 || model.posture == .standing || (model.liftedPageLive && model.rules.lit(model.angle))
         var out: [Target] = [], upper: [Target] = []
         for x in 0..<s.slotsAcross { for y in 0..<s.slotsDown {
             let c = geo.center(x: x, y: y), fc = s.cell(page: .fixed, x: x, y: y)

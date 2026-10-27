@@ -347,6 +347,8 @@ nonisolated struct LanternParts: Shape {
 struct EnvelopeGoal: View {
     let size: Double
     var back = false
+    /// 8-7: the seal broken, the flap turned up (Chapter8Marks `OpenedFlap`, design-review-ch8-art §3.5)
+    var opened = false
     @Environment(\.highContrast) private var hc
     var body: some View {
         let k = size / 40, ink = hc ? Color.black : Tok.ink700
@@ -356,6 +358,8 @@ struct EnvelopeGoal: View {
                 EnvelopeParts(part: .seams).stroke(ink, style: StrokeStyle(lineWidth: max(1, 1.0 * k), lineCap: .round))
                 EnvelopeParts(part: .flap).fill(hc ? Color.black : Tok.paperBack.mix(with: Color(hex: 0x8A7A62), by: 0.18))
                 EnvelopeParts(part: .flap).stroke(ink, style: StrokeStyle(lineWidth: 1.4 * k, lineJoin: .round))
+            } else if opened {
+                OpenedFlap().stroke(ink, style: StrokeStyle(lineWidth: (hc ? 2.5 : 2.2) * k, lineCap: .round, lineJoin: .round))
             } else {
                 EnvelopeParts(part: .vee).stroke(ink, style: StrokeStyle(lineWidth: (hc ? 1.8 : 1.4) * k, lineCap: .round, lineJoin: .round))
             }

@@ -24,11 +24,12 @@ public struct Difficulty: Sendable {
     public static func closesMax(optional: Bool, tier: String?, wet: Bool = false) -> Int {
         closesMax[optional ? "dark" : tier == "final" ? "final" : wet ? "wet" : "main"]!
     }
-    /// check.js gates chapter 7 by its chapter number; FoldCore has no chapters, and wet ink is chapter 7's tile.
-    public static func isWetChapter(_ level: Level) -> Bool { level.map.contains { $0.contains("I") } }
+    /// check.js gates chapter 7 by its chapter number; FoldCore has no chapters, and wet ink is chapter 7's tile (8-7
+    /// reuses it under the lamp: chapter 8 carries `lamp`).
+    public static func isWetChapter(_ level: Level) -> Bool { level.lamp == nil && level.map.contains { $0.contains("I") } }
     public static func range(of tier: String) -> ClosedRange<Int>? { tiers.first { $0.name == tier }?.range }
     /// The mechanics `combo` counts (check.js MECHANICS).
-    static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue", "needsFlip", "needsWet"]
+    static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue", "needsFlip", "needsWet", "needsLamp", "needsGate"]
 
     /// What levels.json ships under `expect.difficulty`.
     public struct Summary: Sendable, Codable, Equatable {
@@ -232,7 +233,8 @@ public struct Difficulty: Sendable {
         // twist: something must happen before the first close (it takes it away); the walked shadow was built
         let before = solver.solve(level, angles: angles, from: State(c: start.c, r: start.r, a: 0, face: 0, g: B.press(0, 0)), chain: B) == nil
         let made = path.contains { s in
-            guard s.g != 0, feel(s.a) == .lean, !rules.isRight(s.c), !board(s)[cell(s)].isFloor,
+            // either page (fold-proto 15c073d: under the left lamp a glued stone shades the lifted page, ch. 8)
+            guard s.g != 0, feel(s.a) == .lean, !board(s)[cell(s)].isFloor,
                   let src = rules.shadows(board(s), s.a)[cell(s)] else { return false }
             return base.grid[s.r][s.face == 1 && src >= rules.n ? src + rules.n : src] != .stone
         }

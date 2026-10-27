@@ -67,7 +67,8 @@ public struct Solver: Sendable {
         var a = a0 + step
         while step > 0 ? a <= a1 : a >= a1 {
             // a figure on nothing but a shadow rides it; on paper under a stone (or on glue facing one) it is crushed
-            if !rules.isRight(cur.c) && !b[cur].isFloor {
+            // a shadow on either page (ch. 8 lamp), or an open angle gate (check.js `onShadow`)
+            if !b[cur].isFloor {
                 if src == nil { src = rules.shadows(b, a - step)[cur] }
             } else { src = nil }
             guard let to = rules.ride(b, cur, src, a) else { return nil }
@@ -191,15 +192,17 @@ public struct Solver: Sendable {
         let all = level.map.joined()
         func without(_ ch: Character) -> Solution? {
             // like JS row.split(ch).join('.'): every occurrence
-            solve(Level(id: level.id, map: level.map.map { String($0.map { $0 == ch ? "." : $0 }) }))
+            solve(Level(id: level.id, map: level.map.map { String($0.map { $0 == ch ? "." : $0 }) }, lamp: level.lamp))
         }
         var e = Expectation(solvable: full != nil, changes: full?.cost, needsFold: noFold == nil, needsPop: noPop == nil,
                             stepped15: solve(level, angles: Solver.steps15) != nil)
-        if level.map.contains(where: { $0.dropFirst(rules.n).contains("x") }) || (all.contains("g") && all.contains("x")) {
+        if all.contains("x") && (level.map.contains(where: { $0.dropFirst(rules.n).contains("x") }) || all.contains("g") || (level.lamp ?? "").contains("L")) {
             e.needsShade = solve(level, angles: Solver.angles.filter { !shade.contains($0) }) == nil
             let oneShade = shade.contains { keep in solve(level, angles: Solver.angles.filter { !shade.contains($0) || $0 == keep }) != nil }
             e.needsRide = !oneShade
         }
+        if let lamp = level.lamp, lamp != "R" { var r = level; r.lamp = "R"; e.needsLamp = solve(r) == nil }   // the lamp back on the right bank
+        if all.contains("A") { e.needsGate = without("A") == nil }   // the angle gate laid down as paper
         if all.contains("k") { e.needsKey = without("k") == nil }
         if all.contains("i") { e.needsInk = without("i") == nil }
         if all.contains("I") { e.needsWet = without("I") == nil }   // the wet ink dried into plain paper

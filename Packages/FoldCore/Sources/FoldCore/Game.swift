@@ -120,10 +120,15 @@ public final class FoldGame {
         let previous = shade
         shade = rules.shadows(board, a)
         // on nothing but a shadow, or (closing) under a stone: on the bottom page, or on top-page glue facing one
-        if (!rules.isRight(char.c) && !board[char].isFloor) || rules.crushed(board, char, a) {
+        if !board[char].isFloor || rules.crushed(board, char, a) {
             if rideSrc == nil { rideSrc = previous[char] ?? shade[char] }
             if let to = rules.ride(board, char, rideSrc, a) {
-                if to.c != char.c { char = to; trail.append(to); events.append(.slid(to: to)) }
+                if to.c != char.c {
+                    char = to; trail.append(to); events.append(.slid(to: to))
+                    // a ride that lands on her square delivers it, as the solver already counts it (Codex review 20 #4;
+                    // fold-proto logic.js / main.js only check on steps and posture changes — port upstream)
+                    checkWin(&events)
+                }
             } else {
                 // crushed only where the stone really comes down: on the figure's own square (design-review-ch4 §3.1:
                 // a shadow giving way under you at the shut is a fall, and only a crush gets the dent)

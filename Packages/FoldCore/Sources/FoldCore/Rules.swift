@@ -36,15 +36,41 @@ public struct Rules: Sendable {
         let e = shadowOffset(c - n + 1, a)
         return e < 1 ? -1 : n - e
     }
-    /// Shadowed left-page cells -> the source stone's column. Empty unless shadeMin <= a < foldMin.
+    /// Lamp on the left bank (logic.js `shadowColumnL`): a left-page stone d cells from the hinge shades the lifted
+    /// page's cell round(d * -cos a) from the hinge — the mirror of shadowColumn; closed, the stone's mirror cell.
+    public func shadowColumnL(_ c: Int, _ a: Double) -> Int {
+        let e = shadowOffset(n - c, a)
+        return e < 1 ? -1 : n - 1 + e
+    }
+    /// The lean window (logic.js `lit`): shadows are cast and angle gates stand open.
+    public func lit(_ a: Double) -> Bool { a >= config.shadeMin && a < config.foldMin }
+    /// The `shadows` value of an open angle gate (logic.js maps it to 'A'): no stone casts it.
+    public static let gateSource = -1
+    /// Whether the angle gate at `c` stands open (walkable): any shadow entry does, a stone's shadow landing on it
+    /// (two lamps) as much as `gateSource` — the entry, not its source, is what makes it floor (Codex review 20 #1).
+    public static func gateStands(_ shadows: [Cell: Int], _ c: Cell) -> Bool { shadows[c] != nil }
+
+    /// Everything that is floor only while the page leans (logic.js `shadows`): cell -> the column of the stone that
+    /// shades it (right-page stones onto the left page under the right lamp, then left-page stones onto the facing page
+    /// under the left lamp, first come first served), then each open angle gate -> `Rules.gateSource`. Empty unless lit.
     public func shadows(_ b: Board, _ a: Double) -> [Cell: Int] {
         var out: [Cell: Int] = [:]
-        if a < config.shadeMin || a >= config.foldMin { return out }
+        if !lit(a) { return out }
+        let right = b.lamp.contains("R"), left = b.lamp.contains("L")
         for r in 0..<b.h {
-            for c in n..<(2 * n) where b[c, r].isOpaque {
-                let q = shadowColumn(c, a)
-                if q >= 0 && out[Cell(q, r)] == nil { out[Cell(q, r)] = c }
+            if right {
+                for c in n..<(2 * n) where b[c, r].isOpaque {
+                    let q = shadowColumn(c, a)
+                    if q >= 0 && out[Cell(q, r)] == nil { out[Cell(q, r)] = c }
+                }
             }
+            if left {
+                for c in stride(from: n - 1, through: 0, by: -1) where b[c, r].isOpaque {
+                    let q = shadowColumnL(c, a)
+                    if q >= 0 && out[Cell(q, r)] == nil { out[Cell(q, r)] = c }
+                }
+            }
+            for c in 0..<(2 * n) where b[c, r] == .gate && out[Cell(c, r)] == nil { out[Cell(c, r)] = Rules.gateSource }
         }
         return out
     }
@@ -117,12 +143,12 @@ public struct Rules: Sendable {
             if foldOpen(b, q, r) { return nil }
             if R == .stone || (L == .stone && !R.isFloor) { return .stone }
             if L == .stone { return .card }
-            if L == .door || R == .door { return .door }
+            if L == .door || R == .door || L == .gate || R == .gate { return .door }
             return .gap
         }
         let t = b[c, r]
         if t == .stone { return .stone }
-        if t == .door { return .door }
+        if t == .door || (t == .gate && sh[Cell(c, r)] == nil) { return .door }
         if t.isFloor || sh[Cell(c, r)] != nil { return nil }
         return .gap
     }
@@ -163,11 +189,14 @@ public struct Rules: Sendable {
     }
 
     /// Standing on nothing but a shadow? The shadow carries the character. nil means it falls (or is crushed).
+    /// On an angle gate the figure stays while the lean lasts and falls when it ends (the flap lies down). The formula
+    /// follows the page the source stone is on (ch. 8: left-page stones shade the lifted page).
     public func ride(_ b: Board, _ from: Cell, _ src: Int?, _ a: Double) -> Cell? {
         if crushed(b, from, a) { return nil }
         if b[from].isFloor { return from }
-        guard let src else { return nil }
-        let q = shadowColumn(src, a)
+        if b[from] == .gate { return lit(a) ? from : nil }
+        guard let src, src != Rules.gateSource else { return nil }
+        let q = isRight(src) ? shadowColumn(src, a) : shadowColumnL(src, a)
         if q < 0 || a >= config.foldMin || b[q, from.r].isBlock { return nil }
         return Cell(q, from.r)
     }
@@ -309,10 +338,10 @@ public struct Rules: Sendable {
 
     // MARK: the shadow lock (design-review-ch3 §3, judged as rewritten in design-review-ch4 §2 / design-spec §5)
 
-    /// The shadows that lie on gaps (bare squares of the bottom page) at fold angle `a`. Shadows on paper or on a
-    /// stone do not count.
+    /// The shadows that lie on gaps (bare squares) at fold angle `a`, on either page: the right lamp shades the bottom
+    /// page, the left lamp the lifted one (Codex review 20 #3). Shadows on paper, a stone or a gate do not count.
     public func gapShadows(_ b: Board, _ a: Double) -> [Cell] {
-        shadows(b, a).keys.filter { !isRight($0.c) && b[$0] == .empty }.sorted { ($0.r, $0.c) < ($1.r, $1.c) }
+        shadows(b, a).keys.filter { b[$0] == .empty }.sorted { ($0.r, $0.c) < ($1.r, $1.c) }
     }
 
     /// Locked = at least one shadow lies on a gap, and every such shadow is connected to what the figure standing at
@@ -329,11 +358,15 @@ public struct Rules: Sendable {
     /// for a figure standing at `from`. Consecutive samples with the same gaps merge into one window.
     public func lockWindows(_ b: Board, from: Cell, step: Double = 0.25) -> [LockWindow] {
         var out: [LockWindow] = []
-        var a = config.shadeMin
+        var a = config.shadeMin, lastSources: [Int?] = []
         while a < config.foldMin {
             if let cells = lockCells(b, from: from, a) {
-                if let last = out.last, last.cells == cells, abs(last.hi - (a - step)) < 1e-6 { out[out.count - 1].hi = a }
+                // the same gaps shaded by other stones are another lock: under two lamps a gap can change hands inside
+                // one stretch, and resting at the merged middle put 8-7's figure on the wrong stone's shadow
+                let sh = shadows(b, a), sources = cells.map { sh[$0] }
+                if let last = out.last, last.cells == cells, sources == lastSources, abs(last.hi - (a - step)) < 1e-6 { out[out.count - 1].hi = a }
                 else { out.append(LockWindow(lo: a, hi: a, cells: cells)) }
+                lastSources = sources
             }
             a += step
         }

@@ -26,7 +26,9 @@ final class ParTests: XCTestCase {
         // vol. 2 chapter 1 「胶」: the save IDs are the level IDs (design-review-v2c1 §3 存档), never positions
         XCTAssertEqual(Array(ids[35..<42]), ["turn", "overleaf", "twoFaces", "inlay", "bleed", "pressedFlower", "lastPage"])
         // vol. 2 chapter 7 「墨晕」 (fold-proto design-ch7.md; 7-6 turned was cut, `through` is the sixth level)
-        XCTAssertEqual(Array(ids[42...]), ["wet", "print", "ring", "spoiled", "pocket", "through"])
+        XCTAssertEqual(Array(ids[42..<48]), ["wet", "print", "ring", "spoiled", "pocket", "through"])
+        // vol. 2 chapter 8 「灯位」 (fold-proto design-ch8.md; 8-5 was cut; 8-1 is `leftLamp`: the proto reuses 3-6's `lamp`)
+        XCTAssertEqual(Array(ids[48...]), ["leftLamp", "lift", "banks", "gate", "taken", "twolamps"])
         XCTAssertEqual(Array(ids[25..<35]), ["glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps",
                                        "darkBack", "darkDoor", "darkInk"])
     }

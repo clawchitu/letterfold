@@ -70,21 +70,14 @@ struct LevelScreen: View {
                 }
             }
             .frame(maxHeight: .infinity)
+            // the rule line floats in the larger empty band above or below the book, never over a square (b20: on 7-6
+            // and twolamps it hid the bottom row); if neither band fits it, one smaller line, else at the top edge
+            .overlay { if let toast = model.toast { ToastBand(text: toast, board: model.boardRect).transition(.opacity) } }
             // the toast floats over the board instead of taking layout space, so the board never moves when it
             // appears (Shuai 10/27: 「出现时 别移动游戏棋盘」)
             .overlay(alignment: .bottom) {
                 VStack(spacing: 8) {
                 if settings.soundMode, let a = model.lastAnnouncement { SoundCaption(text: a).allowsHitTesting(false) }
-                if let toast = model.toast {
-                    Text(toast).font(.callout).foregroundStyle(Tok.paperNew).multilineTextAlignment(.center)
-                        .padding(.horizontal, 16).padding(.vertical, 10)
-                        .background(RoundedRectangle(cornerRadius: 14).fill(Tok.ink900.opacity(0.94)))
-                        .padding(.horizontal, 24)
-                        .padding(.bottom, 8)
-                        .transition(.opacity)
-                        .accessibilityHidden(true)   // already announced
-                        .allowsHitTesting(false)     // a rule line over the bottom row never eats a tap
-                }
                 // the win's 下一封 knot floats too, so it never lifts the board (b19: a footer kept at its height cost
                 // every board 26 pt instead)
                 if model.showNext {
@@ -402,7 +395,7 @@ private struct WalkPanel: View {
                 .background(RoundedRectangle(cornerRadius: 10).fill(Color(hex: 0xF1EDE5)))
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(label)
+        .accessibilityLabel(L10n.spokenText(label))   // 听一行: 行 read háng (IPA hint)
         .accessibilityIdentifier(id)
     }
 }
@@ -592,5 +585,54 @@ nonisolated struct WipeShape: Shape {
         p.move(to: CGPoint(x: r.minX, y: r.minY)); p.addLine(to: CGPoint(x: r.minX + s, y: r.minY))
         p.addLine(to: CGPoint(x: r.minX, y: r.minY + s)); p.closeSubpath()
         return p
+    }
+}
+
+/// The rule-hint toast, placed in whichever empty band (above or below the drawn book) is larger.
+private struct ToastBand: View {
+    let text: String
+    let board: CGRect
+    @State private var full: CGFloat = 60
+    @State private var small: CGFloat = 32
+
+    var body: some View {
+        GeometryReader { g in
+            let area = g.frame(in: .global)
+            let above = max(0, board.minY - area.minY), below = max(0, area.maxY - board.maxY)
+            let known = board.height > 0
+            let bandTop = !known || above > below
+            let band = known ? max(above, below) : 0
+            let compact = known && full + 8 > band
+            let h = compact ? small : full
+            let y: CGFloat = !known ? area.height - full / 2 - 8
+                : (compact && small + 8 > band) ? small / 2 + 4                       // neither band fits: the top edge
+                : bandTop ? above / 2 : area.height - below / 2
+            ZStack {
+                bubble(compact: false).hidden().onGeometryChange(for: CGFloat.self) { $0.size.height } action: { full = $0 }
+                bubble(compact: true).hidden().onGeometryChange(for: CGFloat.self) { $0.size.height } action: { small = $0 }
+                bubble(compact: compact).modifier(ToastProbe())
+            }
+            .frame(width: g.size.width)
+            .position(x: g.size.width / 2, y: max(h / 2, y))
+        }
+        .allowsHitTesting(false)     // a rule line never eats a tap
+    }
+
+    private func bubble(compact: Bool) -> some View {
+        Text(text).font(compact ? .footnote : .callout).foregroundStyle(Tok.paperNew).multilineTextAlignment(.center)
+            .lineLimit(compact ? 1 : nil).minimumScaleFactor(compact ? 0.7 : 1)
+            .padding(.horizontal, compact ? 12 : 16).padding(.vertical, compact ? 6 : 10)
+            .background(RoundedRectangle(cornerRadius: compact ? 10 : 14).fill(Tok.ink900.opacity(0.94)))
+            .padding(.horizontal, 24)
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityHidden(true)   // already announced
+    }
+}
+
+/// Under `-probe YES` the toast's bubble is an element `toast.bubble` (the UI tests check it covers no square).
+private struct ToastProbe: ViewModifier {
+    func body(content: Content) -> some View {
+        if UserDefaults.standard.bool(forKey: "probe") { content.accessibilityElement().accessibilityIdentifier("toast.bubble").accessibilityHidden(false) }
+        else { content }
     }
 }

@@ -110,10 +110,15 @@ struct TileFace: View {
     var inkVariant = 0
     /// Ch. 7: when wet ink reached this square at the last press (its ring grows in).
     var bledAt: Date? = nil
+    /// Ch. 8: an angle gate stands (the page leans: it is floor) or lies down (Chapter8Marks.swift).
+    var gateStanding = false
+    /// The gate's crease-side edge is the top of this drawing (the lifted page seen from behind)
+    var gateCreaseAtTop = false
     @Environment(\.highContrast) private var hc
     @Environment(\.goalIsFigure) private var goalIsFigure
     @Environment(\.skin) private var skin
     @Environment(\.envelopeBack) private var envelopeBack
+    @Environment(\.envelopeOpened) private var envelopeOpened
 
     var body: some View {
         switch tile {
@@ -133,7 +138,7 @@ struct TileFace: View {
                 } else if skin == .shadow {
                     LanternGoal(size: size)
                 } else if skin == .letter {
-                    EnvelopeGoal(size: size, back: envelopeBack)
+                    EnvelopeGoal(size: size, back: envelopeBack, opened: envelopeOpened)
                 } else {
                     Flag(size: size)
                 }
@@ -142,6 +147,7 @@ struct TileFace: View {
         case .key: SkinKeyGlyph(size: size, ring: paper.thread)
         case .door: ZStack { if !bare { PathTile(size: size, paper: paper) }; SkinDoor(open: false, size: size) }
         case .openDoor: ZStack { if !bare { PathTile(size: size, paper: paper) }; SkinDoor(open: true, size: size) }
+        case .gate: GateMark(standing: gateStanding, size: size, hc: hc, creaseAtTop: gateCreaseAtTop)
         case .ink:
             // wet ink is walkable: it sits on a path square like every other floor (frame v2-1)
             ZStack {

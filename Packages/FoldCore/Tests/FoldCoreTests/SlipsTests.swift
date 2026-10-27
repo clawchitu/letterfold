@@ -8,7 +8,8 @@ final class SlipsTests: XCTestCase {
         "twoShades", "bridgeShade", "inkShore", "stoneRain", "shadeDoor", "twoFigures",
         "glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps",
         "turn", "overleaf", "twoFaces", "inlay", "bleed", "pressedFlower", "lastPage",
-        "wet", "print", "ring", "spoiled", "pocket", "through"]
+        "wet", "print", "ring", "spoiled", "pocket", "through",
+        "leftLamp", "lift", "banks", "gate", "taken", "twolamps"]
 
     func defaults() -> UserDefaults {
         let name = "slips.test.\(UUID().uuidString)"
@@ -27,7 +28,7 @@ final class SlipsTests: XCTestCase {
             XCTAssertTrue(film.frames.indices.contains(film.still), "\(demo.id)")
             XCTAssertLessThanOrEqual(film.totalMs, 4400, "\(demo.id): a loop is 3.6–4.4 s with its end pause")
             // the demo board shows the slip's own rule
-            XCTAssertTrue(Slips.triggers(Level(id: "x", map: demo.map)).contains(demo.id) || [.shadow, .ride].contains(demo.id), "\(demo.id)")
+            XCTAssertTrue(Slips.triggers(Level(id: "x", map: demo.map, lamp: demo.lamp)).contains(demo.id) || [.shadow, .ride].contains(demo.id), "\(demo.id)")
         }
         // the beats that matter, frame by frame
         let glue = try SlipDemo.demo(.glue).film(config: pack.config)
@@ -50,6 +51,17 @@ final class SlipsTests: XCTestCase {
         XCTAssertEqual(wet.frames[wet.still].board[1, 0], .wetInk)
         XCTAssertEqual(wet.frames[wet.still].board[0, 1], .empty, "two rings: (0,1) is still a gap")
         XCTAssertTrue(wet.frames.last!.won)
+        // 灯位 (design-ch8 §5.1): the left stone's shadow on the lifted page carries her outward onto the letter
+        let lamp = try SlipDemo.demo(.lamp).film(config: pack.config)
+        XCTAssertEqual(lamp.frames[lamp.still].char, Cell(6, 0))
+        XCTAssertEqual(lamp.frames[lamp.still].angle, 135)
+        XCTAssertEqual(lamp.frames[lamp.still].board.lamp, "L")
+        // 活页门 (design-ch8 §5.2): flattened while on the gate she falls home; the second lean walks her through
+        let gate = try SlipDemo.demo(.gate).film(config: pack.config)
+        XCTAssertTrue(gate.frames.contains { $0.char == Cell(2, 0) && $0.angle == 120 })
+        XCTAssertEqual(gate.frames[gate.still].angle, 120)
+        XCTAssertTrue(gate.frames.last!.won)
+        XCTAssertEqual(SlipID.allCases.count, 12, "已集 n / 12")
         let turn = try SlipDemo.demo(.turn).film(config: pack.config)
         XCTAssertEqual(turn.frames.last!.board.face, 1)
         XCTAssertTrue(turn.frames.last!.won)
@@ -68,7 +80,7 @@ final class SlipsTests: XCTestCase {
         let pack = try LevelPack.bundled()
         let first = Slips.firstLevels(pack.levels, order: Self.mainLine)
         XCTAssertEqual(first, [.stone: "facing", .door: "key", .ink: "ink", .tab: "stand", .shadow: "shadow", .press: "press",
-                               .ride: "ride", .glue: "glue", .turn: "turn", .wet: "wet"])
+                               .ride: "ride", .glue: "glue", .turn: "turn", .wet: "wet", .lamp: "leftLamp", .gate: "gate"])
         let bridge = pack.levels.first { $0.id == "bridge" }!
         XCTAssertEqual(Slips.due(bridge, seen: []), [])
         let glue = pack.levels.first { $0.id == "glue" }!

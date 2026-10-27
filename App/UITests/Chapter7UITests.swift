@@ -55,13 +55,29 @@ final class Chapter7UITests: XCTestCase {
         shot("ch7-7-3-mid")
     }
 
-    /// 7-7 透: two closes, then the turn (solution state 14): open on the third page, three rings through.
-    func testShotSevenSevenThirdPage() {
-        launch(48, ["-replayTo", "14", "-noSlips", "YES"])
+    /// 7-6 透 (through v3): close, turn to the third page, lean and close again (shipped solution state 11: shut, the
+    /// third page facing the left one, two closes); open on the third page to see the wet ink through.
+    func testShotSevenSixThirdPage() {
+        launch(48, ["-replayTo", "11", "-noSlips", "YES"])
         XCTAssertEqual(f.probe("face"), "1", "the third page faces the left page")
         open()
         Thread.sleep(forTimeInterval: 1.2)
-        shot("ch7-7-7-third-page")
+        shot("ch7-7-6-third-page")
+    }
+
+    /// 7-6 透 leaning on the third page (shipped solution states 9 and 10: (5,3) then (5,2) at fold 140): the old woman
+    /// stands on the leaning page's back and must still be drawn (b20: she vanished while the book leaned).
+    func testFigureDrawnLeaningOnTheThirdPage() {
+        for state in [9, 10] {
+            launch(48, ["-replayTo", "\(state)", "-noSlips", "YES"])
+            XCTAssertEqual(f.probe("face"), "1", "the third page faces the left page")
+            let fig = app.descendants(matching: .any).matching(identifier: "figure").firstMatch
+            XCTAssertTrue(fig.waitForExistence(timeout: 3), "state \(state): the figure is drawn")
+            XCTAssertGreaterThan(fig.frame.height, 20, "state \(state): upright, not squashed into the page")
+            XCTAssertTrue(app.windows.firstMatch.frame.contains(fig.frame), "state \(state): on screen")
+            shot("ch7-7-6-lean-state\(state)")
+            app.terminate()
+        }
     }
 
     /// High contrast: wet ink keeps a dashed ring after a close, dry ink (none in 7-1) would not.

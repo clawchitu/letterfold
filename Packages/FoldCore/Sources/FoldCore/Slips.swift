@@ -5,6 +5,9 @@ public enum SlipID: String, CaseIterable, Sendable, Codable {
     case stone, door, ink, tab, shadow, press, ride, glue, turn
     /// Ch. 7 「墨晕」 (fold-proto design-ch7 §6, tools/slips.js): wet ink, first in 7-1. The tenth slip.
     case wet
+    /// Ch. 8 「灯位」 (fold-proto design-ch8 §5, tools/slips.js): the lamp on the left bank (first in 8-1) and the angle
+    /// gate (first in 8-4). Slips eleven and twelve.
+    case lamp, gate
 }
 
 /// The slips' triggers and the save logic around them (design-onboarding §7.2–7.3), pure so they are tested here.
@@ -35,6 +38,8 @@ public enum Slips {
             case .glue: return s.contains("g")
             case .turn: return pages == 3
             case .wet: return s.contains("I")
+            case .lamp: return (level.lamp ?? "R").contains("L")
+            case .gate: return s.contains("A")
             }
         }
     }
@@ -152,7 +157,7 @@ public struct SlipFilm: Sendable {
 public struct SlipDemo: Sendable {
     public enum Beat: Sendable {
         case bump(Int, Int, Rules.Block)
-        case angle(Double, ms: Int, stamp: Rules.Stamp.Kind? = nil, crushed: Bool? = nil, shadowAt: Cell? = nil)
+        case angle(Double, ms: Int, stamp: Rules.Stamp.Kind? = nil, crushed: Bool? = nil, shadowAt: Cell? = nil, falls: Bool = false)
         case walk(Cell), walkStack(Cell), flip, at(Cell), win, pause(Int), still
     }
     public enum Failure: Error, CustomStringConvertible {
@@ -163,6 +168,8 @@ public struct SlipDemo: Sendable {
     /// The level that introduces it (design-onboarding §1).
     public let level: String
     public let map: [String]
+    /// The level's lamp (ch. 8 `lamp`): nil = the right bank.
+    public var lamp: String? = nil
     public let beats: [Beat]
 
     /// tools/slips.js, beat for beat (plus pauses, a still marker and the closing opens the storyboards ask for).
@@ -201,13 +208,24 @@ public struct SlipDemo: Sendable {
             .bump(1, 0, .gap), .pause(400), .angle(180, ms: 500, stamp: .bleed), .pause(300), .angle(0, ms: 300),
             .bump(1, 0, .gap), .pause(400), .angle(180, ms: 500, stamp: .bleed), .pause(300), .angle(0, ms: 300),
             .walk(Cell(1, 0)), .still, .walk(Cell(1, 1)), .win]),
+        // 灯位: the left page's stone shades the lifted page beside her; closing a little more slides the shadow outward
+        // onto her square (design-ch8 §5.1). The still: 45° (fold 135), on her square
+        SlipDemo(id: .lamp, level: "8-1", map: ["x---S-G-", "--------"], lamp: "L", beats: [
+            .bump(1, 0, .gap), .pause(300), .angle(120, ms: 500, shadowAt: Cell(5, 0)), .pause(150),
+            .walk(Cell(5, 0)), .angle(135, ms: 600), .at(Cell(6, 0)), .still, .pause(400)]),
+        // 活页门: lying flat it is a door; leaning it stands and is floor; flatten while on it and she falls home; lean
+        // again and walk through the lower gate (design-ch8 §5.2). The still: leaning, on her square
+        SlipDemo(id: .gate, level: "8-4", map: ["S.A-----", "-.AG----"], beats: [
+            .walk(Cell(1, 0)), .bump(1, 0, .door), .pause(300), .angle(120, ms: 400), .pause(150),
+            .walk(Cell(2, 0)), .pause(250), .angle(0, ms: 500, falls: true), .at(Cell(0, 0)), .pause(300),
+            .walk(Cell(1, 1)), .angle(120, ms: 400), .walk(Cell(3, 1)), .still, .win]),
     ]
 
     public static func demo(_ id: SlipID) -> SlipDemo { all.first { $0.id == id }! }
 
     /// Plays the script on the real engine; throws on the first move the rules refuse.
     public func film(config: FoldConfig = .standard) throws -> SlipFilm {
-        let game = try FoldGame(level: Level(id: "slip.\(id.rawValue)", map: map), config: config)
+        let game = try FoldGame(level: Level(id: "slip.\(id.rawValue)", map: map, lamp: lamp), config: config)
         var frames: [SlipFrame] = []
         var still: Int?
         func fail(_ m: String) -> Failure { .rule(id, m) }
@@ -222,10 +240,10 @@ public struct SlipDemo: Sendable {
                 let b = game.rules.stepBlock(game.board, game.char, dc, dr, game.posture, game.shade)
                 guard let b, b.why == why else { throw fail("step \(dc),\(dr) expected blocked by \(why), got \(String(describing: b?.why))") }
                 add(.bump(dc: dc, dr: dr, at: Cell(b.c, b.r)), 120)
-            case let .angle(target, ms, stamp, crushed, shadowAt):
+            case let .angle(target, ms, stamp, crushed, shadowAt, falls):
                 let from = game.angle
                 let n = max(1, Int((abs(target - from) / FoldGame.subStep).rounded(.up)))
-                var wasCrushed = false, stamps: [Rules.Stamp] = []
+                var wasCrushed = false, fell = false, stamps: [Rules.Stamp] = []
                 for k in 1...n {
                     let before = game.char
                     let a = from + (target - from) * Double(k) / Double(n)
@@ -234,7 +252,9 @@ public struct SlipDemo: Sendable {
                     stamps += s
                     if events.contains(.fell(crushed: true)) { wasCrushed = true; add(.sweep, ms / n, s); add(.crush(at: before), 260) }
                     else { add(.sweep, ms / n, s) }
+                    if events.contains(.fell(crushed: false)) { fell = true }
                 }
+                if fell != falls { throw fail("at fold \(target) fell=\(fell), expected \(falls)") }
                 if let crushed, crushed != wasCrushed { throw fail("at fold \(target) crushed=\(wasCrushed), expected \(crushed)") }
                 if let stamp, !stamps.contains(where: { $0.kind == stamp }) { throw fail("expected a \(stamp) stamp at fold \(target)") }
                 if let shadowAt, game.shade[shadowAt] == nil { throw fail("no shadow at \(shadowAt) at fold \(target)") }

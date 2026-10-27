@@ -53,6 +53,7 @@ final class LayoutStabilityUITests: PlaythroughUITests {
         save("2-7-toast-before")
         tile(0, 0).tap()                                  // the goal across the gap: 走不到那里
         XCTAssertTrue(toastShows("走不到"), "the blocked tap's toast")
+        assertToastClear("2-7")
         save("2-7-toast-after")
         assertSame(start, frames(), "toast")
         let acts = level("crease")
@@ -67,6 +68,29 @@ final class LayoutStabilityUITests: PlaythroughUITests {
         Thread.sleep(forTimeInterval: 2.5)                // the aha, the book flat again, the thread redrawn
         save("2-7-win")
         assertSame(start, frames(), "win knot")
+    }
+
+    /// The toast's bubble covers no square (b20: on 7-6 and twolamps it hid the bottom row).
+    func assertToastClear(_ what: String) {
+        let b = app.descendants(matching: .any).matching(identifier: "toast.bubble").firstMatch
+        XCTAssertTrue(b.waitForExistence(timeout: 3), "\(what): the toast's bubble")
+        let r = b.frame
+        for (k, t) in frames() where t.insetBy(dx: 1, dy: 1).intersects(r) { XCTFail("\(what): the toast \(r) covers \(k) \(t)") }
+    }
+
+    /// 7-6 透 and 8-7 twolamps: a blocked tap's toast floats in an empty band, never over a square.
+    func testToastNeverCoversASquare() {
+        for (level, name) in [(48, "7-6"), (54, "twolamps")] {
+            launch(level, ["-noSlips", "YES"])
+            let start = frames()
+            tile(0, 0).tap()                              // far from the start, across the book: 走不到那里
+            XCTAssertTrue(toastShows("走不到"), "\(name): the blocked tap's toast")
+            Thread.sleep(forTimeInterval: 0.4)
+            assertToastClear(name)
+            save("\(name)-toast")
+            assertSame(start, frames(), "\(name) toast")
+            app.terminate()
+        }
     }
 
     /// High contrast: the thread does not age (4pt over white everywhere).

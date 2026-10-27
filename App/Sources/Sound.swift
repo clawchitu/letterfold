@@ -129,6 +129,14 @@ final class SoundBoard {
     func turn() { play("turn", volume: 0.5) { Self.noiseBurst(0.24, decay: 9, lowpass: 3800, gain: 0.45) } }
     /// Ch. 7 「墨晕」: paper drinking the ink — a short low-passed puff (90 ms), once per ring (design-ch7 §2).
     func blot() { play("blot", volume: 0.4) { Self.noiseBurst(0.09, decay: 30, lowpass: 900, gain: 0.55) } }
+    /// Ch. 8 活页门 (design-review-ch8-art §3.2): the paper piece flipping up — a 40 ms white-noise snap and a
+    /// mid knock; lying down, the same an octave lower.
+    func gate(up: Bool) {
+        play(up ? "gateUp" : "gateDown", volume: 0.5) {
+            let snap = Self.noiseBurst(0.04, decay: 60, lowpass: 6000, gain: 0.5), knock = Self.tone(up ? 660 : 330, .wood, 0.18)
+            return (0..<max(snap.count, knock.count)).map { i in (i < snap.count ? snap[i] : 0) + (i < knock.count ? 0.6 * knock[i] : 0) }
+        }
+    }
     func rub(volume: Double = 0.35) { play("rub", volume: volume) { Self.noiseBurst(0.12, decay: 18, lowpass: 5200, gain: 0.5) } }
     func hollow(pan: Double = 0) {
         play("hollow", pan: pan, volume: 0.7) {

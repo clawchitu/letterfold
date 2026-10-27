@@ -170,7 +170,13 @@ const NATIVE = {
   carried: ['影子把你从第{from}列带到第{to}列（你现在在这里）', 'The shadow carried you from column {from} to column {to} (you are there now)', '影がきみを{from}列目から{to}列目へ運んだ（いまはそこにいる）', '그림자가 당신을 {from}열에서 {to}열로 옮겼어요(지금 거기 있어요)'],
   // the next chapter, not yet written (map card)
   'ch.7': ['墨晕', 'Bleed', '滲み', '번짐'],
-  'ch.8': ['待续', 'To Be Continued', 'つづく', '다음 이야기'],
+  'ch.8': ['灯位', 'The Lamp', '灯', '등불'],
+  // 0.1 (20): after 卷二's finale, a dashed card for 卷三 (fold-proto brainstorm-vol3.md; not written yet)
+  'ch.9': ['待续', 'To Be Continued', 'つづく', '다음 이야기'],
+  'map.book3': ['卷三', 'Book Three', '第三巻', '제3권'],
+  // ch. 8 「灯位」: the board reads the angle gate `A` aloud (fold-proto has `gate` / `gateOpen` / `gateDown` only)
+  'kind.A': ['活页门，斜起时开着', 'paper gate, open while the page leans', '紙の扉、傾けているあいだ開く', '종이 문, 기울이는 동안 열림'],
+  'noun.A': ['活页门', 'paper gate', '紙の扉', '종이 문'],
   // 0.1 (19) ch. 7 「墨晕」: fold-proto names only `i` (「湿墨」); the native board also reads `I` aloud, so the two inks
   // need different names when they share a page (7-3). Not in fold-proto yet (reported upstream). ja/ko: TODO-native-check.
   'kind.I': ['未干的墨，每合一次洇一圈', 'undried ink, bleeds a ring each close', '乾いていない墨、閉じるたびにひとまわり滲む', '마르지 않은 먹, 닫을 때마다 한 겹 번짐'],
@@ -208,7 +214,7 @@ function catalog(entries) {
 
 // 0.1 (16): ch. 6 strings fold-proto has only in zh / en (or in an older form) for ja / ko. Marked TODO-native-check in
 // the catalog comments until a native speaker has read them.
-const CH6_NATIVE = ['ch.6', 'ch.7', 'ch.8', 'kind.I', 'noun.I', 'kind.i.ch7', 'carried', 'flip.action', 'flip.hint', 'restart', 'restartLabel', 'restartHint', 'restarted'];
+const CH6_NATIVE = ['ch.6', 'ch.7', 'ch.8', 'ch.9', 'map.book3', 'kind.A', 'noun.A', 'kind.I', 'noun.I', 'kind.i.ch7', 'carried', 'flip.action', 'flip.hint', 'restart', 'restartLabel', 'restartHint', 'restarted'];
 const STRING_FIX = {
   ja: {
     'chHead.6': '六 · めくる',
@@ -233,7 +239,11 @@ const HELP_ADD = {
 // 0.1 (19): ch. 7 「墨晕」 strings — fold-proto has zh / en final and ja / ko drafts (design-ch7.md §5–6, TODO review there).
 const CH7_DRAFTS = ['ch.7.line', 'chHead.7', 'paper.ch7', 'inkBled', 'letter.7.title', 'letter.7.body', 'letter.7.sign', 'letter.7.end',
   'slip.wet.title', 'slip.wet.body', 'slip.wet.pic'];
-const CHECKED = new Set(['help', ...Object.keys(STRING_FIX.ja), ...Object.keys(STRING_FIX.ko), ...CH7_DRAFTS]);
+// 0.1 (20): ch. 8 「灯位」 strings — fold-proto has zh / en final and ja / ko drafts (design-ch8.md §4–5, TODO review there).
+const CH8_DRAFTS = ['ch.8.line', 'chHead.8', 'paper.ch8', 'pre.lamp', 'gate', 'gateOpen', 'gateDown', 'lampSide.L', 'lampSide.LR',
+  'letter.8.title', 'letter.8.body', 'letter.8.sign', 'letter.8.end', 'slip.lamp.title', 'slip.lamp.body', 'slip.lamp.pic',
+  'slip.gate.title', 'slip.gate.body', 'slip.gate.pic'];
+const CHECKED = new Set(['help', ...Object.keys(STRING_FIX.ja), ...Object.keys(STRING_FIX.ko), ...CH7_DRAFTS, ...CH8_DRAFTS]);
 for (const [l, table] of Object.entries(STRING_FIX)) Object.assign(src.strings[l], table);
 for (const [l, [from, to]] of Object.entries(HELP_ADD)) {
   if (!src.strings[l].help.includes(to)) src.strings[l].help = src.strings[l].help.replace(from, to);
@@ -374,7 +384,37 @@ for (const [l, table] of Object.entries(LEVEL_V17)) Object.assign(src.levelTexts
 // level, no strings.
 const LEVEL_CH7 = ['wet', 'print', 'ring', 'spoiled', 'pocket', 'through'];
 const LEVEL_CUT = new Set(['turned']);
-const LEVEL_CHECKED = new Set([...Object.keys(LEVEL_CH6.ja), ...Object.keys(LEVEL_V17.ja), ...LEVEL_CH7]);
+// 0.1 (20): ch. 8 「灯位」 likewise (8-5 was cut, design-ch8.md §3.3). fold-proto 0053ff1 reuses the id `lamp` for 8-1
+// (3-6 is `lamp`): in i18n.js's object literals the later entry wins, so `levelTexts.lamp` is 8-1's text and 3-6's is
+// gone. The native app ships 8-1 as `leftLamp` (tools/level-extras.js NATIVE_IDS) and keeps 3-6's text as the catalog
+// already has it.
+const LEVEL_CH8 = ['leftLamp', 'lift', 'banks', 'gate', 'taken', 'twolamps'];
+const LEVEL_DUP = { lamp: 'leftLamp' };
+const oldLevels = (() => { try { return JSON.parse(fs.readFileSync(path.join(outDir, 'Levels.xcstrings'), 'utf8')).strings; } catch { return {}; } })();
+// Which entry survived differs per table: zh / en keep 8-1's (it comes later), ja / ko keep 3-6's, so 8-1's ja / ko
+// drafts (i18n.js 0053ff1, the `lamp` entries right after `rideBack` there) are copied here.
+const LEVEL_DUP_LOST = {
+  leftLamp: {
+    ja: ['灯', '灯が左へ移った。', '60° まで傾ける：左頁の石の影が右頁の隣の隙間に落ちる。乗って 45° まで閉じる——影が外へ滑り、彼女の枡まで運ぶ。', '影は持ち上げた頁に落ち、閉じるほど外へ滑る。'],
+    ko: ['등불', '등불이 왼쪽으로 옮겨 갔어요.', '60°까지 기울여요: 왼쪽 면 돌의 그림자가 오른쪽 면 옆 틈에 떨어져요. 올라서서 45°까지 닫아요. 그림자가 바깥으로 미끄러져 그녀의 칸까지 데려다줘요.', '그림자는 들어 올린 면에 떨어지고, 닫을수록 바깥으로 미끄러져요.'],
+  },
+};
+for (const [id, nid] of Object.entries(LEVEL_DUP)) {
+  if (!oldLevels[`${id}.name`]) continue;
+  const old = (l) => ['name', 'line', 'hint', 'hint1'].map((part) => oldLevels[`${id}.${part}`]?.localizations[LANG[l]]?.stringUnit.value).filter((v) => v != null);
+  if (Object.keys(LANG).every((l) => (src.levelTexts[l][id] || [])[0] === old(l)[0])) continue;   // the duplicate is gone upstream
+  for (const l of Object.keys(LANG)) {
+    const survived = src.levelTexts[l][id];
+    src.levelTexts[l][nid] = survived && survived[0] !== old(l)[0] ? survived : LEVEL_DUP_LOST[nid][l];
+    src.levelTexts[l][id] = old(l);
+  }
+}
+// The cut 8-5 「石背」 (design-ch8.md §3.3) keeps its draft text in i18n.js under `back`, 1-3's id, and it wins in zh / en:
+// 1-3 keeps the text the catalog already has.
+const LEVEL_KEEP = ['back'];
+const oldText = (id, l) => ['name', 'line', 'hint', 'hint1'].map((part) => oldLevels[`${id}.${part}`]?.localizations[LANG[l]]?.stringUnit.value).filter((v) => v != null);
+for (const id of LEVEL_KEEP) if (oldLevels[`${id}.name`]) for (const l of Object.keys(LANG)) src.levelTexts[l][id] = oldText(id, l);
+const LEVEL_CHECKED = new Set([...Object.keys(LEVEL_CH6.ja), ...Object.keys(LEVEL_V17.ja), ...LEVEL_CH7, ...LEVEL_CH8]);
 
 for (const id of Object.keys(src.levelTexts.en).filter((x) => !LEVEL_CUT.has(x))) {
   // an optional 4th entry: the first rung of the 「?」 ladder (design-review-v2c1 §2), shown before the hint

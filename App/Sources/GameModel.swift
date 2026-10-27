@@ -15,12 +15,14 @@ struct Chapter: Identifiable {
     /// they are outside the strict chapter unlock, the chapter's count and 「继续」; they open once the chapter is
     /// delivered, from the sealed letter under its card on the map.
     var darkIDs: [String] = []
+    /// The dashed card after 卷二's finale: 「卷三 · 待续」, the next book, not yet written (0.1 (20)).
+    var nextBook = false
     /// 卷一《两岸》 = chapters 1–4, 卷二《翻页》 = 5 on (roadmap §1).
     var volume: Int { id <= 4 ? 1 : 2 }
     /// The chapter's number inside its volume (the map cards).
     var inVolume: Int { volume == 1 ? id : id - 4 }
     static func numeral(_ n: Int) -> String {
-        L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("ja") ? ["一", "二", "三", "四", "五", "六", "七", "八"][n - 1] : "\(n)"
+        L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("ja") ? ["一", "二", "三", "四", "五", "六", "七", "八", "九"][n - 1] : "\(n)"
     }
     /// 一 … 五 through the book in Chinese and Japanese; the reader's own digits elsewhere (one language on screen at a time).
     var numeral: String { Self.numeral(id) }
@@ -28,7 +30,7 @@ struct Chapter: Identifiable {
     var volumeNumeral: String { Self.numeral(inVolume) }
     var name: String { L10n.t("ch.\(id)") }
     /// The chapter's seal on its map card and (vol. 2) on the finale: 达 · 通 · 影 · 成 · 胶 (design-v2c1 §2 章印).
-    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "页"][min(7, id - 1)] }
+    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "灯", "页"][min(8, id - 1)] }
     static func volumeChapters(_ v: Int) -> [Chapter] { all.filter { $0.volume == v } }
 
     static let all: [Chapter] = [
@@ -50,8 +52,12 @@ struct Chapter: Identifiable {
         // vol. 2 chapter 3 「墨晕」 (fold-proto design-ch7.md): wet ink; opens once chapter 6 is all delivered (the strict
         // rule). Six levels: 7-6 turned was cut, `through` is the sixth
         Chapter(id: 7, levelIDs: ["wet", "print", "ring", "spoiled", "pocket", "through"], unlocked: true, soon: false),
-        // vol. 2 chapter 4 is not written yet: a dashed card, never a sealed chapter that looks openable
-        Chapter(id: 8, levelIDs: [], unlocked: false, soon: true),
+        // vol. 2 chapter 4 「灯位」, 卷二's finale (fold-proto design-ch8.md): the lamp on the left bank and the angle gate;
+        // opens once chapter 7 is all delivered (the strict rule). Six levels: 8-5 was cut; 8-1 is `leftLamp` (the proto
+        // reuses 3-6's id `lamp`)
+        Chapter(id: 8, levelIDs: ["leftLamp", "lift", "banks", "gate", "taken", "twolamps"], unlocked: true, soon: false),
+        // 卷三 is not written yet: a dashed card after the finale, never a sealed chapter that looks openable
+        Chapter(id: 9, levelIDs: [], unlocked: false, soon: true, nextBook: true),
     ]
 }
 
@@ -166,6 +172,9 @@ final class GameModel {
     var spread: Spread { Spread(orientation, columnsPerPage: config.columnsPerPage, rows: board.h) }
 
     private(set) var toast: String?
+    /// Where the drawn book's squares are on screen (global coordinates): the toast floats in the larger empty band
+    /// above or below it and never covers a square.
+    var boardRect: CGRect = .zero
 
     // 「翻」 (vol. 2 ch. 6, design-ch6.md §2): turning the closed book over. BookView rotates the whole book by `flipTurn`
     // (0 → 180°, 0.6 s ease-in-out, around the vertical axis) and draws `shownFace`, which switches at the midpoint.
@@ -301,7 +310,9 @@ final class GameModel {
         /// Where a ridden shadow picked the figure up: the carry is said once, where it ends (playtest-ch6 §2 #6).
         var carryFrom: Cell?
         /// Crushed or fallen: the reason, said last in the fold announcement so 「路接通了」 cannot drown it (fold-proto e613f80).
-        var fell = "" }
+        var fell = ""
+        /// Ch. 8: the gates stood up / lay down with the lean (said once per rest: `gateOpen` / `gateDown`).
+        var gate: Bool? = nil }
 
     static let step = 15.0
     static let snapPoints: [Double] = [0, 90, 130, 180]
@@ -349,7 +360,7 @@ final class GameModel {
     /// -cameraPitch <deg> (screenshots), -probe YES (UI tests: the drag's edge probe).
     static func launch() -> GameModel {
         let d = UserDefaults.standard
-        if d.bool(forKey: "resetProgress") { SavedProgress.resetAll(d); for k in [ruleBlockedKey, ruleUnderKey, layerRuleKey, shadowPaperKey] { d.removeObject(forKey: k) }; for k in 2...6 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
+        if d.bool(forKey: "resetProgress") { SavedProgress.resetAll(d); for k in [ruleBlockedKey, ruleUnderKey, layerRuleKey, shadowPaperKey] { d.removeObject(forKey: k) }; for k in 2...8 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
         var pack = try! LevelPack.bundled()
         let start = d.integer(forKey: "startLevel")
         // -levelMap "row|row|…" (UI tests only; gaps written "_", as a value starting with "-" would read as a flag): play the -startLevel level on another board, so a rule's regression test
@@ -515,7 +526,7 @@ final class GameModel {
     private func orderedSlips(_ ids: [SlipID]) -> [SlipID] {
         let start = game.board.start
         func distance(_ id: SlipID) -> Int {
-            let tile: Tile? = switch id { case .stone, .press: .stone; case .door: .door; case .ink: .ink; case .tab: .tab; case .glue: .glue; case .wet: .wetInk; default: nil }
+            let tile: Tile? = switch id { case .stone, .press: .stone; case .door: .door; case .ink: .ink; case .tab: .tab; case .glue: .glue; case .wet: .wetInk; case .gate: .gate; default: nil }
             guard let tile else { return .max }
             var best = Int.max
             for r in 0..<board.h { for c in 0..<board.w where board[c, r] == tile {
@@ -746,18 +757,31 @@ final class GameModel {
             rideFeel()
             // design-ch3 §5: the page is held up to the lamp once it leans past 89° (physical)
             if paper.backlit && before < 91 && angle >= 91 && angle < config.foldMin { pending.lit = true }
+            gateCheck(from: before)
             lockCheck(from: before)
         }
     }
 
+    /// Ch. 8 angle gates stand while the page leans (`rules.lit`), lie down outside it (design-review-ch8-art §3.2):
+    /// a paper snap and a light tap each way, and `gateOpen` / `gateDown` in the next announcement.
+    private func gateCheck(from before: Double) {
+        let was = rules.lit(before), now = rules.lit(angle)
+        guard was != now, board.grid.contains(where: { $0.contains(.gate) }) else { return }
+        haptics.tick()
+        sound.gate(up: now)
+        pending.gate = now
+    }
+
     // MARK: the shadow lock (design-review-ch3 §3)
 
-    /// A gap: an empty square on the bottom page next to paper, where a shadow would make a path.
+    /// A gap: an empty square next to paper on the same page, where a shadow would make a path — on the bottom page
+    /// (right lamp) or the lifted one (left lamp; Codex review 20 #3).
     static func isGap(_ b: Board, _ rules: Rules, _ c: Cell) -> Bool {
-        guard !rules.isRight(c.c), b[c] == .empty else { return false }
+        guard b[c] == .empty else { return false }
+        let lo = rules.isRight(c.c) ? rules.n : 0, hi = lo + rules.n
         return [(1, 0), (-1, 0), (0, 1), (0, -1)].contains { d in
             let n = Cell(c.c + d.0, c.r + d.1)
-            return n.c >= 0 && n.c < rules.n && n.r >= 0 && n.r < b.h && b[n].isFloor
+            return n.c >= lo && n.c < hi && n.r >= 0 && n.r < b.h && b[n].isFloor
         }
     }
     func isGap(_ c: Cell) -> Bool { Self.isGap(board, rules, c) }
@@ -1707,7 +1731,7 @@ final class GameModel {
         let a = Int(angle.rounded())
         let p = pending
         pending = Pending(hadShade: !shade.isEmpty)
-        if a == saidAngle && !p.mode && !p.connected && !p.shade && !p.lit && !p.dead && p.stamps.isEmpty && p.fell.isEmpty && p.carryFrom == nil { return }
+        if a == saidAngle && !p.mode && !p.connected && !p.shade && !p.lit && !p.dead && p.stamps.isEmpty && p.fell.isEmpty && p.carryFrom == nil && p.gate == nil { return }
         saidAngle = a
         var parts: [String] = []
         switch posture {
@@ -1722,6 +1746,7 @@ final class GameModel {
             else { parts.append(L10n.t(isLeaning ? "book.lean" : "book.open", ["a": 180 - a])) }
         }
         if p.lit { parts.append(L10n.t("paper.lit")) }
+        if let g = p.gate { parts.append(L10n.t(g ? "gateOpen" : "gateDown")) }
         if !p.fell.isEmpty {
             // crushed / fell: what the shut did, then the reason, last (nothing about paths: you are back at the start)
             if p.stamps.contains(where: { $0.kind == .glue }) { parts.append(L10n.t("glued")) }
@@ -1826,6 +1851,8 @@ final class GameModel {
     /// A stone is still on its way to `c`: the square does not draw it yet.
     func stoneInFlight(_ c: Cell) -> Bool { inFlight.contains(c) }
     /// What a square shows: a glue square keeps its glue until the stone it pulls lands on it.
+    /// Ch. 8 「灯位」: the lifted page carries shadows (left lamp) or angle gates, so it is walked on while it leans.
+    var liftedPageLive: Bool { board.liftedPageLive }
     func shownTile(_ c: Cell) -> Tile { inFlight.contains(c) ? .glue : board[c] }
 
     /// 5-7's seal 「胶」 on her square (design-review-v2c1 ④): 24 pt, its centre 6 pt in from the square's top-right
@@ -1923,6 +1950,7 @@ final class GameModel {
         // shut: the stack is named by its bottom-page square (the one the stack sits on)
         let at = posture == .closed ? Cell(rules.proj(c), r) : Cell(c, r)
         var parts = [pos(at), f.shadow ? L10n.t("kindShadow") : f.tabUp ? L10n.t("kindTabUp") : kind(f.tile)]
+        if let open = f.gateOpen { parts.append(L10n.t(open ? "gate.state.open" : "gate.state.down")) }
         if f.goalInStack { parts.append(kind(.goal)) }
         if case .you(let onTop)? = f.here {
             parts.append(onTop.map { L10n.t("hereOnPage", ["page": L10n.t($0 ? "page.folding" : "page.fixed")]) } ?? L10n.t("hereYou"))
@@ -1997,11 +2025,11 @@ final class GameModel {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
             if UIAccessibility.isVoiceOverRunning {
                 UIAccessibility.post(notification: .announcement,
-                                     argument: NSAttributedString(string: s, attributes: [.accessibilitySpeechLanguage: L10n.lang]))
+                                     argument: L10n.speech(s))
             } else if AppSettings.shared.speak, let self {
                 // 语音朗读: no screen reader running, so speak in the system voice of the app's language
                 self.speech.stopSpeaking(at: .word)
-                let u = AVSpeechUtterance(string: s)
+                let u = AVSpeechUtterance(attributedString: L10n.speech(s))   // 第5行 read háng (IPA hint)
                 u.voice = AVSpeechSynthesisVoice(language: L10n.lang == "zh-Hans" ? "zh-CN" : L10n.lang)
                 self.speech.speak(u)
             }

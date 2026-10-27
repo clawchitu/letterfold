@@ -17,6 +17,9 @@ public enum Tile: Character, Sendable, Codable, CaseIterable {
     /// Wet ink (vol. 2 ch. 7 「墨晕」, design-ch7.md §1): floor like ink, but every press first bleeds it one ring into
     /// the gaps and glue beside it on its own page, then prints it (wet) onto the facing gap.
     case wetInk = "I"
+    /// Angle gate (vol. 2 ch. 8 「灯位」, design-ch8.md §1.1): a paper flap over a gap that is floor only while the page
+    /// leans (the lamp window, `Rules.lit`); flat or closed it is a gap. Not floor, not a block, lets the light through.
+    case gate = "A"
 
     /// Something you can stand on.
     public var isFloor: Bool { [.paper, .start, .goal, .key, .ink, .openDoor, .tab, .glue, .wetInk].contains(self) }
@@ -74,6 +77,10 @@ public struct Expectation: Sendable, Codable, Equatable {
     public var needsWet: Bool?
     /// Vol. 2 ch. 7: full closes (posture moves onto the closed book) in check.js's solution.
     public var wetCloses: Int?
+    /// Vol. 2 ch. 8: unsolvable with the lamp back on the right bank.
+    public var needsLamp: Bool?
+    /// Vol. 2 ch. 8: unsolvable with the angle gate laid down as paper.
+    public var needsGate: Bool?
     public var stepped15: Bool
     /// tools/check.js `analyse()` (design-difficulty.md §2); the Swift `Difficulty` port must agree.
     public var difficulty: Difficulty.Summary?
@@ -91,6 +98,8 @@ public struct Expectation: Sendable, Codable, Equatable {
         case "glueFires": return glueFires
         case "needsFlip": return needsFlip
         case "needsWet": return needsWet
+        case "needsLamp": return needsLamp
+        case "needsGate": return needsGate
         default: return nil
         }
     }
@@ -110,9 +119,11 @@ public struct Level: Sendable, Codable, Identifiable, Equatable {
     public var len: Int?
     /// The proto solver's shortest solution (gen.js bestPath) as [c, r, fold angle, stamped] states (tools/level-extras.js).
     public var solution: [[Int]]?
+    /// Vol. 2 ch. 8 「灯位」 (levels.js `lamp`): which bank the lamp hangs on — "R" (default), "L" or "LR".
+    public var lamp: String?
     public var isOptional: Bool { optional == true }
-    public init(id: String, map: [String], expect: Expectation? = nil, tier: String? = nil, needs: [String]? = nil) {
-        self.id = id; self.map = map; self.expect = expect; self.tier = tier; self.needs = needs
+    public init(id: String, map: [String], expect: Expectation? = nil, tier: String? = nil, needs: [String]? = nil, lamp: String? = nil) {
+        self.id = id; self.map = map; self.expect = expect; self.tier = tier; self.needs = needs; self.lamp = lamp
     }
 }
 
@@ -178,6 +189,9 @@ public struct Board: Sendable, Equatable {
     public let pages: Int
     /// Which page of the right leaf faces the left page: 0 = right page, 1 = third page.
     public var face: Int = 0
+    /// Vol. 2 ch. 8: the lamp's bank — "R" (right-page stones shade the left page), "L" (left-page stones shade the
+    /// lifted page), "LR" (both). logic.js `s.lamp` / `lampOf`.
+    public let lamp: String
     let n: Int
 
     public init(level: Level, columnsPerPage n: Int = 4) throws {
@@ -195,10 +209,15 @@ public struct Board: Sendable, Equatable {
         guard let start, start.c < 2 * n else { throw FoldError.noStart }
         self.start = start
         self.n = n
+        lamp = level.lamp ?? "R"
         pages = width / n
         h = grid.count
         w = 2 * n
     }
+
+    /// Ch. 8 「灯位」: the lifted page carries shadows (left lamp) or angle gates, so it is walked on while it leans
+    /// (the app keeps its squares tappable through the lean window).
+    public var liftedPageLive: Bool { lamp.contains("L") || grid.contains { $0.contains(.gate) } }
 
     /// The grid column behind a visible column (logic.js colOf).
     @inline(__always) public func colOf(_ c: Int) -> Int { face == 1 && c >= n ? c + n : c }

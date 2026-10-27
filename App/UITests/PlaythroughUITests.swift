@@ -1,7 +1,7 @@
 import XCTest
 
-/// A first-time player's run through the whole book in Chinese, all 48 levels: cover → 1-1 … 4-6 → 5-1 … 5-7 → the
-/// three 暗信 → map → 6-1 … 6-7 (「翻」) → the sixth letter → 7-1 … 7-6 (「墨晕」) → the seventh letter, with the letters and chapter openers between. Every fold is a real one-finger drag on the page,
+/// A first-time player's run through the whole book in Chinese, all 54 levels: cover → 1-1 … 4-6 → 5-1 … 5-7 → the
+/// three 暗信 → map → 6-1 … 6-7 (「翻」) → the sixth letter → 7-1 … 7-6 (「墨晕」) → the seventh letter → 8-1 … 8-6 (「灯位」) → the eighth letter, with the letters and chapter openers between. Every fold is a real one-finger drag on the page,
 /// every walk a tap on a square. The moves come from PlaythroughPlan.swift, generated from the proto solver's shortest
 /// solutions and checked in FoldCore (UIPlanTests): angles the page can rest at, with tolerances a drag can hit.
 /// Set TEST_RUNNER_LF_SHOTS=/some/dir to also write each level's start and end as PNGs (QA passes).
@@ -140,6 +140,7 @@ class PlaythroughUITests: XCTestCase {
     ]
     static let chapter6 = ["turn", "overleaf", "twoFaces", "inlay", "bleed", "pressedFlower", "lastPage"]
     static let chapter7 = ["wet", "print", "ring", "spoiled", "pocket", "through"]
+    static let chapter8 = ["leftLamp", "lift", "banks", "gate", "taken", "twolamps"]
 
     func testPlaythroughAllLevels() {
         app = XCUIApplication()
@@ -210,8 +211,8 @@ class PlaythroughUITests: XCTestCase {
         shot("map-dark-done")
 
         // vol. 2 chapter 6 「翻」: opens once all of chapter 5 is delivered (strict unlock; the 暗信 are not required);
-        // chapter 7 「墨晕」 once chapter 6 is
-        for (ch, ids) in [(6, Self.chapter6), (7, Self.chapter7)] {
+        // chapter 7 「墨晕」 once chapter 6 is, chapter 8 「灯位」 once chapter 7 is
+        for (ch, ids) in [(6, Self.chapter6), (7, Self.chapter7), (8, Self.chapter8)] {
         enterChapter(ch)
         for (li, id) in ids.enumerated() {
             let code = "\(ch)-\(li + 1)"
@@ -231,6 +232,6 @@ class PlaythroughUITests: XCTestCase {
             }
         }
         }
-        XCTAssertEqual(played, 48)
+        XCTAssertEqual(played, 54)
     }
 }
