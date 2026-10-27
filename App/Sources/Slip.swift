@@ -439,7 +439,7 @@ struct SlipIcon: View {
             case .glue: GlueMark(size: cell).frame(width: size, height: size).clipShape(RoundedRectangle(cornerRadius: 3))
             case .turn: SlipGlyph(id: .turn).stroke(hc ? Color.black : Tok.ink700, style: StrokeStyle(lineWidth: 1.2, lineJoin: .round)).frame(width: size, height: size)
             case .wet: WetBlot(size: cell * 0.9)
-            case .lamp: LampGlyph().stroke(hc ? Color.black : Tok.ink700, style: StrokeStyle(lineWidth: 1.2, lineJoin: .round)).frame(width: size * 0.8, height: size * 0.8)
+            case .lamp: LampMark(hc: hc).scaleEffect(size * 0.8 / LampMark.size.height)
             case .gate: GateMark(standing: true, size: size * 0.9, hc: hc)
             }
         }
@@ -492,7 +492,7 @@ nonisolated struct SlipGlyph: Shape {
                 p.move(to: pt(0.5 + 0.46 * cos(a0), 0.5 + 0.46 * sin(a0)))
                 p.addArc(center: pt(0.5, 0.5), radius: r.width * 0.46, startAngle: .radians(a0), endAngle: .radians(a1), clockwise: false)
             }
-        case .lamp: p.addPath(LampGlyph().path(in: r))
+        case .lamp: p.addPath(LampFrame().path(in: r))
         case .gate: p.addPath(GateFrame().path(in: r))
         case .turn:
             p.addRect(CGRect(x: r.minX + r.width * 0.3, y: r.minY + r.height * 0.04, width: r.width * 0.6, height: r.height * 0.74))

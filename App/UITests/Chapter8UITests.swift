@@ -57,4 +57,23 @@ final class Chapter8UITests: XCTestCase {
         XCTAssertTrue(f.isHere(4, 3), "the gate lay down: she fell back to the start")
         shot("ch8-8-4-fell")
     }
+
+    /// Art review shots (design-review-ch8-art): 8-1 leaning ('L': lamp lower-left, empty hook upper-right, the shadow on
+    /// the lifted page), the gate standing at 40° and lying flat on 8-4, 8-7 mid-lean (both lamps), and HC on 8-4.
+    func testShotsArt() {
+        launch(49, ["-noSlips", "YES"])
+        f.lean(to: 60, tol: 6); Thread.sleep(forTimeInterval: 1)
+        shot("b20-8-1-lean")
+        launch(52, ["-noSlips", "YES"])
+        shot("b20-8-4-gate-lying")
+        f.lean(to: 40, tol: 6); Thread.sleep(forTimeInterval: 1)
+        shot("b20-8-4-gate-standing")
+        launch(54, ["-noSlips", "YES"])
+        f.lean(to: 55, tol: 8); Thread.sleep(forTimeInterval: 1)
+        shot("b20-8-7-lean")
+        launch(52, ["-highContrast", "YES", "-noSlips", "YES"])
+        shot("b20-hc-8-4-lying")
+        f.lean(to: 40, tol: 6); Thread.sleep(forTimeInterval: 1)
+        shot("b20-hc-8-4-standing")
+    }
 }
