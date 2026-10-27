@@ -692,31 +692,31 @@
       }
     },
     "carried": {
-      "comment": "UI. Native app only. ja/ko: TODO-native-check.",
+      "comment": "UI. From fold-proto i18n.js. Placeholders: {col} ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "影子把你从第{from}列带到第{to}列（你现在在这里）"
+            "value": "鹤带你飞到了{col}"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The shadow carried you from column {from} to column {to} (you are there now)"
+            "value": "the crane carried you to {col}"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影がきみを{from}列目から{to}列目へ運んだ（いまはそこにいる）"
+            "value": "鶴がきみを{col}へ運んだ"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자가 당신을 {from}열에서 {to}열로 옮겼어요(지금 거기 있어요)"
+            "value": "학이 너를 {col:으로} 데려갔어요"
           }
         }
       }
@@ -777,6 +777,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "학"
+          }
+        }
+      }
+    },
+    "ch.10.line": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每合一次书，鹤就飞到对页。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Each time the book closes, the crane flies to the other page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本を閉じるたび、鶴は向かいの頁へ飛ぶ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책을 닫을 때마다 학은 맞은편 면으로 날아가요."
           }
         }
       }
@@ -1591,6 +1621,36 @@
         }
       }
     },
+    "chHead.10": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "十 · 鹤"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 · Crane"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "十 · 鶴"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10장 · 학"
+          }
+        }
+      }
+    },
     "chHead.2": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -2247,6 +2307,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "닫으면 {col}의 틈을 덮어요"
+          }
+        }
+      }
+    },
+    "craneFlew": {
+      "comment": "UI. From fold-proto i18n.js. Placeholders: {col} ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鹤飞到了{col}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the crane flew to {col}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鶴が{col}へ飛んだ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "학이 {col:으로} 날아갔어요"
+          }
+        }
+      }
+    },
+    "craneGlued": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鹤粘在胶上了"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the crane is stuck on the glue"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鶴は糊に貼りついた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "학이 풀에 붙었어요"
+          }
+        }
+      }
+    },
+    "craneSoaked": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鹤染了墨，不飞了"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the crane is soaked with ink and will not fly"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鶴は墨に染みて、もう飛ばない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "학이 먹에 물들어 더는 못 날아요"
+          }
+        }
+      }
+    },
+    "craneStuck": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "落点被占了，鹤飞不动"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "its landing is taken: the crane cannot fly"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "降り場がふさがっている：鶴は飛べない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "내려앉을 자리가 막혀서 학이 못 날아요"
           }
         }
       }
@@ -5431,6 +5611,36 @@
         }
       }
     },
+    "kind.h": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "纸鹤"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "paper crane"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紙の鶴"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종이학"
+          }
+        }
+      }
+    },
     "kind.i": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -6507,6 +6717,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "— 왼쪽 강가에서"
+          }
+        }
+      }
+    },
+    "letter.10.body": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石头太重了，我折了只鹤。\n每合一次书，它就飞到你那页同样的位置——\n同样的位置，在你那页是反过来的。\n站在它上面。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The stones were too heavy, so I folded a crane.\nEach time the book closes it flies to the same square on your page —\nthe same square, which on your page is the other way round.\nStand on it."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石は重すぎたから、鶴を折った。\n本を閉じるたび、きみの頁の同じ場所へ飛ぶ——\n同じ場所は、きみの頁では裏返し。\nその上に立って。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌이 너무 무거워서, 학을 접었어.\n책을 닫을 때마다 네 면의 같은 자리로 날아가——\n같은 자리는, 네 면에선 거꾸로야.\n그 위에 올라서."
+          }
+        }
+      }
+    },
+    "letter.10.end": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷三《倾》第二章完。\n下一章，什么都没发生的时候。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of Book Three, chapter two.\nNext, when nothing happens."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三巻『傾』第二章 了。\n次の章、何も起きなかったとき。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제3권 《기울다》 2장 끝.\n다음 장, 아무 일도 없었을 때."
+          }
+        }
+      }
+    },
+    "letter.10.sign": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——右岸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— the Right Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——右岸より"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— 오른쪽 강가에서"
+          }
+        }
+      }
+    },
+    "letter.10.title": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右岸来信"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A Letter from the Right Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右岸からの手紙"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오른쪽 강가에서 온 편지"
           }
         }
       }
@@ -9361,6 +9691,36 @@
         }
       }
     },
+    "noun.h": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "纸鹤"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "paper crane"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紙の鶴"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종이학"
+          }
+        }
+      }
+    },
     "noun.i": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -10141,6 +10501,36 @@
         }
       }
     },
+    "paper.ch10": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "硬卡纸。角上折了只鹤。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Card. A crane folded from the corner."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "厚紙。角で鶴を折った。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두꺼운 종이. 모서리로 학을 접었어요."
+          }
+        }
+      }
+    },
     "paper.ch2": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -10557,6 +10947,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "닫기"
+          }
+        }
+      }
+    },
+    "pre.crane": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "纸鹤"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "paper crane"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紙の鶴"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종이학"
           }
         }
       }
@@ -12181,6 +12601,36 @@
         }
       }
     },
+    "shadowCarried": {
+      "comment": "VoiceOver. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影子把你从第{from}列带到第{to}列（你现在在这里）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The shadow carried you from column {from} to column {to} (you are there now)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影がきみを{from}列目から{to}列目へ運んだ（いまはそこにいる）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자가 당신을 {from}열에서 {to}열로 옮겼어요(지금 거기 있어요)"
+          }
+        }
+      }
+    },
     "shadowGap": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js. Placeholders: {c}",
       "extractionState": "manual",
@@ -12417,6 +12867,96 @@
           "stringUnit": {
             "state": "translated",
             "value": "두 번 탭하면 다시 읽어요"
+          }
+        }
+      }
+    },
+    "slip.crane.body": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一格折成鹤的纸，能站。书每合上一次——翻也算——它就飞到对页同一行的镜像格，站在它上面的人跟着飞。落点上有东西，它就不飞。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A square of paper folded into a crane; you can stand on it. Each time the book closes — a turn counts too — it flies to the mirror square on the facing page, and whoever stands on it flies with it. If something sits on its landing, it does not fly."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鶴に折った一枡の紙。立てる。本を閉じるたび——翻すのも数える——向かいの頁の同じ行の鏡の枡へ飛び、上に立つ人も一緒に飛ぶ。降り場に何かあれば飛ばない。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "학으로 접은 종이 한 칸. 올라설 수 있어요. 책을 닫을 때마다——넘기는 것도 쳐요——맞은편 면 같은 줄의 거울 칸으로 날아가고, 위에 선 사람도 함께 날아요. 내려앉을 자리에 뭔가 있으면 날지 않아요."
+          }
+        }
+      }
+    },
+    "slip.crane.pic": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：站上鹤，合上，你在对页；落点有石头，它留在原地。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: stand on the crane, close, and you are on the other page; with a stone on its landing it stays."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：鶴に乗って閉じれば向こうの頁。降り場に石があれば、その場に残る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 학 위에서 닫으면 맞은편 면. 자리에 돌이 있으면 그대로 있어요."
+          }
+        }
+      }
+    },
+    "slip.crane.title": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "纸鹤"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paper Crane"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紙の鶴"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "종이학"
           }
         }
       }
@@ -13377,66 +13917,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "풀로 붙이지 않은 돌. 책을 세울 때마다——90°를 넘으면, 닫지 않아도——접힌 금 쪽으로 한 칸 굴러가요. 틈에 떨어지면 틈은 종이가 돼요. 다시 굴러오지 않아요."
-          }
-        }
-      }
-    },
-    "slip.roll.flat": {
-      "comment": "UI. design-review-vol3-art §3.7: the roll slip's captions. ja/ko: TODO-native-check.",
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "放平"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Flat again"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "平らに"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "다시 펴면"
-          }
-        }
-      }
-    },
-    "slip.roll.lean": {
-      "comment": "UI. design-review-vol3-art §3.7: the roll slip's captions. ja/ko: TODO-native-check.",
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "斜起"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Leaning"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "傾ける"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "기울이면"
           }
         }
       }
