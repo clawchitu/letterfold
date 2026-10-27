@@ -70,17 +70,22 @@ struct LevelScreen: View {
                 }
             }
             .frame(maxHeight: .infinity)
-            VStack(spacing: 8) {
-                if settings.soundMode, let a = model.lastAnnouncement { SoundCaption(text: a) }
+            // the toast floats over the board instead of taking layout space, so the board never moves when it
+            // appears (Shuai 10/27: 「出现时 别移动游戏棋盘」)
+            .overlay(alignment: .bottom) {
                 if let toast = model.toast {
                     Text(toast).font(.callout).foregroundStyle(Tok.paperNew).multilineTextAlignment(.center)
                         .padding(.horizontal, 16).padding(.vertical, 10)
                         .background(RoundedRectangle(cornerRadius: 14).fill(Tok.ink900.opacity(0.94)))
                         .padding(.horizontal, 24)
+                        .padding(.bottom, 8)
                         .transition(.opacity)
                         .accessibilityHidden(true)   // already announced
                         .allowsHitTesting(false)     // a rule line over the bottom row never eats a tap
                 }
+            }
+            VStack(spacing: 8) {
+                if settings.soundMode, let a = model.lastAnnouncement { SoundCaption(text: a) }
                 if model.showNext {
                     NextKnot(title: model.isLastInChapter ? L10n.t("letter.read") : model.isDark && model.nextDark == nil ? L10n.t("dark.back") : L10n.t("next")) {
                         if model.isLastInChapter { router.go(.letter) }
