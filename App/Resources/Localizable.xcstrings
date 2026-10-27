@@ -751,6 +751,96 @@
         }
       }
     },
+    "ch.10": {
+      "comment": "UI. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鹤"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crane"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鶴"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "학"
+          }
+        }
+      }
+    },
+    "ch.11": {
+      "comment": "UI. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "来回"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To and Fro"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "行き来"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오가기"
+          }
+        }
+      }
+    },
+    "ch.12": {
+      "comment": "UI. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三折"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trifold"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三つ折り"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "세 번 접기"
+          }
+        }
+      }
+    },
     "ch.2": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -1178,25 +1268,55 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "待续"
+            "value": "滚"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "To Be Continued"
+            "value": "Roll"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "つづく"
+            "value": "転"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "다음 이야기"
+            "value": "구르기"
+          }
+        }
+      }
+    },
+    "ch.9.line": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "书立起来，什么都往折痕滚。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stand the book up and everything rolls to the crease."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本を立てると、なにもかも折り目へ転がる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "책을 세우면 모든 게 접힌 금으로 굴러가요."
           }
         }
       }
@@ -1677,6 +1797,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "8장 · 등불"
+          }
+        }
+      }
+    },
+    "chHead.9": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "九 · 滚"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "9 · Roll"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "九 · 転"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "9장 · 구르기"
           }
         }
       }
@@ -3392,7 +3542,7 @@
       }
     },
     "gate.state.down": {
-      "comment": "VoiceOver. Native app only: the gate's state on its square (Codex review 20 #2). ja/ko: TODO-native-check.",
+      "comment": "UI. Native app only. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -3422,7 +3572,7 @@
       }
     },
     "gate.state.open": {
-      "comment": "VoiceOver. Native app only: the gate's state on its square (Codex review 20 #2). ja/ko: TODO-native-check.",
+      "comment": "UI. Native app only. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -5821,6 +5971,36 @@
         }
       }
     },
+    "kind.r": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "松石"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "loose stone"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "転がる石"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "구르는 돌"
+          }
+        }
+      }
+    },
     "kind.x": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -7088,25 +7268,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "卷二《翻页》完。\n卷三，把纸举到灯前。"
+            "value": "卷二《翻页》完。\n卷三，把书立起来。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "End of Book Two, Turning the Page.\nBook Three: hold the paper up to the lamp."
+            "value": "End of Book Two, Turning the Page.\nBook Three: stand the book up."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "第二巻『頁をめくる』 了。\n第三巻、紙を灯にかざして。"
+            "value": "第二巻『頁をめくる』 了。\n第三巻、本を立てて。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "제2권 《페이지를 넘기다》 끝.\n제3권, 종이를 등불에 비추어."
+            "value": "제2권 《페이지를 넘기다》 끝.\n제3권, 책을 세워 봐."
           }
         }
       }
@@ -7167,6 +7347,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "오른쪽 강가에서 온 편지"
+          }
+        }
+      }
+    },
+    "letter.9.body": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我过不去，就把东西送过去。\n书立起来的时候，什么都往低处滚——\n低处是折痕，折痕是你。\n别接，让它滚到底。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I cannot cross, so I send things over.\nWhen the book stands, everything rolls to the low place —\nthe low place is the crease, and the crease is you.\nDon’t catch it. Let it roll all the way."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "渡れないなら、ものを送る。\n本を立てると、なにもかも低いほうへ転がる——\n低いほうは折り目、折り目はきみ。\n受け止めないで。最後まで転がして。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "건널 수 없으니, 물건을 보낼게.\n책을 세우면 모든 게 낮은 곳으로 굴러가——\n낮은 곳은 접힌 금, 접힌 금은 너야.\n받지 마. 끝까지 구르게 둬."
+          }
+        }
+      }
+    },
+    "letter.9.end": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷三《倾》第一章完。\n下一章，石头太重了。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of Book Three, chapter one.\nNext, the stones are too heavy."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三巻『傾』第一章 了。\n次の章、石は重すぎる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제3권 《기울다》 1장 끝.\n다음 장, 돌이 너무 무거워."
+          }
+        }
+      }
+    },
+    "letter.9.sign": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——左岸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— the Left Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——左岸より"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— 왼쪽 강가에서"
+          }
+        }
+      }
+    },
+    "letter.9.title": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左岸来信"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A Letter from the Left Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左岸からの手紙"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "왼쪽 강가에서 온 편지"
           }
         }
       }
@@ -8101,6 +8401,36 @@
         }
       }
     },
+    "map.toBook3": {
+      "comment": "UI. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下一页：卷三《倾》"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next page: Book Three, Tilt"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次の頁：第三巻『傾く』"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음 페이지: 제3권 《기울기》"
+          }
+        }
+      }
+    },
     "map.vol1Back": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -8187,6 +8517,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "제2권 《책장 넘기기》"
+          }
+        }
+      }
+    },
+    "map.vol2BackLabel": {
+      "comment": "UI. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回到卷二《翻页》，已送达 {n} / {total}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back to Book Two, Turning the Page: {n} of {total} delivered"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第二巻『ページをめくる』へ戻る、{n} / {total} 通 届いた"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제2권 《책장 넘기기》으로, {total}통 중 {n}통 도착"
+          }
+        }
+      }
+    },
+    "map.vol3Back": {
+      "comment": "UI. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷三《倾》"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Book Three: Tilt"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三巻『傾く』"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제3권 《기울기》"
           }
         }
       }
@@ -9091,6 +9481,36 @@
         }
       }
     },
+    "noun.r": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "松石"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "loose stone"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "転がる石"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "구르는 돌"
+          }
+        }
+      }
+    },
     "noun.x": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -9931,6 +10351,36 @@
         }
       }
     },
+    "paper.ch9": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "硬卡纸。立得住。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Card. It stands on its own."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "厚紙。ひとりで立つ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두꺼운 종이. 혼자 서 있어요."
+          }
+        }
+      }
+    },
     "paper.letter": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -10287,6 +10737,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "펴기"
+          }
+        }
+      }
+    },
+    "pre.roll": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "松石"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "loose stone"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "転がる石"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "구르는 돌"
           }
         }
       }
@@ -10767,6 +11247,96 @@
           "stringUnit": {
             "state": "translated",
             "value": "오른쪽 페이지"
+          }
+        }
+      }
+    },
+    "rollHeld": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你挡住了松石"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "you are holding the loose stone"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "きみが石を止めている"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "네가 돌을 막고 있어요"
+          }
+        }
+      }
+    },
+    "rolled": {
+      "comment": "UI. From fold-proto i18n.js. Placeholders: {col} ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "松石滚到了{col}"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the loose stone rolled to {col}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石が{col}へ転がった"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌이 {col:으로} 굴러갔어요"
+          }
+        }
+      }
+    },
+    "rolledIn": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "松石掉进缺口，那里是纸了"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the loose stone dropped into the gap: paper now"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石が隙間に落ちて、そこは紙になった"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌이 틈에 떨어져 거기는 종이가 됐어요"
           }
         }
       }
@@ -12781,6 +13351,96 @@
         }
       }
     },
+    "slip.roll.body": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一颗没粘住的石头。书每立起来一次——经过 90°，不用合上——它就往折痕滚一格；滚进缺口，缺口就成了纸。它不会滚回来。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A stone that is not glued down. Each time the book stands up — past 90°, no need to close — it rolls one square towards the crease; into a gap, and the gap is paper. It never rolls back."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "糊づけされていない石。本を立てるたび——90° を越えれば、閉じなくても——折り目へ一枡転がる。隙間に落ちれば、そこは紙になる。戻ってはこない。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "풀로 붙이지 않은 돌. 책을 세울 때마다——90°를 넘으면, 닫지 않아도——접힌 금 쪽으로 한 칸 굴러가요. 틈에 떨어지면 틈은 종이가 돼요. 다시 굴러오지 않아요."
+          }
+        }
+      }
+    },
+    "slip.roll.pic": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：斜起，石头滚了一格；放平，它掉进缺口，缺口成了桥。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: leaning, the stone rolls one square; flat again, it drops into the gap and the gap is a bridge."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：傾けると石が一枡転がる。平らに戻すと隙間に落ち、隙間は橋になる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 기울이면 돌이 한 칸 굴러요. 다시 펴면 틈에 떨어지고, 틈은 다리가 돼요."
+          }
+        }
+      }
+    },
+    "slip.roll.title": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "松石"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loose Stone"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "転がる石"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "구르는 돌"
+          }
+        }
+      }
+    },
     "slip.shadow.body": {
       "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
       "extractionState": "manual",
@@ -14157,6 +14817,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "책장 넘기기"
+          }
+        }
+      }
+    },
+    "vol.3": {
+      "comment": "UI. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "倾"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tilt"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "傾く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기울기"
           }
         }
       }

@@ -110,7 +110,7 @@ struct ContentsPage: View {
             Button(action: back) {
                 HStack(spacing: 4) {
                     Image(systemName: "chevron.left").font(.footnote.weight(.semibold))
-                    Text(L10n.t(chapter.volume == 1 ? "map.vol1Back" : "map.vol2Back")).lineLimit(1).minimumScaleFactor(0.7)
+                    Text(L10n.t("map.vol\(chapter.volume)Back")).lineLimit(1).minimumScaleFactor(0.7)
                 }
                 .font(fonts.songti(.regular, 17, relativeTo: .body)).foregroundStyle(Tok.ink700)
                 .frame(minHeight: 44).contentShape(Rectangle())
@@ -422,7 +422,8 @@ struct ObjectsView: View {
     var body: some View {
         let n = seen.count, total = SlipID.allCases.count
         let backKey = router.objectsBack == .settings ? "settings.title"
-            : (router.mapPage ?? 2) == 2 && model.isUnlocked(Chapter.all[4]) ? "map.vol2Back" : "map.vol1Back"
+            : (router.mapPage ?? 3) == 3 && model.isUnlocked(Chapter.all[8]) ? "map.vol3Back"
+            : (router.mapPage ?? 2) >= 2 && model.isUnlocked(Chapter.all[4]) ? "map.vol2Back" : "map.vol1Back"
         VStack(alignment: .leading, spacing: 0) {
             Button { router.go(router.objectsBack) } label: {
                 HStack(spacing: 4) {

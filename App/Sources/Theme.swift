@@ -68,6 +68,8 @@ struct PaperState: Equatable {
     /// The chapter's margin marks (a constant per chapter, not per level; off in the three accessibility modes, see
     /// `GameModel.marginShown`).
     var margin: [MarginMark] = []
+    /// 卷三's hard card (Chapter9Marks.swift, design-review-vol3-art §3.2): the squares are pressed in, stones lie flat.
+    var card = false
 
     static let chapter1 = PaperState(color: Tok.paperNew, translucency: 0.05, inkSaturation: 0.82, backlit: false, thread: Tok.thread)
     static let chapter2 = PaperState(color: Color(hex: 0xF3EDE2), translucency: 0.15, inkSaturation: 0.78, backlit: false, thread: Tok.thread, skin: .stand, margin: [.railing])
