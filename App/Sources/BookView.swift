@@ -530,7 +530,7 @@ private struct TileItem: View {
         let face = TileFace(tile: t, size: geo.tile, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
                             mirrorAxisVertical: geo.horizontal, printedAt: model.inkPrintedAt[c], figureShift: model.meetShift(c, geo.tile),
                             inkVariant: model.inkVariant(c), bledAt: model.bledAt(c), gateStanding: Rules.gateStands(model.shade, c),
-                            craneLandedAt: model.craneLandedAt[c])
+                            craneFX: model.craneFX[c])
         let r = RoundedRectangle(cornerRadius: 3, style: .continuous)
         ZStack {
             face
@@ -674,6 +674,8 @@ private struct PuppetLayer: View {
         .scaleEffect(x: 1 + 0.5 * model.squash, y: 1 - 0.86 * model.squash, anchor: .bottom)
         // in her square (4-6) the two stand side by side: his cane and her bun both show (design-ch4 §4)
         .position(x: at.x - model.meetShift(model.figureCell, geo.tile), y: at.y - geo.tile * 0.12)
+        // ch. 10: carried, she rides the crane's hop (design-review-ch10-art §3.4)
+        .modifier(CraneCarry(fx: model.craneFX[model.figureCell], size: geo.tile))
         .allowsHitTesting(false)
         // the UI tests' probe sees the drawn figure (VoiceOver never does: the square says 「你在这里」)
         .modifier(FigureProbe())
@@ -1013,10 +1015,10 @@ private struct StackTile: View {
     }
 
     @ViewBuilder private func glyph(_ t: Tile, cell c: Cell) -> some View {
-        if t != .empty && t != .stone && t != .paper {
+        if (t != .empty && t != .stone && t != .paper) || (t == .paper && model.craneFX[c] != nil) {
             TileFace(tile: t, size: size, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
                      mirrorAxisVertical: flipVertical, printedAt: model.inkPrintedAt[c], bare: true, figureShift: model.meetShift(c, size),
-                     inkVariant: model.inkVariant(c), bledAt: model.bledAt(c), craneLandedAt: model.craneLandedAt[c])
+                     inkVariant: model.inkVariant(c), bledAt: model.bledAt(c), craneFX: model.craneFX[c])
                 .frame(width: size, height: size)
         }
     }

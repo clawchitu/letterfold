@@ -112,8 +112,8 @@ struct TileFace: View {
     var bledAt: Date? = nil
     /// Ch. 8: an angle gate stands (the page leans: it is floor) or lies down (Chapter8Marks.swift).
     var gateStanding = false
-    /// Ch. 10: when a crane landed on this square at the last press (it flashes once, Chapter10Marks.swift).
-    var craneLandedAt: Date? = nil
+    /// Ch. 10: what a crane did on this square at the last press — hop, soak, glue, shrug, ghost (Chapter10Marks.swift).
+    var craneFX: CraneFX? = nil
     /// The gate's crease-side edge is the top of this drawing (the lifted page seen from behind)
     var gateCreaseAtTop = false
     @Environment(\.highContrast) private var hc
@@ -124,6 +124,14 @@ struct TileFace: View {
     @Environment(\.looseUpright) private var looseUpright
 
     var body: some View {
+        if let fx = craneFX, tile != .crane {
+            ZStack { face; CraneFXOverlay(fx: fx, size: size, hc: hc, bare: bare) }
+        } else {
+            face
+        }
+    }
+
+    @ViewBuilder private var face: some View {
         switch tile {
         case .empty: EmptyView()
         case .paper: if !bare { PathTile(size: size, paper: paper) }
@@ -157,7 +165,7 @@ struct TileFace: View {
         case .crane:
             ZStack {
                 if !bare { PathTile(size: size, paper: paper) }
-                CraneGlyph(size: size, hc: hc, landedAt: craneLandedAt)
+                CraneGlyph(size: size, hc: hc, fx: craneFX)
             }
         case .key: SkinKeyGlyph(size: size, ring: paper.thread)
         case .door: ZStack { if !bare { PathTile(size: size, paper: paper) }; SkinDoor(open: false, size: size) }

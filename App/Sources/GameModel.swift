@@ -33,9 +33,9 @@ struct Chapter: Identifiable {
     var volumeNumeral: String { Self.numeral(cardNumber) }
     var name: String { L10n.t("ch.\(id)") }
     /// The chapter's seal on its map card and (vol. 2) on the finale: 达 · 通 · 影 · 成 · 胶 (design-v2c1 §2 章印).
-    /// Ch. 10: 「飞」 (placeholder until the vol. 3 art review names it).
+    /// Ch. 10: 「载」 (design-review-ch10-art §2.7: what carried you across; 渡 is two level names).
     /// Ch. 9: 「落」 (design-review-vol3-art §4, Fable: the stone settles, the letter lands on the far bank).
-    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "灯", "落", "飞"][min(9, id - 1)] }
+    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "灯", "落", "载"][min(9, id - 1)] }
     static func volumeChapters(_ v: Int) -> [Chapter] { all.filter { $0.volume == v } }
 
     static let all: [Chapter] = [
@@ -250,8 +250,14 @@ final class GameModel {
     private(set) var inkPrintedAt: [Cell: Date] = [:]
     /// Ch. 7 「墨晕」: the squares wet ink bled onto at the last press, and when (the ring grows out of its neighbour).
     private(set) var inkBledAt: [Cell: Date] = [:]
-    /// Ch. 10 「鹤」: where a crane landed at the last press, and when (its square flashes, Chapter10Marks.swift).
-    var craneLandedAt: [Cell: Date] = [:]
+    /// Ch. 10 「鹤」: the last press's crane effects by square — hop, soak, glue, shrug, ghost (Chapter10Marks.swift).
+    var craneFX: [Cell: CraneFX] = [:]
+    @ObservationIgnored var craneFXTask: Task<Void, Never>?
+    @ObservationIgnored var craneGhostTask: Task<Void, Never>?
+    @ObservationIgnored var craneFlewThisPress = false
+    @ObservationIgnored var craneShrugThisPress = false
+    /// A crane could not fly at the last close: `craneStuck` goes into that close's announcement.
+    @ObservationIgnored var craneStuckToSay = false
     /// glue.pull (design-review-v2c1 §3): stones flying across the crease to the glue that took them, the faint mark
     /// each leaves where it was, and the glue square's flash. Times are CACurrentMediaTime().
     struct GluePull: Equatable { var from: Cell; var to: Cell; var start: Double }
@@ -722,7 +728,7 @@ final class GameModel {
     private func clearTransient() {
         cancelFlip()
         quiet = false; dragging = false; angleHint = false; walking = false
-        threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]; inkBledAt = [:]; craneLandedAt = [:]
+        threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]; inkBledAt = [:]; clearCraneFX()
         pending = Pending(); nopes = 0
         rollFlight = nil; fillRings = [:]   // a roll belongs to the board it happened on (Codex review 21 #1)
         toastTask?.cancel(); toastTask = nil; toast = nil
@@ -1492,6 +1498,7 @@ final class GameModel {
 
     func undo() {
         tuckSlip()
+        clearCraneFX()
         if aha { finishAhaNow(); return }
         if won { return }
         stopAll()
@@ -1527,10 +1534,13 @@ final class GameModel {
         var here = figure ?? char
         var pulled: [(Cell, Cell)] = []
         defer { if !pulled.isEmpty { startGlue(pulled) } }
+        // ch. 10: the crane moves last — after the ink, the doors and the glue of the same press (T_c 560, else 340)
+        var inkFirst = false, closedNow = false, landed: Set<Cell> = []
         for e in events {
             switch e {
-            case .postureChanged(_, let to):
+            case .postureChanged(let was, let to):
                 pending.mode = true
+                if to == .closed { closedNow = true } else if was == .closed { noteCraneOpened() }
                 if to == .closed && !game.won {
                     // three-page books: how the layers work, once (playtest-ch6 §2 #1); else the gap rule
                     if board.pages > 2 && teachRule(Self.layerRuleKey, "layerRule") {} else { teachUnderOnClose() }
@@ -1555,7 +1565,10 @@ final class GameModel {
                     sound.blot()
                 }
                 if s.kind == .glue, s.cells.count == 2 { pulled.append((s.cells[0], s.cells[1])) }
-                if s.kind == .crane { noteCraneFlew(s) }
+                if s.kind == .crane {
+                    if let to = s.to { landed.insert(to) }
+                    noteCrane(s, inkFirst: inkFirst, carrying: s.cells[0] == here)
+                } else { inkFirst = true }
             case .connected:
                 pending.connected = true; pending.lost = false
                 haptics.connect()
@@ -1608,6 +1621,7 @@ final class GameModel {
                 win()
             }
         }
+        if closedNow && board.first(.crane) != nil { noteCranesStuck(landed: landed, inkFirst: inkFirst) }
     }
 
     private func win() {

@@ -111,8 +111,9 @@ struct SlipLayer: View {
             // 松石笺: the two beats stand above the text (§3.7), so it is the beats' height plus the text's
             // and where the table above the page is too short for that its foot comes down over the bottom page (9-1's
             // is all gaps), never cutting the text
-            if model.slipPages.contains(.roll) {
-                let h = min(RollSlipPicture.height + 24 + 10 + 200, size.height - 16)
+            if model.slipPages.contains(.roll) || model.slipPages.contains(.crane) {
+                let pic = model.slipPages.contains(.crane) ? CraneSlipPicture.height : RollSlipPicture.height
+                let h = min(pic + 24 + 10 + 200, size.height - 16)
                 let x = min(max(a.page.midX - w / 2, -margin + 8), size.width + margin - 8 - w)
                 return CGRect(x: x, y: max(8, a.crease - 8 - h), width: w, height: h)
             }
@@ -191,10 +192,11 @@ struct SlipView: View {
         let text = SlipText.body(id, horizontalCrease: horizontal)
         let last = page + 1 >= pages
         Group {
-            if id == .roll {
-                // 松石笺 (design-review-vol3-art §3.7): two still beats side by side above the text, not a film
+            if id == .roll || id == .crane {
+                // 松石笺 (design-review-vol3-art §3.7), 纸鹤笺 (design-review-ch10-art §3.8): two still beats side by
+                // side above the text, not a film
                 VStack(alignment: .leading, spacing: 10) {
-                    RollSlipPicture().frame(maxWidth: .infinity)
+                    Group { if id == .crane { CraneSlipPicture() } else { RollSlipPicture() } }.frame(maxWidth: .infinity)
                     column(text, last: last)
                 }
             } else if horizontal {

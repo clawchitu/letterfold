@@ -1501,6 +1501,35 @@
         }
       }
     },
+    "ch.number": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第{n}章"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chapter {n}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第{n}章"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n}장"
+          }
+        }
+      }
+    },
     "ch.sealed": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -12901,6 +12930,35 @@
         }
       }
     },
+    "slip.crane.close": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合上"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "close"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "닫기"
+          }
+        }
+      }
+    },
     "slip.crane.pic": {
       "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
@@ -12927,6 +12985,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "그림: 학 위에서 닫으면 맞은편 면. 자리에 돌이 있으면 그대로 있어요."
+          }
+        }
+      }
+    },
+    "slip.crane.stay": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不飞"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stays"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "飛ばない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "안 날아요"
           }
         }
       }
@@ -13917,6 +14004,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "풀로 붙이지 않은 돌. 책을 세울 때마다——90°를 넘으면, 닫지 않아도——접힌 금 쪽으로 한 칸 굴러가요. 틈에 떨어지면 틈은 종이가 돼요. 다시 굴러오지 않아요."
+          }
+        }
+      }
+    },
+    "slip.roll.flat": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "放平"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "flat"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "平らに"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "펴기"
+          }
+        }
+      }
+    },
+    "slip.roll.lean": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "斜起"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lean"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "傾ける"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기울이기"
           }
         }
       }

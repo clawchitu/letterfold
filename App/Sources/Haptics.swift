@@ -127,6 +127,8 @@ final class Haptics {
     func rollLand() { if !play([tap(0, 0.6, 0.15)]) { impactSoft.impactOccurred(intensity: 0.6 * scale) } }
     func rollDrop() { if !play([tap(0, 0.7, 0.8)]) { impactRigid.impactOccurred(intensity: 0.7 * scale) } }
     func rollHeld() { if !play([tap(0, 0.4, 0.4)]) { impactLight.impactOccurred(intensity: 0.4 * scale) } }
+    /// Ch. 10: a crane takes off (design-review-ch10-art §3.5: Impact .light 0.5).
+    func craneLift() { if !play([tap(0, 0.5, 0.4)]) { impactLight.impactOccurred(intensity: 0.5 * scale) } }
     func soft() { if !play([tap(0, 0.45, 0.1)]) { impactSoft.impactOccurred(intensity: 0.45 * scale) } }
     /// glue.pull: one rigid tap per stone that changes page, `stagger` apart (design-review-v2c1 §3).
     func glue(count: Int, stagger: Double) {
