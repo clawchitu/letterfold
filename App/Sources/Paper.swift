@@ -119,6 +119,7 @@ struct TileFace: View {
     @Environment(\.skin) private var skin
     @Environment(\.envelopeBack) private var envelopeBack
     @Environment(\.envelopeOpened) private var envelopeOpened
+    @Environment(\.looseUpright) private var looseUpright
 
     var body: some View {
         switch tile {
@@ -143,7 +144,13 @@ struct TileFace: View {
                     Flag(size: size)
                 }
             }
-        case .stone: PaperStone(size: size)
+        // vol. 3 card (Chapter9Marks.swift): the fixed stone lies flat in a pressed square; the loose stone is a ball
+        case .stone: if paper.card { ZStack { if !bare && !hc { CardPathTile(size: size) }; CardStone(size: size) } } else { PaperStone(size: size) }
+        case .loose:
+            ZStack {
+                if !bare { PathTile(size: size, paper: paper) }
+                if !looseUpright { LooseBall(size: size, hc: hc) }
+            }
         case .key: SkinKeyGlyph(size: size, ring: paper.thread)
         case .door: ZStack { if !bare { PathTile(size: size, paper: paper) }; SkinDoor(open: false, size: size) }
         case .openDoor: ZStack { if !bare { PathTile(size: size, paper: paper) }; SkinDoor(open: true, size: size) }
@@ -194,6 +201,8 @@ struct PathTile: View {
                 r.strokeBorder(.black, lineWidth: doubleFrame ? 2 : 3)
                 if doubleFrame { r.inset(by: 8).stroke(.black, lineWidth: 2) }
             }
+        } else if paper.card {
+            CardPathTile(size: size)
         } else if paper.ruled {
             // letter paper (design-v2c1 §2): the squares are printed, not embossed — a flat card face with a printed edge
             r.fill(paper.tileFace)

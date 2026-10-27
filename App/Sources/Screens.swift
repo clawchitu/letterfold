@@ -498,7 +498,9 @@ struct ChapterMapView: View {
     }
 
     private var volumeTwoOpen: Bool { Chapter.all.first { $0.id == 5 }.map(model.isUnlocked) ?? false }
-    private var shown: Int { volumeTwoOpen ? (page ?? 2) : 1 }
+    private var volumeThreeOpen: Bool { Chapter.all.first { $0.id == 9 }.map(model.isUnlocked) ?? false }
+    /// The page shown: the one turned to, else the newest open book's (卷三 once chapter 9 opens).
+    private var shown: Int { volumeThreeOpen ? (page ?? 3) : volumeTwoOpen ? min(2, page ?? 2) : 1 }
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -569,6 +571,21 @@ struct ChapterMapView: View {
                     Text("\(vol1Done) / \(vol1.count)").font(.subheadline.monospacedDigit()).foregroundStyle(Tok.ink700)
                         .accessibilityLabel(L10n.t("ch.count", ["n": vol1Done, "total": vol1.count]))
                         .accessibilityIdentifier("map.count")
+                } else if shown == 3 {
+                    // 「‹ 卷二《翻页》25 / 25」: book two folded away the same way (design-review-vol3-art §3.9)
+                    let vol2 = Chapter.volumeChapters(2).flatMap { model.chapterIndices($0) }
+                    let vol2Done = vol2.filter { model.done.contains($0) }.count
+                    Button { turn(to: 2) } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "chevron.left")
+                            Text(L10n.t("map.vol2Back")).lineLimit(1).minimumScaleFactor(0.7)
+                            Text("\(vol2Done) / \(vol2.count)").monospacedDigit().foregroundStyle(Tok.ink700)
+                        }
+                        .font(.subheadline).foregroundStyle(Tok.ink900).frame(minHeight: 44)
+                    }
+                    .accessibilityLabel(L10n.t("map.vol2BackLabel", ["n": vol2Done, "total": vol2.count]))
+                    .accessibilityIdentifier("map.vol2")
+                    Spacer()
                 } else {
                     // 「‹ 卷一《两岸》25 / 25」: book one, folded away into the way back (frame v2c1-map)
                     Button { turn(to: 1) } label: {
@@ -586,7 +603,7 @@ struct ChapterMapView: View {
             }
             .padding(.horizontal, 16)
             HStack(alignment: .firstTextBaseline) {
-                Text(L10n.t(shown == 1 ? "map.title" : "vol.2")).font(fonts.songti(.bold, 34, relativeTo: .largeTitle)).foregroundStyle(Tok.ink900)
+                Text(L10n.t(shown == 1 ? "map.title" : "vol.\(shown)")).font(fonts.songti(.bold, 34, relativeTo: .largeTitle)).foregroundStyle(Tok.ink900)
                     .accessibilityAddTraits(.isHeader)
                     .accessibilityIdentifier("map.title")
                 Spacer()
@@ -594,13 +611,22 @@ struct ChapterMapView: View {
             .padding(.horizontal, 24).padding(.top, 2)
             GeometryReader { g in
                 ScrollView {
-                    if shown == 1 { volumeOne(g.size.width) } else { volumeTwo(g.size.width) }
+                    if shown == 1 { volumeOne(g.size.width) } else if shown == 2 { volumeTwo(g.size.width) } else { volumeThree(g.size.width) }
                 }
                 .clipped()
                 // a swipe up past the last card turns to the next page (only once book one is done)
+                // one swipe turns one page: the page it started on decides (Codex review 21 #4)
                 .simultaneousGesture(DragGesture(minimumDistance: 30).onEnded { v in
-                    if shown == 1 && volumeTwoOpen && v.translation.height < -90 && abs(v.translation.height) > abs(v.translation.width) * 1.5 { turn(to: 2) }
-                    if shown == 2 && v.translation.height > 120 && abs(v.translation.height) > abs(v.translation.width) * 1.5 && v.startLocation.y < 140 { turn(to: 1) }
+                    let h = v.translation.height, vertical = abs(h) > abs(v.translation.width) * 1.5
+                    guard vertical else { return }
+                    let up = h < -90, down = h > 120 && v.startLocation.y < 140
+                    switch shown {
+                    case 1 where up && volumeTwoOpen: turn(to: 2)
+                    case 2 where up && volumeThreeOpen: turn(to: 3)
+                    case 2 where down: turn(to: 1)
+                    case 3 where down: turn(to: 2)
+                    default: break
+                    }
                 })
             }
             .id(shown)
@@ -653,7 +679,7 @@ struct ChapterMapView: View {
                 ForEach(Chapter.volumeChapters(1)) { ch in card(ch, width) }
                 HStack {
                     Spacer()
-                    NextPageCard(open: volumeTwoOpen) { turn(to: 2) }.frame(width: (width - 64) / 2)
+                    NextPageCard(book: 2, open: volumeTwoOpen) { turn(to: 2) }.frame(width: (width - 64) / 2)
                 }
                 objectsLink.padding(.top, 10)
             }
@@ -681,6 +707,26 @@ struct ChapterMapView: View {
                         .padding(.top, -8)
                     }
                 }
+                // after 卷二's finale, the next page: 卷三《倾》 (as 卷一 hands over to 卷二)
+                HStack {
+                    Spacer()
+                    NextPageCard(book: 3, open: volumeThreeOpen) { turn(to: 3) }.frame(width: (width - 64) / 2)
+                }
+                objectsLink.padding(.top, 10)
+            }
+            .padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 100)
+        }
+    }
+
+    /// 卷三《倾》 (frame V6, design-review-vol3-art §3.9): 「九 滚」 on card paper with the thread knotted at it, then the
+    /// dashed 「未写」 cards of chapters 10–12.
+    private func volumeThree(_ width: Double) -> some View {
+        ZStack(alignment: .top) {
+            Rectangle().fill(Tok.ink900.opacity(0.12)).frame(width: 1).frame(maxHeight: .infinity)
+            ThreadDrop(from: 0, to: 46, color: hc ? Tok.hcLine : Tok.threadAged).frame(height: 48)
+            Knot(color: hc ? Tok.hcLine : Tok.threadAged, small: true).offset(x: -6, y: 46 - 7)
+            VStack(spacing: 18) {
+                ForEach(Chapter.volumeChapters(3)) { ch in card(ch, width) }
                 objectsLink.padding(.top, 10)
             }
             .padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 100)
@@ -785,9 +831,9 @@ private struct ChapterCard: View {
         let idx = model.chapterIndices(chapter)
         let n = idx.filter { model.done.contains($0) }.count
         let delivered = model.isUnlocked(chapter) && n == idx.count && !idx.isEmpty
-        let paper: Color = [PaperState.chapter1.color, PaperState.chapter2.color, PaperState.chapter3.color, PaperState.chapter4.color,
-                            Tok.paperLetter, Tok.paperLetter, Tok.paperLetter, Tok.paperLetter, Tok.paperLetter][min(8, chapter.id - 1)]
-        let status = chapter.soon ? L10n.t(chapter.volume == 2 ? "ch.unwritten" : "ch.soon") : !model.isUnlocked(chapter) ? L10n.t("ch.sealed") : delivered ? L10n.t("ch.delivered") : L10n.t("ch.inProgress")
+        let paper: Color = chapter.volume == 3 ? Tok.paperCard : [PaperState.chapter1.color, PaperState.chapter2.color, PaperState.chapter3.color, PaperState.chapter4.color,
+                            Tok.paperLetter, Tok.paperLetter, Tok.paperLetter, Tok.paperLetter][min(7, chapter.id - 1)]
+        let status = chapter.soon ? L10n.t(chapter.volume >= 2 ? "ch.unwritten" : "ch.soon") : !model.isUnlocked(chapter) ? L10n.t("ch.sealed") : delivered ? L10n.t("ch.delivered") : L10n.t("ch.inProgress")
         let sealed = !chapter.soon && !model.isUnlocked(chapter)
         // each chapter's seal on its card (frame ch4-map): 达 · 通 · 影 · 成; 「成」 is the finale's cinnabar seal
         let glyph = chapter.sealGlyph
@@ -839,7 +885,7 @@ private struct ChapterCard: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(L10n.t("ch.label", ["n": chapter.inVolume, "name": chapter.name]))
+        .accessibilityLabel(L10n.t("ch.label", ["n": chapter.cardNumber, "name": chapter.name]))
         .accessibilityValue([idx.isEmpty || chapter.soon ? nil : L10n.t("ch.count", ["n": n, "total": idx.count]), status].compactMap { $0 }.joined(separator: L10n.t("sep")))
         .accessibilityAddTraits(.isButton)
         .accessibilityIdentifier("chapter-\(chapter.id)")
@@ -894,6 +940,8 @@ private struct DarkLetterCard: View {
 /// After the fourth chapter (roadmap.md §1): a dashed card, 「下一页 · 卷二」. Until book one is delivered it is only
 /// a promise; then it turns the map to vol. 2's page.
 private struct NextPageCard: View {
+    /// The book this card turns to (2: 卷二《翻页》 after 卷一; 3: 卷三《倾》 after 卷二).
+    var book = 2
     let open: Bool
     let action: () -> Void
     let fonts = FontBook.shared
@@ -906,7 +954,7 @@ private struct NextPageCard: View {
                     if open { Image(systemName: "chevron.down").font(.footnote.weight(.semibold)).foregroundStyle(Tok.ink700) }
                 }
                 .padding(.horizontal, 14).padding(.top, 16).padding(.bottom, 26)
-                Text(L10n.t("map.book2") + (open ? " · " + L10n.t("vol.2") : "")).font(.footnote).foregroundStyle(Tok.ink600)
+                Text(L10n.t("map.book\(book)") + (open ? " · " + L10n.t("vol.\(book)") : "")).font(.footnote).foregroundStyle(Tok.ink600)
                     .padding(.horizontal, 14).padding(.bottom, 12)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -915,10 +963,10 @@ private struct NextPageCard: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(open ? L10n.t("map.toBook2") : L10n.t("map.nextPage") + L10n.t("sep") + L10n.t("map.book2"))
+        .accessibilityLabel(open ? L10n.t("map.toBook\(book)") : L10n.t("map.nextPage") + L10n.t("sep") + L10n.t("map.book\(book)"))
         .accessibilityValue(open ? "" : L10n.t("ch.soon"))
         .accessibilityAddTraits(open ? .isButton : [])
-        .accessibilityIdentifier("map.nextPage")
+        .accessibilityIdentifier(book == 2 ? "map.nextPage" : "map.nextPage\(book)")
     }
 }
 
@@ -938,7 +986,7 @@ private struct UnwrittenCard: View {
         .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(Tok.ink600.opacity(0.6), style: StrokeStyle(lineWidth: 1, dash: [4, 3])))
         .padding(.top, 70)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(chapter.nextBook ? L10n.t("map.book3") + L10n.t("sep") + chapter.name : L10n.t("ch.label", ["n": chapter.inVolume, "name": chapter.name]))
+        .accessibilityLabel(chapter.nextBook ? L10n.t("map.book3") + L10n.t("sep") + chapter.name : L10n.t("ch.label", ["n": chapter.cardNumber, "name": chapter.name]))
         .accessibilityValue(L10n.t("ch.unwritten"))
         .accessibilityIdentifier("chapter-\(chapter.id)")
     }

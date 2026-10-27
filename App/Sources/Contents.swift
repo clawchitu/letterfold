@@ -8,7 +8,7 @@ import FoldCore
 
 extension Chapter {
     /// The chapter's paper (the map cards, the contents page, a slip on the 「物件」 page).
-    var paperState: PaperState { id >= 5 ? .letter : [PaperState.chapter1, .chapter2, .chapter3, .chapter4][max(0, id - 1)] }
+    var paperState: PaperState { id >= 9 ? .card : id >= 5 ? .letter : [PaperState.chapter1, .chapter2, .chapter3, .chapter4][max(0, id - 1)] }
     /// Its one line (ch.N.line), if it has one (chapter 1 has none).
     var line: String? { let k = "ch.\(id).line", v = L10n.t(k); return v == k ? nil : v }
     static func of(level id: String) -> Chapter? { all.first { $0.levelIDs.contains(id) || $0.darkIDs.contains(id) } }
@@ -110,7 +110,7 @@ struct ContentsPage: View {
             Button(action: back) {
                 HStack(spacing: 4) {
                     Image(systemName: "chevron.left").font(.footnote.weight(.semibold))
-                    Text(L10n.t(chapter.volume == 1 ? "map.vol1Back" : "map.vol2Back")).lineLimit(1).minimumScaleFactor(0.7)
+                    Text(L10n.t("map.vol\(chapter.volume)Back")).lineLimit(1).minimumScaleFactor(0.7)
                 }
                 .font(fonts.songti(.regular, 17, relativeTo: .body)).foregroundStyle(Tok.ink700)
                 .frame(minHeight: 44).contentShape(Rectangle())
@@ -175,7 +175,7 @@ struct ContentsPage: View {
         }
         .padding(.bottom, 16)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(L10n.t("ch.label", ["n": chapter.inVolume, "name": chapter.name]) + L10n.t("sep") + L10n.t("ch.count", ["n": n, "total": total]))
+        .accessibilityLabel(L10n.t("ch.label", ["n": chapter.cardNumber, "name": chapter.name]) + L10n.t("sep") + L10n.t("ch.count", ["n": n, "total": total]))
         .accessibilityAddTraits(.isHeader)
         .accessibilityIdentifier("contents.title")
         .accessibilityFocused($titleFocus)
@@ -422,7 +422,8 @@ struct ObjectsView: View {
     var body: some View {
         let n = seen.count, total = SlipID.allCases.count
         let backKey = router.objectsBack == .settings ? "settings.title"
-            : (router.mapPage ?? 2) == 2 && model.isUnlocked(Chapter.all[4]) ? "map.vol2Back" : "map.vol1Back"
+            : (router.mapPage ?? 3) == 3 && model.isUnlocked(Chapter.all[8]) ? "map.vol3Back"
+            : (router.mapPage ?? 2) >= 2 && model.isUnlocked(Chapter.all[4]) ? "map.vol2Back" : "map.vol1Back"
         VStack(alignment: .leading, spacing: 0) {
             Button { router.go(router.objectsBack) } label: {
                 HStack(spacing: 4) {

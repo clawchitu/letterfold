@@ -30,6 +30,24 @@ final class GridChain: @unchecked Sendable {
         memo[k] = idx
         return idx
     }
+    /// The lifted page passed upright (vol. 3 ch. 9, check.js grids().roll): grid g with the loose stones on the page of
+    /// `face` rolled, unless the figure holds one. Keyed on the figure's cell only when it stands on the facing page —
+    /// on the left page it is in nobody's way. No roll: g itself.
+    private struct RollKey: Hashable { let g: Int, face: Int, held: Cell? }
+    private var rollMemo: [RollKey: Int] = [:]
+    func roll(_ g: Int, _ face: Int, _ fig: Cell) -> Int {
+        let held: Cell? = rules.isRight(fig.c) ? fig : nil
+        let k = RollKey(g: g, face: face, held: held)
+        if let m = rollMemo[k] { return m }
+        var b = table[g]; b.face = face
+        let ev = rules.roll(&b, fig: held)
+        if ev.isEmpty { rollMemo[k] = g; return g }
+        b.face = 0
+        let idx: Int
+        if let i = sig[b.grid] { idx = i } else { idx = table.count; table.append(b); sig[b.grid] = idx }
+        rollMemo[k] = idx
+        return idx
+    }
     /// The board a state sees.
     func world(_ s: FoldState) -> Board { var b = table[s.g]; b.face = s.face; return b }
 }
@@ -78,6 +96,33 @@ public struct Solver: Sendable {
         return cur
     }
 
+    /// One hinge move (check.js `move`): the state after turning the hinge from s.a to a, or nil if the figure falls or is
+    /// crushed. The angle walks in 5° steps and a figure on a shadow rides it; each time the lifted page passes upright
+    /// (vol. 3: the hinge crosses 90°) the loose stones roll first — the rest of the sweep (shadows, the crush when the
+    /// book closes) is judged on the rolled board. Reaching a close presses the pages after the sweep.
+    func move(_ B: GridChain, _ s: FoldState, _ a1: Double) -> FoldState? {
+        var cur = Cell(s.c, s.r), g = s.g
+        var src: Int?
+        var b = B.world(s)
+        let step = a1 > s.a ? 5.0 : -5.0
+        var a = s.a + step
+        while step > 0 ? a <= a1 : a >= a1 {
+            if rules.passes(a - step, a) {
+                let ng = B.roll(g, s.face, cur)
+                if ng != g { g = ng; b = B.world(FoldState(c: cur.c, r: cur.r, a: a, face: s.face, g: g)) }
+                src = nil
+            }
+            if !b[cur].isFloor {
+                if src == nil { src = rules.shadows(b, a - step)[cur] }
+            } else { src = nil }
+            guard let to = rules.ride(b, cur, src, a) else { return nil }
+            cur = to
+            a += step
+        }
+        if a1 >= rules.config.foldMin { g = B.press(g, s.face) }
+        return FoldState(c: cur.c, r: cur.r, a: a1, face: s.face, g: g)
+    }
+
     /// The level's grid chain (check.js grids), or nil for a bad map.
     func chain(_ level: Level) -> GridChain? {
         guard let base = try? Board(level: level, columnsPerPage: rules.n) else { return nil }
@@ -123,7 +168,7 @@ public struct Solver: Sendable {
             }
             var next: [(FoldState, Int)] = []
             for a in angles where FoldTally.cost(from: s.a, to: a) > 0 {
-                if let to = turn(b, here, s.a, a) { next.append((FoldState(c: to.c, r: to.r, a: a, face: s.face, g: after(B, s, a)), FoldTally.cost(from: s.a, to: a))) }
+                if let n = move(B, s, a) { next.append((n, FoldTally.cost(from: s.a, to: a))) }
             }
             if !noFlip, case let .to(f) = flipOf(B, s) { next.append((f, FoldTally.turnCost)) }
             let sh = rules.shadows(b, s.a)
@@ -155,7 +200,7 @@ public struct Solver: Sendable {
             }
             var next: [(FoldState, Int)] = []
             for a in angles where FoldTally.cost(from: s.a, to: a) > 0 {
-                if let to = turn(b, here, s.a, a) { next.append((FoldState(c: to.c, r: to.r, a: a, face: s.face, g: after(B, s, a)), 1000 * FoldTally.cost(from: s.a, to: a))) }
+                if let n = move(B, s, a) { next.append((n, 1000 * FoldTally.cost(from: s.a, to: a))) }
             }
             if case let .to(f) = flipOf(B, s) { next.append((f, 1000 * FoldTally.turnCost)) }
             for nb in rules.neighbours(b, here, p, rules.shadows(b, s.a)) { next.append((FoldState(c: nb.c, r: nb.r, a: s.a, face: s.face, g: s.g), 1)) }
@@ -196,12 +241,16 @@ public struct Solver: Sendable {
         }
         var e = Expectation(solvable: full != nil, changes: full?.cost, needsFold: noFold == nil, needsPop: noPop == nil,
                             stepped15: solve(level, angles: Solver.steps15) != nil)
-        if all.contains("x") && (level.map.contains(where: { $0.dropFirst(rules.n).contains("x") }) || all.contains("g") || (level.lamp ?? "").contains("L")) {
+        func stoneIn(_ x: Substring) -> Bool { x.contains("x") || x.contains("r") }
+        if stoneIn(Substring(all)) && (level.map.contains(where: { stoneIn($0.dropFirst(rules.n)) }) || all.contains("g") || (level.lamp ?? "").contains("L")) {
             e.needsShade = solve(level, angles: Solver.angles.filter { !shade.contains($0) }) == nil
             let oneShade = shade.contains { keep in solve(level, angles: Solver.angles.filter { !shade.contains($0) || $0 == keep }) != nil }
             e.needsRide = !oneShade
         }
         if let lamp = level.lamp, lamp != "R" { var r = level; r.lamp = "R"; e.needsLamp = solve(r) == nil }   // the lamp back on the right bank
+        if all.contains("r") {   // vol. 3 ch. 9: unsolvable with the loose stones glued down
+            e.needsRoll = solve(Level(id: level.id, map: level.map.map { String($0.map { $0 == "r" ? "x" : $0 }) }, lamp: level.lamp)) == nil
+        }
         if all.contains("A") { e.needsGate = without("A") == nil }   // the angle gate laid down as paper
         if all.contains("k") { e.needsKey = without("k") == nil }
         if all.contains("i") { e.needsInk = without("i") == nil }

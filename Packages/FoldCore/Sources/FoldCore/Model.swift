@@ -20,13 +20,17 @@ public enum Tile: Character, Sendable, Codable, CaseIterable {
     /// Angle gate (vol. 2 ch. 8 「灯位」, design-ch8.md §1.1): a paper flap over a gap that is floor only while the page
     /// leans (the lamp window, `Rules.lit`); flat or closed it is a gap. Not floor, not a block, lets the light through.
     case gate = "A"
+    /// Loose stone (vol. 3 ch. 9 「滚」, design-ch9.md §1): a stone that is not glued down. Blocks, shades and crushes like
+    /// a stone, but each time the lifted page passes upright (the hinge crosses 90°) it rolls one cell towards the crease
+    /// (`Rules.roll`). Glue that pulls it holds it: it arrives as a `.stone`.
+    case loose = "r"
 
     /// Something you can stand on.
     public var isFloor: Bool { [.paper, .start, .goal, .key, .ink, .openDoor, .tab, .glue, .wetInk].contains(self) }
     /// Something that blocks the stacked cell when the book is closed.
-    public var isBlock: Bool { self == .stone || self == .door }
-    /// Stones block the light; paper and ink let it through.
-    public var isOpaque: Bool { self == .stone }
+    public var isBlock: Bool { self == .stone || self == .loose || self == .door }
+    /// Stones (fixed or loose) block the light; paper and ink let it through.
+    public var isOpaque: Bool { self == .stone || self == .loose }
 }
 
 /// The three postures of the book. The web prototype calls them open / pop / fold.
@@ -81,6 +85,8 @@ public struct Expectation: Sendable, Codable, Equatable {
     public var needsLamp: Bool?
     /// Vol. 2 ch. 8: unsolvable with the angle gate laid down as paper.
     public var needsGate: Bool?
+    /// Vol. 3 ch. 9: unsolvable with the loose stones glued down (r -> x).
+    public var needsRoll: Bool?
     public var stepped15: Bool
     /// tools/check.js `analyse()` (design-difficulty.md §2); the Swift `Difficulty` port must agree.
     public var difficulty: Difficulty.Summary?
@@ -100,6 +106,7 @@ public struct Expectation: Sendable, Codable, Equatable {
         case "needsWet": return needsWet
         case "needsLamp": return needsLamp
         case "needsGate": return needsGate
+        case "needsRoll": return needsRoll
         default: return nil
         }
     }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		081963E1758A65BB7EEF708D /* Chapter9UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B2C966B3DCE7BA4E158633 /* Chapter9UITests.swift */; };
 		089C73E24BB02BF7002C67DC /* Chapter8Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAF188A41CB92A6FB2A0D7D /* Chapter8Marks.swift */; };
 		0ACF1846232647123A81BF6B /* Skins.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD058B4451F306D134BBAF38 /* Skins.swift */; };
 		11BE4B3530A847817165737B /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDBB77B419ABE4C00953E0 /* App.swift */; };
@@ -40,6 +41,7 @@
 		CDAFA5AA7DB1731BE06494F7 /* Petals.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF748F41958AB1E89B0C34D9 /* Petals.swift */; };
 		D8A70EB3F8BBE29228DA425A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 379A2157A36D86786F6D27BF /* PrivacyInfo.xcprivacy */; };
 		E06BF6C6CF71DF946E87BED5 /* LevelScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B298358295F0A825501A00E9 /* LevelScreen.swift */; };
+		E19FF7E22BAF0B7F47038916 /* Chapter9Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = D182D97E9762DC8C6D7AA780 /* Chapter9Marks.swift */; };
 		E6F6C5E335E9922EBEEF96E7 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5597D142A9CB8FB0E573B6 /* Theme.swift */; };
 		E814CEA6AE8D68A972F67039 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578B23505A90DB23ECB3C2A4 /* Haptics.swift */; };
 		EC45A98D94C4BC1BBB07EF81 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E9E382EAE32A5BCA3D71BC9 /* L10n.swift */; };
@@ -62,6 +64,7 @@
 		011869BA3DC1C9873A1049D7 /* PlanLevelUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanLevelUITests.swift; sourceTree = "<group>"; };
 		0EBA74BD18A4CCAC6C76307B /* SlipUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlipUITests.swift; sourceTree = "<group>"; };
 		23DC96729D3FCEAF07A7743F /* Paper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paper.swift; sourceTree = "<group>"; };
+		25B2C966B3DCE7BA4E158633 /* Chapter9UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter9UITests.swift; sourceTree = "<group>"; };
 		2991315D14E1D1169059EEE2 /* Hinge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hinge.swift; sourceTree = "<group>"; };
 		2BC0F961EF86FAC46A7C6FE8 /* Slip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slip.swift; sourceTree = "<group>"; };
 		3015C80653E030579E65FC8D /* LayoutStabilityUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutStabilityUITests.swift; sourceTree = "<group>"; };
@@ -96,6 +99,7 @@
 		B298358295F0A825501A00E9 /* LevelScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelScreen.swift; sourceTree = "<group>"; };
 		B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterfoldUITests.swift; sourceTree = "<group>"; };
 		CC0494484CEC40B87ECCEA13 /* Chapter4UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter4UITests.swift; sourceTree = "<group>"; };
+		D182D97E9762DC8C6D7AA780 /* Chapter9Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter9Marks.swift; sourceTree = "<group>"; };
 		D7F376A74B6D07769C3C7A89 /* LetterfoldUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LetterfoldUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8FF8C2C6BDE8074179A5B56 /* Chapter7UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter7UITests.swift; sourceTree = "<group>"; };
 		EABD85E9AF4932093EFF07E7 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
@@ -124,6 +128,7 @@
 				442751BD211723A6FF2D59D6 /* Chapter6UITests.swift */,
 				D8FF8C2C6BDE8074179A5B56 /* Chapter7UITests.swift */,
 				7F02AD93FA8DB47DA0A3261F /* Chapter8UITests.swift */,
+				25B2C966B3DCE7BA4E158633 /* Chapter9UITests.swift */,
 				86874352C30014FFF456BE3E /* ContentsUITests.swift */,
 				76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */,
 				3015C80653E030579E65FC8D /* LayoutStabilityUITests.swift */,
@@ -142,6 +147,7 @@
 				79DDBB77B419ABE4C00953E0 /* App.swift */,
 				9649A387FE6D80E352CD3FC9 /* BookView.swift */,
 				6DAF188A41CB92A6FB2A0D7D /* Chapter8Marks.swift */,
+				D182D97E9762DC8C6D7AA780 /* Chapter9Marks.swift */,
 				31779719E8C773D36D2CFC1B /* Contents.swift */,
 				45EBF8A2E746E16AE1153A20 /* GameModel.swift */,
 				578B23505A90DB23ECB3C2A4 /* Haptics.swift */,
@@ -319,6 +325,7 @@
 				11BE4B3530A847817165737B /* App.swift in Sources */,
 				23541C263217811CE7EE57A7 /* BookView.swift in Sources */,
 				089C73E24BB02BF7002C67DC /* Chapter8Marks.swift in Sources */,
+				E19FF7E22BAF0B7F47038916 /* Chapter9Marks.swift in Sources */,
 				47335045E1361AE66BF22A79 /* Contents.swift in Sources */,
 				F6517ABF6F79233473DE2C2F /* GameModel.swift in Sources */,
 				E814CEA6AE8D68A972F67039 /* Haptics.swift in Sources */,
@@ -348,6 +355,7 @@
 				F2F1AE66279EFC5F18207868 /* Chapter6UITests.swift in Sources */,
 				A705642545DADEEE55649A53 /* Chapter7UITests.swift in Sources */,
 				BD62CB81468AD08351DF824C /* Chapter8UITests.swift in Sources */,
+				081963E1758A65BB7EEF708D /* Chapter9UITests.swift in Sources */,
 				B06253E7629EEE0DFA262540 /* ContentsUITests.swift in Sources */,
 				ACE672D75211636A787E4B4A /* FoldDriver.swift in Sources */,
 				A96D787350289A485576F1F0 /* LayoutStabilityUITests.swift in Sources */,
@@ -461,7 +469,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -561,7 +569,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (

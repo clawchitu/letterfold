@@ -37,7 +37,9 @@ public struct CellFacts: Sendable, Equatable {
 extension Rules {
     /// The facts about the square at `cell` (shut: the stack whose bottom-page cell this is; a top-page cell names the
     /// same stack). `figure` is where the figure is drawn (the app may show it under a stone while being crushed).
-    public func facts(_ b: Board, _ cell: Cell, posture p: Posture, shade: [Cell: Int], figure: Cell) -> CellFacts {
+    /// `angle`: the hinge now (fold degrees); below upright the next close first passes it, so the notes are read off
+    /// the board that pass leaves (loose stones rolled, the figure holding hers; Codex review 21 #3).
+    public func facts(_ b: Board, _ cell: Cell, posture p: Posture, shade: [Cell: Int], figure: Cell, angle: Double? = nil) -> CellFacts {
         if p == .closed { return stackFacts(b, Cell(proj(cell.c), cell.r), figure: figure) }
         let c = cell.c, r = cell.r
         let tl = b[cell], m = mirror(c)
@@ -48,19 +50,21 @@ extension Rules {
         if figure == cell { f.here = .you(onTop: nil) }
         // the notes predict the next close, and every press bleeds the wet ink first: read both squares off the bled
         // board (a blot that covers glue spoils it, so the facing stone stays put; Codex review 19 #2)
-        let (T, M) = closeTiles(b, cell, m)
+        var nb = b
+        if let a = angle, !standing(a) { roll(&nb, fig: figure) }
+        let (T, M) = closeTiles(nb, cell, m)
         if !isRight(c) {
-            if T == .empty && (M.isFloor || M == .stone) { f.note = .fallsHere(M) }
+            if T == .empty && (M.isFloor || M.isOpaque) { f.note = .fallsHere(M) }
             else if T == .door && M == .key { f.note = .doorKey }
-            else if T == .glue && M == .stone { f.note = .glueTakes }
-            else if T == .stone && M == .glue { f.note = .stoneGlued(col: m + 1) }
-            else if T.isFloor && M == .stone { f.note = .crushedHere }
+            else if T == .glue && M.isOpaque { f.note = .glueTakes }
+            else if T.isOpaque && M == .glue { f.note = .stoneGlued(col: m + 1) }
+            else if T.isFloor && M.isOpaque { f.note = .crushedHere }
             else if (T == .ink || T == .wetInk) && M == .empty { f.note = .inkPrints }
             else if T == .tab && c == n - 1 && M == .tab { f.note = .tabBridge }
         } else {
-            if T == .stone && M == .glue { f.note = .stoneGlued(col: m + 1) }
-            else if T == .stone { f.note = .stoneShadow(col: m + 1) }
-            else if T == .glue && M == .stone { f.note = .glueTakes }
+            if T.isOpaque && M == .glue { f.note = .stoneGlued(col: m + 1) }
+            else if T.isOpaque { f.note = .stoneShadow(col: m + 1) }
+            else if T == .glue && M.isOpaque { f.note = .glueTakes }
             else if T == .key && M == .door { f.note = .keyOpens(col: m + 1) }
             else if (T == .ink || T == .wetInk) && M == .empty { f.note = .inkTo(col: m + 1) }
             else if T == .tab && c == n && M == .tab { f.note = .tabBridge }

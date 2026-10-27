@@ -127,7 +127,7 @@ struct BookView: View {
                 // UI tests: the shadow lock, the camera's pose and the finale's seal (design-review-ch4 §4.3–4.5)
                 Color.clear.frame(width: 2, height: 2)
                     .accessibilityElement().accessibilityIdentifier("probe.state")
-                    .accessibilityValue("lock=\(model.lockedCells.map { "\($0.c),\($0.r)" }.joined(separator: " "));cam=\(Int(model.cameraPitch.rounded()));seal=\(model.finaleSeal ? 1 : 0);split=\(model.finaleSealSplit ? 1 : 0);aha=\(model.aha ? 1 : 0);me=\(model.figureCell.c),\(model.figureCell.r);stuck=\(model.stuck ? 1 : 0);glued=\(model.gluePulls.count);face=\(model.shownFace);said=\(model.lastAnnouncement ?? "");toast=\(model.toast ?? "")")
+                    .accessibilityValue("lock=\(model.lockedCells.map { "\($0.c),\($0.r)" }.joined(separator: " "));cam=\(Int(model.cameraPitch.rounded()));seal=\(model.finaleSeal ? 1 : 0);split=\(model.finaleSealSplit ? 1 : 0);aha=\(model.aha ? 1 : 0);me=\(model.figureCell.c),\(model.figureCell.r);stuck=\(model.stuck ? 1 : 0);glued=\(model.gluePulls.count);face=\(model.shownFace);said=\(model.lastAnnouncement ?? "");toast=\(model.toast ?? "");flight=\(model.rollFlight?.rolls.count ?? 0);balls=\(model.loosePoses().count)")
             }
         }
         .environment(\.goalIsFigure, model.goalIsFigure)
@@ -147,7 +147,7 @@ struct BookView: View {
             ForEach(rotorCells { $0 == .empty }, id: \.self) { c in AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace) }
         }
         .accessibilityRotor(Text(L10n.t("rotor.object"))) {
-            ForEach(rotorCells { [.stone, .key, .door, .openDoor, .ink, .wetInk, .goal, .tab, .glue, .gate].contains($0) }, id: \.self) { c in
+            ForEach(rotorCells { [.stone, .loose, .key, .door, .openDoor, .ink, .wetInk, .goal, .tab, .glue, .gate].contains($0) }, id: \.self) { c in
                 AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace)
             }
         }
@@ -791,6 +791,7 @@ private struct FrontFace: View {
     /// false: taps and VoiceOver go to ProjectedTargets instead (camera book)
     var targets = true
     @Environment(\.highContrast) private var hc
+    @Environment(\.looseUpright) private var looseUpright
 
     var body: some View {
         let s = geo.spread, page = geo.pageSize
@@ -807,7 +808,8 @@ private struct FrontFace: View {
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: targets && (angle < 20 || model.posture == .standing || (model.liftedPageLive && model.rules.lit(model.angle))))
             ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .folding),
                         end: model.trail.last.flatMap { s.page(of: $0.c) == .folding ? geo.center($0) : nil })
-            if !model.puppetOnRamp && s.page(of: model.figureCell.c) == .folding { PuppetLayer(model: model, geo: geo, at: geo.center(model.figureCell)) }
+            // ch. 9: she is drawn over the upright balls instead (CameraBook, design-review-vol3-art §3.4: balls, then her)
+            if !model.puppetOnRamp && !looseUpright && s.page(of: model.figureCell.c) == .folding { PuppetLayer(model: model, geo: geo, at: geo.center(model.figureCell)) }
             if model.finaleSeal && model.finaleGlyph != "成", let g = model.goal, s.page(of: g.c) == .folding {
                 GoalSeal(model: model).position(geo.center(g)).offset(model.goalSealOffset(tile: geo.tile))
             }
@@ -1308,11 +1310,24 @@ private struct CameraBook: View {
                         .overlay { if model.finaleSealSplit, let g = model.goalStackSlot {
                             FinaleSealHalf(edge: .top, at: CGPoint(x: geo.center(x: g.x, y: 0).x, y: page.height))
                         } }
+                        .environment(\.looseUpright, model.paper.card)
                         .projectionEffect(cam.transform(o: edge0 + H * fold, eu: ex, ev: -fold))
                 }
             }
             .offset(y: showBack ? model.press * 2 : 0)
             .shadow(color: .black.opacity(hc ? 0 : 0.12 * max(0, sin(t))), radius: 6, x: 0, y: 3)
+            // ch. 9: the lifted page's loose stones, upright over the projected page (they roll; the page squashes, they do not)
+            if model.paper.card && !showBack {
+                LooseBallsLayer(model: model, tile: geo.tile, scale: cam.k) { c in cam.project(center3D(c, fold: fold, W: W, H: H)) }
+                    .frame(width: geo.bookSize.width, height: geo.bookSize.height, alignment: .topLeading)
+                // §3.4: the figure over the balls (FrontFace leaves her out under looseUpright), on the page's projection
+                if !model.puppetOnRamp && geo.spread.page(of: model.figureCell.c) == .folding {
+                    ZStack(alignment: .topLeading) { PuppetLayer(model: model, geo: geo, at: geo.center(model.figureCell)) }
+                        .frame(width: page.width, height: page.height, alignment: .topLeading)
+                        .projectionEffect(cam.transform(o: edge0 + H * fold, eu: ex, ev: -fold))
+                        .allowsHitTesting(false)
+                }
+            }
             // chapter 3 leaning: what lies under the lit top page is drawn over it, veiled, only where it is covered
             // chapter 3 leaning: what lies under the lit top page is drawn over it, veiled, only where it is covered.
             // Order (design-review-ch3 §4 ②, 0.1 (8)): the squares and shadows, then the top page's stones (they hang

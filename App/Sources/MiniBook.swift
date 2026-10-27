@@ -58,6 +58,7 @@ struct MiniBook: View {
         case .ink: [.ink]
         case .tab: [.tab]
         case .glue: [.glue, .stone]
+        case .roll: [.loose]
         default: []
         }
         var cells = all.filter { want.contains(b[$0]) || ((film.id == .shadow || film.id == .ride) && st.shade[$0] != nil) }

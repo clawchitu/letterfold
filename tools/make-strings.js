@@ -171,9 +171,20 @@ const NATIVE = {
   // the next chapter, not yet written (map card)
   'ch.7': ['墨晕', 'Bleed', '滲み', '번짐'],
   'ch.8': ['灯位', 'The Lamp', '灯', '등불'],
-  // 0.1 (20): after 卷二's finale, a dashed card for 卷三 (fold-proto brainstorm-vol3.md; not written yet)
-  'ch.9': ['待续', 'To Be Continued', 'つづく', '다음 이야기'],
+  // 0.1 (21): 卷三《倾》 (fold-proto design-vol3.md §1): chapter 9 「滚」 is written; 10–12 are dashed 「未写」 cards
+  // (design-review-vol3-art §2.7). The map's page title / the opener's tag row read `vol.N` as the volume's name.
+  'ch.9': ['滚', 'Roll', '転', '구르기'],
+  'ch.10': ['鹤', 'Crane', '鶴', '학'],
+  'ch.11': ['来回', 'To and Fro', '行き来', '오가기'],
+  'ch.12': ['三折', 'Trifold', '三つ折り', '세 번 접기'],
+  'vol.3': ['倾', 'Tilt', '傾く', '기울기'],
   'map.book3': ['卷三', 'Book Three', '第三巻', '제3권'],
+  'map.toBook3': ['下一页：卷三《倾》', 'Next page: Book Three, Tilt', '次の頁：第三巻『傾く』', '다음 페이지: 제3권 《기울기》'],
+  'map.vol3Back': ['卷三《倾》', 'Book Three: Tilt', '第三巻『傾く』', '제3권 《기울기》'],
+  'map.vol2BackLabel': ['回到卷二《翻页》，已送达 {n} / {total}', 'Back to Book Two, Turning the Page: {n} of {total} delivered', '第二巻『ページをめくる』へ戻る、{n} / {total} 通 届いた', '제2권 《책장 넘기기》으로, {total}통 중 {n}통 도착'],
+  // 0.1 (20) M (dc73881): VoiceOver says whether a gate stands — kept here so a re-sync does not drop them
+  'gate.state.open': ["现在立着，可以走", "standing now, walkable", "いま立っている、歩ける", "지금 서 있음, 걸을 수 있음"],
+  'gate.state.down': ["现在趴着", "lying down now", "いま倒れている", "지금 누워 있음"],
   // ch. 8 「灯位」: the board reads the angle gate `A` aloud (fold-proto has `gate` / `gateOpen` / `gateDown` only)
   'kind.A': ['活页门，斜起时开着', 'paper gate, open while the page leans', '紙の扉、傾けているあいだ開く', '종이 문, 기울이는 동안 열림'],
   'noun.A': ['活页门', 'paper gate', '紙の扉', '종이 문'],
@@ -214,7 +225,7 @@ function catalog(entries) {
 
 // 0.1 (16): ch. 6 strings fold-proto has only in zh / en (or in an older form) for ja / ko. Marked TODO-native-check in
 // the catalog comments until a native speaker has read them.
-const CH6_NATIVE = ['ch.6', 'ch.7', 'ch.8', 'ch.9', 'map.book3', 'kind.A', 'noun.A', 'kind.I', 'noun.I', 'kind.i.ch7', 'carried', 'flip.action', 'flip.hint', 'restart', 'restartLabel', 'restartHint', 'restarted'];
+const CH6_NATIVE = ['ch.6', 'ch.7', 'ch.8', 'ch.9', 'ch.10', 'ch.11', 'ch.12', 'vol.3', 'map.toBook3', 'map.vol3Back', 'map.vol2BackLabel', 'gate.state.open', 'gate.state.down', 'map.book3', 'kind.A', 'noun.A', 'kind.I', 'noun.I', 'kind.i.ch7', 'carried', 'flip.action', 'flip.hint', 'restart', 'restartLabel', 'restartHint', 'restarted'];
 const STRING_FIX = {
   ja: {
     'chHead.6': '六 · めくる',
@@ -243,7 +254,10 @@ const CH7_DRAFTS = ['ch.7.line', 'chHead.7', 'paper.ch7', 'inkBled', 'letter.7.t
 const CH8_DRAFTS = ['ch.8.line', 'chHead.8', 'paper.ch8', 'pre.lamp', 'gate', 'gateOpen', 'gateDown', 'lampSide.L', 'lampSide.LR',
   'letter.8.title', 'letter.8.body', 'letter.8.sign', 'letter.8.end', 'slip.lamp.title', 'slip.lamp.body', 'slip.lamp.pic',
   'slip.gate.title', 'slip.gate.body', 'slip.gate.pic'];
-const CHECKED = new Set(['help', ...Object.keys(STRING_FIX.ja), ...Object.keys(STRING_FIX.ko), ...CH7_DRAFTS, ...CH8_DRAFTS]);
+// 0.1 (21): ch. 9 「滚」 strings — fold-proto 42c5c62 has zh / en final and ja / ko drafts (design-ch9.md §4–5, TODO review there).
+const CH9_DRAFTS = ['ch.9.line', 'chHead.9', 'paper.ch9', 'pre.roll', 'kind.r', 'noun.r', 'rolled', 'rolledIn', 'rollHeld',
+  'letter.9.title', 'letter.9.body', 'letter.9.sign', 'letter.9.end', 'letter.8.end', 'slip.roll.title', 'slip.roll.body', 'slip.roll.pic'];
+const CHECKED = new Set(['help', ...Object.keys(STRING_FIX.ja), ...Object.keys(STRING_FIX.ko), ...CH7_DRAFTS, ...CH8_DRAFTS, ...CH9_DRAFTS]);
 for (const [l, table] of Object.entries(STRING_FIX)) Object.assign(src.strings[l], table);
 for (const [l, [from, to]] of Object.entries(HELP_ADD)) {
   if (!src.strings[l].help.includes(to)) src.strings[l].help = src.strings[l].help.replace(from, to);
@@ -414,7 +428,9 @@ for (const [id, nid] of Object.entries(LEVEL_DUP)) {
 const LEVEL_KEEP = ['back'];
 const oldText = (id, l) => ['name', 'line', 'hint', 'hint1'].map((part) => oldLevels[`${id}.${part}`]?.localizations[LANG[l]]?.stringUnit.value).filter((v) => v != null);
 for (const id of LEVEL_KEEP) if (oldLevels[`${id}.name`]) for (const l of Object.keys(LANG)) src.levelTexts[l][id] = oldText(id, l);
-const LEVEL_CHECKED = new Set([...Object.keys(LEVEL_CH6.ja), ...Object.keys(LEVEL_V17.ja), ...LEVEL_CH7, ...LEVEL_CH8]);
+// 0.1 (21): ch. 9 「滚」 likewise (design-ch9.md §3)
+const LEVEL_CH9 = ['roll', 'twice', 'jump', 'hold', 'late', 'order', 'settle'];
+const LEVEL_CHECKED = new Set([...Object.keys(LEVEL_CH6.ja), ...Object.keys(LEVEL_V17.ja), ...LEVEL_CH7, ...LEVEL_CH8, ...LEVEL_CH9]);
 
 for (const id of Object.keys(src.levelTexts.en).filter((x) => !LEVEL_CUT.has(x))) {
   // an optional 4th entry: the first rung of the 「?」 ladder (design-review-v2c1 §2), shown before the hint

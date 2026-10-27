@@ -9,7 +9,8 @@ final class SlipsTests: XCTestCase {
         "glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps",
         "turn", "overleaf", "twoFaces", "inlay", "bleed", "pressedFlower", "lastPage",
         "wet", "print", "ring", "spoiled", "pocket", "through",
-        "leftLamp", "lift", "banks", "gate", "taken", "twolamps"]
+        "leftLamp", "lift", "banks", "gate", "taken", "twolamps",
+        "roll", "twice", "jump", "hold", "late", "order", "settle"]
 
     func defaults() -> UserDefaults {
         let name = "slips.test.\(UUID().uuidString)"
@@ -61,7 +62,13 @@ final class SlipsTests: XCTestCase {
         XCTAssertTrue(gate.frames.contains { $0.char == Cell(2, 0) && $0.angle == 120 })
         XCTAssertEqual(gate.frames[gate.still].angle, 120)
         XCTAssertTrue(gate.frames.last!.won)
-        XCTAssertEqual(SlipID.allCases.count, 12, "已集 n / 12")
+        // 松石 (design-ch9 §5): leaning past upright rolls the stone one square; back flat it fills the gap; she crosses
+        let roll = try SlipDemo.demo(.roll).film(config: pack.config)
+        XCTAssertEqual(roll.frames[roll.still].angle, 0)
+        XCTAssertEqual(roll.frames[roll.still].board[4, 0], .paper, "the gap is paper now")
+        XCTAssertFalse(roll.frames[roll.still].board.grid[0].contains(.loose), "the stone is gone into the gap")
+        XCTAssertTrue(roll.frames.last!.won)
+        XCTAssertEqual(SlipID.allCases.count, 13, "已集 n / 13")
         let turn = try SlipDemo.demo(.turn).film(config: pack.config)
         XCTAssertEqual(turn.frames.last!.board.face, 1)
         XCTAssertTrue(turn.frames.last!.won)
@@ -80,7 +87,7 @@ final class SlipsTests: XCTestCase {
         let pack = try LevelPack.bundled()
         let first = Slips.firstLevels(pack.levels, order: Self.mainLine)
         XCTAssertEqual(first, [.stone: "facing", .door: "key", .ink: "ink", .tab: "stand", .shadow: "shadow", .press: "press",
-                               .ride: "ride", .glue: "glue", .turn: "turn", .wet: "wet", .lamp: "leftLamp", .gate: "gate"])
+                               .ride: "ride", .glue: "glue", .turn: "turn", .wet: "wet", .lamp: "leftLamp", .gate: "gate", .roll: "roll"])
         let bridge = pack.levels.first { $0.id == "bridge" }!
         XCTAssertEqual(Slips.due(bridge, seen: []), [])
         let glue = pack.levels.first { $0.id == "glue" }!

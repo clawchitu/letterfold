@@ -133,7 +133,7 @@ struct LevelScreen: View {
     /// 二 · 立: the first time chapter 2 opens, its opener plays once (frame 6-A). -noOpener YES skips it.
     private func checkOpener() {
         let d = UserDefaults.standard
-        let key = ["stand": "opener.2", "shadow": "opener.3", "twoShades": "opener.4", "glue": "opener.5", "turn": "opener.6"][model.level.id]
+        let key = ["stand": "opener.2", "shadow": "opener.3", "twoShades": "opener.4", "glue": "opener.5", "turn": "opener.6", "roll": "opener.9"][model.level.id]
         guard let key, !d.bool(forKey: key), !d.bool(forKey: "noOpener") else { return }
         d.set(true, forKey: key)
         opener = true
@@ -449,20 +449,22 @@ private struct ChapterOpener: View {
     var body: some View {
         let rm = AppSettings.shared.motionReduced
         let cjk = L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("ja")
-        let book2 = chapter.volume == 2
+        let book2 = chapter.volume >= 2, book3 = chapter.volume == 3
+        // a new book's paper: 卷二 old paper → letter paper; 卷三 letter paper → card (design-review-vol3-art §3.6)
+        let newPaper = book3 ? Tok.paperCard : Tok.paperLetter
         ZStack {
-            PaperSurface(color: book2 ? PaperState.aged.color : Tok.paperNew).ignoresSafeArea()
+            PaperSurface(color: book3 ? Tok.paperLetter : book2 ? PaperState.aged.color : Tok.paperNew).ignoresSafeArea()
             if book2 && rm {
-                PaperSurface(color: Tok.paperLetter).ignoresSafeArea().opacity(wipe)
+                PaperSurface(color: newPaper).ignoresSafeArea().opacity(wipe)
             } else {
-                PaperSurface(color: book2 ? Tok.paperLetter : chapter.id >= 4 ? PaperState.chapter4.color : chapter.id == 3 ? PaperState.chapter3.color : PaperState.chapter2.color).ignoresSafeArea()
+                PaperSurface(color: book2 ? newPaper : chapter.id >= 4 ? PaperState.chapter4.color : chapter.id == 3 ? PaperState.chapter3.color : PaperState.chapter2.color).ignoresSafeArea()
                     .mask(WipeShape(progress: wipe).ignoresSafeArea())
             }
             VStack(spacing: 18) {
                 if book2 {
                     HStack(spacing: 10) {
                         Rectangle().fill(Tok.ink600.opacity(0.6)).frame(width: 22, height: 1)
-                        Text(L10n.t("vol.2")).font(FontBook.shared.songti(.regular, 15, relativeTo: .subheadline)).foregroundStyle(Tok.ink700).tracking(cjk ? 4 : 0.5)
+                        Text(book3 ? L10n.t("map.book3") + " · " + L10n.t("vol.3") : L10n.t("vol.2")).font(FontBook.shared.songti(.regular, 15, relativeTo: .subheadline)).foregroundStyle(Tok.ink700).tracking(cjk ? 4 : 0.5)
                         Rectangle().fill(Tok.ink600.opacity(0.6)).frame(width: 22, height: 1)
                     }
                 }
@@ -474,7 +476,8 @@ private struct ChapterOpener: View {
                     .opacity(book2 && !lineShown ? 0 : 1)
                 if chapter.id == 3 { LampBook().frame(width: 150, height: 120).padding(.top, 22).accessibilityHidden(true) }
                 if chapter.id == 4 { WornBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
-                if book2 { LetterBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
+                if book3 { StandBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
+                else if book2 { LetterBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
             }
             .padding(.horizontal, 24)
         }
@@ -490,7 +493,8 @@ private struct ChapterOpener: View {
             withAnimation(.easeOut(duration: 0.4).delay(rm ? 0.2 : 1.0)) { lineShown = true }
             UIAccessibility.post(notification: .screenChanged, argument: nil)
             // VoiceOver users dismiss it themselves (activate), so it is never missed
-            if !UIAccessibility.isVoiceOverRunning { DispatchQueue.main.asyncAfter(deadline: .now() + 2.6) { done() } }
+            // -openerHold YES (screenshots): it stays until tapped
+            if !UIAccessibility.isVoiceOverRunning && !UserDefaults.standard.bool(forKey: "openerHold") { DispatchQueue.main.asyncAfter(deadline: .now() + 2.6) { done() } }
         }
     }
 }
@@ -632,7 +636,7 @@ private struct ToastBand: View {
 /// Under `-probe YES` the toast's bubble is an element `toast.bubble` (the UI tests check it covers no square).
 private struct ToastProbe: ViewModifier {
     func body(content: Content) -> some View {
-        if UserDefaults.standard.bool(forKey: "probe") { content.accessibilityElement().accessibilityIdentifier("toast.bubble").accessibilityHidden(false) }
+        if UserDefaults.standard.bool(forKey: "probe") { content.accessibilityElement(children: .combine).accessibilityIdentifier("toast.bubble").accessibilityHidden(false) }
         else { content }
     }
 }

@@ -141,13 +141,13 @@ public struct Rules: Sendable {
         if p == .closed {
             let q = proj(c), L = b[q, r], R = b[mirror(q), r]
             if foldOpen(b, q, r) { return nil }
-            if R == .stone || (L == .stone && !R.isFloor) { return .stone }
-            if L == .stone { return .card }
+            if R.isOpaque || (L.isOpaque && !R.isFloor) { return .stone }
+            if L.isOpaque { return .card }
             if L == .door || R == .door || L == .gate || R == .gate { return .door }
             return .gap
         }
         let t = b[c, r]
-        if t == .stone { return .stone }
+        if t.isOpaque { return .stone }
         if t == .door || (t == .gate && sh[Cell(c, r)] == nil) { return .door }
         if t.isFloor || sh[Cell(c, r)] != nil { return nil }
         return .gap
@@ -306,7 +306,7 @@ public struct Rules: Sendable {
                     } else if (A == .ink || A == .wetInk) && B == .empty {
                         b[c, r] = A
                         events.append(Stamp(kind: .ink, cells: [Cell(a, r), Cell(c, r)], wet: A == .wetInk))
-                    } else if A == .glue && B == .stone {
+                    } else if A == .glue && B.isOpaque {   // a loose stone the glue takes is held: it arrives as a stone
                         b[a, r] = .stone; b[c, r] = .paper
                         events.append(Stamp(kind: .glue, cells: [Cell(c, r), Cell(a, r)]))
                     }
@@ -314,6 +314,41 @@ public struct Rules: Sendable {
             }
         }
         return events
+    }
+
+    // MARK: loose stones (vol. 3 ch. 9 「滚」, logic.js STAND / standing / passes / roll)
+
+    /// The lifted page is upright or past it: loose stones roll when the hinge crosses this (logic.js STAND).
+    public static let stand = 90.0
+    public func standing(_ a: Double) -> Bool { a >= Rules.stand }
+    /// The hinge moved from a0 to a1: did the lifted page pass upright (so loose stones roll)?
+    public func passes(_ a0: Double, _ a1: Double) -> Bool { standing(a0) != standing(a1) }
+
+    /// One loose stone's roll: `from` -> `to` (one cell towards the crease); `filled` = it dropped into a gap, which is
+    /// paper from then on (the stone is gone).
+    public struct Roll: Sendable, Equatable {
+        public let from: Cell, to: Cell, filled: Bool
+        public init(from: Cell, to: Cell, filled: Bool) { self.from = from; self.to = to; self.filled = filled }
+    }
+
+    /// The lifted page passed upright: every loose stone on the facing page (read through columns N..<2N, so after a turn
+    /// the third page's) rolls one cell towards the crease — onto paper it rolls, into a gap it drops and fills it; against
+    /// anything else, or the figure standing crease-side of it (`fig`), it stays. The stone nearest the crease rolls
+    /// first, so a line of them rolls together. Left-page stones never roll. Returns the rolls, nearest the crease first.
+    /// Mutates the board.
+    @discardableResult
+    public func roll(_ b: inout Board, fig: Cell?) -> [Roll] {
+        var out: [Roll] = []
+        for r in 0..<b.h {
+            for c in (n + 1)..<(2 * n) where b[c, r] == .loose {
+                if let f = fig, f.c == c - 1, f.r == r { continue }
+                let ahead = b[c - 1, r]
+                guard ahead == .paper || ahead == .empty else { continue }
+                b[c - 1, r] = ahead == .empty ? .paper : .loose; b[c, r] = .paper
+                out.append(Roll(from: Cell(c, r), to: Cell(c - 1, r), filled: ahead == .empty))
+            }
+        }
+        return out
     }
 
     // MARK: turning the page (vol. 2 ch. 6 「翻」, logic.js flipBlock / flip)

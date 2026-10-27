@@ -29,7 +29,7 @@ public struct Difficulty: Sendable {
     public static func isWetChapter(_ level: Level) -> Bool { level.lamp == nil && level.map.contains { $0.contains("I") } }
     public static func range(of tier: String) -> ClosedRange<Int>? { tiers.first { $0.name == tier }?.range }
     /// The mechanics `combo` counts (check.js MECHANICS).
-    static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue", "needsFlip", "needsWet", "needsLamp", "needsGate"]
+    static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue", "needsFlip", "needsWet", "needsLamp", "needsGate", "needsRoll"]
 
     /// What levels.json ships under `expect.difficulty`.
     public struct Summary: Sendable, Codable, Equatable {
@@ -98,7 +98,6 @@ public struct Difficulty: Sendable {
         func board(_ s: State) -> Board { B.world(s) }
         func cell(_ s: State) -> Cell { Cell(s.c, s.r) }
         func won(_ s: State) -> Bool { rules.isWin(board(s), cell(s), rules.posture(s.a)) }
-        func moved(_ s: State, _ to: Cell, _ a: Double) -> State { State(c: to.c, r: to.r, a: a, face: s.face, g: solver.after(B, s, a)) }
         func steps(_ s: State) -> [State] {
             let b = board(s)
             return rules.neighbours(b, cell(s), rules.posture(s.a), rules.shadows(b, s.a)).map { State(c: $0.c, r: $0.r, a: s.a, face: s.face, g: s.g) }
@@ -123,12 +122,12 @@ public struct Difficulty: Sendable {
             if won(s) { wins.insert(s); continue }
             var out: [State] = []
             for a in angles where a != s.a {
-                guard let to = solver.turn(board(s), cell(s), s.a, a) else {
+                guard let n = solver.move(B, s, a) else {
                     kills += 1
                     if board(s)[cell(s)].isFloor { traps.insert(s) }
                     continue
                 }
-                out.append(moved(s, to, a))
+                out.append(n)
             }
             switch solver.flipOf(B, s) {   // turning the book onto a stone is a crush from paper
             case .crushed: kills += 1; traps.insert(s)
@@ -178,7 +177,7 @@ public struct Difficulty: Sendable {
             for a in angles {
                 if a == s.a || (feel(a) == feel(s.a) && feel(a) != .lean) { continue }
                 var nexts: [State] = [], seen: Set<State> = []
-                for x in cl { if let to = solver.turn(board(x), cell(x), x.a, a) { let n = moved(x, to, a); if seen.insert(n).inserted { nexts.append(n) } } }
+                for x in cl { if let n = solver.move(B, x, a), seen.insert(n).inserted { nexts.append(n) } }
                 for n in nexts { rec(n, depth - 1, labels + [label(s.a, a)]) }
             }
             var flips: [State] = [], seenF: Set<State> = []
@@ -193,7 +192,7 @@ public struct Difficulty: Sendable {
             if i == 0 { path.append(start); continue }
             let p = path[i - 1]
             var g = p.g
-            if st.face != p.face { g = B.press(p.g, st.face) } else if st.angle != p.a { g = solver.after(B, p, st.angle) }
+            if st.face != p.face { g = B.press(p.g, st.face) } else if st.angle != p.a { g = solver.move(B, p, st.angle)?.g ?? p.g }
             path.append(State(c: st.cell.c, r: st.cell.r, a: st.angle, face: st.face, g: g))
         }
         let bestCells = Set(best.steps.map(\.cell))
@@ -213,13 +212,13 @@ public struct Difficulty: Sendable {
         // closest (ties: the fuller close — closing is what a player does first)
         var direct: (h: Int, a: Double, from: State)?
         for x in closure(start) { for a in angles where a != 0 {
-            let h = apparent(State(c: x.c, r: x.r, a: a, face: 0, g: solver.after(B, x, a)), goal)
+            let h = apparent(State(c: x.c, r: x.r, a: a, face: 0, g: 0), goal)   // check.js 7808fad: imagined on the start grid
             if direct == nil || h < direct!.h || (h == direct!.h && a > direct!.a) { direct = (h, a, x) }
         } }
         var misdirect = false
         if let d = direct {
-            if let to = solver.turn(board(d.from), cell(d.from), 0, d.a) {
-                let rest = solver.solve(level, angles: angles, from: State(c: to.c, r: to.r, a: d.a, face: 0, g: solver.after(B, d.from, d.a)), chain: B)
+            if let n = solver.move(B, d.from, d.a) {
+                let rest = solver.solve(level, angles: angles, from: n, chain: B)
                 misdirect = rest == nil || rest!.cost > best.cost
             } else { misdirect = true }                                   // crushed or dropped
         }
@@ -236,7 +235,7 @@ public struct Difficulty: Sendable {
             // either page (fold-proto 15c073d: under the left lamp a glued stone shades the lifted page, ch. 8)
             guard s.g != 0, feel(s.a) == .lean, !board(s)[cell(s)].isFloor,
                   let src = rules.shadows(board(s), s.a)[cell(s)] else { return false }
-            return base.grid[s.r][s.face == 1 && src >= rules.n ? src + rules.n : src] != .stone
+            return !base.grid[s.r][s.face == 1 && src >= rules.n ? src + rules.n : src].isOpaque   // a rolled loose stone's shadow is made too
         }
         let structure = best.cost + (forks == 1 ? 1 : 0) + (walk >= 8 ? 1 : 0) + (trap ? 1 : 0) + (window <= 2 ? 1 : 0) + (combo >= 3 ? 1 : 0)
         let insight = 2 * (misdirect ? 1 : 0) + 2 * (deadEnds >= 1 ? 1 : 0) + (deadC.count >= 12 ? 1 : 0) + 2 * (before ? 1 : 0)
@@ -272,7 +271,7 @@ public struct Difficulty: Sendable {
             }
             for n in rules.neighbours(b, here, p, rules.shadows(b, s.a)) { push(State(c: n.c, r: n.r, a: s.a, face: s.face, g: s.g), hc) }
             for a in Solver.angles where a != s.a {
-                if let to = solver.turn(b, here, s.a, a) { push(State(c: to.c, r: to.r, a: a, face: s.face, g: solver.after(B, s, a)), hc + 1) }
+                if let n = solver.move(B, s, a) { push(n, hc + 1) }
             }
             if case let .to(f) = solver.flipOf(B, s) { push(f, hc + 1) }
         }
