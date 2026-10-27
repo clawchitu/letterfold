@@ -109,6 +109,21 @@ final class Chapter9UITests: XCTestCase {
         XCTAssertEqual(f.probe("balls"), "1", "one ball drawn, not the stale flight beside the restored stone")
     }
 
+    /// Codex review 21 #2: an update that skips the whole window (Reduce Motion: 「全开」 is one jump, fold 120 -> 0)
+    /// must not leave the flight it starts behind, or re-entering the window draws a stone the board no longer has
+    /// there. A one-stone board, the stone two squares out: the launch's pass rolls it once, the jump once more.
+    func testAFastPassLeavesNoFlight() {
+        launch(58, ["-noSlips", "YES", "-reduceMotion", "YES", "-buttonControl", "YES", "-startAngle", "120",
+                    "-levelMap", "G......r|S-------"])
+        XCTAssertTrue(kind(6, 0).contains("松石"), "rolled once at launch: \(label(6, 0))")
+        XCTAssertEqual(f.probe("flight"), "0")
+        app.buttons["fold.open"].tap()                         // one jump back over upright: rolls again, to (5,0)
+        Thread.sleep(forTimeInterval: 1)
+        XCTAssertEqual(f.phys(), 180)
+        XCTAssertTrue(kind(5, 0).contains("松石"), "rolled again: \(label(5, 0))")
+        XCTAssertEqual(f.probe("flight"), "0", "the jump left the window: no flight left over")
+    }
+
     /// Visual check shots for build 21 (LF_SHOTS): the roll mid-window (before the crossing and after it, angle-driven
     /// so a start angle freezes it), 9-6 mid-solution, high contrast, and the roll slip.
     func testShotsCh9() {

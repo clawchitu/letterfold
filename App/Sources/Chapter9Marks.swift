@@ -235,8 +235,7 @@ extension GameModel {
     }
 
     /// Called on every angle change: the flight ends when the hinge leaves the window; a filled gap gets its ring then.
-    func settleRollFlight(crossed: Bool) {
-        if crossed && rollFlight == nil { noteHeldIfAny() }
+    func settleRollFlight() {
         guard let f = rollFlight, angle <= RollCurve.lo || angle >= RollCurve.hi else { return }
         for r in f.rolls where r.filled { fillRings[r.to] = Date() }
         rollFlight = nil
