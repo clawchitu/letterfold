@@ -307,7 +307,9 @@ final class GameModel {
         /// Where a ridden shadow picked the figure up: the carry is said once, where it ends (playtest-ch6 §2 #6).
         var carryFrom: Cell?
         /// Crushed or fallen: the reason, said last in the fold announcement so 「路接通了」 cannot drown it (fold-proto e613f80).
-        var fell = "" }
+        var fell = ""
+        /// Ch. 8: the gates stood up / lay down with the lean (said once per rest: `gateOpen` / `gateDown`).
+        var gate: Bool? = nil }
 
     static let step = 15.0
     static let snapPoints: [Double] = [0, 90, 130, 180]
@@ -752,8 +754,19 @@ final class GameModel {
             rideFeel()
             // design-ch3 §5: the page is held up to the lamp once it leans past 89° (physical)
             if paper.backlit && before < 91 && angle >= 91 && angle < config.foldMin { pending.lit = true }
+            gateCheck(from: before)
             lockCheck(from: before)
         }
+    }
+
+    /// Ch. 8 angle gates stand while the page leans (`rules.lit`), lie down outside it (design-review-ch8-art §3.2):
+    /// a paper snap and a light tap each way, and `gateOpen` / `gateDown` in the next announcement.
+    private func gateCheck(from before: Double) {
+        let was = rules.lit(before), now = rules.lit(angle)
+        guard was != now, board.grid.contains(where: { $0.contains(.gate) }) else { return }
+        haptics.tick()
+        sound.gate(up: now)
+        pending.gate = now
     }
 
     // MARK: the shadow lock (design-review-ch3 §3)
@@ -1713,7 +1726,7 @@ final class GameModel {
         let a = Int(angle.rounded())
         let p = pending
         pending = Pending(hadShade: !shade.isEmpty)
-        if a == saidAngle && !p.mode && !p.connected && !p.shade && !p.lit && !p.dead && p.stamps.isEmpty && p.fell.isEmpty && p.carryFrom == nil { return }
+        if a == saidAngle && !p.mode && !p.connected && !p.shade && !p.lit && !p.dead && p.stamps.isEmpty && p.fell.isEmpty && p.carryFrom == nil && p.gate == nil { return }
         saidAngle = a
         var parts: [String] = []
         switch posture {
@@ -1728,6 +1741,7 @@ final class GameModel {
             else { parts.append(L10n.t(isLeaning ? "book.lean" : "book.open", ["a": 180 - a])) }
         }
         if p.lit { parts.append(L10n.t("paper.lit")) }
+        if let g = p.gate { parts.append(L10n.t(g ? "gateOpen" : "gateDown")) }
         if !p.fell.isEmpty {
             // crushed / fell: what the shut did, then the reason, last (nothing about paths: you are back at the start)
             if p.stamps.contains(where: { $0.kind == .glue }) { parts.append(L10n.t("glued")) }
