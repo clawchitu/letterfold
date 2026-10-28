@@ -499,8 +499,10 @@ struct ChapterMapView: View {
 
     private var volumeTwoOpen: Bool { Chapter.all.first { $0.id == 5 }.map(model.isUnlocked) ?? false }
     private var volumeThreeOpen: Bool { Chapter.all.first { $0.id == 9 }.map(model.isUnlocked) ?? false }
-    /// The page shown: the one turned to, else the newest open book's (卷三 once chapter 9 opens).
-    private var shown: Int { volumeThreeOpen ? (page ?? 3) : volumeTwoOpen ? min(2, page ?? 2) : 1 }
+    /// The page shown: the one turned to, else the page of the chapter being played (the 「继续」 level's).
+    private var shown: Int { model.mapPage(page) }
+    /// Set once the map has landed on the chapter being played: the first landing jumps, a later page turn back glides.
+    @State private var landed = false
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -610,10 +612,22 @@ struct ChapterMapView: View {
             }
             .padding(.horizontal, 24).padding(.top, 2)
             GeometryReader { g in
+                ScrollViewReader { proxy in
                 ScrollView {
                     if shown == 1 { volumeOne(g.size.width) } else if shown == 2 { volumeTwo(g.size.width) } else { volumeThree(g.size.width) }
                 }
                 .clipped()
+                // 「开始」 lands on the chapter being played, a third of the way down (above 「继续」), not on page one's top;
+                // the page is rebuilt per volume (.id(shown)), so a turn back to its volume lands there again
+                .onAppear {
+                    guard let ch = model.currentChapter, ch.volume == shown else { landed = true; return }
+                    let glide = landed && !AppSettings.shared.motionReduced
+                    landed = true
+                    DispatchQueue.main.async {
+                        if glide { withAnimation(.easeInOut(duration: 0.35)) { proxy.scrollTo(Self.cardID(ch.id), anchor: Self.landing) } }
+                        else { proxy.scrollTo(Self.cardID(ch.id), anchor: Self.landing) }
+                    }
+                }
                 // a swipe up past the last card turns to the next page (only once book one is done)
                 // one swipe turns one page: the page it started on decides (Codex review 21 #4)
                 .simultaneousGesture(DragGesture(minimumDistance: 30).onEnded { v in
@@ -628,6 +642,7 @@ struct ChapterMapView: View {
                     default: break
                     }
                 })
+                }
             }
             .id(shown)
             .transition(.opacity)
@@ -733,6 +748,10 @@ struct ChapterMapView: View {
         }
     }
 
+    static func cardID(_ id: Int) -> String { "map.card.\(id)" }
+    /// Where the chapter being played lands: its card a third of the way down, clear of the title and of 「继续」.
+    static let landing = UnitPoint(x: 0.5, y: 0.32)
+
     private func card(_ ch: Chapter, _ width: Double) -> some View {
         HStack {
             if ch.inVolume % 2 == 0 { Spacer() }
@@ -743,6 +762,7 @@ struct ChapterMapView: View {
                 .opacity(router.contents == ch.id ? 0 : 1)
             if ch.inVolume % 2 == 1 { Spacer() }
         }
+        .id(Self.cardID(ch.id))
     }
 
     private func openDark(_ ch: Chapter) {
@@ -786,6 +806,15 @@ struct ChapterMapView: View {
 }
 
 extension GameModel {
+    /// The chapter of the 「继续」 level: the first open chapter with a letter not yet delivered (nil once all are).
+    var currentChapter: Chapter? {
+        Chapter.all.first { ch in isUnlocked(ch) && chapterIndices(ch).contains { !done.contains($0) } }
+    }
+    /// The map's page: the one turned to, else the current chapter's volume, else the newest open book's; never past it.
+    func mapPage(_ turned: Int?) -> Int {
+        let newest = Chapter.all.first { $0.id == 9 }.map(isUnlocked) == true ? 3 : Chapter.all.first { $0.id == 5 }.map(isUnlocked) == true ? 2 : 1
+        return min(max(1, turned ?? currentChapter?.volume ?? newest), newest)
+    }
     func chapterIndices(_ ch: Chapter) -> [Int] { ch.levelIDs.compactMap { id in pack.levels.firstIndex { $0.id == id } } }
     func darkIndices(_ ch: Chapter) -> [Int] { ch.darkIDs.compactMap { id in pack.levels.firstIndex { $0.id == id } } }
     /// A chapter's 暗信 open once the chapter itself is delivered (its letter read or not): optional, never in the way.

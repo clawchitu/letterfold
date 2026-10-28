@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		081963E1758A65BB7EEF708D /* Chapter9UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B2C966B3DCE7BA4E158633 /* Chapter9UITests.swift */; };
-		A10C0DE10C0DE10C0DE10C03 /* Chapter10UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10C0DE10C0DE10C0DE10C04 /* Chapter10UITests.swift */; };
 		089C73E24BB02BF7002C67DC /* Chapter8Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAF188A41CB92A6FB2A0D7D /* Chapter8Marks.swift */; };
 		0ACF1846232647123A81BF6B /* Skins.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD058B4451F306D134BBAF38 /* Skins.swift */; };
 		11BE4B3530A847817165737B /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDBB77B419ABE4C00953E0 /* App.swift */; };
@@ -16,6 +15,7 @@
 		2440B5FB027790D0976AF907 /* Hinge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2991315D14E1D1169059EEE2 /* Hinge.swift */; };
 		287378E19EFCA32706FC4E35 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4097B0AC06804266642AEB30 /* Settings.swift */; };
 		30DF961F440B6EF2FFC056E0 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = EABD85E9AF4932093EFF07E7 /* InfoPlist.xcstrings */; };
+		315A4F04504D631DA448B741 /* Chapter10UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6977AD3FCF19C5CAFDFFFA7E /* Chapter10UITests.swift */; };
 		325A01DF0182BD81C710BC54 /* LetterfoldUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */; };
 		34363C4C6EA532C07D98704B /* Boards13.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49EBF627B593BF5091E2F46E /* Boards13.swift */; };
 		34A798E0D5924075ECEA5944 /* FoldCore in Frameworks */ = {isa = PBXBuildFile; productRef = 88BED3A0FF644679AC1747FE /* FoldCore */; };
@@ -36,6 +36,7 @@
 		AAC6885CD98A69713F89E05E /* Chapter4UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0494484CEC40B87ECCEA13 /* Chapter4UITests.swift */; };
 		ACE672D75211636A787E4B4A /* FoldDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */; };
 		B06253E7629EEE0DFA262540 /* ContentsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86874352C30014FFF456BE3E /* ContentsUITests.swift */; };
+		B0A4EF7084065CE30480E0EB /* MapUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0CC632AAB4806752275D5BB /* MapUITests.swift */; };
 		B1D32DD32E79E29D08463F20 /* MiniBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FCF925CDB8149AB521F8E2D /* MiniBook.swift */; };
 		BD62CB81468AD08351DF824C /* Chapter8UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F02AD93FA8DB47DA0A3261F /* Chapter8UITests.swift */; };
 		C8A342F843413DC1FB323FDC /* PlaythroughPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2ACD110F34C4648B09D796 /* PlaythroughPlan.swift */; };
@@ -43,13 +44,13 @@
 		D8A70EB3F8BBE29228DA425A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 379A2157A36D86786F6D27BF /* PrivacyInfo.xcprivacy */; };
 		E06BF6C6CF71DF946E87BED5 /* LevelScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B298358295F0A825501A00E9 /* LevelScreen.swift */; };
 		E19FF7E22BAF0B7F47038916 /* Chapter9Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = D182D97E9762DC8C6D7AA780 /* Chapter9Marks.swift */; };
-		A10C0DE10C0DE10C0DE10C01 /* Chapter10Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10C0DE10C0DE10C0DE10C02 /* Chapter10Marks.swift */; };
 		E6F6C5E335E9922EBEEF96E7 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5597D142A9CB8FB0E573B6 /* Theme.swift */; };
 		E814CEA6AE8D68A972F67039 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578B23505A90DB23ECB3C2A4 /* Haptics.swift */; };
 		EC45A98D94C4BC1BBB07EF81 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E9E382EAE32A5BCA3D71BC9 /* L10n.swift */; };
 		F2F1AE66279EFC5F18207868 /* Chapter6UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442751BD211723A6FF2D59D6 /* Chapter6UITests.swift */; };
 		F6517ABF6F79233473DE2C2F /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EBF8A2E746E16AE1153A20 /* GameModel.swift */; };
 		F82CD4AB1512484854127089 /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9AA4B7A8AA01181783D9B58 /* Sound.swift */; };
+		FEF3E51D6AE2D0172801FBE4 /* Chapter10Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A59202716B0AC3485A116A1 /* Chapter10Marks.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,9 +66,9 @@
 /* Begin PBXFileReference section */
 		011869BA3DC1C9873A1049D7 /* PlanLevelUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanLevelUITests.swift; sourceTree = "<group>"; };
 		0EBA74BD18A4CCAC6C76307B /* SlipUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlipUITests.swift; sourceTree = "<group>"; };
+		1A59202716B0AC3485A116A1 /* Chapter10Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter10Marks.swift; sourceTree = "<group>"; };
 		23DC96729D3FCEAF07A7743F /* Paper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paper.swift; sourceTree = "<group>"; };
 		25B2C966B3DCE7BA4E158633 /* Chapter9UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter9UITests.swift; sourceTree = "<group>"; };
-		A10C0DE10C0DE10C0DE10C04 /* Chapter10UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter10UITests.swift; sourceTree = "<group>"; };
 		2991315D14E1D1169059EEE2 /* Hinge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hinge.swift; sourceTree = "<group>"; };
 		2BC0F961EF86FAC46A7C6FE8 /* Slip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slip.swift; sourceTree = "<group>"; };
 		3015C80653E030579E65FC8D /* LayoutStabilityUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutStabilityUITests.swift; sourceTree = "<group>"; };
@@ -83,6 +84,7 @@
 		59688079C7688C54335A73BD /* Chapter5UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter5UITests.swift; sourceTree = "<group>"; };
 		5DCB74D3A0DCC9D491D54DCD /* FoldCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FoldCore; path = Packages/FoldCore; sourceTree = SOURCE_ROOT; };
 		661C1BE741FF0CB5D1E9EE51 /* PlaythroughUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaythroughUITests.swift; sourceTree = "<group>"; };
+		6977AD3FCF19C5CAFDFFFA7E /* Chapter10UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter10UITests.swift; sourceTree = "<group>"; };
 		6DAF188A41CB92A6FB2A0D7D /* Chapter8Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter8Marks.swift; sourceTree = "<group>"; };
 		73CBDC31A0224AF98A0B8641 /* Screens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screens.swift; sourceTree = "<group>"; };
 		76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldDriver.swift; sourceTree = "<group>"; };
@@ -94,6 +96,7 @@
 		93CA716983C6FD7D2F2CB18E /* Levels.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Levels.xcstrings; sourceTree = "<group>"; };
 		9649A387FE6D80E352CD3FC9 /* BookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookView.swift; sourceTree = "<group>"; };
 		9E9E382EAE32A5BCA3D71BC9 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
+		A0CC632AAB4806752275D5BB /* MapUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapUITests.swift; sourceTree = "<group>"; };
 		A8EC280F556F518FD3E0CF1A /* Letterfold.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Letterfold.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9AA4B7A8AA01181783D9B58 /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		AB5597D142A9CB8FB0E573B6 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -103,7 +106,6 @@
 		B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterfoldUITests.swift; sourceTree = "<group>"; };
 		CC0494484CEC40B87ECCEA13 /* Chapter4UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter4UITests.swift; sourceTree = "<group>"; };
 		D182D97E9762DC8C6D7AA780 /* Chapter9Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter9Marks.swift; sourceTree = "<group>"; };
-		A10C0DE10C0DE10C0DE10C02 /* Chapter10Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter10Marks.swift; sourceTree = "<group>"; };
 		D7F376A74B6D07769C3C7A89 /* LetterfoldUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LetterfoldUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8FF8C2C6BDE8074179A5B56 /* Chapter7UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter7UITests.swift; sourceTree = "<group>"; };
 		EABD85E9AF4932093EFF07E7 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
@@ -133,11 +135,12 @@
 				D8FF8C2C6BDE8074179A5B56 /* Chapter7UITests.swift */,
 				7F02AD93FA8DB47DA0A3261F /* Chapter8UITests.swift */,
 				25B2C966B3DCE7BA4E158633 /* Chapter9UITests.swift */,
-				A10C0DE10C0DE10C0DE10C04 /* Chapter10UITests.swift */,
+				6977AD3FCF19C5CAFDFFFA7E /* Chapter10UITests.swift */,
 				86874352C30014FFF456BE3E /* ContentsUITests.swift */,
 				76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */,
 				3015C80653E030579E65FC8D /* LayoutStabilityUITests.swift */,
 				B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */,
+				A0CC632AAB4806752275D5BB /* MapUITests.swift */,
 				011869BA3DC1C9873A1049D7 /* PlanLevelUITests.swift */,
 				AD2ACD110F34C4648B09D796 /* PlaythroughPlan.swift */,
 				661C1BE741FF0CB5D1E9EE51 /* PlaythroughUITests.swift */,
@@ -153,7 +156,7 @@
 				9649A387FE6D80E352CD3FC9 /* BookView.swift */,
 				6DAF188A41CB92A6FB2A0D7D /* Chapter8Marks.swift */,
 				D182D97E9762DC8C6D7AA780 /* Chapter9Marks.swift */,
-				A10C0DE10C0DE10C0DE10C02 /* Chapter10Marks.swift */,
+				1A59202716B0AC3485A116A1 /* Chapter10Marks.swift */,
 				31779719E8C773D36D2CFC1B /* Contents.swift */,
 				45EBF8A2E746E16AE1153A20 /* GameModel.swift */,
 				578B23505A90DB23ECB3C2A4 /* Haptics.swift */,
@@ -330,9 +333,9 @@
 			files = (
 				11BE4B3530A847817165737B /* App.swift in Sources */,
 				23541C263217811CE7EE57A7 /* BookView.swift in Sources */,
+				FEF3E51D6AE2D0172801FBE4 /* Chapter10Marks.swift in Sources */,
 				089C73E24BB02BF7002C67DC /* Chapter8Marks.swift in Sources */,
 				E19FF7E22BAF0B7F47038916 /* Chapter9Marks.swift in Sources */,
-				A10C0DE10C0DE10C0DE10C01 /* Chapter10Marks.swift in Sources */,
 				47335045E1361AE66BF22A79 /* Contents.swift in Sources */,
 				F6517ABF6F79233473DE2C2F /* GameModel.swift in Sources */,
 				E814CEA6AE8D68A972F67039 /* Haptics.swift in Sources */,
@@ -356,6 +359,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				34363C4C6EA532C07D98704B /* Boards13.swift in Sources */,
+				315A4F04504D631DA448B741 /* Chapter10UITests.swift in Sources */,
 				940B2DA1796BB58F3B8FCFAD /* Chapter3UITests.swift in Sources */,
 				AAC6885CD98A69713F89E05E /* Chapter4UITests.swift in Sources */,
 				A14167539C197C23C60606DD /* Chapter5UITests.swift in Sources */,
@@ -363,11 +367,11 @@
 				A705642545DADEEE55649A53 /* Chapter7UITests.swift in Sources */,
 				BD62CB81468AD08351DF824C /* Chapter8UITests.swift in Sources */,
 				081963E1758A65BB7EEF708D /* Chapter9UITests.swift in Sources */,
-				A10C0DE10C0DE10C0DE10C03 /* Chapter10UITests.swift in Sources */,
 				B06253E7629EEE0DFA262540 /* ContentsUITests.swift in Sources */,
 				ACE672D75211636A787E4B4A /* FoldDriver.swift in Sources */,
 				A96D787350289A485576F1F0 /* LayoutStabilityUITests.swift in Sources */,
 				325A01DF0182BD81C710BC54 /* LetterfoldUITests.swift in Sources */,
+				B0A4EF7084065CE30480E0EB /* MapUITests.swift in Sources */,
 				41C9101008DFEE17CF0C3A91 /* PlanLevelUITests.swift in Sources */,
 				C8A342F843413DC1FB323FDC /* PlaythroughPlan.swift in Sources */,
 				4808A9C05E1935D6FFE4F8B2 /* PlaythroughUITests.swift in Sources */,
@@ -477,7 +481,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 22;
+				CURRENT_PROJECT_VERSION = 23;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -577,7 +581,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 22;
+				CURRENT_PROJECT_VERSION = 23;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
