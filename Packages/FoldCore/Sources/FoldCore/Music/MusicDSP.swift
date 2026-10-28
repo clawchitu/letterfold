@@ -360,7 +360,7 @@ final class PluckSynth: @unchecked Sendable {
         let t = timbres[cur]
         startSwish(dur: rng.uniform(0.8...1.1), pan: rng.uniform(-0.2...0.2))
         play(.qin, midi: Int(t.accentNote), vel: 0.9, dur: 9, orn: rng.uniform() < 0.5 ? 1 : 0, pan: 0, delay: 0.55,
-             gain: 0.5, bright: 0.7)
+             gain: 0.35, bright: 0.7)
         // gen.py: no note right on top of an accent, so it reads clearly
         if nextNote < clock + Int(3 * sr) { nextNote = clock + Int((3 + rng.uniform(0...1.5)) * sr) }
     }
@@ -596,7 +596,7 @@ final class PluckSynth: @unchecked Sendable {
 
     /// Calibration (see MusicTests): the pluck bus before the limiter.
     static let compThreshold: Float = 0.22
-    static let pluckLevel: Float = 0.45
+    static let pluckLevel: Float = 0.56
 }
 
 // MARK: - the bed: drone, water, air
@@ -723,7 +723,7 @@ final class BedSynth: @unchecked Sendable {
     }
 
     /// Calibration: each bed part at 0 dB has about the RMS of the pluck bus (gen.py sets beds relative to it).
-    static let padLevel: Float = 0.03
-    static let waterLevel: Float = 0.28
-    static let airLevel: Float = 0.25
+    static let padLevel: Float = 0.062
+    static let waterLevel: Float = 0.56
+    static let airLevel: Float = 0.5
 }
