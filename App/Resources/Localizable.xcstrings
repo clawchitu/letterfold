@@ -12420,6 +12420,96 @@
         }
       }
     },
+    "set.music": {
+      "comment": "UI. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "音乐"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Music"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "音楽"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "음악"
+          }
+        }
+      }
+    },
+    "set.music.d": {
+      "comment": "UI. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "背景里轻轻的琴声，每章不同"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quiet music in the background, its own in each chapter"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "背景に静かな音楽。章ごとに違う音色"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "배경에 잔잔한 음악, 장마다 다른 음색"
+          }
+        }
+      }
+    },
+    "set.musicVol": {
+      "comment": "UI. Native app only. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "音乐音量"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Music volume"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "音楽の音量"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "음악 음량"
+          }
+        }
+      }
+    },
     "set.rm": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",

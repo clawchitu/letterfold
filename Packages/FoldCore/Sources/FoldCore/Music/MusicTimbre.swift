@@ -86,7 +86,7 @@ public struct MusicTimbre: Sendable, Equatable {
             t.phraseLen = 2...4; t.noteGap = 1.4...2.6; t.rest = 7.0...15.0
             t.yin = 0; t.nao = 0; t.slideUp = 0.08; t.slideDown = 0.06; t.dyadProb = 0.05
             t.padDB = -16; t.waterDB = nil; t.airDB = -21
-            t.reverbMix = 48; t.trimDB = -2.3
+            t.reverbMix = 48; t.trimDB = -3.2
             if ch == 7 { t.waterDB = -15; t.airDB = nil }                // 墨晕: soft water
             if ch == 8 { t.chimeEvery = 11 }                               // 灯位: a wind chime's shimmer
             return t

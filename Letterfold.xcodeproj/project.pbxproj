@@ -24,6 +24,7 @@
 		47335045E1361AE66BF22A79 /* Contents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31779719E8C773D36D2CFC1B /* Contents.swift */; };
 		4808A9C05E1935D6FFE4F8B2 /* PlaythroughUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661C1BE741FF0CB5D1E9EE51 /* PlaythroughUITests.swift */; };
 		4E042B49889CAFAFFA62FB4A /* Levels.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 93CA716983C6FD7D2F2CB18E /* Levels.xcstrings */; };
+		62D5404C1817B37DCB26D633 /* MusicUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB4F047FF96EB1C56C27E68 /* MusicUITests.swift */; };
 		632B7BC5D43A1FE091458D59 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */; };
 		83E16CC195AEC3EC5512860E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B5BC6A962BF940695C18366 /* Assets.xcassets */; };
 		940B2DA1796BB58F3B8FCFAD /* Chapter3UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33328FA03A6FDAE3C9019CD5 /* Chapter3UITests.swift */; };
@@ -38,6 +39,7 @@
 		B06253E7629EEE0DFA262540 /* ContentsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86874352C30014FFF456BE3E /* ContentsUITests.swift */; };
 		B0A4EF7084065CE30480E0EB /* MapUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0CC632AAB4806752275D5BB /* MapUITests.swift */; };
 		B1D32DD32E79E29D08463F20 /* MiniBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FCF925CDB8149AB521F8E2D /* MiniBook.swift */; };
+		B5ED0A3CDD754F993C1645DE /* Music.swift in Sources */ = {isa = PBXBuildFile; fileRef = 051331415EAAB64692652349 /* Music.swift */; };
 		BD62CB81468AD08351DF824C /* Chapter8UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F02AD93FA8DB47DA0A3261F /* Chapter8UITests.swift */; };
 		C8A342F843413DC1FB323FDC /* PlaythroughPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2ACD110F34C4648B09D796 /* PlaythroughPlan.swift */; };
 		CDAFA5AA7DB1731BE06494F7 /* Petals.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF748F41958AB1E89B0C34D9 /* Petals.swift */; };
@@ -65,8 +67,10 @@
 
 /* Begin PBXFileReference section */
 		011869BA3DC1C9873A1049D7 /* PlanLevelUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanLevelUITests.swift; sourceTree = "<group>"; };
+		051331415EAAB64692652349 /* Music.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Music.swift; sourceTree = "<group>"; };
 		0EBA74BD18A4CCAC6C76307B /* SlipUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlipUITests.swift; sourceTree = "<group>"; };
 		1A59202716B0AC3485A116A1 /* Chapter10Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter10Marks.swift; sourceTree = "<group>"; };
+		1CB4F047FF96EB1C56C27E68 /* MusicUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicUITests.swift; sourceTree = "<group>"; };
 		23DC96729D3FCEAF07A7743F /* Paper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paper.swift; sourceTree = "<group>"; };
 		25B2C966B3DCE7BA4E158633 /* Chapter9UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter9UITests.swift; sourceTree = "<group>"; };
 		2991315D14E1D1169059EEE2 /* Hinge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hinge.swift; sourceTree = "<group>"; };
@@ -141,6 +145,7 @@
 				3015C80653E030579E65FC8D /* LayoutStabilityUITests.swift */,
 				B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */,
 				A0CC632AAB4806752275D5BB /* MapUITests.swift */,
+				1CB4F047FF96EB1C56C27E68 /* MusicUITests.swift */,
 				011869BA3DC1C9873A1049D7 /* PlanLevelUITests.swift */,
 				AD2ACD110F34C4648B09D796 /* PlaythroughPlan.swift */,
 				661C1BE741FF0CB5D1E9EE51 /* PlaythroughUITests.swift */,
@@ -164,6 +169,7 @@
 				9E9E382EAE32A5BCA3D71BC9 /* L10n.swift */,
 				B298358295F0A825501A00E9 /* LevelScreen.swift */,
 				7FCF925CDB8149AB521F8E2D /* MiniBook.swift */,
+				051331415EAAB64692652349 /* Music.swift */,
 				23DC96729D3FCEAF07A7743F /* Paper.swift */,
 				EF748F41958AB1E89B0C34D9 /* Petals.swift */,
 				73CBDC31A0224AF98A0B8641 /* Screens.swift */,
@@ -343,6 +349,7 @@
 				EC45A98D94C4BC1BBB07EF81 /* L10n.swift in Sources */,
 				E06BF6C6CF71DF946E87BED5 /* LevelScreen.swift in Sources */,
 				B1D32DD32E79E29D08463F20 /* MiniBook.swift in Sources */,
+				B5ED0A3CDD754F993C1645DE /* Music.swift in Sources */,
 				3C0775AFD33349CA0C055368 /* Paper.swift in Sources */,
 				CDAFA5AA7DB1731BE06494F7 /* Petals.swift in Sources */,
 				99273F2D8C732350A8BCA85B /* Screens.swift in Sources */,
@@ -372,6 +379,7 @@
 				A96D787350289A485576F1F0 /* LayoutStabilityUITests.swift in Sources */,
 				325A01DF0182BD81C710BC54 /* LetterfoldUITests.swift in Sources */,
 				B0A4EF7084065CE30480E0EB /* MapUITests.swift in Sources */,
+				62D5404C1817B37DCB26D633 /* MusicUITests.swift in Sources */,
 				41C9101008DFEE17CF0C3A91 /* PlanLevelUITests.swift in Sources */,
 				C8A342F843413DC1FB323FDC /* PlaythroughPlan.swift in Sources */,
 				4808A9C05E1935D6FFE4F8B2 /* PlaythroughUITests.swift in Sources */,

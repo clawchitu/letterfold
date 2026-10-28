@@ -367,6 +367,7 @@ final class GameModel {
         }
         haptics.prepare()
         sound.start()
+        MusicDirector.shared.apply()
         sound.startMotif { [weak self] in self?.goalVoice() }
         NotificationCenter.default.addObserver(forName: UIAccessibility.elementFocusedNotification, object: nil, queue: .main) { note in
             let id = (note.userInfo?[UIAccessibility.focusedElementUserInfoKey] as? UIAccessibilityIdentification)?.accessibilityIdentifier
@@ -520,6 +521,7 @@ final class GameModel {
         cameraPitch = Self.handPitch
         sync()
         sound.figureMotif = goalIsFigure
+        MusicDirector.shared.setChapter(chapter.id)   // the chapter's timbre, crossfading over 2 s
         if hingeKind == .device, settings.hingeFold, let a = (device as? AnyHingeAngle)?.lastAngle {
             setAngle(Self.virtualFold(a)); pending = Pending()
             if looksAtWall(angle) { cameraPitch = Self.wallPitch }   // a hinge already standing: look at the wall
@@ -1074,6 +1076,7 @@ final class GameModel {
         released = nil; landing = nil
         if crushWaiting { crushLands() } else { haptics.contact(feel) }
         sound.slap(feel)
+        MusicDirector.shared.accent()   // a soft swish and the tonic, low
         if settings.motionReduced {
             withAnimation(.linear(duration: 0.2)) { glow = 1 }
             withAnimation(.linear(duration: 0.2).delay(0.25)) { glow = 0 }
@@ -1632,6 +1635,7 @@ final class GameModel {
 
     private func win() {
         won = true
+        MusicDirector.shared.win()   // a short rising phrase
         stopWalk()
         done.insert(index)
         doneIDs.insert(level.id); SavedProgress.save(doneIDs)
@@ -2075,6 +2079,9 @@ final class GameModel {
         let s = L10n.cap(text)
         lastAnnouncement = s
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+            if UIAccessibility.isVoiceOverRunning || AppSettings.shared.speak {
+                MusicDirector.shared.duck(for: min(6, 1 + Double(s.count) * 0.09))   // the music dips under speech
+            }
             if UIAccessibility.isVoiceOverRunning {
                 UIAccessibility.post(notification: .announcement,
                                      argument: L10n.speech(s))

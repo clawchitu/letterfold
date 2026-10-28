@@ -132,6 +132,7 @@ final class SoundBoard {
     /// Ch. 8 活页门 (design-review-ch8-art §3.2): the paper piece flipping up — a 40 ms white-noise snap and a
     /// mid knock; lying down, the same an octave lower.
     func gate(up: Bool) {
+        MusicDirector.shared.duck(for: 1.0)
         play(up ? "gateUp" : "gateDown", volume: 0.5) {
             let snap = Self.noiseBurst(0.04, decay: 60, lowpass: 6000, gain: 0.5), knock = Self.tone(up ? 660 : 330, .wood, 0.18)
             return (0..<max(snap.count, knock.count)).map { i in (i < snap.count ? snap[i] : 0) + (i < knock.count ? 0.6 * knock[i] : 0) }
@@ -193,6 +194,7 @@ final class SoundBoard {
 
     /// An ascending arpeggio (宫 角 徵 宫′) when a path connects.
     func chord() {
+        MusicDirector.shared.duck(for: 1.2)
         for (i, row) in [0, 2, 3, 5].enumerated() { note(row: row, timbre: .paper, pan: 0, volume: 0.6, delay: Double(i) * 0.07) }
     }
 
@@ -205,6 +207,7 @@ final class SoundBoard {
                 guard let self, !Task.isCancelled, AppSettings.shared.soundMode, let w = `where`() else { continue }
                 // the goal's motif; her lamp's (4-6) is a music box, falling where the goal's rises
                 let fig = self.figureMotif
+                MusicDirector.shared.duck(for: 1.2)   // the goal's chime
                 for (i, row) in (fig ? [5, 3, 4] : [3, 4, 5]).enumerated() {
                     self.note(row: row, timbre: fig ? .bell : .wood, pan: w.pan, volume: w.volume * 0.55, delay: Double(i) * (fig ? 0.2 : 0.16))
                 }
@@ -213,6 +216,7 @@ final class SoundBoard {
     }
     /// 4-6: the two motifs at once when the two figures meet in the shut book.
     func meet() {
+        MusicDirector.shared.duck(for: 1.4)
         for (i, row) in [3, 4, 5].enumerated() { note(row: row, timbre: .wood, pan: -0.2, volume: 0.5, delay: Double(i) * 0.16) }
         for (i, row) in [5, 3, 4].enumerated() { note(row: row, timbre: .bell, pan: 0.2, volume: 0.45, delay: Double(i) * 0.16) }
     }
