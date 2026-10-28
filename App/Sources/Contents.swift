@@ -422,8 +422,7 @@ struct ObjectsView: View {
     var body: some View {
         let n = seen.count, total = SlipID.allCases.count
         let backKey = router.objectsBack == .settings ? "settings.title"
-            : (router.mapPage ?? 3) == 3 && model.isUnlocked(Chapter.all[8]) ? "map.vol3Back"
-            : (router.mapPage ?? 2) >= 2 && model.isUnlocked(Chapter.all[4]) ? "map.vol2Back" : "map.vol1Back"
+            : "map.vol\(model.mapPage(router.mapPage))Back"
         VStack(alignment: .leading, spacing: 0) {
             Button { router.go(router.objectsBack) } label: {
                 HStack(spacing: 4) {
