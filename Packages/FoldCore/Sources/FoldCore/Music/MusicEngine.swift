@@ -107,16 +107,16 @@ public final class MusicEngine: @unchecked Sendable {
         reverbRamp?.cancel()
         let from = reverb.wetDryMix, to = MusicTimbre.forChapter(ch).reverbMix
         guard ramp, from != to else { reverb.wetDryMix = to; return }
-        var k = 0
-        func step() {
-            k += 1
-            reverb.wetDryMix = from + (to - from) * Float(k) / 20
-            guard k < 20 else { return }
-            let w = DispatchWorkItem { step() }
-            reverbRamp = w
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: w)
-        }
-        step()
+        rampReverb(from: from, to: to, step: 1)
+    }
+
+    /// 20 steps over 2 s; the scheduled steps hold the engine weakly (codex 24).
+    private func rampReverb(from: Float, to: Float, step k: Int) {
+        reverb.wetDryMix = from + (to - from) * Float(k) / 20
+        guard k < 20 else { reverbRamp = nil; return }
+        let w = DispatchWorkItem { [weak self] in self?.rampReverb(from: from, to: to, step: k + 1) }
+        reverbRamp = w
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: w)
     }
 
     /// A close: a soft paper swish and one resonant low note on the chapter's tonic.

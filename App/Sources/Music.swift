@@ -20,6 +20,7 @@ final class MusicDirector {
     @ObservationIgnored private var duckTask: Task<Void, Never>?
     @ObservationIgnored private var stopTask: Task<Void, Never>?
     @ObservationIgnored private var ducked = false
+    @ObservationIgnored private var duckUntil = Date.distantPast
     @ObservationIgnored private var lastAccent = Date.distantPast
 
     private init() {
@@ -101,7 +102,12 @@ final class MusicDirector {
         }
     }
 
-    private func setActive(_ a: Bool) { active = a; apply() }
+    private func setActive(_ a: Bool) {
+        active = a
+        // the hint is only posted while we are in the foreground: re-read it on the way back (codex 24)
+        if a { silenced = AVAudioSession.sharedInstance().secondaryAudioShouldBeSilencedHint }
+        apply()
+    }
 
     private func interrupted(began: Bool) {
         if began { playing = false; return }   // the system has stopped the engine
@@ -139,15 +145,19 @@ final class MusicDirector {
 
     static let duckGain: Float = 0.35
 
-    /// Dips under speech and the gate / chime effects for `seconds` (a newer duck extends it).
+    /// Dips under speech and the gate / chime effects for `seconds`; overlapping ducks last until the latest
+    /// deadline (a short gate duck never lifts a long announcement's).
     func duck(for seconds: Double) {
         guard playing, let e = engine else { return }
+        let until = Date().addingTimeInterval(seconds)
+        guard until > duckUntil || !ducked else { return }
+        duckUntil = until
         ducked = true
         e.gain = Self.duckGain
         duckTask?.cancel()
         duckTask = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(seconds))
-            guard let self, !Task.isCancelled else { return }
+            guard let self, !Task.isCancelled, Date() >= self.duckUntil.addingTimeInterval(-0.05) else { return }
             self.ducked = false
             if self.playing { self.engine?.gain = 1 }
         }

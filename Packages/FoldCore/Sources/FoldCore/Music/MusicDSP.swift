@@ -254,7 +254,7 @@ final class PluckSynth: @unchecked Sendable {
     private func reset() {
         cur = max(1, min(12, control.chapter.load(ordering: .relaxed)))
         let t = timbres[cur]
-        clock = 0; nextNote = Int(t.firstNoteAt * sr); phraseN = 0; phraseI = 0; deg = Int(t.startDegree)
+        clock = 0; lastAccent = -1_000_000; nextNote = Int(t.firstNoteAt * sr); phraseN = 0; phraseI = 0; deg = Int(t.startDegree)
         nextChime = t.chimeEvery > 0 ? Int(t.chimeEvery * rng.uniform(0.3...1.0) * sr) : -1
         for i in 0..<Self.maxVoices { voices[i].active = false }
         swish.active = false
