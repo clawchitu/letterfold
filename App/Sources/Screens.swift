@@ -1249,6 +1249,24 @@ struct SettingsView: View {
                     Divider().padding(.leading, 16)
                     row(L10n.t("opt.audio"), L10n.t("set.sound.d"), $settings.soundMode, id: "set.sound")
                     Divider().padding(.leading, 16)
+                    row(L10n.t("set.music"), L10n.t("set.music.d"), $settings.music, id: "set.music")
+                    if settings.music {
+                        HStack(spacing: 10) {
+                            Image(systemName: "speaker.fill").font(.footnote).foregroundStyle(Tok.ink600).accessibilityHidden(true)
+                            Slider(value: $settings.musicVolume, in: 0...1)
+                                .tint(Tok.ink900)
+                                .accessibilityLabel(L10n.t("set.musicVol"))
+                                .accessibilityIdentifier("set.musicVol")
+                            Image(systemName: "speaker.wave.2.fill").font(.footnote).foregroundStyle(Tok.ink600).accessibilityHidden(true)
+                        }
+                        .padding(.horizontal, 16).padding(.bottom, 14)
+                    }
+                    if UserDefaults.standard.bool(forKey: "probe") {
+                        Color.clear.frame(width: 1, height: 1)
+                            .accessibilityElement().accessibilityIdentifier("probe.music")
+                            .accessibilityValue(MusicDirector.shared.playing ? "playing" : "stopped")
+                    }
+                    Divider().padding(.leading, 16)
                     let hapticsText = VStack(alignment: .leading, spacing: 2) {
                         Text(L10n.t("set.haptics")).font(.body).foregroundStyle(Tok.ink900)
                         Text(L10n.t("set.haptics.d")).font(.subheadline).foregroundStyle(Tok.ink600)

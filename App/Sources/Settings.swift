@@ -10,6 +10,10 @@ final class AppSettings {
     var buttonControl: Bool { didSet { d.set(buttonControl, forKey: "set.buttons") } }
     var speak: Bool { didSet { d.set(speak, forKey: "set.speak") } }
     var soundMode: Bool { didSet { d.set(soundMode, forKey: "set.sound") } }
+    /// 「音乐」: the generative background music (default on; separate from the effects and sound mode).
+    var music: Bool { didSet { d.set(music, forKey: "set.music"); MusicDirector.shared.apply() } }
+    /// Music volume 0…1 (0.7 = the reference level).
+    var musicVolume: Double { didSet { d.set(musicVolume, forKey: "set.musicVol"); MusicDirector.shared.apply() } }
     /// 0 off, 1 light (0.6x), 2 strong (1.0x).
     var hapticLevel: Int { didSet { d.set(hapticLevel, forKey: "set.haptics") } }
     var highContrast: Bool { didSet { d.set(highContrast, forKey: "set.hc") } }
@@ -46,6 +50,8 @@ final class AppSettings {
         speak = d.bool(forKey: "set.speak")
         soundMode = d.bool(forKey: "soundMode") || d.bool(forKey: "set.sound")
         hapticLevel = d.object(forKey: "set.haptics") as? Int ?? 2
+        music = d.object(forKey: "set.music") as? Bool ?? true
+        musicVolume = d.object(forKey: "set.musicVol") as? Double ?? 0.7
         highContrast = d.bool(forKey: "highContrast") || d.bool(forKey: "set.hc")
         largeGrid = d.bool(forKey: "largeGrid") || d.bool(forKey: "set.big")
         reduceMotion = d.bool(forKey: "reduceMotion") || d.bool(forKey: "set.rm")
