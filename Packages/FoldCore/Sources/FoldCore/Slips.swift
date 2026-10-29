@@ -48,6 +48,8 @@ public enum Slips {
             case .gate: return s.contains("A")
             case .roll: return s.contains("r")
             case .crane: return s.contains("h")
+            // a posture slip like ride (tools/slips.js `fro`, tile null): the *declared* needs (levels.js), only on
+            // fro / past / park — not expect.needsFro, which check.js also finds on ch. 9/10 jump / late / ground
             case .fro: return needs.contains("needsFro")
             }
         }

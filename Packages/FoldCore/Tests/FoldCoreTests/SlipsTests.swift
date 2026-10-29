@@ -31,7 +31,7 @@ final class SlipsTests: XCTestCase {
             XCTAssertTrue(film.frames.indices.contains(film.still), "\(demo.id)")
             XCTAssertLessThanOrEqual(film.totalMs, 4400, "\(demo.id): a loop is 3.6–4.4 s with its end pause")
             // the demo board shows the slip's own rule
-            XCTAssertTrue(Slips.triggers(Level(id: "x", map: demo.map, lamp: demo.lamp)).contains(demo.id) || [.shadow, .ride].contains(demo.id), "\(demo.id)")
+            XCTAssertTrue(Slips.triggers(Level(id: "x", map: demo.map, lamp: demo.lamp)).contains(demo.id) || [.shadow, .ride, .fro].contains(demo.id), "\(demo.id)")
         }
         // the beats that matter, frame by frame
         let glue = try SlipDemo.demo(.glue).film(config: pack.config)
@@ -111,6 +111,19 @@ final class SlipsTests: XCTestCase {
         XCTAssertEqual(Slips.due(glue, seen: []), [.stone, .press], "lazy: unseen older objects first, two at most")
         XCTAssertEqual(Slips.due(glue, seen: ["stone", "press", "glue"]), [])
         XCTAssertLessThanOrEqual(Slips.due(pack.levels.first { $0.id == "lastPage" }!, seen: []).count, 2)
+    }
+
+    /// The fro slip keys on the declared needs, not on expect.needsFro: ch. 9/10 levels a to-and-fro also solves never pull it out.
+    func testFroSlipOnlyInChapter11() throws {
+        let pack = try LevelPack.bundled()
+        for id in ["jump", "late", "ground"] {
+            let lv = pack.levels.first { $0.id == id }!
+            XCTAssertEqual(lv.expect?.needsFro, true, "\(id): check.js finds a to-and-fro")
+            XCTAssertFalse(Slips.triggers(lv).contains(.fro), "\(id) must not trigger the fro slip")
+        }
+        let fro = pack.levels.filter { Slips.triggers($0).contains(.fro) }.map(\.id)
+        XCTAssertEqual(Set(fro), ["fro", "past", "park"])
+        XCTAssertEqual(Slips.due(pack.levels.first { $0.id == "fro" }!, seen: ["glue", "roll"]), [.fro])
     }
 
     func testSeedOldSaveAndNewPlayer() throws {
