@@ -35,7 +35,8 @@ struct Chapter: Identifiable {
     /// The chapter's seal on its map card and (vol. 2) on the finale: 达 · 通 · 影 · 成 · 胶 (design-v2c1 §2 章印).
     /// Ch. 10: 「载」 (design-review-ch10-art §2.7: what carried you across; 渡 is two level names).
     /// Ch. 9: 「落」 (design-review-vol3-art §4, Fable: the stone settles, the letter lands on the far bank).
-    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "灯", "落", "载"][min(9, id - 1)] }
+    /// Ch. 11: 「返」 (design-ch11.md names none: the page goes up and comes back, 来回; placeholder until an art review).
+    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "灯", "落", "载", "返"][min(10, id - 1)] }
     static func volumeChapters(_ v: Int) -> [Chapter] { all.filter { $0.volume == v } }
 
     static let all: [Chapter] = [
@@ -66,7 +67,8 @@ struct Chapter: Identifiable {
         // 卷三's next three chapters are not written yet: dashed 「未写」 cards (design-review-vol3-art §2.7)
         // 卷三 chapter 2 「鹤」 (fold-proto design-ch10.md): the paper crane; opens once chapter 9 is all delivered
         Chapter(id: 10, levelIDs: ["crane", "land", "cross", "ground", "soak", "over"], unlocked: true, soon: false),
-        Chapter(id: 11, levelIDs: [], unlocked: false, soon: true),
+        // 卷三 chapter 3 「来回」 (fold-proto design-ch11.md): no new tile, the hinge's path; opens once chapter 10 is all delivered
+        Chapter(id: 11, levelIDs: ["fro", "still", "hover", "past", "park"], unlocked: true, soon: false),
         Chapter(id: 12, levelIDs: [], unlocked: false, soon: true),
     ]
 }
@@ -385,7 +387,7 @@ final class GameModel {
     /// -cameraPitch <deg> (screenshots), -probe YES (UI tests: the drag's edge probe).
     static func launch() -> GameModel {
         let d = UserDefaults.standard
-        if d.bool(forKey: "resetProgress") { SavedProgress.resetAll(d); for k in [ruleBlockedKey, ruleUnderKey, layerRuleKey, shadowPaperKey] { d.removeObject(forKey: k) }; for k in 2...10 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
+        if d.bool(forKey: "resetProgress") { SavedProgress.resetAll(d); for k in [ruleBlockedKey, ruleUnderKey, layerRuleKey, shadowPaperKey] { d.removeObject(forKey: k) }; for k in 2...11 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
         var pack = try! LevelPack.bundled()
         let start = d.integer(forKey: "startLevel")
         // -levelMap "row|row|…" (UI tests only; gaps written "_", as a value starting with "-" would read as a flag): play the -startLevel level on another board, so a rule's regression test
