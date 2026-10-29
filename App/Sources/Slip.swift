@@ -111,11 +111,13 @@ struct SlipLayer: View {
             // 松石笺: the two beats stand above the text (§3.7), so it is the beats' height plus the text's
             // and where the table above the page is too short for that its foot comes down over the bottom page (9-1's
             // is all gaps), never cutting the text
-            if model.slipPages.contains(.roll) || model.slipPages.contains(.crane) {
+            if model.slipPages.contains(.roll) || model.slipPages.contains(.crane) || model.slipPages.contains(.fro) {
                 // 纸鹤笺's beats are a whole book tall each (frame C4): the slip may run past the book's frame into the
                 // table below it rather than cut the text
-                let crane = model.slipPages.contains(.crane)
-                let h = crane ? min(CraneSlipPicture.height + 24 + 10 + 290, size.height + 140) : min(RollSlipPicture.height + 24 + 10 + 200, size.height - 16)
+                // 来回笺 (design-ch11 §8.4) is drawn the same way: two whole books, 28 pt squares
+                let crane = model.slipPages.contains(.crane) || model.slipPages.contains(.fro)
+                let tall = model.slipPages.contains(.fro) ? FroSlipPicture.height : CraneSlipPicture.height
+                let h = crane ? min(tall + 24 + 10 + 290, size.height + 140) : min(RollSlipPicture.height + 24 + 10 + 200, size.height - 16)
                 let x = min(max(a.page.midX - w / 2, -margin + 8), size.width + margin - 8 - w)
                 return CGRect(x: x, y: max(8, a.crease - 8 - h), width: w, height: h)
             }
@@ -189,16 +191,27 @@ struct SlipView: View {
     @Environment(\.dynamicTypeSize) private var typeSize
     @State private var linePitch: CGFloat = 29
 
+    /// the slips whose pictures are two still beats above the text (松石, 纸鹤, 来回), not a film
+    static let twoBeats: Set<SlipID> = [.roll, .crane, .fro]
+
+    @ViewBuilder private var beats: some View {
+        switch id {
+        case .crane: CraneSlipPicture()
+        case .fro: FroSlipPicture()   // 来回笺 (design-ch11 §8.4)
+        default: RollSlipPicture()
+        }
+    }
+
     var body: some View {
         let paper = paperOverride ?? model.paper
         let text = SlipText.body(id, horizontalCrease: horizontal)
         let last = page + 1 >= pages
         Group {
-            if id == .roll || id == .crane {
+            if Self.twoBeats.contains(id) {
                 // 松石笺 (design-review-vol3-art §3.7), 纸鹤笺 (design-review-ch10-art §3.8): two still beats side by
                 // side above the text, not a film
                 VStack(alignment: .leading, spacing: 10) {
-                    Group { if id == .crane { CraneSlipPicture() } else { RollSlipPicture() } }.frame(maxWidth: .infinity)
+                    beats.frame(maxWidth: .infinity)
                     column(text, last: last)
                 }
             } else if horizontal {
@@ -461,6 +474,7 @@ struct SlipIcon: View {
             case .gate: GateMark(standing: true, size: size * 0.9, hc: hc)
             case .roll: LooseBall(size: size, hc: hc)
             case .crane: CraneGlyph(size: size, hc: hc)
+            case .fro: FroGlyph(size: size, hc: hc)
             }
         }
         .frame(width: size, height: size)
@@ -516,6 +530,7 @@ nonisolated struct SlipGlyph: Shape {
         case .gate: p.addPath(GateFrame().path(in: r))
         case .roll: p.addEllipse(in: r.insetBy(dx: r.width * 0.18, dy: r.height * 0.18))
         case .crane: p.addPath(CraneOutline().path(in: r))
+        case .fro: p.addPath(FroOutline().path(in: r))
         case .turn:
             p.addRect(CGRect(x: r.minX + r.width * 0.3, y: r.minY + r.height * 0.04, width: r.width * 0.6, height: r.height * 0.74))
             p.move(to: pt(0.3, 0.2)); p.addLine(to: pt(0.12, 0.2)); p.addLine(to: pt(0.12, 0.94)); p.addLine(to: pt(0.72, 0.94)); p.addLine(to: pt(0.72, 0.78))
