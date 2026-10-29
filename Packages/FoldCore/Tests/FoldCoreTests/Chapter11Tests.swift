@@ -51,4 +51,54 @@ final class Chapter11Tests: XCTestCase {
         var b90 = try board(["....-.rS"]), b85 = try board(["....-.rS"])
         XCTAssertEqual(sweep(&b90, 0, 90) + sweep(&b85, 0, 85), 1)
     }
+
+    static let ch11 = ["fro", "still", "hover", "past", "park"]
+    @discardableResult func play(_ g: FoldGame, to a: Double) -> [GameEvent] {
+        var ev: [GameEvent] = []
+        let step = a > g.angle ? 1.0 : -1.0
+        while abs(g.angle - a) > 0.01 { ev += g.setAngle(abs(a - g.angle) < 1 ? a : g.angle + step) }
+        return ev
+    }
+    func rolls(_ ev: [GameEvent]) -> [Rules.Roll] { ev.flatMap { if case let .rolled(r) = $0 { return r } else { return [] } } }
+
+    /// CraneTests.testChapter10LevelsAgreeWithTheProto for ch. 11: report == check.js (difficulty too), the proto
+    /// solution replays to a win in FoldGame at par, never through a dead end.
+    func testChapter11LevelsAgreeWithTheProto() throws {
+        let pack = try LevelPack.bundled(), solver = Solver(pack.config)
+        for id in Self.ch11 {
+            let lv = try XCTUnwrap(pack.levels.first { $0.id == id }, id)
+            var mine = solver.report(lv), theirs = try XCTUnwrap(lv.expect, id)
+            XCTAssertEqual(mine.difficulty, theirs.difficulty, "\(id): difficulty matches check.js")
+            mine.difficulty = nil; theirs.difficulty = nil
+            if mine != theirs { try? "\(id)\nswift: \(mine)\ncheck: \(theirs)\n".write(toFile: "/tmp/lf25-report-\(id).txt", atomically: true, encoding: .utf8) }
+            theirs.wetCloses = nil   // check.js authoring diagnostic (FoldCoreTests excludes it too)
+            XCTAssertEqual(mine, theirs, "\(id): FoldCore matches check.js")
+            let sol = try XCTUnwrap(lv.solution, id)
+            let g = try FoldGame(level: lv, config: pack.config)
+            var ev: [GameEvent] = []
+            for s in sol.dropFirst() {
+                let cell = Cell(s[0], s[1]), a = Double(s[2])
+                if s[4] != g.face { ev += g.flip(); g.tally.turn() } else if a != g.angle { ev += play(g, to: a); g.tally.rest(at: a) } else { ev += g.step(to: cell) }
+                XCTAssertEqual(g.char, cell, id)
+            }
+            XCTAssertTrue(g.won, "\(id) won")
+            XCTAssertFalse(rolls(ev).isEmpty, "\(id): a stone rolls")
+            XCTAssertFalse(ev.contains(.deadEnd), "\(id): the solution is never a dead end")
+            XCTAssertEqual(g.tally.count, lv.expect?.changes, "\(id): 折数 = par")
+        }
+    }
+
+    /// design-ch11 §6.1 in the game: closed, then opened only to a lean that stays on the closed side of upright, then
+    /// closed again — no pass, nothing rolls, the board is unchanged; opened flat, it passes upright and rolls.
+    func testAnOpeningThatStaysPastUprightRollsNothing() throws {
+        let g = try FoldGame(level: Level(id: "t", map: ["S...-.r.", "........"]), config: LevelPack.bundled().config)
+        XCTAssertEqual(rolls(play(g, to: 180)).map(\.to), [Cell(5, 0)], "the close passes upright once")
+        let closed = g.board.grid
+        XCTAssertEqual(rolls(play(g, to: 120)), [], "fold 120 (physical 60°) stays past upright")
+        XCTAssertEqual(rolls(play(g, to: 180)), [])
+        XCTAssertEqual(g.board.grid, closed, "the board is unchanged")
+        let flat = rolls(play(g, to: 0))
+        XCTAssertEqual(flat.map(\.to), [Cell(4, 0)], "opened flat: it passes upright and the stone drops into the gap")
+        XCTAssertEqual(g.board[4, 0], .paper)
+    }
 }
