@@ -180,7 +180,7 @@ final class LampTests: XCTestCase {
             XCTAssertFalse(ev.contains(.deadEnd), "\(id): the solution is never a dead end")
             XCTAssertEqual(g.tally.count, lv.expect?.changes, "\(id): 折数 = par")
         }
-        XCTAssertEqual(pack.levels.filter { $0.lamp != nil }.map(\.id), Self.ch8)
+        XCTAssertEqual(pack.levels.filter { $0.lamp != nil }.map(\.id), Self.ch8 + ["still"], "ch. 8, and 11-2 still under the lamp")
         XCTAssertEqual(try level("gate").expect?.needsGate, true)
         XCTAssertEqual(try level("twolamps").expect?.needsGate, false, "8-7 v2: the gate only lengthens (design-ch8 §8.2)")
         XCTAssertEqual(try level("lamp").lamp, nil, "3-6 keeps its id and the right lamp")

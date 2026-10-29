@@ -76,4 +76,9 @@ let playthroughPlan: [(id: String, acts: [PlanAct])] = [
     ("ground", [.walk(2, 4, 2), .lean(51, tol: 8), .walk(2, 0, 8), .open, .close, .walk(1, 0, 1), .walk(1, 1, 1), .walk(1, 2, 1), .open, .walk(6, 3, 1)]),
     ("soak", [.walk(7, 1, 7), .close, .lean(39, tol: 8), .walk(2, 0, 3), .close, .lean(75, tol: 7), .walk(3, 4, 5)]),
     ("over", [.walk(4, 3, 6), .close, .walk(3, 2, 1), .walk(3, 1, 1), .walk(2, 1, 1), .walk(2, 0, 1), .stand, .close, .flip, .lean(80, tol: 8), .walk(7, 2, 4)]),
+    ("fro", [.lean(70, tol: 8), .walk(6, 0, 1), .open, .walk(4, 1, 3)]),
+    ("still", [.walk(5, 0, 1), .lean(41, tol: 8), .walk(6, 2, 5), .open, .walk(5, 2, 1), .close, .walk(2, 3, 1), .walk(3, 3, 1)]),
+    ("hover", [.walk(5, 0, 3), .lean(70, tol: 8), .walk(7, 2, 4), .close, .walk(0, 3, 1), .lean(30, tol: 4), .walk(2, 3, 2), .close, .lean(70, tol: 8), .walk(4, 4, 2)]),
+    ("past", [.walk(7, 2, 5), .lean(70, tol: 8), .walk(7, 3, 1), .open, .walk(6, 3, 1), .close, .walk(1, 2, 1), .lean(76, tol: 7), .walk(3, 1, 7)]),
+    ("park", [.walk(6, 2, 2), .stand, .walk(5, 1, 2), .close, .walk(2, 0, 1), .walk(3, 0, 1), .flip, .walk(3, 1, 1), .open, .lean(30, tol: 8), .open, .walk(6, 2, 7)]),
 ]

@@ -133,7 +133,7 @@ struct LevelScreen: View {
     /// 二 · 立: the first time chapter 2 opens, its opener plays once (frame 6-A). -noOpener YES skips it.
     private func checkOpener() {
         let d = UserDefaults.standard
-        let key = ["stand": "opener.2", "shadow": "opener.3", "twoShades": "opener.4", "glue": "opener.5", "turn": "opener.6", "roll": "opener.9"][model.level.id]
+        let key = ["stand": "opener.2", "shadow": "opener.3", "twoShades": "opener.4", "glue": "opener.5", "turn": "opener.6", "roll": "opener.9", "fro": "opener.11"][model.level.id]
         guard let key, !d.bool(forKey: key), !d.bool(forKey: "noOpener") else { return }
         d.set(true, forKey: key)
         opener = true
@@ -476,7 +476,9 @@ private struct ChapterOpener: View {
                     .opacity(book2 && !lineShown ? 0 : 1)
                 if chapter.id == 3 { LampBook().frame(width: 150, height: 120).padding(.top, 22).accessibilityHidden(true) }
                 if chapter.id == 4 { WornBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
-                if book3 { StandBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
+                // 十一 · 来回: the book stands up and lies back down (design-ch11 §8.4), not the still standing book
+                if chapter.id == 11 { FroBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
+                else if book3 { StandBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
                 else if book2 { LetterBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
             }
             .padding(.horizontal, 24)

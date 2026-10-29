@@ -10,6 +10,15 @@ const outDir = path.join(__dirname, '..', 'App', 'Resources');
 
 // strings the native app needs that the web prototype does not have
 const NATIVE = {
+  // 0.1 (25): keys earlier builds wrote into the catalog by hand (0.1 (22) map / slip beats, 0.1 (24) music), kept by the sync
+  'ch.number': ['第{n}章', 'Chapter {n}', '第{n}章', '{n}장'],
+  'set.music': ['音乐', 'Music', '音楽', '음악'],
+  'set.music.d': ['背景里轻轻的琴声，每章不同', 'Quiet music in the background, its own in each chapter', '背景に静かな音楽。章ごとに違う音色', '배경에 잔잔한 음악, 장마다 다른 음색'],
+  'set.musicVol': ['音乐音量', 'Music volume', '音楽の音量', '음악 음량'],
+  'slip.crane.close': ['合上', 'close', '閉じる', '닫기'],
+  'slip.crane.stay': ['不飞', 'stays', '飛ばない', '안 날아요'],
+  'slip.roll.lean': ['斜起', 'lean', '傾ける', '기울이기'],
+  'slip.roll.flat': ['放平', 'flat', '平らに', '펴기'],
   walkHere: ['走到这里', 'Walk here', 'ここへ歩く', '여기로 걷기'],
   hingeSource: ['折叠输入', 'Fold input', '折りの入力', '접기 입력'],
   'hinge.simulated': ['滑块与拖动', 'Slider and drag', 'スライダーとドラッグ', '슬라이더와 드래그'],
@@ -176,7 +185,7 @@ const NATIVE = {
   // (design-review-vol3-art §2.7). The map's page title / the opener's tag row read `vol.N` as the volume's name.
   'ch.9': ['滚', 'Roll', '転', '구르기'],
   'ch.10': ['鹤', 'Crane', '鶴', '학'],
-  'ch.11': ['来回', 'To and Fro', '行き来', '오가기'],
+  'ch.11': ['来回', 'To and Fro', '往き来', '오가기'],
   'ch.12': ['三折', 'Trifold', '三つ折り', '세 번 접기'],
   'vol.3': ['倾', 'Tilt', '傾く', '기울기'],
   'map.book3': ['卷三', 'Book Three', '第三巻', '제3권'],
@@ -262,7 +271,10 @@ const CH9_DRAFTS = ['ch.9.line', 'chHead.9', 'paper.ch9', 'pre.roll', 'kind.r', 
 const CH10_DRAFTS = ['ch.10.line', 'chHead.10', 'paper.ch10', 'pre.crane', 'kind.h', 'noun.h', 'carried', 'craneFlew', 'craneStuck',
   'craneSoaked', 'craneGlued', 'letter.10.title', 'letter.10.body', 'letter.10.sign', 'letter.10.end', 'letter.9.end',
   'slip.crane.title', 'slip.crane.body', 'slip.crane.pic'];
-const CHECKED = new Set(['help', ...Object.keys(STRING_FIX.ja), ...Object.keys(STRING_FIX.ko), ...CH7_DRAFTS, ...CH8_DRAFTS, ...CH9_DRAFTS, ...CH10_DRAFTS]);
+// 0.1 (25): ch. 11 「来回」 strings — fold-proto 2bb1213 has zh / en final and ja / ko drafts (design-ch11.md §4–5, TODO review there).
+const CH11_DRAFTS = ['ch.11.line', 'chHead.11', 'paper.ch11', 'letter.11.title', 'letter.11.body', 'letter.11.sign', 'letter.11.end',
+  'slip.fro.title', 'slip.fro.body', 'slip.fro.pic'];
+const CHECKED = new Set(['help', ...Object.keys(STRING_FIX.ja), ...Object.keys(STRING_FIX.ko), ...CH7_DRAFTS, ...CH8_DRAFTS, ...CH9_DRAFTS, ...CH10_DRAFTS, ...CH11_DRAFTS]);
 for (const [l, table] of Object.entries(STRING_FIX)) Object.assign(src.strings[l], table);
 for (const [l, [from, to]] of Object.entries(HELP_ADD)) {
   if (!src.strings[l].help.includes(to)) src.strings[l].help = src.strings[l].help.replace(from, to);
@@ -436,7 +448,8 @@ for (const id of LEVEL_KEEP) if (oldLevels[`${id}.name`]) for (const l of Object
 // 0.1 (21): ch. 9 「滚」 likewise (design-ch9.md §3)
 const LEVEL_CH9 = ['roll', 'twice', 'jump', 'hold', 'late', 'order', 'settle'];
 const LEVEL_CH10 = ['crane', 'land', 'cross', 'ground', 'soak', 'over'];   // 0.1 (22): ch. 10 「鹤」, ja / ko drafts
-const LEVEL_CHECKED = new Set([...Object.keys(LEVEL_CH6.ja), ...Object.keys(LEVEL_V17.ja), ...LEVEL_CH7, ...LEVEL_CH8, ...LEVEL_CH9, ...LEVEL_CH10]);
+const LEVEL_CH11 = ['fro', 'still', 'hover', 'past', 'park'];   // 0.1 (25): ch. 11 「来回」, ja / ko drafts
+const LEVEL_CHECKED = new Set([...Object.keys(LEVEL_CH6.ja), ...Object.keys(LEVEL_V17.ja), ...LEVEL_CH7, ...LEVEL_CH8, ...LEVEL_CH9, ...LEVEL_CH10, ...LEVEL_CH11]);
 
 for (const id of Object.keys(src.levelTexts.en).filter((x) => !LEVEL_CUT.has(x))) {
   // an optional 4th entry: the first rung of the 「?」 ladder (design-review-v2c1 §2), shown before the hint

@@ -11,7 +11,8 @@ final class SlipsTests: XCTestCase {
         "wet", "print", "ring", "spoiled", "pocket", "through",
         "leftLamp", "lift", "banks", "gate", "taken", "twolamps",
         "roll", "twice", "jump", "hold", "late", "order", "settle",
-        "crane", "land", "cross", "ground", "soak", "over"]
+        "crane", "land", "cross", "ground", "soak", "over",
+        "fro", "still", "hover", "past", "park"]
 
     func defaults() -> UserDefaults {
         let name = "slips.test.\(UUID().uuidString)"
@@ -30,7 +31,7 @@ final class SlipsTests: XCTestCase {
             XCTAssertTrue(film.frames.indices.contains(film.still), "\(demo.id)")
             XCTAssertLessThanOrEqual(film.totalMs, 4400, "\(demo.id): a loop is 3.6–4.4 s with its end pause")
             // the demo board shows the slip's own rule
-            XCTAssertTrue(Slips.triggers(Level(id: "x", map: demo.map, lamp: demo.lamp)).contains(demo.id) || [.shadow, .ride].contains(demo.id), "\(demo.id)")
+            XCTAssertTrue(Slips.triggers(Level(id: "x", map: demo.map, lamp: demo.lamp)).contains(demo.id) || [.shadow, .ride, .fro].contains(demo.id), "\(demo.id)")
         }
         // the beats that matter, frame by frame
         let glue = try SlipDemo.demo(.glue).film(config: pack.config)
@@ -75,7 +76,13 @@ final class SlipsTests: XCTestCase {
         XCTAssertEqual(crane.frames[crane.still].board[5, 0], .crane, "the crane landed on the facing page")
         XCTAssertEqual(crane.frames[crane.still].board[2, 0], .paper)
         XCTAssertTrue(crane.frames.last!.won)
-        XCTAssertEqual(SlipID.allCases.count, 14, "已集 n / 14")
+        // 来回 (design-ch11 §5): a lean and back — two passes, no press: the stone drops into the gap, the glue caught nothing
+        let fro = try SlipDemo.demo(.fro).film(config: pack.config)
+        XCTAssertEqual(fro.frames[fro.still].board[4, 0], .paper, "the gap is paper now")
+        XCTAssertFalse(fro.frames[fro.still].board.grid[0].contains(.loose), "the stone is gone into the gap")
+        XCTAssertEqual(fro.frames[fro.still].board[2, 0], .glue, "the glue caught nothing")
+        XCTAssertTrue(fro.frames.last!.won)
+        XCTAssertEqual(SlipID.allCases.count, 15, "已集 n / 15")
         let turn = try SlipDemo.demo(.turn).film(config: pack.config)
         XCTAssertEqual(turn.frames.last!.board.face, 1)
         XCTAssertTrue(turn.frames.last!.won)
@@ -94,7 +101,8 @@ final class SlipsTests: XCTestCase {
         let pack = try LevelPack.bundled()
         let first = Slips.firstLevels(pack.levels, order: Self.mainLine)
         XCTAssertEqual(first, [.stone: "facing", .door: "key", .ink: "ink", .tab: "stand", .shadow: "shadow", .press: "press",
-                               .ride: "ride", .glue: "glue", .turn: "turn", .wet: "wet", .lamp: "leftLamp", .gate: "gate", .roll: "roll", .crane: "crane"])
+                               .ride: "ride", .glue: "glue", .turn: "turn", .wet: "wet", .lamp: "leftLamp", .gate: "gate", .roll: "roll", .crane: "crane",
+                               .fro: "fro"])
         let bridge = pack.levels.first { $0.id == "bridge" }!
         XCTAssertEqual(Slips.due(bridge, seen: []), [])
         let glue = pack.levels.first { $0.id == "glue" }!
@@ -103,6 +111,19 @@ final class SlipsTests: XCTestCase {
         XCTAssertEqual(Slips.due(glue, seen: []), [.stone, .press], "lazy: unseen older objects first, two at most")
         XCTAssertEqual(Slips.due(glue, seen: ["stone", "press", "glue"]), [])
         XCTAssertLessThanOrEqual(Slips.due(pack.levels.first { $0.id == "lastPage" }!, seen: []).count, 2)
+    }
+
+    /// The fro slip keys on the declared needs, not on expect.needsFro: ch. 9/10 levels a to-and-fro also solves never pull it out.
+    func testFroSlipOnlyInChapter11() throws {
+        let pack = try LevelPack.bundled()
+        for id in ["jump", "late", "ground"] {
+            let lv = pack.levels.first { $0.id == id }!
+            XCTAssertEqual(lv.expect?.needsFro, true, "\(id): check.js finds a to-and-fro")
+            XCTAssertFalse(Slips.triggers(lv).contains(.fro), "\(id) must not trigger the fro slip")
+        }
+        let fro = pack.levels.filter { Slips.triggers($0).contains(.fro) }.map(\.id)
+        XCTAssertEqual(Set(fro), ["fro", "past", "park"])
+        XCTAssertEqual(Slips.due(pack.levels.first { $0.id == "fro" }!, seen: ["glue", "roll"]), [.fro])
     }
 
     func testSeedOldSaveAndNewPlayer() throws {

@@ -12,6 +12,8 @@ public enum SlipID: String, CaseIterable, Sendable, Codable {
     case roll
     /// Ch. 10 「鹤」 (fold-proto design-ch10 §5, tools/slips.js 'crane'): the paper crane (first in 10-1). Slip fourteen.
     case crane
+    /// Ch. 11 「来回」 (fold-proto design-ch11 §5, tools/slips.js 'fro'): to and fro, a lean that comes back (first in 11-1). Slip fifteen.
+    case fro
 }
 
 /// The slips' triggers and the save logic around them (design-onboarding §7.2–7.3), pure so they are tested here.
@@ -46,6 +48,9 @@ public enum Slips {
             case .gate: return s.contains("A")
             case .roll: return s.contains("r")
             case .crane: return s.contains("h")
+            // a posture slip like ride (tools/slips.js `fro`, tile null): the *declared* needs (levels.js), only on
+            // fro / past / park — not expect.needsFro, which check.js also finds on ch. 9/10 jump / late / ground
+            case .fro: return needs.contains("needsFro")
             }
         }
     }
@@ -240,6 +245,12 @@ public struct SlipDemo: Sendable {
         SlipDemo(id: .crane, level: "10-1", map: ["S.h.....", "--x--G--"], beats: [
             .walk(Cell(2, 0)), .pause(300), .angle(180, ms: 500, stamp: .crane), .at(Cell(5, 0)), .pause(250),
             .angle(0, ms: 500), .at(Cell(5, 0)), .still, .pause(300), .walk(Cell(5, 1)), .win]),
+        // 来回: the loose stone is a wall; lean (physical 60°, fold 120) — one pass, it rolls to (5,0), the square the glue
+        // faces; back flat — a second pass and no press between: it drops into the gap and the glue caught nothing; across
+        // the bridge, down to her (tools/slips.js `fro`). The still: flat again, the gap filled
+        SlipDemo(id: .fro, level: "11-1", map: [".-g--.rS", "----G--."], beats: [
+            .bump(-1, 0, .stone), .pause(300), .angle(120, ms: 500, rolled: [Cell(6, 0), Cell(5, 0)]), .pause(250),
+            .angle(0, ms: 500, rolled: [Cell(5, 0), Cell(4, 0)]), .still, .pause(300), .walk(Cell(4, 1)), .win]),
     ]
 
     public static func demo(_ id: SlipID) -> SlipDemo { all.first { $0.id == id }! }

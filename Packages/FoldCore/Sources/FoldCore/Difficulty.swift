@@ -27,9 +27,18 @@ public struct Difficulty: Sendable {
     /// check.js gates chapter 7 by its chapter number; FoldCore has no chapters, and wet ink is chapter 7's tile (8-7
     /// reuses it under the lamp: chapter 8 carries `lamp`).
     public static func isWetChapter(_ level: Level) -> Bool { level.lamp == nil && level.map.contains { $0.contains("I") } && !level.map.contains { $0.contains("h") } }   // ch. 10-5 soak has wet ink and cranes: not the wet chapter (check.js WET_CHAPTER = 7)
+    /// check.js PAR_MAX_CH = {11: {hard: 5, final: 6}}: ch. 11 「来回」 (a lean that comes back costs 2 changes and no
+    /// close) raises hard 4 -> 5 and final 5 -> 6. FoldCore has no chapters and ch. 11 shares its tiles with ch. 9/10, so no
+    /// structural rule separates it (needsFro is also true on 9-3 / 9-5 / 10-4): it is recognised by its level ids.
+    public static let chapter11: Set<String> = ["fro", "still", "hover", "past", "park"]
+    public static func parMax(for level: Level) -> Int {
+        if level.isOptional { return parMax["dark"]! }
+        if chapter11.contains(level.id), let t = level.tier, let m = ["hard": 5, "final": 6][t] { return m }
+        return parMax[level.tier ?? ""] ?? 3
+    }
     public static func range(of tier: String) -> ClosedRange<Int>? { tiers.first { $0.name == tier }?.range }
     /// The mechanics `combo` counts (check.js MECHANICS).
-    static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue", "needsFlip", "needsWet", "needsLamp", "needsGate", "needsRoll", "needsCrane"]
+    static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue", "needsFlip", "needsWet", "needsLamp", "needsGate", "needsRoll", "needsCrane", "needsFro", "needsHover"]
 
     /// What levels.json ships under `expect.difficulty`.
     public struct Summary: Sendable, Codable, Equatable {
