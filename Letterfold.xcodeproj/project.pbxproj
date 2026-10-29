@@ -26,6 +26,7 @@
 		4E042B49889CAFAFFA62FB4A /* Levels.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 93CA716983C6FD7D2F2CB18E /* Levels.xcstrings */; };
 		62D5404C1817B37DCB26D633 /* MusicUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB4F047FF96EB1C56C27E68 /* MusicUITests.swift */; };
 		632B7BC5D43A1FE091458D59 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */; };
+		7C677CF2FF97368F1172CDA0 /* Chapter11UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CBFCF4DC6EB77948082A067 /* Chapter11UITests.swift */; };
 		83E16CC195AEC3EC5512860E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B5BC6A962BF940695C18366 /* Assets.xcassets */; };
 		940B2DA1796BB58F3B8FCFAD /* Chapter3UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33328FA03A6FDAE3C9019CD5 /* Chapter3UITests.swift */; };
 		95BDB217EE07141E153788C9 /* SlipUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EBA74BD18A4CCAC6C76307B /* SlipUITests.swift */; };
@@ -100,6 +101,7 @@
 		868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		93CA716983C6FD7D2F2CB18E /* Levels.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Levels.xcstrings; sourceTree = "<group>"; };
 		9649A387FE6D80E352CD3FC9 /* BookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookView.swift; sourceTree = "<group>"; };
+		9CBFCF4DC6EB77948082A067 /* Chapter11UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter11UITests.swift; sourceTree = "<group>"; };
 		9E9E382EAE32A5BCA3D71BC9 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 		A0CC632AAB4806752275D5BB /* MapUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapUITests.swift; sourceTree = "<group>"; };
 		A8EC280F556F518FD3E0CF1A /* Letterfold.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Letterfold.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -142,6 +144,7 @@
 				7F02AD93FA8DB47DA0A3261F /* Chapter8UITests.swift */,
 				25B2C966B3DCE7BA4E158633 /* Chapter9UITests.swift */,
 				6977AD3FCF19C5CAFDFFFA7E /* Chapter10UITests.swift */,
+				9CBFCF4DC6EB77948082A067 /* Chapter11UITests.swift */,
 				86874352C30014FFF456BE3E /* ContentsUITests.swift */,
 				76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */,
 				3015C80653E030579E65FC8D /* LayoutStabilityUITests.swift */,
@@ -371,6 +374,7 @@
 			files = (
 				34363C4C6EA532C07D98704B /* Boards13.swift in Sources */,
 				315A4F04504D631DA448B741 /* Chapter10UITests.swift in Sources */,
+				7C677CF2FF97368F1172CDA0 /* Chapter11UITests.swift in Sources */,
 				940B2DA1796BB58F3B8FCFAD /* Chapter3UITests.swift in Sources */,
 				AAC6885CD98A69713F89E05E /* Chapter4UITests.swift in Sources */,
 				A14167539C197C23C60606DD /* Chapter5UITests.swift in Sources */,
