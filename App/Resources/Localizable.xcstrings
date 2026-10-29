@@ -842,7 +842,7 @@
       }
     },
     "ch.11.line": {
-      "comment": "UI. From fold-proto i18n.js.",
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1712,7 +1712,7 @@
       }
     },
     "chHead.11": {
-      "comment": "UI. From fold-proto i18n.js.",
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -6932,7 +6932,7 @@
       }
     },
     "letter.11.body": {
-      "comment": "UI. From fold-proto i18n.js.",
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -6962,7 +6962,7 @@
       }
     },
     "letter.11.end": {
-      "comment": "UI. From fold-proto i18n.js.",
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -6992,7 +6992,7 @@
       }
     },
     "letter.11.sign": {
-      "comment": "UI. From fold-proto i18n.js.",
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -7022,7 +7022,7 @@
       }
     },
     "letter.11.title": {
-      "comment": "UI. From fold-proto i18n.js.",
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -10742,7 +10742,7 @@
       }
     },
     "paper.ch11": {
-      "comment": "UI. From fold-proto i18n.js.",
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -13412,7 +13412,7 @@
       }
     },
     "slip.fro.body": {
-      "comment": "UI. From fold-proto i18n.js.",
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -13442,7 +13442,7 @@
       }
     },
     "slip.fro.pic": {
-      "comment": "UI. From fold-proto i18n.js.",
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -13472,7 +13472,7 @@
       }
     },
     "slip.fro.title": {
-      "comment": "UI. From fold-proto i18n.js.",
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {

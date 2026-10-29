@@ -1742,7 +1742,7 @@
       }
     },
     "fro.hint": {
-      "comment": "Level \"fro\": hint. From fold-proto i18n.js.",
+      "comment": "Level \"fro\": hint. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1772,7 +1772,7 @@
       }
     },
     "fro.hint1": {
-      "comment": "Level \"fro\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "comment": "Level \"fro\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1802,7 +1802,7 @@
       }
     },
     "fro.line": {
-      "comment": "Level \"fro\": one-line teaser. From fold-proto i18n.js.",
+      "comment": "Level \"fro\": one-line teaser. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1832,7 +1832,7 @@
       }
     },
     "fro.name": {
-      "comment": "Level \"fro\": title. From fold-proto i18n.js.",
+      "comment": "Level \"fro\": title. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2312,7 +2312,7 @@
       }
     },
     "hover.hint": {
-      "comment": "Level \"hover\": hint. From fold-proto i18n.js.",
+      "comment": "Level \"hover\": hint. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2342,7 +2342,7 @@
       }
     },
     "hover.hint1": {
-      "comment": "Level \"hover\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "comment": "Level \"hover\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2372,7 +2372,7 @@
       }
     },
     "hover.line": {
-      "comment": "Level \"hover\": one-line teaser. From fold-proto i18n.js.",
+      "comment": "Level \"hover\": one-line teaser. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2402,7 +2402,7 @@
       }
     },
     "hover.name": {
-      "comment": "Level \"hover\": title. From fold-proto i18n.js.",
+      "comment": "Level \"hover\": title. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -4772,7 +4772,7 @@
       }
     },
     "park.hint": {
-      "comment": "Level \"park\": hint. From fold-proto i18n.js.",
+      "comment": "Level \"park\": hint. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -4802,7 +4802,7 @@
       }
     },
     "park.hint1": {
-      "comment": "Level \"park\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "comment": "Level \"park\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -4832,7 +4832,7 @@
       }
     },
     "park.line": {
-      "comment": "Level \"park\": one-line teaser. From fold-proto i18n.js.",
+      "comment": "Level \"park\": one-line teaser. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -4862,7 +4862,7 @@
       }
     },
     "park.name": {
-      "comment": "Level \"park\": title. From fold-proto i18n.js.",
+      "comment": "Level \"park\": title. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -4892,7 +4892,7 @@
       }
     },
     "past.hint": {
-      "comment": "Level \"past\": hint. From fold-proto i18n.js.",
+      "comment": "Level \"past\": hint. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -4922,7 +4922,7 @@
       }
     },
     "past.hint1": {
-      "comment": "Level \"past\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "comment": "Level \"past\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -4952,7 +4952,7 @@
       }
     },
     "past.line": {
-      "comment": "Level \"past\": one-line teaser. From fold-proto i18n.js.",
+      "comment": "Level \"past\": one-line teaser. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -4982,7 +4982,7 @@
       }
     },
     "past.name": {
-      "comment": "Level \"past\": title. From fold-proto i18n.js.",
+      "comment": "Level \"past\": title. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -7082,7 +7082,7 @@
       }
     },
     "still.hint": {
-      "comment": "Level \"still\": hint. From fold-proto i18n.js.",
+      "comment": "Level \"still\": hint. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -7112,7 +7112,7 @@
       }
     },
     "still.hint1": {
-      "comment": "Level \"still\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "comment": "Level \"still\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -7142,7 +7142,7 @@
       }
     },
     "still.line": {
-      "comment": "Level \"still\": one-line teaser. From fold-proto i18n.js.",
+      "comment": "Level \"still\": one-line teaser. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -7172,7 +7172,7 @@
       }
     },
     "still.name": {
-      "comment": "Level \"still\": title. From fold-proto i18n.js.",
+      "comment": "Level \"still\": title. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
