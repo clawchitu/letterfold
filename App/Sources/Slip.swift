@@ -126,6 +126,14 @@ struct SlipLayer: View {
             return CGRect(x: x, y: a.crease - 8 - h, width: w, height: h)
         }
         let w = min(max(a.page.width - 24, minWidth), 460)
+        if let tall = SlipView.beatsHeight(model.slipPages) {
+            // 松石 / 纸鹤 / 来回笺 in landscape: the beats stand above the text, taller than a short board's page
+            // (a two-row board's ≈ 152 pt); the slip takes the picture plus its text, up to the screen's height, and
+            // SlipView scales the beats down where even that cannot hold both
+            let h = min(tall + 24 + 10 + 200, max(a.page.height - 24, size.height - 16))
+            let x = min(max(a.page.minX + (a.page.width - w) / 2, -margin + 8), size.width + margin - 8 - w)
+            return CGRect(x: x, y: max(8, min(a.page.minY + 12, size.height - 8 - h)), width: w, height: h)
+        }
         let h = min(a.page.height - 24, MiniBook.size.width + 24 + 170)
         let x = min(max(a.page.minX + (a.page.width - w) / 2, -margin + 8), size.width + margin - 8 - w)
         return CGRect(x: x, y: a.page.minY + 12, width: w, height: h)
@@ -194,6 +202,20 @@ struct SlipView: View {
     /// the slips whose pictures are two still beats above the text (松石, 纸鹤, 来回), not a film
     static let twoBeats: Set<SlipID> = [.roll, .crane, .fro]
 
+    /// The two beats' natural height for a two-beat slip.
+    static func pictureHeight(_ id: SlipID) -> Double {
+        switch id {
+        case .crane: CraneSlipPicture.height
+        case .fro: FroSlipPicture.height
+        default: RollSlipPicture.height
+        }
+    }
+
+    /// The tallest two-beat picture among the slips on show, or nil when none of them has beats.
+    static func beatsHeight(_ ids: [SlipID]) -> Double? {
+        ids.filter { twoBeats.contains($0) }.map(pictureHeight).max()
+    }
+
     @ViewBuilder private var beats: some View {
         switch id {
         case .crane: CraneSlipPicture()
@@ -210,8 +232,11 @@ struct SlipView: View {
             if Self.twoBeats.contains(id) {
                 // 松石笺 (design-review-vol3-art §3.7), 纸鹤笺 (design-review-ch10-art §3.8): two still beats side by
                 // side above the text, not a film
+                // never more than the slip can hold above at least ~130 pt of text: a short slip scales the beats down
+                let tall = Self.pictureHeight(id)
+                let k = min(1, max(0.4, (size.height - 24 - 10 - 130) / tall))
                 VStack(alignment: .leading, spacing: 10) {
-                    beats.frame(maxWidth: .infinity)
+                    beats.scaleEffect(k, anchor: .top).frame(height: tall * k, alignment: .top).frame(maxWidth: .infinity)
                     column(text, last: last)
                 }
             } else if horizontal {

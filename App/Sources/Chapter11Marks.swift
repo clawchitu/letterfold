@@ -9,8 +9,8 @@ import FoldCore
 
 /// One still of 十一 · 来回's small book: the left leaf flat, the right leaf at `phi` degrees off level about the crease
 /// point (0.50 w, 0.68 h) — 0 flat, 120 = physical 60° (past upright, leaning 30° over the left leaf). Each leaf is a
-/// 3 pt band with three pressed-square ticks (StandBook's drawing), four squares long. A loose stone lies on the left
-/// leaf `ballAt` squares from the crease (centre), sinking by `sink` into the square by the crease; `pressed` draws
+/// 3 pt band with three pressed-square ticks (StandBook's drawing), four squares long. A loose stone lies on the right
+/// (lifting) leaf `ballAt` squares from the crease (centre), sinking by `sink` into the square by the crease; `pressed` draws
 /// that square pressed in, `ring` its faint one-off ring (0…1 fades it out).
 struct FroBookFrame: View {
     var phi = 0.0
@@ -29,19 +29,23 @@ struct FroBookFrame: View {
             ZStack {
                 leaf(crease, angle: 180, len: len, cell: cell, w: w)
                 leaf(crease, angle: phi, len: len, cell: cell, w: w)
+                // the stone lies on the right leaf, the one that lifts (only the lifted page's stones roll, §6), on
+                // its inner face: the normal that points up while the leaf is level, carried round with it
+                let a = phi * .pi / 180, dx = cos(a), dy = -sin(a), nx = -sin(a), ny = -cos(a)
+                let on = { (t: Double, off: Double) in CGPoint(x: crease.x + dx * t + nx * off, y: crease.y + dy * t + ny * off) }
                 if pressed {
-                    // the square by the crease, pressed in: a short shallow trough on the left leaf
-                    Path { p in p.move(to: CGPoint(x: crease.x - 0.85 * cell, y: crease.y + 0.4)); p.addLine(to: CGPoint(x: crease.x - 0.15 * cell, y: crease.y + 0.4)) }
+                    // the square by the crease, pressed in: a short shallow trough on the right leaf
+                    Path { p in p.move(to: on(0.15 * cell, -0.4)); p.addLine(to: on(0.85 * cell, -0.4)) }
                         .stroke(hc ? Color.black : Tok.tileEdge.opacity(0.55), style: StrokeStyle(lineWidth: hc ? 1.5 : 1.2, lineCap: .round))
                 }
                 if let ring {
                     Circle().stroke(hc ? Color.black : Tok.tileEdge, lineWidth: 1).frame(width: cell * 0.9, height: cell * 0.9)
-                        .position(x: crease.x - 0.5 * cell, y: crease.y - 1.5).opacity(1 - ring)
+                        .position(on(0.5 * cell, 1.5)).opacity(1 - ring)
                 }
                 if let ballAt, sink < 1 {
                     let s = ballD / 0.64
                     LooseBall(size: s, sink: sink, hc: hc).frame(width: s, height: s)
-                        .position(x: crease.x - ballAt * cell, y: crease.y - ballD / 2 - 1.5 + s * 0.02)
+                        .position(on(ballAt * cell, ballD / 2 + 1.5 - s * 0.02))
                 }
             }
             .shadow(color: .black.opacity(hc ? 0 : 0.14), radius: 6, y: 4)
@@ -70,7 +74,7 @@ struct FroBookFrame: View {
 }
 
 /// 十一 · 来回's opener (§8.4): the book lies flat; its right leaf rises about the crease to physical 60° over 0.8 s
-/// (easeInOut), holds 0.2 s and lies back down over 0.8 s. At each upright crossing the stone on the left leaf rolls one
+/// (easeInOut), holds 0.2 s and lies back down over 0.8 s. At each upright crossing the stone on the right leaf rolls one
 /// square towards the crease (RollCurve, as in play); the second roll drops it into the square by the crease, a faint
 /// ring for 200 ms and the square is pressed. 2.0 s; the book ends as it began, only the stone is gone — nothing was
 /// pressed: no glue, ink, flash or close.snap. Reduce Motion (the app's setting): three frames, flat / leaning / flat,
@@ -261,7 +265,8 @@ nonisolated struct FroOutline: Shape {
         var p = Path()
         p.move(to: pt(0.06, 0.8)); p.addLine(to: pt(0.56, 0.8))
         p.addLine(to: pt(0.56 - 0.46 * 0.5, 0.8 - 0.46 * 0.866))
-        p.addEllipse(in: CGRect(x: r.minX + r.width * 0.08, y: r.minY + r.height * 0.56, width: r.width * 0.2, height: r.width * 0.2))
+        // the stone on the leaning leaf's inner face, 1.5 squares up from the crease (as FroGlyph)
+        p.addEllipse(in: CGRect(x: r.minX + r.width * 0.29, y: r.minY + r.height * 0.6, width: r.width * 0.2, height: r.width * 0.2))
         return p
     }
 }
