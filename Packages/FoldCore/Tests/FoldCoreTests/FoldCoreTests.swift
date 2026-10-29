@@ -126,7 +126,8 @@ final class DifficultyTests: XCTestCase {
                         4, 8, 14, 18, 17, 18,
                         3, 8, 12, 11, 18, 19,
                         4, 7, 14, 13, 15, 19, 21,
-                        5, 6, 16, 18, 19, 19])
+                        5, 6, 16, 18, 19, 19,
+                        6, 12, 17, 19, 20])
         let vol1 = pack.levels.prefix(25).compactMap(\.len)
         XCTAssertGreaterThanOrEqual(Double(vol1.reduce(0, +)) / Double(vol1.count), 15)
         for range in [0..<5, 5..<13, 13..<19, 19..<25, 25..<32, 35..<42, 42..<48, 48..<54, 54..<61] {
