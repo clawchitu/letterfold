@@ -9,7 +9,7 @@ final class ParTests: XCTestCase {
         let solver = Solver(pack.config)
         for lv in pack.levels {
             let s = try XCTUnwrap(solver.solve(lv), lv.id)
-            XCTAssertLessThanOrEqual(s.cost, Difficulty.parMax[lv.isOptional ? "dark" : lv.tier ?? ""] ?? 3, lv.id)
+            XCTAssertLessThanOrEqual(s.cost, Difficulty.parMax(for: lv), lv.id)
             var closes = 0, prev: Posture? = nil
             for st in s.steps { if st.posture == .closed && prev != .closed { closes += 1 }; prev = st.posture }
             XCTAssertLessThanOrEqual(closes, Difficulty.closesMax(optional: lv.isOptional, tier: lv.tier, wet: Difficulty.isWetChapter(lv)), lv.id)
@@ -32,7 +32,9 @@ final class ParTests: XCTestCase {
         // vol. 3 chapter 9 「滚」 (fold-proto design-ch9.md)
         XCTAssertEqual(Array(ids[54..<61]), ["roll", "twice", "jump", "hold", "late", "order", "settle"])
         // vol. 3 chapter 10 「鹤」 (fold-proto design-ch10.md)
-        XCTAssertEqual(Array(ids[61...]), ["crane", "land", "cross", "ground", "soak", "over"])
+        XCTAssertEqual(Array(ids[61..<67]), ["crane", "land", "cross", "ground", "soak", "over"])
+        // vol. 3 chapter 11 「来回」 (fold-proto design-ch11.md)
+        XCTAssertEqual(Array(ids[67...]), ["fro", "still", "hover", "past", "park"])
         XCTAssertEqual(Array(ids[25..<35]), ["glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps",
                                        "darkBack", "darkDoor", "darkInk"])
     }

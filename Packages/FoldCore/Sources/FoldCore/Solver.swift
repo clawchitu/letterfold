@@ -85,6 +85,14 @@ public struct Solver: Sendable {
         public var walk: Int { steps.count - 1 - cost }
     }
 
+    /// The player models check.js `move` opts stand for (vol. 3 ch. 11 「来回」). `noFro`: passes roll only on the sweep of
+    /// a close or of the opening after one (the ch. 9/10 player's model). `openPass`: every opening of the closed book rolls,
+    /// as if it always went flat (a forced roll at the first 5° step of an opening that stays on the closed side of upright).
+    public struct Options: Sendable, Equatable {
+        public var noFro = false, openPass = false
+        public init(noFro: Bool = false, openPass: Bool = false) { self.noFro = noFro; self.openPass = openPass }
+    }
+
     /// The character cell after turning the hinge from a0 to a1, or nil if it falls (or is crushed): check.js `turn`.
     public func turn(_ b: Board, _ from: Cell, _ a0: Double, _ a1: Double) -> Cell? {
         var cur = from
@@ -108,14 +116,17 @@ public struct Solver: Sendable {
     /// crushed. The angle walks in 5° steps and a figure on a shadow rides it; each time the lifted page passes upright
     /// (vol. 3: the hinge crosses 90°) the loose stones roll first — the rest of the sweep (shadows, the crush when the
     /// book closes) is judged on the rolled board. Reaching a close presses the pages after the sweep.
-    func move(_ B: GridChain, _ s: FoldState, _ a1: Double) -> FoldState? {
+    func move(_ B: GridChain, _ s: FoldState, _ a1: Double, _ opts: Options = Options()) -> FoldState? {
         var cur = Cell(s.c, s.r), g = s.g
         var src: Int?
         var b = B.world(s)
         let step = a1 > s.a ? 5.0 : -5.0
+        let fm = rules.config.foldMin
+        let rolls = !opts.noFro || a1 >= fm || s.a >= fm
+        let forced = opts.openPass && s.a >= fm && a1 < fm && !rules.passes(s.a, a1)
         var a = s.a + step
         while step > 0 ? a <= a1 : a >= a1 {
-            if rules.passes(a - step, a) {
+            if (rolls && rules.passes(a - step, a)) || (forced && a == s.a + step) {
                 let ng = B.roll(g, s.face, cur)
                 if ng != g { g = ng; b = B.world(FoldState(c: cur.c, r: cur.r, a: a, face: s.face, g: g)) }
                 src = nil
@@ -153,10 +164,11 @@ public struct Solver: Sendable {
     func step(_ s: FoldState) -> Step { Step(posture: rules.posture(s.a), angle: s.a, cell: Cell(s.c, s.r), st: s.st, face: s.face) }
 
     public func solve(_ level: Level, angles: [Double] = Solver.angles) -> Solution? { solve(level, angles: angles, from: nil) }
+    public func solve(_ level: Level, angles: [Double] = Solver.angles, options: Options) -> Solution? { solve(level, angles: angles, from: nil, options: options) }
 
     /// 0-1 BFS from `from` (default: the level's start, flat, unpressed): angle changes and page turns cost 1, steps 0.
     /// A `from` state's g indexes `chain`, so pass that chain when starting mid-game.
-    func solve(_ level: Level, angles: [Double] = Solver.angles, from: FoldState?, chain: GridChain? = nil, noFlip: Bool = false) -> Solution? {
+    func solve(_ level: Level, angles: [Double] = Solver.angles, from: FoldState?, chain: GridChain? = nil, noFlip: Bool = false, options: Options = Options()) -> Solution? {
         guard let B = chain ?? self.chain(level) else { return nil }
         let start = from ?? startOf(B)
         var parent: [FoldState: FoldState] = [:]
@@ -177,7 +189,7 @@ public struct Solver: Sendable {
             }
             var next: [(FoldState, Int)] = []
             for a in angles where FoldTally.cost(from: s.a, to: a) > 0 {
-                if let n = move(B, s, a) { next.append((n, FoldTally.cost(from: s.a, to: a))) }
+                if let n = move(B, s, a, options) { next.append((n, FoldTally.cost(from: s.a, to: a))) }
             }
             if !noFlip, case let .to(f) = flipOf(B, s) { next.append((f, FoldTally.turnCost)) }
             let sh = rules.shadows(b, s.a)
@@ -221,6 +233,22 @@ public struct Solver: Sendable {
         return nil
     }
 
+    /// gen.js measure (ch. 11): `passes` = hinge moves of the shortest solution that take the lifted page through upright;
+    /// `fros` = leans that come back — two consecutive hinge moves that both pass, no end closed, no turn between (a pair is spent).
+    public func passesAndFros(_ level: Level) -> (passes: Int, fros: Int)? {
+        guard let path = shortest(level)?.path else { return nil }
+        var hinge: [Int] = []
+        for i in 1..<max(1, path.count) where path[i].face == path[i - 1].face && path[i].angle != path[i - 1].angle { hinge.append(i) }
+        let isPass = { (i: Int) in rules.passes(path[i - 1].angle, path[i].angle) }
+        let shut = { (i: Int) in path[i].posture == .closed }
+        var fros = 0, k = 0
+        while k + 1 < hinge.count {
+            let i = hinge[k], j = hinge[k + 1]
+            if isPass(i) && isPass(j) && !shut(i - 1) && !shut(i) && !shut(j) && !(i + 1..<j + 1).contains(where: { path[$0].face != path[$0 - 1].face && $0 < j }) { fros += 1; k += 2 } else { k += 1 }
+        }
+        return (hinge.filter(isPass).count, fros)
+    }
+
     /// Can the goal still be reached from here (the game's dead-end check, design-review-v2c1 §3)? `closedOnce`: the
     /// first close has happened (the board in play is the stamped one).
     public func canStillWin(_ level: Level, from cell: Cell, angle: Double, closedOnce: Bool) -> Bool {
@@ -259,6 +287,11 @@ public struct Solver: Sendable {
         if let lamp = level.lamp, lamp != "R" { var r = level; r.lamp = "R"; e.needsLamp = solve(r) == nil }   // the lamp back on the right bank
         if all.contains("r") {   // vol. 3 ch. 9: unsolvable with the loose stones glued down
             e.needsRoll = solve(Level(id: level.id, map: level.map.map { String($0.map { $0 == "r" ? "x" : $0 }) }, lamp: level.lamp)) == nil
+        }
+        if all.contains("r") {   // vol. 3 ch. 11: unsolvable, or dearer, without a lean that comes back / a re-close from a lean
+            let nf = solve(level, options: Options(noFro: true)), nh = solve(level, options: Options(openPass: true))
+            e.needsFro = nf == nil || (full != nil && nf!.cost > full!.cost)
+            e.needsHover = nh == nil || (full != nil && nh!.cost > full!.cost)
         }
         if all.contains("h") { e.needsCrane = without("h") == nil }   // vol. 3 ch. 10: the cranes unfolded into plain paper
         if all.contains("A") { e.needsGate = without("A") == nil }   // the angle gate laid down as paper

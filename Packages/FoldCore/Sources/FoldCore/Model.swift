@@ -92,6 +92,10 @@ public struct Expectation: Sendable, Codable, Equatable {
     public var needsRoll: Bool?
     /// Vol. 3 ch. 10: unsolvable with the cranes unfolded into plain paper (h -> .).
     public var needsCrane: Bool?
+    /// Vol. 3 ch. 11: unsolvable, or dearer, when a lean that comes back rolls nothing (passes only with a press).
+    public var needsFro: Bool?
+    /// Vol. 3 ch. 11: unsolvable, or dearer, when every opening of the closed book rolls (no re-close from a lean).
+    public var needsHover: Bool?
     public var stepped15: Bool
     /// tools/check.js `analyse()` (design-difficulty.md §2); the Swift `Difficulty` port must agree.
     public var difficulty: Difficulty.Summary?
@@ -113,6 +117,8 @@ public struct Expectation: Sendable, Codable, Equatable {
         case "needsGate": return needsGate
         case "needsRoll": return needsRoll
         case "needsCrane": return needsCrane
+        case "needsFro": return needsFro
+        case "needsHover": return needsHover
         default: return nil
         }
     }
