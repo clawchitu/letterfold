@@ -10,6 +10,15 @@ const outDir = path.join(__dirname, '..', 'App', 'Resources');
 
 // strings the native app needs that the web prototype does not have
 const NATIVE = {
+  // 0.1 (25): keys earlier builds wrote into the catalog by hand (0.1 (22) map / slip beats, 0.1 (24) music), kept by the sync
+  'ch.number': ['第{n}章', 'Chapter {n}', '第{n}章', '{n}장'],
+  'set.music': ['音乐', 'Music', '音楽', '음악'],
+  'set.music.d': ['背景里轻轻的琴声，每章不同', 'Quiet music in the background, its own in each chapter', '背景に静かな音楽。章ごとに違う音色', '배경에 잔잔한 음악, 장마다 다른 음색'],
+  'set.musicVol': ['音乐音量', 'Music volume', '音楽の音量', '음악 음량'],
+  'slip.crane.close': ['合上', 'close', '閉じる', '닫기'],
+  'slip.crane.stay': ['不飞', 'stays', '飛ばない', '안 날아요'],
+  'slip.roll.lean': ['斜起', 'lean', '傾ける', '기울이기'],
+  'slip.roll.flat': ['放平', 'flat', '平らに', '펴기'],
   walkHere: ['走到这里', 'Walk here', 'ここへ歩く', '여기로 걷기'],
   hingeSource: ['折叠输入', 'Fold input', '折りの入力', '접기 입력'],
   'hinge.simulated': ['滑块与拖动', 'Slider and drag', 'スライダーとドラッグ', '슬라이더와 드래그'],
