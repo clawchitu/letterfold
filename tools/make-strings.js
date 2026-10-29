@@ -185,7 +185,7 @@ const NATIVE = {
   // (design-review-vol3-art §2.7). The map's page title / the opener's tag row read `vol.N` as the volume's name.
   'ch.9': ['滚', 'Roll', '転', '구르기'],
   'ch.10': ['鹤', 'Crane', '鶴', '학'],
-  'ch.11': ['来回', 'To and Fro', '行き来', '오가기'],
+  'ch.11': ['来回', 'To and Fro', '往き来', '오가기'],
   'ch.12': ['三折', 'Trifold', '三つ折り', '세 번 접기'],
   'vol.3': ['倾', 'Tilt', '傾く', '기울기'],
   'map.book3': ['卷三', 'Book Three', '第三巻', '제3권'],
