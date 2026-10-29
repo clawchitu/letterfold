@@ -110,7 +110,7 @@ final class DifficultyTests: XCTestCase {
             XCTAssertEqual(len, lv.len, "\(lv.id): measured len \(len), declared \(lv.len ?? -1)")
             if let lo = Difficulty.lenMin[tier] { XCTAssertGreaterThanOrEqual(len, lo, "\(lv.id): too short for \(tier)") }
             if let hi = Difficulty.lenMax[tier] { XCTAssertLessThanOrEqual(len, hi, "\(lv.id): too long for \(tier)") }
-            XCTAssertLessThanOrEqual(s.par, Difficulty.parMax[tier] ?? 3, "\(lv.id): over par for \(tier)")
+            XCTAssertLessThanOrEqual(s.par, Difficulty.parMax(for: lv), "\(lv.id): over par for \(tier)")   // ch. 11 hard 5 / final 6
             let closes = s.path.indices.dropFirst().filter { s.path[$0].posture == .closed && s.path[$0 - 1].posture != .closed }.count
             XCTAssertLessThanOrEqual(closes, Difficulty.closesMax(optional: lv.isOptional, tier: lv.tier, wet: Difficulty.isWetChapter(lv)), "\(lv.id): too many full closes")
             XCTAssertEqual(s.par, lv.expect?.changes, lv.id)

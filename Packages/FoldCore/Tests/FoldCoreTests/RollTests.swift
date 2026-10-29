@@ -156,6 +156,6 @@ final class RollTests: XCTestCase {
             XCTAssertFalse(ev.contains(.deadEnd), "\(id): the solution is never a dead end")
             XCTAssertEqual(g.tally.count, lv.expect?.changes, "\(id): 折数 = par")
         }
-        XCTAssertEqual(pack.levels.filter { $0.map.joined().contains("r") && !CraneTests.ch10.contains($0.id) }.map(\.id), Self.ch9)
+        XCTAssertEqual(pack.levels.filter { $0.map.joined().contains("r") && !CraneTests.ch10.contains($0.id) }.map(\.id), Self.ch9 + Chapter11Tests.ch11, "ch. 9, and every ch. 11 level rolls")
     }
 }
