@@ -1379,7 +1379,9 @@ private struct CameraBook: View {
         // the bridges, the targets); `rel` is what the projection turns the page by — on the Duo relative to the lid, which
         // is itself the folding page (design-duo.md §2; Codex review P1: never feed `rel` to gameplay drawing decisions)
         let th = model.angle + model.rubber + model.tease
-        let rel = th - model.drawnOffset
+        // §2: past 90° the lid turns its back to the reader — the leaf is drawn where it lands, over the fixed page on
+        // the lower half (a hinge-shut book shows its stacked map there), not relative to the lid any more
+        let rel = th > 90 ? th : th - model.drawnOffset
         let cam = BookCamera.make(fold: rel, pitch: model.cameraPitch, page: page, container: geo.bookSize, reduceMotion: AppSettings.shared.motionReduced,
                                   large: AppSettings.shared.largeGrid, tri: model.trifoldFace, duo: model.duoLayout)
         let t = rel * .pi / 180

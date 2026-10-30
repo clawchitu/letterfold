@@ -9,7 +9,10 @@ let hingeLog = Logger(subsystem: "com.haoqianglyu.letterfold", category: "hinge"
 /// in the portrait window a horizontal line at screen.bounds.height / 2 (475.5 pt). Only with a hinge that reported
 /// itself and a window on a display ≥ 600 pt wide (the inner one); the outer display and every other iPhone: nil.
 enum DuoScreen {
+    /// Debug (-duoShot): the inner display's size, forced, for ImageRenderer snapshots off the real Duo.
+    @MainActor static var forced: CGSize?
     @MainActor static var hingeY: CGFloat? {
+        if let f = forced { return f.width >= 600 ? f.height / 2 : nil }
         guard AppSettings.shared.hingePresent,
               let screen = (UIApplication.shared.connectedScenes.first { $0 is UIWindowScene } as? UIWindowScene)?.screen,
               screen.bounds.width >= 600 else { return nil }
