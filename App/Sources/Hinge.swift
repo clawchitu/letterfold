@@ -5,6 +5,20 @@ import FoldCore
 
 let hingeLog = Logger(subsystem: "com.haoqianglyu.letterfold", category: "hinge")
 
+/// design-duo.md §2: the Duo's inner display. The SDK has no hinge geometry, so the hinge is where the long side halves:
+/// in the portrait window a horizontal line at screen.bounds.height / 2 (475.5 pt). Only with a hinge that reported
+/// itself and a window on a display ≥ 600 pt wide (the inner one); the outer display and every other iPhone: nil.
+enum DuoScreen {
+    @MainActor static var hingeY: CGFloat? {
+        guard AppSettings.shared.hingePresent,
+              let screen = (UIApplication.shared.connectedScenes.first { $0 is UIWindowScene } as? UIWindowScene)?.screen,
+              screen.bounds.width >= 600 else { return nil }
+        return screen.bounds.height / 2
+    }
+    /// The band under the fixed page kept for the top bar (「书」「?」), which moves below the hinge on the Duo.
+    static let chromeBand: CGFloat = 56
+}
+
 /// Where the fold angle comes from. Angles are in game degrees: 0 = flat, 90 = standing, 180 = closed.
 protocol HingeProvider: AnyObject {
     var kind: HingeKind { get }

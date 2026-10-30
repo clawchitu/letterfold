@@ -188,6 +188,13 @@ final class GameModel {
     static var letterDelay: Double { UserDefaults.standard.object(forKey: "finaleLetterDelay") != nil ? UserDefaults.standard.double(forKey: "finaleLetterDelay") : 1.5 }
 
     var orientation: Spread.Orientation = .horizontalCrease
+    /// design-duo.md §2: BookView pins the crease on the Duo's hinge (set by BookView).
+    var duoLayout = false
+    /// The phone's own fold (FoldCore fold degrees, 0 flat), whatever drives the book: the paper lies on the glass, so
+    /// on the Duo the page is drawn relative to the lid (`drawnFold`).
+    private(set) var physicalFold: Double = 0
+    /// What BookView turns the folding page by: the virtual angle less the lid's own (design-duo.md §2).
+    var drawnOffset: Double { duoLayout ? physicalFold : 0 }
     var spread: Spread { Spread(orientation, columnsPerPage: config.columnsPerPage, rows: board.h) }
 
     private(set) var toast: String?
@@ -372,7 +379,10 @@ final class GameModel {
         else if #available(iOS 27.1, *) { device = UIHingeProvider() } else { device = nil }
         simulated.onAngle = { [weak self] a in self?.setAngle(a) }
         (device as? any PhysicalHinge)?.onHinge = { [weak self] p, s in
-            guard let self, self.hingeKind == .device else { return }
+            guard let self else { return }
+            let f = HingeMapping().fold(physical: p, status: s) ?? 0
+            if abs(f - self.physicalFold) > 0.05 { self.physicalFold = f }
+            guard self.hingeKind == .device else { return }
             self.hingeMoved(physical: p, status: s)
         }
         device?.onAvailabilityChange = { [weak self] ok in

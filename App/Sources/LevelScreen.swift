@@ -17,8 +17,10 @@ struct LevelScreen: View {
 
     var body: some View {
         let big = typeSize.isAccessibilitySize || settings.largeGrid
+        // design-duo.md §2: on the Duo's inner display the lid carries only paper; the top bar sits below the fixed page
+        let duo = model.duoLayout
         VStack(spacing: 0) {
-            TopBar(model: model, router: router, nameFaded: nameFaded && !big && !settings.contrastHigh, inline: !big)
+            if !duo { TopBar(model: model, router: router, nameFaded: nameFaded && !big && !settings.contrastHigh, inline: !big) }
             if big {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(model.titleText)
@@ -70,6 +72,9 @@ struct LevelScreen: View {
                 }
             }
             .frame(maxHeight: .infinity)
+            .overlay(alignment: .bottom) {
+                if duo { TopBar(model: model, router: router, nameFaded: nameFaded && !big && !settings.contrastHigh, inline: !big).frame(height: DuoScreen.chromeBand) }
+            }
             // the rule line floats in the larger empty band above or below the book, never over a square (b20: on 7-6
             // and twolamps it hid the bottom row); if neither band fits it, one smaller line, else at the top edge
             .overlay { if let toast = model.toast { ToastBand(text: toast, board: model.boardRect).transition(.opacity) } }
