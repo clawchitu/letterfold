@@ -208,6 +208,8 @@ final class GameModel {
     static let layerRuleKey = "fold.layerRule", shadowPaperKey = "fold.shadowOnPaper"
     /// Ch. 12: the third page's refused fold was said; again only once it has been opened (main.js setAngle.blocked).
     @ObservationIgnored private var flapRefusedSaid = false
+    /// Ch. 12 on a Duo: 「第三页用手指折；铰链折的是书。」 said once per level (design-duo.md §4).
+    @ObservationIgnored private var hingeBookSaid = false
     @ObservationIgnored private var autoCreaseTask: Task<Void, Never>?
     private(set) var lastAnnouncement: String?
     private(set) var shake: [Cell: Int] = [:]
@@ -543,6 +545,8 @@ final class GameModel {
         sync()
         sound.figureMotif = goalIsFigure
         MusicDirector.shared.setChapter(chapter.id)   // the chapter's timbre, crossfading over 2 s
+        // a trifold restarts laid flat on the book's crease (face 0, f 0: game.restart rebuilds the board), so the
+        // phone's angle goes on as the book's fold, which face 0 allows (design-duo.md §5)
         if hingeKind == .device, settings.hingeFold, let a = (device as? any PhysicalHinge)?.lastAngle {
             setAngle(a); pending = Pending()
             if looksAtWall(angle) { cameraPitch = Self.wallPitch }   // a hinge already standing: look at the wall
@@ -754,7 +758,7 @@ final class GameModel {
         cancelFlip()
         quiet = false; dragging = false; angleHint = false; walking = false
         threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]; inkBledAt = [:]; clearCraneFX()
-        pending = Pending(); nopes = 0
+        pending = Pending(); nopes = 0; hingeBookSaid = false
         rollFlight = nil; fillRings = [:]   // a roll belongs to the board it happened on (Codex review 21 #1)
         toastTask?.cancel(); toastTask = nil; toast = nil
         clearGlue()
@@ -1188,6 +1192,25 @@ final class GameModel {
         switch action {
         case .ignore: return
         case .takeOver(let f):
+            // ch. 12 (design-duo.md §4): the hinge is the book's crease, the third page is always the thumb's. On the
+            // third page's crease a hinge turn goes back to the book's (the autoCrease path, inside the same one undo
+            // step) when the third page lies flat or folded all the way; half folded, the hinge is ignored with one
+            // quiet word per level.
+            if onFlap {
+                if game.creaseBlock != nil {
+                    hinge.reset()
+                    if !hingeBookSaid { hingeBookSaid = true; show(L10n.t("tri.hingeIsBook")) }
+                    return
+                }
+                finishMotionNow(); stopWalk()
+                pushUndo()
+                switchCrease(auto: true, undo: false)
+                hingeActive = true
+                freezeCamera()
+                stopGhost(); hasFolded = true
+                move(to: f, .bezier(0.2, 0.7, 0.2, 1, duration: 0.16))
+                break
+            }
             finishFlipNow()
             tuckSlip()   // the book moved by the hinge: the slip goes back (§2.2 ④)
             hingeActive = true
@@ -1566,7 +1589,7 @@ final class GameModel {
 
     /// 「第三页」 (button, P, VoiceOver action): take hold of the other crease. Refused with the reason as a toast, else
     /// one undoable move; it costs no 折数. `auto`: the third page has just come to rest folded all the way (autoCrease).
-    func switchCrease(auto: Bool = false) {
+    func switchCrease(auto: Bool = false, undo: Bool = true) {
         autoCreaseTask?.cancel(); autoCreaseTask = nil
         tuckSlip()
         if aha { finishAhaNow(); return }
@@ -1587,7 +1610,7 @@ final class GameModel {
             show(L10n.t(key))
             return
         }
-        pushUndo()
+        if undo { pushUndo() }
         let events = game.switchCrease()
         clearCrush(); rollFlight = nil; fillRings = [:]; shake = [:]; flapRefusedSaid = false
         withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .easeInOut(duration: 0.25)) {
