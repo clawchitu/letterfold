@@ -119,7 +119,8 @@ final class PlaytestTests: XCTestCase {
     /// Codex review 12: a level won leaning (5-7 两盏灯, under the stone across from her door) is shut by the finale;
     /// the won figure must stay where it won.
     func testWonFigureStaysWhenTheFinaleShutsTheBook() throws {
-        for lv in pack.levels {
+        // ch. 12 trifold faces are views, not turns (Chapter12Tests replays those: switchCrease)
+        for lv in pack.levels where !lv.isTrifold {
             let sol = try XCTUnwrap(lv.solution), g = try FoldGame(level: lv, config: pack.config)
             for s in sol.dropFirst() { if s.count > 4 && s[4] != g.face { g.flip() } else if Double(s[2]) != g.angle { g.setAngle(Double(s[2])) } else { g.step(to: Cell(s[0], s[1])) } }
             XCTAssertTrue(g.won, lv.id)

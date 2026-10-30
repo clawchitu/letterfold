@@ -187,7 +187,8 @@ final class FoldTallyTests: XCTestCase {
         let pack = try LevelPack.bundled()
         var checked = 0
         for lv in pack.levels {
-            guard let sol = lv.solution, let par = lv.expect?.changes, sol.count > 1 else { continue }
+            // ch. 12 trifold faces are views, not turns: Chapter12Tests replays those solutions (crease switches) at par
+            guard !lv.isTrifold, let sol = lv.solution, let par = lv.expect?.changes, sol.count > 1 else { continue }
             let g = try FoldGame(level: lv, config: pack.config)
             for (prev, s) in zip(sol, sol.dropFirst()) {
                 let face = s.count > 4 ? s[4] : 0, prevFace = prev.count > 4 ? prev[4] : 0

@@ -10,13 +10,16 @@ struct BookGeometry {
     let pad: Double
     /// Pages laid end to end on the table: 3 on a ch. 12 trifold (left | right | third), else 2.
     var leaves = 2
+    /// Ch. 12 portrait: the trifold's frame takes the whole width (its leaf stands two pages tall, and the camera's yaw
+    /// swings it wider than one page), else the page's width.
+    var frameWidth: Double? = nil
 
     var horizontal: Bool { spread.orientation == .horizontalCrease }
     var pageSize: CGSize {
         CGSize(width: Double(spread.slotsAcross) * tile + Double(spread.slotsAcross - 1) * gap + 2 * pad,
                height: Double(spread.slotsDown) * tile + Double(spread.slotsDown - 1) * gap + 2 * pad)
     }
-    var bookSize: CGSize { horizontal ? CGSize(width: pageSize.width, height: pageSize.height * Double(leaves)) : CGSize(width: pageSize.width * Double(leaves), height: pageSize.height) }
+    var bookSize: CGSize { horizontal ? CGSize(width: max(pageSize.width, frameWidth ?? 0), height: pageSize.height * Double(leaves)) : CGSize(width: pageSize.width * Double(leaves), height: pageSize.height) }
     /// Page depth measured away from the crease.
     var depth: Double { horizontal ? pageSize.height : pageSize.width }
 
@@ -68,7 +71,7 @@ struct BookGeometry {
                 tile = max(30, min(tile, fw, fh))
             }
         }
-        return BookGeometry(spread: s, tile: floor(tile), pad: pad, leaves: leaves)
+        return BookGeometry(spread: s, tile: floor(tile), pad: pad, leaves: leaves, frameWidth: leaves == 3 && horizontal ? available.width : nil)
     }
 }
 
@@ -143,7 +146,7 @@ struct BookView: View {
                 // UI tests: the shadow lock, the camera's pose and the finale's seal (design-review-ch4 §4.3–4.5)
                 Color.clear.frame(width: 2, height: 2)
                     .accessibilityElement().accessibilityIdentifier("probe.state")
-                    .accessibilityValue("lock=\(model.lockedCells.map { "\($0.c),\($0.r)" }.joined(separator: " "));cam=\(Int(model.cameraPitch.rounded()));seal=\(model.finaleSeal ? 1 : 0);split=\(model.finaleSealSplit ? 1 : 0);aha=\(model.aha ? 1 : 0);me=\(model.figureCell.c),\(model.figureCell.r);stuck=\(model.stuck ? 1 : 0);glued=\(model.gluePulls.count);face=\(model.shownFace);said=\(model.lastAnnouncement ?? "");toast=\(model.toast ?? "");flight=\(model.rollFlight?.rolls.count ?? 0);balls=\(model.loosePoses().count)")
+                    .accessibilityValue("lock=\(model.lockedCells.map { "\($0.c),\($0.r)" }.joined(separator: " "));cam=\(Int(model.cameraPitch.rounded()));seal=\(model.finaleSeal ? 1 : 0);split=\(model.finaleSealSplit ? 1 : 0);aha=\(model.aha ? 1 : 0);me=\(model.figureCell.c),\(model.figureCell.r);stuck=\(model.stuck ? 1 : 0);glued=\(model.gluePulls.count);face=\(model.shownFace);crease=\(Int(model.probeCreaseY.rounded()));said=\(model.lastAnnouncement ?? "");toast=\(model.toast ?? "");flight=\(model.rollFlight?.rolls.count ?? 0);balls=\(model.loosePoses().count)")
             }
         }
         .environment(\.goalIsFigure, model.goalIsFigure)
@@ -1234,7 +1237,12 @@ struct BookCamera {
         // nothing zooms when the crease in hand changes; the crease's place on screen follows the face's extents
         let fit = tri == nil ? (behind: 1.0, ahead: 1.0) : (behind: 1.0, ahead: 2.0), ext = extents(tri)
         let (p0, q0) = pose(0, GameModel.handPitch), (p1, q1) = pose(90, GameModel.wallPitch)
-        let flat = box(BookCamera(pitch: p0, yaw: q0, f: f, k: 1, cx: 0, cy: 0), 0, fit)
+        var flat = box(BookCamera(pitch: p0, yaw: q0, f: f, k: 1, cx: 0, cy: 0), 0, fit)
+        // the third page's crease puts two pages on the near side, which the perspective draws taller: fit that too
+        if tri != nil {
+            let near = box(BookCamera(pitch: p0, yaw: q0, f: f, k: 1, cx: 0, cy: 0), 0, (behind: 2, ahead: 1))
+            if near.height > flat.height { flat = near }
+        }
         let stand = box(BookCamera(pitch: p1, yaw: q1, f: f, k: 1, cx: 0, cy: 0), 90, fit)
         var k = min(1, (Wc - 6) / Double(max(flat.width, stand.width)))
         if !large { k = min(k, Hc / Double(flat.height)) }
@@ -1434,6 +1442,12 @@ private struct CameraBook: View {
                     .modifier(FigureProbe())
             }
             CreaseLine(a: cam.project(edge0), b: cam.project(SIMD3(W / 2, 0, 0)), glow: model.glow, white: model.paper.creaseWhite)
+            // ch. 12: the crease not in hand — the second one on the leaf (face 0), or the book's on the table (face 2)
+            if tri == 0 && !showBack {
+                CreaseLine(a: cam.project(edge0 + H * fold), b: cam.project(SIMD3(W / 2, 0, 0) + H * fold), glow: 0, white: 0)
+            } else if tri == 2 {
+                CreaseLine(a: cam.project(edge0 + SIMD3(0, H, 0)), b: cam.project(SIMD3(W / 2, H, 0)), glow: 0, white: 0)
+            }
             if rise > 0 { ramps(cam, fold: fold, rise: rise, W: W, H: H) }
             if model.puppetOnRamp {
                 let p = cam.project(rampPoint(model.char, fold: fold, rise: rise, W: W))
@@ -1469,6 +1483,13 @@ private struct CameraBook: View {
                 .position(x: (x0 + x1) / 2, y: (y0 + y1) / 2)
                 .allowsHitTesting(false).accessibilityHidden(true)
             ProjectedTargets(model: model, geo: geo, rotorSpace: rotorSpace, cam: cam, fold: fold, th: th)
+            // UI tests: where the crease in hand is on screen (a trifold moves it with the face)
+            if model.isTrifold {
+                Color.clear.frame(width: 1, height: 1)
+                    .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { model.probeCreaseY = Double($0.midY) }
+                    .position(cam.project(SIMD3(0, 0, 0)))
+                    .allowsHitTesting(false).accessibilityHidden(true)
+            }
             FoldControl(model: model)
                 .frame(width: page.width, height: 24)
                 .position(cam.project(SIMD3(0, 0, 0)))

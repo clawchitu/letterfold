@@ -312,6 +312,8 @@ final class GameModel {
     var probeRise: Double = 0
     /// UI tests: the largest fold angle reached while dragging (proves the drag was seen).
     var probeAngle: Double = 0
+    /// UI tests: the crease in hand's screen y (global points), ch. 12 only.
+    var probeCreaseY: Double = 0
     /// The 2-1 ghost hand is drawing the page: like a finger, it holds the camera until it lets go.
     @ObservationIgnored private var ghostDriving = false
     @ObservationIgnored private(set) var motionTarget: Double?
