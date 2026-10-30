@@ -61,6 +61,7 @@ struct MiniBook: View {
         case .roll: [.loose]
         case .crane: [.crane]
         case .fro: [.loose, .glue]   // ch. 11: the stone that rolls and the glue it never meets
+        case .trifold: [.goal]   // ch. 12: her on the folded third page
         default: []
         }
         var cells = all.filter { want.contains(b[$0]) || ((film.id == .shadow || film.id == .ride) && st.shade[$0] != nil) }

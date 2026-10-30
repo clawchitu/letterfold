@@ -36,7 +36,8 @@ struct Chapter: Identifiable {
     /// Ch. 10: 「载」 (design-review-ch10-art §2.7: what carried you across; 渡 is two level names).
     /// Ch. 9: 「落」 (design-review-vol3-art §4, Fable: the stone settles, the letter lands on the far bank).
     /// Ch. 11: 「返」 (design-ch11.md names none: the page goes up and comes back, 来回; placeholder until an art review).
-    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "灯", "落", "载", "返"][min(10, id - 1)] }
+    /// Ch. 12: 「叠」 (design-ch12.md names none: the letter folded twice over, 三折; placeholder until an art review).
+    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "灯", "落", "载", "返", "叠"][min(11, id - 1)] }
     static func volumeChapters(_ v: Int) -> [Chapter] { all.filter { $0.volume == v } }
 
     static let all: [Chapter] = [
@@ -69,7 +70,9 @@ struct Chapter: Identifiable {
         Chapter(id: 10, levelIDs: ["crane", "land", "cross", "ground", "soak", "over"], unlocked: true, soon: false),
         // 卷三 chapter 3 「来回」 (fold-proto design-ch11.md): no new tile, the hinge's path; opens once chapter 10 is all delivered
         Chapter(id: 11, levelIDs: ["fro", "still", "hover", "past", "park"], unlocked: true, soon: false),
-        Chapter(id: 12, levelIDs: [], unlocked: false, soon: true),
+        // 卷三 chapter 4 「三折」, 卷三's finale (fold-proto design-ch12.md): the third page on a crease of its own; opens once
+        // chapter 11 is all delivered. Five levels: 12-5 was cut (§3.4)
+        Chapter(id: 12, levelIDs: ["home", "hole", "return", "drop", "twofold"], unlocked: true, soon: false),
     ]
 }
 
@@ -203,6 +206,9 @@ final class GameModel {
     /// The press of a turn still in the air (Codex review 16): land it at once when other input arrives.
     @ObservationIgnored private var flipLanding: (events: [GameEvent], before: Cell, face: Int, landed: Bool)?
     static let layerRuleKey = "fold.layerRule", shadowPaperKey = "fold.shadowOnPaper"
+    /// Ch. 12: the third page's refused fold was said; again only once it has been opened (main.js setAngle.blocked).
+    @ObservationIgnored private var flapRefusedSaid = false
+    @ObservationIgnored private var autoCreaseTask: Task<Void, Never>?
     private(set) var lastAnnouncement: String?
     private(set) var shake: [Cell: Int] = [:]
     private(set) var done: Set<Int>
@@ -306,6 +312,8 @@ final class GameModel {
     var probeRise: Double = 0
     /// UI tests: the largest fold angle reached while dragging (proves the drag was seen).
     var probeAngle: Double = 0
+    /// UI tests: the crease in hand's screen y (global points), ch. 12 only.
+    var probeCreaseY: Double = 0
     /// The 2-1 ghost hand is drawing the page: like a finger, it holds the camera until it lets go.
     @ObservationIgnored private var ghostDriving = false
     @ObservationIgnored private(set) var motionTarget: Double?
@@ -387,7 +395,7 @@ final class GameModel {
     /// -cameraPitch <deg> (screenshots), -probe YES (UI tests: the drag's edge probe).
     static func launch() -> GameModel {
         let d = UserDefaults.standard
-        if d.bool(forKey: "resetProgress") { SavedProgress.resetAll(d); for k in [ruleBlockedKey, ruleUnderKey, layerRuleKey, shadowPaperKey] { d.removeObject(forKey: k) }; for k in 2...11 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
+        if d.bool(forKey: "resetProgress") { SavedProgress.resetAll(d); for k in [ruleBlockedKey, ruleUnderKey, layerRuleKey, shadowPaperKey] { d.removeObject(forKey: k) }; for k in 2...12 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
         var pack = try! LevelPack.bundled()
         let start = d.integer(forKey: "startLevel")
         // -levelMap "row|row|…" (UI tests only; gaps written "_", as a value starting with "-" would read as a flag): play the -startLevel level on another board, so a rule's regression test
@@ -414,6 +422,12 @@ final class GameModel {
         // -replayTo N (screenshots, UI tests): play the level's shipped solution up to its state N (turns included)
         if d.integer(forKey: "replayTo") > 0, let sol = m.level.solution {
             for st in sol.prefix(d.integer(forKey: "replayTo") + 1).dropFirst() {
+                if m.level.isTrifold {
+                    // ch. 12: a state's face is the view (0 / 2 / 3); taking a crease is free, each rest is a fold
+                    if st[4] != m.game.face || Double(st[2]) != m.game.angle { m.reach(face: st[4], angle: Double(st[2])) }
+                    else { _ = m.game.step(to: Cell(st[0], st[1])) }
+                    continue
+                }
                 if st.count > 4 && st[4] != m.game.face { _ = m.game.flip() }
                 else if Double(st[2]) != m.game.angle { m.setAngle(Double(st[2])) }
                 else { _ = m.game.step(to: Cell(st[0], st[1])) }
@@ -493,7 +507,8 @@ final class GameModel {
     }
     var angleText: String { L10n.t("angle", ["a": shownAngle]) }
     var foldValue: String { L10n.t("fold.value", ["mode": modeWord, "a": shownAngle]) }
-    func pos(_ c: Int, _ r: Int) -> String { L10n.t("pos", ["r": r + 1, "c": c + 1]) }
+    /// Ch. 12: positions are MAP columns (1–12: left | right | third page), the columns the hints count in (a11y.js pos).
+    func pos(_ c: Int, _ r: Int) -> String { L10n.t("pos", ["r": r + 1, "c": mapCol(c, r) + 1]) }
     func pos(_ p: Cell) -> String { pos(p.c, p.r) }
 
     /// The board's accessibilityValue: progress without the thread (design-spec §7), e.g. "step 3, 2 squares from the goal, book closed".
@@ -747,7 +762,7 @@ final class GameModel {
     var intro: String {
         let t = levelText, g = game.goal
         return L10n.t(isDark ? "intro.dark" : "intro", ["n": code, "name": isDark ? darkName : t.name, "line": t.line, "you": pos(game.char),
-                                "goal": g.map(pos) ?? L10n.t("elsewhere")]) + " " + L10n.t("paper.ch\(chapter.id)")
+                                "goal": g.map(pos) ?? L10n.t("elsewhere")]) + " " + L10n.t("paper.ch\(chapter.id)") + (isTrifold ? " " + L10n.t("tri.help") : "")
     }
 
     /// The web's hints talk about the right and left pages; on a portrait phone those are the top and bottom pages.
@@ -779,6 +794,7 @@ final class GameModel {
         let before = angle, figure = char
         let events = game.setAngle(a)
         angle = game.angle
+        if angle < config.foldMin - 10 { flapRefusedSaid = false }
         // a hold is noted before this update's roll is handled; the flight is settled after handle() installs any new flight, so an
         // update that skips the whole window never leaves a stale flight to come back on re-entry (Codex review 21 #2)
         if paper.card && rules.passes(before, angle) && rollFlight == nil { noteHeldIfAny() }
@@ -1052,9 +1068,10 @@ final class GameModel {
     private func freezeCamera() { cameraTask?.cancel(); cameraTask = nil }
 
     private func arrived(at target: Double) {
-        if target >= 180 { contact() }
+        if target >= 180 && angle >= config.foldMin { contact() }   // ch. 12: a refused third page stopped short of the slap
         else if detents.contains(target) { haptics.snap() }
         if !aha { settle() }
+        autoCrease()
     }
 
     /// How fast the page came down, fold °/s: the last ~80 ms of motion (finger, spring or hinge) when it reached the
@@ -1291,6 +1308,7 @@ final class GameModel {
         stopWalk()
         finishMotionNow()
         playTile(cell)
+        if let key = flapWalkBlock { haptics.nope(); show(L10n.t(key)); return }
         guard let path = game.path(to: cell) else {
             haptics.nope()
             if settings.soundMode { sound.hollow(pan: pan(of: cell)) }
@@ -1342,6 +1360,7 @@ final class GameModel {
         if won { return }
         stopWalk()
         finishMotionNow()
+        if let key = flapWalkBlock { haptics.nope(); show(L10n.t(key)); return }
         let page = posture == .closed ? Spread.Page.fixed : spread.page(of: char.c)
         let (dc, dr) = spread.delta(d, on: page)
         let here = posture == .closed ? Cell(rules.proj(char.c), char.r) : char
@@ -1377,6 +1396,7 @@ final class GameModel {
     }
     func stopWalk() { walkTask?.cancel(); walkTask = nil; walking = false }
     private func stopAll() {
+        autoCreaseTask?.cancel(); autoCreaseTask = nil
         cancelFlip()   // undo / restart / a new level: the turn being undone is not landed or announced
         stopWalk(); stopMotion(); stopGhost(); freezeCamera(); settleTask?.cancel(); ahaTask?.cancel(); stuckTask?.cancel()
         clearCrush(); stopRideFeel()
@@ -1386,7 +1406,7 @@ final class GameModel {
     // MARK: 「翻」 (design-ch6.md §1–2)
 
     /// The book has a third page (12-column rows).
-    var hasThirdPage: Bool { board.pages > 2 }
+    var hasThirdPage: Bool { board.pages > 2 && !board.trifold }
     /// The 「翻」 button is offered: a three-page book, shut, nothing else running. Standing on the leaf it is still
     /// offered and the tap says why it cannot turn (no.flip.leaf).
     var canShowFlip: Bool { hasThirdPage && posture == .closed && !won && !aha && !flipping && crushAt == nil }
@@ -1499,6 +1519,110 @@ final class GameModel {
         announce(parts.joined(separator: L10n.t("sep")))
     }
 
+    // MARK: the second crease (vol. 3 ch. 12 「三折」, main.js switchCrease / autoCrease)
+
+    /// A trifold level: the third page hangs off the right page's outer edge on a crease of its own.
+    var isTrifold: Bool { board.trifold }
+    /// The hinge in view is the third page's own crease (face 2: right page flat, third page lifting).
+    var onFlap: Bool { board.trifold && game.face == 2 }
+    /// BookView: the trifold's view (0 the book, third page flat · 2 the third page's crease · 3 the book, third page
+    /// folded onto the right page), nil on every other level.
+    var trifoldFace: Int? { board.trifold ? game.face : nil }
+
+    /// A visible column as a MAP column (main.js mapCol): face 2 shows right | third (the left page aside at −4…−1),
+    /// face 3 reads the folded leaf's top layer (the third page, or the right page through one of its holes).
+    func mapCol(_ c: Int, _ r: Int) -> Int {
+        guard board.trifold else { return c }
+        if c < 0 { return c + config.columnsPerPage }
+        guard r >= 0, r < board.h, c < board.w else { return c }
+        return board.colOf(c, r)
+    }
+    /// Face 3: which layer of the folded leaf a square shows (a11y.js layer): the third page, or the right page through a hole.
+    func layerWord(_ c: Int, _ r: Int) -> String? {
+        let n = config.columnsPerPage
+        guard board.trifold, game.face == 3, c >= n, c < 2 * n, board[c, r] != .empty else { return nil }
+        return L10n.t(mapCol(c, r) < 2 * n ? "tri.layerHole" : "tri.layerThird")
+    }
+    /// Face 3: a square of the folded leaf that shows the right page through a hole of the third page (BookView marks it).
+    func seenThroughHole(_ c: Cell) -> Bool {
+        let n = config.columnsPerPage
+        return board.trifold && game.face == 3 && c.c >= n && c.c < 2 * n && board[c] != .empty && mapCol(c.c, c.r) < 2 * n
+    }
+
+    /// No walking in the third page's view while it lies folded, nor off the left page lying aside (main.js onTap).
+    var flapWalkBlock: String? {
+        guard onFlap else { return nil }
+        if posture == .closed { return "tri.walkFolded" }
+        if char.c < 0 { return "tri.aside" }
+        return nil
+    }
+
+    /// 「第三页」 (button, P, VoiceOver action): take hold of the other crease. Refused with the reason as a toast, else
+    /// one undoable move; it costs no 折数. `auto`: the third page has just come to rest folded all the way (autoCrease).
+    func switchCrease(auto: Bool = false) {
+        autoCreaseTask?.cancel(); autoCreaseTask = nil
+        tuckSlip()
+        if aha { finishAhaNow(); return }
+        guard isTrifold, !won else { return }
+        stopWalk()
+        if !auto { finishMotionNow() }
+        if let why = game.creaseBlock {
+            if auto { return }
+            haptics.nope()
+            if settings.soundMode { sound.hollow() }
+            let key: String
+            switch why {
+            case .notTrifold: return
+            case .bookFirst: key = "tri.bookFirst"
+            case .flapFirst: key = "tri.flapFirst"
+            case .flap(let b): key = b == .cover ? "tri.covered" : "tri.blocked"
+            }
+            show(L10n.t(key))
+            return
+        }
+        pushUndo()
+        let events = game.switchCrease()
+        clearCrush(); rollFlight = nil; fillRings = [:]; shake = [:]; flapRefusedSaid = false
+        withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .easeInOut(duration: 0.25)) {
+            angle = game.angle; rubber = 0
+            sync()
+        }
+        forgetMotion()
+        aimCamera(at: angle)
+        saidAngle = Int(angle.rounded()); pending = Pending()
+        haptics.tick()
+        sound.rub(volume: 0.35)
+        show(L10n.t(game.face == 2 ? "tri.onFlap" : game.face == 3 ? "tri.onBookFolded" : "tri.onBookFlat"))
+        if events.contains(.won) { handle(events, from: posture) }
+    }
+
+    /// Ch. 12 (creative review 10/29): the third page folded all the way and at rest — nothing more to do on its crease,
+    /// so the control goes back to the book's by itself, after the press has been heard; never mid-drag (the finger that
+    /// folded the flap must not go on to close the book). Laid flat again it stays on the third page's crease.
+    private func autoCrease() {
+        guard onFlap, angle >= config.foldMin, !won, !aha, !dragging, autoCreaseTask == nil else { return }
+        autoCreaseTask = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(450))
+            guard let self, !Task.isCancelled else { return }
+            self.autoCreaseTask = nil
+            guard self.onFlap, self.angle >= self.config.foldMin, !self.won, !self.aha, !self.dragging, !self.hingeActive,
+                  self.motionTarget == nil, !self.walking else { return }
+            self.switchCrease(auto: true)
+        }
+    }
+
+    /// -replayTo on a trifold (Chapter12Tests.reach): bring the game to a view and an angle, crease by crease, at once.
+    func reach(face f: Int, angle a: Double) {
+        func hinge(_ x: Double) { if abs(game.angle - x) > 0.01 { game.setAngle(x); game.tally.rest(at: x) } }
+        defer { angle = game.angle; sync() }
+        if f == game.face { hinge(a); return }
+        if f == 2 { game.switchCrease(); hinge(a); return }
+        if game.face != 2 { game.switchCrease() }
+        hinge(f == 3 ? 180 : 0)
+        game.switchCrease()
+        hinge(a)
+    }
+
     // MARK: undo
 
     func pushUndo() { game.pushUndo(); canUndo = game.canUndo }
@@ -1543,6 +1667,7 @@ final class GameModel {
         defer { if !pulled.isEmpty { startGlue(pulled) } }
         // ch. 10: the crane moves last — after the ink, the doors and the glue of the same press (T_c 560, else 340)
         var inkFirst = false, closedNow = false, cranePress = false, landed: Set<Cell> = []
+        var offBook = false
         for e in events {
             switch e {
             case .postureChanged(let was, let to):
@@ -1550,7 +1675,7 @@ final class GameModel {
                 if to == .closed { closedNow = true } else if was == .closed { noteCraneOpened() }
                 if to == .closed && !game.won {
                     // three-page books: how the layers work, once (playtest-ch6 §2 #1); else the gap rule
-                    if board.pages > 2 && teachRule(Self.layerRuleKey, "layerRule") {} else { teachUnderOnClose() }
+                    if hasThirdPage && teachRule(Self.layerRuleKey, "layerRule") {} else if !isTrifold { teachUnderOnClose() }
                 }
                 // 90°: the two tabs lock into a bridge: Impact .medium, a paper-tongue click, crease.glow 400 ms.
                 // No 「通」 seal here: that is the chapter's seal, for the map card (design-review-2 §2.2)
@@ -1598,7 +1723,8 @@ final class GameModel {
                 if crushed { beginCrush(at: here) } else { stopMotion(); haptics.fall() }
                 // say why (fold-proto e613f80): the glue pulled the stone below onto you, a stone came down on you, or
                 // the shadow you stood on slid away. On screen now; spoken at the end of the fold's announcement.
-                let text = L10n.t(crushed ? (rules.isRight(here.c) ? "crushedGlue" : "crushed") : "fell")
+                // ch. 12 'off': the book closed with the third page open, and she went over the edge with it
+                let text = L10n.t(offBook ? "fellOff" : crushed ? (rules.isRight(here.c) && !isTrifold ? "crushedGlue" : "crushed") : "fell")
                 show(text, speak: false)
                 pending.fell = text; pending.connected = false; pending.goal = false
                 if motionTarget == nil && !dragging && !hingeActive { settleSoon() }
@@ -1627,6 +1753,27 @@ final class GameModel {
                 noteRolled(rolls)
             case .won:
                 win()
+            case .creased:
+                break   // said by switchCrease
+            case .flapRefused(let why):
+                // ch. 12: the third page stopped short at 30° (main.js setAngle): said once until it is opened again
+                if !flapRefusedSaid {
+                    flapRefusedSaid = true
+                    haptics.nope(); if settings.soundMode { sound.hollow() }
+                    show(L10n.t(why == .cover ? "tri.covered" : "tri.blocked"))
+                }
+            case .offBook:
+                offBook = true
+            case .laidFlat:
+                // ch. 12: a trifold starts again laid out flat (main.js fall): the hinge motion that killed her is over,
+                // and a finger still on the page no longer holds it
+                clearCrush(); haptics.crush()
+                stopMotion(); rubber = 0
+                if dragging { dragging = false; angleHint = false }
+                rollFlight = nil; fillRings = [:]
+                angle = game.angle; sync()
+                aimCamera(at: angle)
+                settleSoon()
             }
         }
         if closedNow && board.first(.crane) != nil {
@@ -1909,7 +2056,12 @@ final class GameModel {
     /// What a square shows: a glue square keeps its glue until the stone it pulls lands on it.
     /// Ch. 8 「灯位」: the lifted page carries shadows (left lamp) or angle gates, so it is walked on while it leans.
     var liftedPageLive: Bool { board.liftedPageLive }
-    func shownTile(_ c: Cell) -> Tile { inFlight.contains(c) ? .glue : board[c] }
+    func shownTile(_ c: Cell) -> Tile {
+        if inFlight.contains(c) { return .glue }
+        // ch. 12, face 2: the left page lies aside at visible −4…−1 (out of the view's board, drawn as it is)
+        if c.c < 0, board.trifold, c.r >= 0, c.r < board.h, c.c + config.columnsPerPage >= 0 { return board.grid[c.r][c.c + config.columnsPerPage] }
+        return board[c]
+    }
 
     /// 5-7's seal 「胶」 on her square (design-review-v2c1 ④): 24 pt, its centre 6 pt in from the square's top-right
     /// corner; 12 pt in (flush) when a square up or to the right of it on screen holds anything, so it covers nothing.
@@ -2008,6 +2160,7 @@ final class GameModel {
         // shut: the stack is named by its bottom-page square (the one the stack sits on)
         let at = posture == .closed ? Cell(rules.proj(c), r) : Cell(c, r)
         var parts = [pos(at), f.shadow ? L10n.t("kindShadow") : f.tabUp ? L10n.t("kindTabUp") : kind(f.tile)]
+        if posture != .closed, let layer = layerWord(c, r) { parts.append(layer) }   // ch. 12: the folded leaf's top layer
         if let open = f.gateOpen { parts.append(L10n.t(open ? "gate.state.open" : "gate.state.down")) }
         if f.goalInStack { parts.append(kind(.goal)) }
         if case .you(let onTop)? = f.here {
@@ -2030,7 +2183,10 @@ final class GameModel {
         case .throughGap?: extra = L10n.t("stack.under")
         case nil: extra = ""
         }
-        return L10n.cap(parts.joined(separator: L10n.t("sep")) + (extra.isEmpty ? "" : L10n.t("semi") + extra))
+        // ch. 12: Rules.facts predicts with the two-page mirror; off the two pages in view (the flat third page, the left
+        // page aside) a prediction would name squares that do not meet — say none there (Codex review 26)
+        let extraSaid = isTrifold && (c < 0 || c >= 2 * config.columnsPerPage) ? "" : extra
+        return L10n.cap(parts.joined(separator: L10n.t("sep")) + (extraSaid.isEmpty ? "" : L10n.t("semi") + extraSaid))
     }
 
     /// 「听一行」: every square of the character's row, low to high page by page.
@@ -2059,8 +2215,15 @@ final class GameModel {
             let want = Cell(here.c + dc, here.r + dr)
             return game.neighbours.contains { n in posture == .closed ? Cell(rules.proj(n.c), n.r) == want : n == want }
         }.map { L10n.t("dir.\($0.rawValue)") }
-        let page = L10n.t(rules.isRight(char.c) ? (game.face == 1 ? "thirdPage" : "page.folding") : "page.fixed")
-        announce(L10n.t("where", ["pos": pos(char), "page": page, "ways": ways.isEmpty ? L10n.t("nowhere") : ways.joined(separator: L10n.t("list")),
+        var page = L10n.t(rules.isRight(char.c) ? (game.face == 1 ? "thirdPage" : "page.folding") : "page.fixed")
+        var head = ""
+        if isTrifold {
+            // ch. 12 (a11y.js): the page by map column, and in the third page's view which hinge is in hand
+            let mc = mapCol(char.c, char.r), n = config.columnsPerPage
+            page = L10n.t(mc < n ? "leftPage" : mc < 2 * n ? "rightPage" : "thirdPage")
+            if onFlap { head = L10n.cap(L10n.t("tri.flapView", ["a": shownAngle])) + L10n.t("semi") }
+        }
+        announce(head + L10n.t("where", ["pos": pos(char), "page": page, "ways": ways.isEmpty ? L10n.t("nowhere") : ways.joined(separator: L10n.t("list")),
                                   "a": shownAngle, "goal": progressValue]))
     }
 

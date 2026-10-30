@@ -12,7 +12,8 @@ final class SlipsTests: XCTestCase {
         "leftLamp", "lift", "banks", "gate", "taken", "twolamps",
         "roll", "twice", "jump", "hold", "late", "order", "settle",
         "crane", "land", "cross", "ground", "soak", "over",
-        "fro", "still", "hover", "past", "park"]
+        "fro", "still", "hover", "past", "park",
+        "home", "hole", "return", "drop", "twofold"]
 
     func defaults() -> UserDefaults {
         let name = "slips.test.\(UUID().uuidString)"
@@ -31,7 +32,7 @@ final class SlipsTests: XCTestCase {
             XCTAssertTrue(film.frames.indices.contains(film.still), "\(demo.id)")
             XCTAssertLessThanOrEqual(film.totalMs, 4400, "\(demo.id): a loop is 3.6–4.4 s with its end pause")
             // the demo board shows the slip's own rule
-            XCTAssertTrue(Slips.triggers(Level(id: "x", map: demo.map, lamp: demo.lamp)).contains(demo.id) || [.shadow, .ride, .fro].contains(demo.id), "\(demo.id)")
+            XCTAssertTrue(Slips.triggers(Level(id: "x", map: demo.map, lamp: demo.lamp, trifold: demo.trifold ? true : nil)).contains(demo.id) || [.shadow, .ride, .fro].contains(demo.id), "\(demo.id)")
         }
         // the beats that matter, frame by frame
         let glue = try SlipDemo.demo(.glue).film(config: pack.config)
@@ -82,7 +83,12 @@ final class SlipsTests: XCTestCase {
         XCTAssertFalse(fro.frames[fro.still].board.grid[0].contains(.loose), "the stone is gone into the gap")
         XCTAssertEqual(fro.frames[fro.still].board[2, 0], .glue, "the glue caught nothing")
         XCTAssertTrue(fro.frames.last!.won)
-        XCTAssertEqual(SlipID.allCases.count, 15, "已集 n / 15")
+        // 三折 (tools/slips.js `trifold`): closed as it is, the third page swings out; folded first, her stack is your column
+        let tri = try SlipDemo.demo(.trifold).film(config: pack.config)
+        XCTAssertEqual(tri.frames[tri.still].board.face, 3, "the still: the third page folded onto the right page")
+        XCTAssertEqual(tri.frames[tri.still].board.w, 8)
+        XCTAssertTrue(tri.frames.last!.won)
+        XCTAssertEqual(SlipID.allCases.count, 16, "已集 n / 16")
         let turn = try SlipDemo.demo(.turn).film(config: pack.config)
         XCTAssertEqual(turn.frames.last!.board.face, 1)
         XCTAssertTrue(turn.frames.last!.won)
@@ -102,7 +108,7 @@ final class SlipsTests: XCTestCase {
         let first = Slips.firstLevels(pack.levels, order: Self.mainLine)
         XCTAssertEqual(first, [.stone: "facing", .door: "key", .ink: "ink", .tab: "stand", .shadow: "shadow", .press: "press",
                                .ride: "ride", .glue: "glue", .turn: "turn", .wet: "wet", .lamp: "leftLamp", .gate: "gate", .roll: "roll", .crane: "crane",
-                               .fro: "fro"])
+                               .fro: "fro", .trifold: "home"])
         let bridge = pack.levels.first { $0.id == "bridge" }!
         XCTAssertEqual(Slips.due(bridge, seen: []), [])
         let glue = pack.levels.first { $0.id == "glue" }!
@@ -181,7 +187,8 @@ final class FoldTallyTests: XCTestCase {
         let pack = try LevelPack.bundled()
         var checked = 0
         for lv in pack.levels {
-            guard let sol = lv.solution, let par = lv.expect?.changes, sol.count > 1 else { continue }
+            // ch. 12 trifold faces are views, not turns: Chapter12Tests replays those solutions (crease switches) at par
+            guard !lv.isTrifold, let sol = lv.solution, let par = lv.expect?.changes, sol.count > 1 else { continue }
             let g = try FoldGame(level: lv, config: pack.config)
             for (prev, s) in zip(sol, sol.dropFirst()) {
                 let face = s.count > 4 ? s[4] : 0, prevFace = prev.count > 4 ? prev[4] : 0
@@ -199,7 +206,7 @@ final class FoldTallyTests: XCTestCase {
             XCTAssertEqual(g.tally.count, par, "\(lv.id): folds = par")
             checked += 1
         }
-        XCTAssertEqual(checked, pack.levels.filter { $0.solution != nil }.count)
+        XCTAssertEqual(checked, pack.levels.filter { $0.solution != nil && !$0.isTrifold }.count)
         XCTAssertGreaterThanOrEqual(checked, 40)
     }
 

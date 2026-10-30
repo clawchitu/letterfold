@@ -8,7 +8,7 @@ final class SolverTests: XCTestCase {
     override func setUpWithError() throws { pack = try LevelPack.bundled() }
 
     func testPackDecodes() throws {
-        XCTAssertEqual(pack.levels.count, 72)
+        XCTAssertEqual(pack.levels.count, 77)
         XCTAssertEqual(pack.levels.filter(\.isOptional).map(\.id), ["darkBack", "darkDoor", "darkInk"])
         XCTAssertEqual(pack.config, .standard)
         for lv in pack.levels { XCTAssertNoThrow(try Board(level: lv), lv.id) }
@@ -127,10 +127,11 @@ final class DifficultyTests: XCTestCase {
                         3, 8, 12, 11, 18, 19,
                         4, 7, 14, 13, 15, 19, 21,
                         5, 6, 16, 18, 19, 19,
-                        6, 12, 17, 19, 20])
+                        6, 12, 17, 19, 20,
+                        4, 17, 13, 15, 21])
         let vol1 = pack.levels.prefix(25).compactMap(\.len)
         XCTAssertGreaterThanOrEqual(Double(vol1.reduce(0, +)) / Double(vol1.count), 15)
-        for range in [0..<5, 5..<13, 13..<19, 19..<25, 25..<32, 35..<42, 42..<48, 48..<54, 54..<61] {
+        for range in [0..<5, 5..<13, 13..<19, 19..<25, 25..<32, 35..<42, 42..<48, 48..<54, 54..<61, 72..<77] {
             let ch = Array(pack.levels[range])
             XCTAssertLessThanOrEqual(ch.compactMap { $0.expect?.changes }.reduce(0, +), 24, "chapter \(range): over the chapter budget")
             if range.lowerBound != 19 { XCTAssertEqual(ch.first?.tier, "teach", "chapter \(range) starts at teach") }
@@ -142,7 +143,7 @@ final class DifficultyTests: XCTestCase {
     /// The proto solver's shortest solution (exported in levels.json, the XCUITest plays it) wins in FoldGame, one
     /// state at a time: every hinge move lands where the proto says, every step is a legal step.
     func testProtoSolutionsReplayInTheGame() throws {
-        for lv in pack.levels {
+        for lv in pack.levels where !lv.isTrifold {   // ch. 12's crease switches: Chapter12Tests.testSolutionsReplay
             let sol = try XCTUnwrap(lv.solution, lv.id)
             let g = try FoldGame(level: lv, config: pack.config)
             XCTAssertEqual(Cell(sol[0][0], sol[0][1]), g.char, lv.id)

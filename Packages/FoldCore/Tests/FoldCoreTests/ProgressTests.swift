@@ -127,7 +127,9 @@ final class ProgressTests: XCTestCase {
         // vol. 3 chapter 10 「鹤」 (fold-proto design-ch10.md)
         XCTAssertEqual(Array(ids[61..<67]), ["crane", "land", "cross", "ground", "soak", "over"])
         // vol. 3 chapter 11 「来回」 (fold-proto design-ch11.md)
-        XCTAssertEqual(Array(ids.suffix(5)), ["fro", "still", "hover", "past", "park"])
+        XCTAssertEqual(Array(ids[67..<72]), ["fro", "still", "hover", "past", "park"])
+        // vol. 3 chapter 12 「三折」 (fold-proto design-ch12.md)
+        XCTAssertEqual(Array(ids.suffix(5)), ["home", "hole", "return", "drop", "twofold"])
         XCTAssertEqual(Set(ids).count, ids.count)
     }
 
@@ -152,13 +154,14 @@ final class ProgressTests: XCTestCase {
         let pack = try LevelPack.bundled()
         SavedProgress.save(Set(Self.build13), d)
         let done = SavedProgress.load(d)
-        // chapters 6 to 11 did not exist in 0.1 (13): they stay to play
+        // chapters 6 to 12 did not exist in 0.1 (13): they stay to play
         let ch6: Set = ["turn", "overleaf", "twoFaces", "inlay", "bleed", "pressedFlower", "lastPage",
                         "wet", "print", "ring", "spoiled", "pocket", "through",
                         "leftLamp", "lift", "banks", "gate", "taken", "twolamps",
                         "roll", "twice", "jump", "hold", "late", "order", "settle",
                         "crane", "land", "cross", "ground", "soak", "over",
-                        "fro", "still", "hover", "past", "park"]
+                        "fro", "still", "hover", "past", "park",
+                        "home", "hole", "return", "drop", "twofold"]
         for lv in pack.levels where !lv.isOptional && !ch6.contains(lv.id) { XCTAssertTrue(done.contains(lv.id), "\(lv.id) stays solved") }
         for id in ch6 { XCTAssertFalse(done.contains(id), id) }
         XCTAssertTrue(SavedProgress.chapterOpen(previous: ["glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps"], done: done), "chapter 6 opens after all of chapter 5")

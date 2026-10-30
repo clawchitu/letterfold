@@ -98,6 +98,10 @@ struct LevelScreen: View {
                 if settings.showButtons {
                     if model.showNext { FooterButtons(model: model).hidden().accessibilityHidden(true).allowsHitTesting(false) }
                     else { FooterButtons(model: model) }
+                } else if model.isTrifold {
+                    // ch. 12: 「第三页」 is always here on a trifold (the crease can be taken, or says why not)
+                    CreaseButton(model: model).opacity(model.showNext ? 0 : 1).allowsHitTesting(!model.showNext)
+                        .accessibilityHidden(model.showNext)
                 } else if model.hasThirdPage {
                     // always laid out on three-page levels, only shown when a flip is possible, so the board never
                     // jumps when the book closes or opens (Haoqiang 10/27: 其他提示也这样); out of the tree while
@@ -133,7 +137,7 @@ struct LevelScreen: View {
     /// 二 · 立: the first time chapter 2 opens, its opener plays once (frame 6-A). -noOpener YES skips it.
     private func checkOpener() {
         let d = UserDefaults.standard
-        let key = ["stand": "opener.2", "shadow": "opener.3", "twoShades": "opener.4", "glue": "opener.5", "turn": "opener.6", "roll": "opener.9", "fro": "opener.11"][model.level.id]
+        let key = ["stand": "opener.2", "shadow": "opener.3", "twoShades": "opener.4", "glue": "opener.5", "turn": "opener.6", "roll": "opener.9", "fro": "opener.11", "home": "opener.12"][model.level.id]
         guard let key, !d.bool(forKey: key), !d.bool(forKey: "noOpener") else { return }
         d.set(true, forKey: key)
         opener = true
@@ -210,7 +214,7 @@ private struct TopBar: View {
 extension GameModel {
     /// 「重新开始」 sits in the top bar without the button footer, and also where the footer is already full (Lean and
     /// 「翻」 in a chapter-6 book: an eighth button would be under 44 pt wide on a 390 pt phone, Codex review 17).
-    var restartInTopBar: Bool { !AppSettings.shared.showButtons || (canLean && hasThirdPage) }
+    var restartInTopBar: Bool { !AppSettings.shared.showButtons || (canLean && (hasThirdPage || isTrifold)) }
 }
 
 /// The footer of buttons, only for assistive tech or Settings › Button control (frame a11y-e1): five buttons,
@@ -232,6 +236,12 @@ private struct FooterButtons: View {
                     .accessibilityHint(L10n.t("flip.hint"))
                     .keyboardShortcut("t", modifiers: [])
             }
+            if model.isTrifold {
+                // ch. 12: the other crease (main.js #btn-crease, aria-pressed while the third page's own is in hand)
+                FooterButton(glyph: "⫽", title: L10n.t("pre.third"), label: L10n.t("pre.thirdLabel"), id: "crease") { model.switchCrease() }
+                    .accessibilityAddTraits(model.onFlap ? .isSelected : [])
+                    .keyboardShortcut("p", modifiers: [])
+            }
             FooterButton(glyph: "↺", title: L10n.t("undo"), label: L10n.t("undo"), id: "undo") { model.undo() }
                 .disabled(!model.canUndo)
             // 「重新开始」 (0.1 (17)): undoable, so no confirmation; disabled until the first move
@@ -247,6 +257,34 @@ private struct FooterButtons: View {
         .padding(.horizontal, 12)
         .accessibilityElement(children: .contain)
         .accessibilitySortPriority(20_000)
+    }
+}
+
+/// 「第三页」 (vol. 3 ch. 12, main.js #btn-crease): under every trifold's book — takes hold of the other crease. Inked
+/// solid while the third page's own crease is in hand (aria-pressed), outlined while the book's is.
+private struct CreaseButton: View {
+    let model: GameModel
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        let on = model.onFlap
+        Button { model.switchCrease() } label: {
+            HStack(spacing: 8) {
+                Text("⫽").font(.system(size: 17, weight: .semibold))
+                Text(L10n.t("pre.third")).font(FontBook.shared.songti(.bold, 20, relativeTo: .title3)).lineLimit(1).minimumScaleFactor(0.7)
+            }
+            .foregroundStyle(on ? (hc ? Color.white : Tok.paperNew) : Tok.ink900)
+            .padding(.horizontal, 26)
+            .frame(minHeight: 48)
+            .background(Capsule().fill(on ? (hc ? Color.black : Tok.ink900) : Color(hex: 0xF4F0E8)).shadow(color: .black.opacity(hc ? 0 : 0.10), radius: 5, y: 2))
+            .overlay(Capsule().stroke(Tok.ink900.opacity(hc ? 1 : 0.55), lineWidth: hc ? 2 : 1))
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .keyboardShortcut("p", modifiers: [])
+        .accessibilityLabel(L10n.t("pre.thirdLabel"))
+        .accessibilityAddTraits(on ? .isSelected : [])
+        .accessibilityIdentifier("crease")
+        .padding(.bottom, 4)
     }
 }
 
@@ -478,6 +516,8 @@ private struct ChapterOpener: View {
                 if chapter.id == 4 { WornBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
                 // 十一 · 来回: the book stands up and lies back down (design-ch11 §8.4), not the still standing book
                 if chapter.id == 11 { FroBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
+                // 十二 · 三折: the third leaf folds in, then the book shuts (Chapter12Marks.swift)
+                else if chapter.id == 12 { TrifoldBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
                 else if book3 { StandBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
                 else if book2 { LetterBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
             }

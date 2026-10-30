@@ -11,6 +11,7 @@
 		089C73E24BB02BF7002C67DC /* Chapter8Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAF188A41CB92A6FB2A0D7D /* Chapter8Marks.swift */; };
 		0ACF1846232647123A81BF6B /* Skins.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD058B4451F306D134BBAF38 /* Skins.swift */; };
 		11BE4B3530A847817165737B /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDBB77B419ABE4C00953E0 /* App.swift */; };
+		16991211E73EA1ECC8352380 /* Chapter12Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9528175E86BD342A9AD5C46 /* Chapter12Marks.swift */; };
 		23541C263217811CE7EE57A7 /* BookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9649A387FE6D80E352CD3FC9 /* BookView.swift */; };
 		2440B5FB027790D0976AF907 /* Hinge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2991315D14E1D1169059EEE2 /* Hinge.swift */; };
 		287378E19EFCA32706FC4E35 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4097B0AC06804266642AEB30 /* Settings.swift */; };
@@ -23,6 +24,7 @@
 		41C9101008DFEE17CF0C3A91 /* PlanLevelUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011869BA3DC1C9873A1049D7 /* PlanLevelUITests.swift */; };
 		47335045E1361AE66BF22A79 /* Contents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31779719E8C773D36D2CFC1B /* Contents.swift */; };
 		4808A9C05E1935D6FFE4F8B2 /* PlaythroughUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661C1BE741FF0CB5D1E9EE51 /* PlaythroughUITests.swift */; };
+		487D950A11A3AAA147002881 /* Chapter12UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36B0909E3FBA8D453FDC2A5 /* Chapter12UITests.swift */; };
 		4E042B49889CAFAFFA62FB4A /* Levels.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 93CA716983C6FD7D2F2CB18E /* Levels.xcstrings */; };
 		62D5404C1817B37DCB26D633 /* MusicUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB4F047FF96EB1C56C27E68 /* MusicUITests.swift */; };
 		632B7BC5D43A1FE091458D59 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */; };
@@ -111,11 +113,13 @@
 		AD2ACD110F34C4648B09D796 /* PlaythroughPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaythroughPlan.swift; sourceTree = "<group>"; };
 		B298358295F0A825501A00E9 /* LevelScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelScreen.swift; sourceTree = "<group>"; };
 		B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterfoldUITests.swift; sourceTree = "<group>"; };
+		B9528175E86BD342A9AD5C46 /* Chapter12Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter12Marks.swift; sourceTree = "<group>"; };
 		BB9E90E2E937D22C60176674 /* Chapter11Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter11Marks.swift; sourceTree = "<group>"; };
 		CC0494484CEC40B87ECCEA13 /* Chapter4UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter4UITests.swift; sourceTree = "<group>"; };
 		D182D97E9762DC8C6D7AA780 /* Chapter9Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter9Marks.swift; sourceTree = "<group>"; };
 		D7F376A74B6D07769C3C7A89 /* LetterfoldUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LetterfoldUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8FF8C2C6BDE8074179A5B56 /* Chapter7UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter7UITests.swift; sourceTree = "<group>"; };
+		E36B0909E3FBA8D453FDC2A5 /* Chapter12UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter12UITests.swift; sourceTree = "<group>"; };
 		EABD85E9AF4932093EFF07E7 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		EF748F41958AB1E89B0C34D9 /* Petals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Petals.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -145,6 +149,7 @@
 				25B2C966B3DCE7BA4E158633 /* Chapter9UITests.swift */,
 				6977AD3FCF19C5CAFDFFFA7E /* Chapter10UITests.swift */,
 				9CBFCF4DC6EB77948082A067 /* Chapter11UITests.swift */,
+				E36B0909E3FBA8D453FDC2A5 /* Chapter12UITests.swift */,
 				86874352C30014FFF456BE3E /* ContentsUITests.swift */,
 				76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */,
 				3015C80653E030579E65FC8D /* LayoutStabilityUITests.swift */,
@@ -168,6 +173,7 @@
 				D182D97E9762DC8C6D7AA780 /* Chapter9Marks.swift */,
 				1A59202716B0AC3485A116A1 /* Chapter10Marks.swift */,
 				BB9E90E2E937D22C60176674 /* Chapter11Marks.swift */,
+				B9528175E86BD342A9AD5C46 /* Chapter12Marks.swift */,
 				31779719E8C773D36D2CFC1B /* Contents.swift */,
 				45EBF8A2E746E16AE1153A20 /* GameModel.swift */,
 				578B23505A90DB23ECB3C2A4 /* Haptics.swift */,
@@ -347,6 +353,7 @@
 				23541C263217811CE7EE57A7 /* BookView.swift in Sources */,
 				FEF3E51D6AE2D0172801FBE4 /* Chapter10Marks.swift in Sources */,
 				DCD8669646E4544F20D36916 /* Chapter11Marks.swift in Sources */,
+				16991211E73EA1ECC8352380 /* Chapter12Marks.swift in Sources */,
 				089C73E24BB02BF7002C67DC /* Chapter8Marks.swift in Sources */,
 				E19FF7E22BAF0B7F47038916 /* Chapter9Marks.swift in Sources */,
 				47335045E1361AE66BF22A79 /* Contents.swift in Sources */,
@@ -375,6 +382,7 @@
 				34363C4C6EA532C07D98704B /* Boards13.swift in Sources */,
 				315A4F04504D631DA448B741 /* Chapter10UITests.swift in Sources */,
 				7C677CF2FF97368F1172CDA0 /* Chapter11UITests.swift in Sources */,
+				487D950A11A3AAA147002881 /* Chapter12UITests.swift in Sources */,
 				940B2DA1796BB58F3B8FCFAD /* Chapter3UITests.swift in Sources */,
 				AAC6885CD98A69713F89E05E /* Chapter4UITests.swift in Sources */,
 				A14167539C197C23C60606DD /* Chapter5UITests.swift in Sources */,

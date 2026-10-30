@@ -32,7 +32,7 @@ targets:
         CFBundleDevelopmentRegion: en
         CFBundleLocalizations: [en, zh-Hans, ja, ko]
         CFBundleShortVersionString: "0.1"
-        CFBundleVersion: "25"
+        CFBundleVersion: "26"
         ITSAppUsesNonExemptEncryption: false
         UILaunchScreen:
           UIColorName: LaunchBackground

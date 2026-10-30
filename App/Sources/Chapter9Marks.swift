@@ -222,7 +222,7 @@ extension GameModel {
         rollFlight = RollFlight(rolls: rolls, fromBelow: rules.standing(angle))
         // spoken / shown once: the stone nearest the crease (main.js rollStones)
         guard let near = rolls.min(by: { $0.to.c < $1.to.c }) else { return }
-        show(near.filled ? L10n.t("rolledIn") : L10n.t("rolled", ["col": L10n.t("col", ["c": near.to.c + 1])]))
+        show(near.filled ? L10n.t("rolledIn") : L10n.t("rolled", ["col": L10n.t("col", ["c": mapCol(near.to.c, near.to.r) + 1])]))
         if rolls.contains(where: \.filled) { haptics.rollDrop(); sound.blot() } else { haptics.rollLand() }
         sound.rub(volume: 0.35)
     }
@@ -264,7 +264,7 @@ extension GameModel {
         }
         let u = RollCurve.u(a, fromBelow: !rules.standing(a))
         for r in 0..<board.h {
-            for c in n..<(2 * n) where board[c, r] == .loose && !flying.contains(Cell(c, r)) {
+            for c in n..<(board.trifold ? board.w : 2 * n) where board[c, r] == .loose && !flying.contains(Cell(c, r)) {   // ch. 12: the third page lifts with the right one (face 0)
                 let cell = Cell(c, r)
                 if let to = next[cell] { out.append(BallPose(cell: cell, toward: to, k: RollCurve.s(u))) }
                 else if inWin && char == Cell(c - 1, r) {

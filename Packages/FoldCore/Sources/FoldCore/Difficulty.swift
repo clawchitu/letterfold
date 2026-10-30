@@ -34,11 +34,14 @@ public struct Difficulty: Sendable {
     public static func parMax(for level: Level) -> Int {
         if level.isOptional { return parMax["dark"]! }
         if chapter11.contains(level.id), let t = level.tier, let m = ["hard": 5, "final": 6][t] { return m }
+        // check.js PAR_MAX_CH[12] (design-ch12.md §3.3): the second crease costs its own posture changes. Ch. 12 is the
+        // trifold chapter, so its levels are the trifold ones.
+        if level.isTrifold, let t = level.tier, let m = ["mid": 4, "hard": 5, "final": 6][t] { return m }
         return parMax[level.tier ?? ""] ?? 3
     }
     public static func range(of tier: String) -> ClosedRange<Int>? { tiers.first { $0.name == tier }?.range }
     /// The mechanics `combo` counts (check.js MECHANICS).
-    static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue", "needsFlip", "needsWet", "needsLamp", "needsGate", "needsRoll", "needsCrane", "needsFro", "needsHover"]
+    static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue", "needsFlip", "needsWet", "needsLamp", "needsGate", "needsRoll", "needsCrane", "needsFro", "needsHover", "needsTrifold"]
 
     /// What levels.json ships under `expect.difficulty`.
     public struct Summary: Sendable, Codable, Equatable {
@@ -131,17 +134,21 @@ public struct Difficulty: Sendable {
             if won(s) { wins.insert(s); continue }
             var out: [State] = []
             for a in angles where a != s.a {
-                guard let n = solver.move(B, s, a) else {
+                switch solver.outcome(B, s, a) {
+                case .refused: continue   // trifold: a refused third-page fold
+                case .dead:
                     kills += 1
                     if board(s)[cell(s)].isFloor { traps.insert(s) }
-                    continue
+                case let .to(n): out.append(n)
                 }
-                out.append(n)
             }
             switch solver.flipOf(B, s) {   // turning the book onto a stone is a crush from paper
             case .crushed: kills += 1; traps.insert(s)
             case let .to(f): out.append(f)
             case .notAllowed: break
+            }
+            for f in solver.flaps(B, s) {   // trifold: the second crease
+                if let n = f { out.append(n) } else { kills += 1; if board(s)[cell(s)].isFloor { traps.insert(s) } }
             }
             out += steps(s)
             for n in out {
@@ -192,18 +199,18 @@ public struct Difficulty: Sendable {
             var flips: [State] = [], seenF: Set<State> = []
             for x in cl { if case let .to(f) = solver.flipOf(B, x), seenF.insert(f).inserted { flips.append(f) } }
             for n in flips { rec(n, depth - 1, labels + ["flip"]) }
+            if s.face != 2 && B.base.trifold {   // trifold: each third-page posture from a flat book is one idea
+                for b in angles {
+                    var nexts: [State] = [], seenB: Set<State> = []
+                    for x in cl { if case let .to(n) = solver.flapOf(B, x, b), seenB.insert(n).inserted { nexts.append(n) } }
+                    for n in nexts { rec(n, depth - 1, labels + ["flap\(feel(b))"]) }
+                }
+            }
         }
         rec(start, min(best.cost, 3), [])   // exponential in par: past 3 forks are reported as 1 (check.js, postmortem §6)
 
-        // the path's states, with their grids (the steps carry only st / face; replay the presses along the way)
-        var path: [State] = []
-        for (i, st) in best.steps.enumerated() {
-            if i == 0 { path.append(start); continue }
-            let p = path[i - 1]
-            var g = p.g
-            if st.face != p.face { g = B.press(p.g, st.face) } else if st.angle != p.a { g = solver.move(B, p, st.angle)?.g ?? p.g }
-            path.append(State(c: st.cell.c, r: st.cell.r, a: st.angle, face: st.face, g: g))
-        }
+        // the path's states, with their grids (check.js best.path)
+        let path: [State] = best.steps.map { State(c: $0.cell.c, r: $0.cell.r, a: $0.angle, face: $0.face, g: $0.g) }
         let bestCells = Set(best.steps.map(\.cell))
         let trap = traps.contains { bestCells.contains(cell($0)) }
         let explore = Set(nodes.map(collapse)).count
@@ -244,7 +251,7 @@ public struct Difficulty: Sendable {
             // either page (fold-proto 15c073d: under the left lamp a glued stone shades the lifted page, ch. 8)
             guard s.g != 0, feel(s.a) == .lean, !board(s)[cell(s)].isFloor,
                   let src = rules.shadows(board(s), s.a)[cell(s)] else { return false }
-            return !base.grid[s.r][s.face == 1 && src >= rules.n ? src + rules.n : src].isOpaque   // a rolled loose stone's shadow is made too
+            return !base.grid[s.r][board(s).colOf(src, s.r)].isOpaque   // a rolled loose stone's shadow is made too
         }
         let structure = best.cost + (forks == 1 ? 1 : 0) + (walk >= 8 ? 1 : 0) + (trap ? 1 : 0) + (window <= 2 ? 1 : 0) + (combo >= 3 ? 1 : 0)
         let insight = 2 * (misdirect ? 1 : 0) + 2 * (deadEnds >= 1 ? 1 : 0) + (deadC.count >= 12 ? 1 : 0) + 2 * (before ? 1 : 0)
@@ -283,6 +290,7 @@ public struct Difficulty: Sendable {
                 if let n = solver.move(B, s, a) { push(n, hc + 1) }
             }
             if case let .to(f) = solver.flipOf(B, s) { push(f, hc + 1) }
+            for case let n? in solver.flaps(B, s) { push(n, hc + 1) }
         }
         return visited.count
     }

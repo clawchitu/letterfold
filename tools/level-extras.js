@@ -19,6 +19,7 @@ pack.levels.forEach((lv, i) => {
   if (nid) lv.id = nid;
   if (src.optional) lv.optional = true;
   if (src.lamp && src.lamp !== 'R') lv.lamp = src.lamp;   // vol. 2 ch. 8 「灯位」: export.js does not ship it
+  if (src.trifold) lv.trifold = true;   // vol. 3 ch. 12 「三折」: the third page on the right page's outer edge (export.js does not ship it)
   const B = GEN.prep(src), g = GEN.explore(B), bp = GEN.bestPath(g);
   if (!bp) throw new Error(`${lv.id}: no solution`);
   lv.len = bp.par + bp.steps;
@@ -26,7 +27,9 @@ pack.levels.forEach((lv, i) => {
   // `stamped`: the book has been closed by this state. gen.js's g > 0 meant that until vol. 3 ch. 9, where a roll (the hinge
   // passing 90°) also moves the grid chain on without a press, so the flag is read off the path: a close (or a turn) so far.
   let closed = false;
-  lv.solution = bp.path.map((k) => { const s = g.nodes.get(k); closed = closed || s.a >= 155 || s.face !== 0; return [s.c, s.r, s.a, closed ? 1 : 0, s.face]; });
+  // Trifold (ch. 12): face 2 = the third page's own crease (a = its angle), face 3 = the book with the third page folded onto the
+  // right page; a press is a close, a turn (face 1) or the third page folding down (face 3).
+  lv.solution = bp.path.map((k) => { const s = g.nodes.get(k); closed = closed || s.a >= 155 || s.face === 1 || s.face === 3; return [s.c, s.r, s.a, closed ? 1 : 0, s.face]; });
 });
 const ids = pack.levels.map((l) => l.id);
 if (new Set(ids).size !== ids.length) throw new Error('duplicate level ids: ' + ids.filter((x, i) => ids.indexOf(x) !== i));

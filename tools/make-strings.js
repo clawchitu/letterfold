@@ -183,10 +183,10 @@ const NATIVE = {
   'ch.8': ['灯位', 'The Lamp', '灯', '등불'],
   // 0.1 (21): 卷三《倾》 (fold-proto design-vol3.md §1): chapter 9 「滚」 is written; 10–12 are dashed 「未写」 cards
   // (design-review-vol3-art §2.7). The map's page title / the opener's tag row read `vol.N` as the volume's name.
-  'ch.9': ['滚', 'Roll', '転', '구르기'],
+  'ch.9': ['滚', 'Roll', '転石', '구르기'],
   'ch.10': ['鹤', 'Crane', '鶴', '학'],
   'ch.11': ['来回', 'To and Fro', '往き来', '오가기'],
-  'ch.12': ['三折', 'Trifold', '三つ折り', '세 번 접기'],
+  'ch.12': ['三折', 'Trifold', '三つ折り', '세 겹'],
   'vol.3': ['倾', 'Tilt', '傾く', '기울기'],
   'map.book3': ['卷三', 'Book Three', '第三巻', '제3권'],
   'map.toBook3': ['下一页：卷三《倾》', 'Next page: Book Three, Tilt', '次の頁：第三巻『傾く』', '다음 페이지: 제3권 《기울기》'],
@@ -236,27 +236,10 @@ function catalog(entries) {
 // 0.1 (16): ch. 6 strings fold-proto has only in zh / en (or in an older form) for ja / ko. Marked TODO-native-check in
 // the catalog comments until a native speaker has read them.
 const CH6_NATIVE = ['ch.6', 'ch.7', 'ch.8', 'ch.9', 'ch.10', 'ch.11', 'ch.12', 'vol.3', 'map.toBook3', 'map.vol3Back', 'map.vol2BackLabel', 'gate.state.open', 'gate.state.down', 'map.book3', 'kind.A', 'noun.A', 'kind.I', 'noun.I', 'kind.i.ch7', 'shadowCarried', 'flip.action', 'flip.hint', 'restart', 'restartLabel', 'restartHint', 'restarted'];
-const STRING_FIX = {
-  ja: {
-    'chHead.6': '六 · めくる',
-    'no.flip.leaf': 'めくる頁の上に立っている——閉じたまま左頁へ歩いてから、めくる',
-    layerRule: '閉じたまま歩くとき：両方の頁が紙のところでは、いまの頁にとどまる。片方だけが紙のところで、その頁へ移る',
-    shadowOnPaper: '紙の上の影は、ただの紙。きみを運べるのは、すき間の上の影だけ',
-    'why.stoneTop': '上の頁の石がこの重なりをふさいでいる',
-    'why.stoneUnder': 'この重なりの下に左頁の石がある',
-  },
-  ko: {
-    'no.flip.leaf': '넘길 페이지 위에 서 있어요. 닫은 채 왼쪽 페이지로 걸어간 뒤 넘기세요',
-    layerRule: '닫은 채 걸을 때: 두 페이지가 모두 종이인 곳에서는 지금 페이지에 머물러요. 한쪽만 종이인 곳에서만 그 페이지로 옮겨 가요',
-    shadowOnPaper: '종이 위 그림자는 그냥 종이예요. 당신을 실어 나르는 건 틈 위의 그림자뿐이에요',
-    'why.stoneTop': '위 페이지의 돌이 이 겹을 막고 있어요',
-    'why.stoneUnder': '이 겹 아래에 왼쪽 페이지의 돌이 있어요',
-  },
-};
-const HELP_ADD = {
-  ja: ['O：開く。', 'O：開く。T：めくる（閉じているとき）。閉じたまま歩くとき、両方の頁が紙なら同じ頁にとどまり、片方だけが紙なら頁を移る。紙の上の影は、ただの紙。'],
-  ko: ['O: 열기.', 'O: 열기. T: 넘기기(닫혀 있을 때). 닫은 채 걸을 때 두 페이지가 모두 종이면 그 페이지에 머물고, 한쪽만 종이일 때만 페이지를 옮겨요. 종이 위 그림자는 그냥 종이예요.'],
-};
+// 0.1 (26): the old ja / ko overrides (頁-era wording) are gone — fold-proto's polished i18n.js (ed751a2..0ef4508,
+// docs/l10n-glossary.md) wins. Kept as empty tables so a future native-only fix has a place to go.
+const STRING_FIX = { ja: {}, ko: {} };
+const HELP_ADD = {};
 // 0.1 (19): ch. 7 「墨晕」 strings — fold-proto has zh / en final and ja / ko drafts (design-ch7.md §5–6, TODO review there).
 const CH7_DRAFTS = ['ch.7.line', 'chHead.7', 'paper.ch7', 'inkBled', 'letter.7.title', 'letter.7.body', 'letter.7.sign', 'letter.7.end',
   'slip.wet.title', 'slip.wet.body', 'slip.wet.pic'];
@@ -274,7 +257,10 @@ const CH10_DRAFTS = ['ch.10.line', 'chHead.10', 'paper.ch10', 'pre.crane', 'kind
 // 0.1 (25): ch. 11 「来回」 strings — fold-proto 2bb1213 has zh / en final and ja / ko drafts (design-ch11.md §4–5, TODO review there).
 const CH11_DRAFTS = ['ch.11.line', 'chHead.11', 'paper.ch11', 'letter.11.title', 'letter.11.body', 'letter.11.sign', 'letter.11.end',
   'slip.fro.title', 'slip.fro.body', 'slip.fro.pic'];
-const CHECKED = new Set(['help', ...Object.keys(STRING_FIX.ja), ...Object.keys(STRING_FIX.ko), ...CH7_DRAFTS, ...CH8_DRAFTS, ...CH9_DRAFTS, ...CH10_DRAFTS, ...CH11_DRAFTS]);
+// 0.1 (26): ch. 12 「三折」 strings — zh / en final, ja / ko polished in fold-proto 0ef4508 (design-ch12.md, l10n-glossary.md).
+const CH12_DRAFTS = ['ch.12.line', 'chHead.12', 'paper.ch12', 'letter.12.title', 'letter.12.body', 'letter.12.sign', 'letter.12.end',
+  'slip.trifold.title', 'slip.trifold.body', 'slip.trifold.pic', 'tri.covered', 'tri.blocked', 'fellOff'];
+const CHECKED = new Set(['help', ...Object.keys(STRING_FIX.ja), ...Object.keys(STRING_FIX.ko), ...CH7_DRAFTS, ...CH8_DRAFTS, ...CH9_DRAFTS, ...CH10_DRAFTS, ...CH11_DRAFTS, ...CH12_DRAFTS]);
 for (const [l, table] of Object.entries(STRING_FIX)) Object.assign(src.strings[l], table);
 for (const [l, [from, to]] of Object.entries(HELP_ADD)) {
   if (!src.strings[l].help.includes(to)) src.strings[l].help = src.strings[l].help.replace(from, to);
@@ -452,11 +438,17 @@ const LEVEL_CH11 = ['fro', 'still', 'hover', 'past', 'park'];   // 0.1 (25): ch.
 const LEVEL_CHECKED = new Set([...Object.keys(LEVEL_CH6.ja), ...Object.keys(LEVEL_V17.ja), ...LEVEL_CH7, ...LEVEL_CH8, ...LEVEL_CH9, ...LEVEL_CH10, ...LEVEL_CH11]);
 
 for (const id of Object.keys(src.levelTexts.en).filter((x) => !LEVEL_CUT.has(x))) {
+  // 0.1 (26): an id the native app renamed (lamp@8 → leftLamp) that fold-proto's rewrite no longer feeds: keep the catalog's text
+  if (!Array.isArray(src.levelTexts.en[id])) for (const l of Object.keys(LANG)) src.levelTexts[l][id] = oldText(id, l);
   // an optional 4th entry: the first rung of the 「?」 ladder (design-review-v2c1 §2), shown before the hint
   ['name', 'line', 'hint', 'hint1'].forEach((part, i) => {
     if (i === 3 && !(src.levelTexts.en[id] || [])[3]) return;
     const values = {};
-    for (const l of Object.keys(LANG)) values[l] = (src.levelTexts[l][id] || src.levelTexts.en[id])[i] ?? src.levelTexts.en[id][i];
+    for (const l of Object.keys(LANG)) {
+      const row = src.levelTexts[l][id] || src.levelTexts.en[id];
+      if (!Array.isArray(row)) { console.warn(`level text ${l}/${id} is not a list (${JSON.stringify(row)}), using en`); values[l] = src.levelTexts.en[id][i]; continue; }
+      values[l] = row[i] ?? src.levelTexts.en[id][i];
+    }
     const what = { name: 'title', line: 'one-line teaser', hint: 'hint', hint1: 'first hint (the 「?」 ladder, before the hint)' }[part];
     lv[`${id}.${part}`] = { comment: `Level "${id}": ${what}. From fold-proto i18n.js.` + (LEVEL_CHECKED.has(id) ? ' ja/ko: TODO-native-check.' : ''), values };
   });

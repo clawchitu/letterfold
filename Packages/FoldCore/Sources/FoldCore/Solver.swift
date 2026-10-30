@@ -20,7 +20,7 @@ final class GridChain: @unchecked Sendable {
     var pages: Int { table[0].pages }
     init(_ base: Board, _ rules: Rules) { var b = base; b.face = 0; table = [b]; self.rules = rules }
     func press(_ g: Int, _ face: Int) -> Int {
-        let k = g * 2 + face
+        let k = g * 4 + face   // faces 0–1 (ch. 6), 2–3 (trifold, ch. 12)
         if let m = memo[k] { return m }
         var b = table[g]; b.face = face
         let ev = rules.stamp(&b)
@@ -36,7 +36,7 @@ final class GridChain: @unchecked Sendable {
     private var flights: [Int: [Cell: Cell]] = [:]
     func carry(_ g: Int, _ face: Int, _ fig: Cell) -> Cell {
         _ = press(g, face)
-        return flights[g * 2 + face]?[fig] ?? fig
+        return flights[g * 4 + face]?[fig] ?? fig
     }
     /// The lifted page passed upright (vol. 3 ch. 9, check.js grids().roll): grid g with the loose stones on the page of
     /// `face` rolled, unless the figure holds one. Keyed on the figure's cell only when it stands on the facing page —
@@ -76,7 +76,10 @@ public struct Solver: Sendable {
         /// 1 once the book has been closed (the board is the stamped one).
         public var st: Int = 0
         /// Which face of the right leaf faces the left page (vol. 2 ch. 6); a step that only changes it is a turn.
+        /// Trifold (ch. 12): 2 = the third page on its own crease (`angle` is its angle), 3 = the book with it folded.
         public var face: Int = 0
+        /// The grid chain index of this state (check.js keeps it on the path's states; the metrics read it).
+        var g: Int = 0
     }
     public struct Solution: Sendable {
         public var cost: Int
@@ -90,7 +93,9 @@ public struct Solver: Sendable {
     /// as if it always went flat (a forced roll at the first 5° step of an opening that stays on the closed side of upright).
     public struct Options: Sendable, Equatable {
         public var noFro = false, openPass = false
-        public init(noFro: Bool = false, openPass: Bool = false) { self.noFro = noFro; self.openPass = openPass }
+        /// Vol. 3 ch. 12: the second crease never moves (check.js `noFlap`, the needsTrifold model).
+        public var noFlap = false
+        public init(noFro: Bool = false, openPass: Bool = false, noFlap: Bool = false) { self.noFro = noFro; self.openPass = openPass; self.noFlap = noFlap }
     }
 
     /// The character cell after turning the hinge from a0 to a1, or nil if it falls (or is crushed): check.js `turn`.
@@ -117,6 +122,58 @@ public struct Solver: Sendable {
     /// (vol. 3: the hinge crosses 90°) the loose stones roll first — the rest of the sweep (shadows, the crush when the
     /// book closes) is judged on the rolled board. Reaching a close presses the pages after the sweep.
     func move(_ B: GridChain, _ s: FoldState, _ a1: Double, _ opts: Options = Options()) -> FoldState? {
+        if case let .to(n) = outcome(B, s, a1, opts) { return n }
+        return nil
+    }
+
+    /// What one hinge move does (check.js `move`): `.refused` (trifold: a third-page fold that is not allowed here — not a
+    /// death), `.dead` (fell or crushed), or the state after it. In the third page's view (face 2) the hinge being turned
+    /// is the third page's (flapOf).
+    enum Outcome { case refused, dead, to(FoldState) }
+    func outcome(_ B: GridChain, _ s: FoldState, _ a1: Double, _ opts: Options = Options()) -> Outcome {
+        if s.face == 2 { return flapOf(B, s, a1, opts) }
+        return sweep(B, s, a1, opts).map(Outcome.to) ?? .dead
+    }
+
+    /// Trifold (vol. 3 ch. 12, check.js flapOf): turning the SECOND crease to b. Only while the book lies flat — from face
+    /// 0 (third page flat) or face 3 (folded) at a = 0, or from face 2 (s.a = its angle). The sweep runs in its view (face 2:
+    /// right page flat, third page lifted). Reaching flat or folded leaves that view: face 0 / face 3 at a = 0, so a flat
+    /// book has one state per third-page posture. A fold over a stone under your feet, or of paper onto you, is refused.
+    func flapOf(_ B: GridChain, _ s: FoldState, _ b: Double, _ opts: Options = Options()) -> Outcome {
+        guard B.base.trifold, !opts.noFlap else { return .refused }
+        let b0: Double? = s.face == 2 ? s.a : s.a != 0 ? nil : s.face == 3 ? 180 : 0
+        guard let b0, b != b0 else { return .refused }
+        let fm = rules.config.foldMin
+        var from = s
+        if s.face != 2 {
+            let f = rules.flapIn(B.world(s), Cell(s.c, s.r))
+            from = FoldState(c: f.c, r: f.r, a: b0, face: 2, g: s.g)
+        }
+        if b >= fm && rules.flapBlock(B.world(from), Cell(from.c, from.r)) != nil { return .refused }
+        guard let n = sweep(B, from, b, opts) else { return .dead }
+        // judged again on the rolled board (a stone that rolled off the square over you leaves paper there)
+        if b >= fm && rules.flapBlock(B.world(n), Cell(n.c, n.r)) != nil { return .refused }
+        if b > 0 && b < fm { return .to(n) }
+        guard let out = rules.flapOut(B.world(n), Cell(n.c, n.r), folded: b >= fm) else { return .refused }
+        return .to(FoldState(c: out.c, r: out.r, a: 0, face: b >= fm ? 3 : 0, g: n.g))
+    }
+
+    /// Every third-page move from s that is not already a move() (check.js flaps): from a flat book only, [dead = nil].
+    func flaps(_ B: GridChain, _ s: FoldState, _ angles: [Double] = Solver.angles, _ opts: Options = Options()) -> [FoldState?] {
+        guard B.base.trifold, s.face != 2, s.a == 0, !opts.noFlap else { return [] }
+        var out: [FoldState?] = []
+        for b in angles {
+            switch flapOf(B, s, b, opts) {
+            case .refused: break
+            case .dead: out.append(nil)
+            case let .to(n): out.append(n)
+            }
+        }
+        return out
+    }
+
+    /// One sweep of the hinge in view (check.js `sweep`).
+    func sweep(_ B: GridChain, _ s: FoldState, _ a1: Double, _ opts: Options = Options()) -> FoldState? {
         var cur = Cell(s.c, s.r), g = s.g
         var src: Int?
         var b = B.world(s)
@@ -161,7 +218,7 @@ public struct Solver: Sendable {
         let to = B.carry(s.g, s.face ^ 1, here)   // a crane under your feet flies to the page you turned to, with you
         return .to(FoldState(c: to.c, r: to.r, a: s.a, face: s.face ^ 1, g: B.press(s.g, s.face ^ 1)))
     }
-    func step(_ s: FoldState) -> Step { Step(posture: rules.posture(s.a), angle: s.a, cell: Cell(s.c, s.r), st: s.st, face: s.face) }
+    func step(_ s: FoldState) -> Step { Step(posture: rules.posture(s.a), angle: s.a, cell: Cell(s.c, s.r), st: s.st, face: s.face, g: s.g) }
 
     public func solve(_ level: Level, angles: [Double] = Solver.angles) -> Solution? { solve(level, angles: angles, from: nil) }
     public func solve(_ level: Level, angles: [Double] = Solver.angles, options: Options) -> Solution? { solve(level, angles: angles, from: nil, options: options) }
@@ -192,6 +249,7 @@ public struct Solver: Sendable {
                 if let n = move(B, s, a, options) { next.append((n, FoldTally.cost(from: s.a, to: a))) }
             }
             if !noFlip, case let .to(f) = flipOf(B, s) { next.append((f, FoldTally.turnCost)) }
+            for case let f? in flaps(B, s, angles, options) { next.append((f, 1)) }   // trifold: the second crease
             let sh = rules.shadows(b, s.a)
             for nb in rules.neighbours(b, here, p, sh) { next.append((FoldState(c: nb.c, r: nb.r, a: s.a, face: s.face, g: s.g), 0)) }
             for (nState, w) in next {
@@ -224,6 +282,7 @@ public struct Solver: Sendable {
                 if let n = move(B, s, a) { next.append((n, 1000 * FoldTally.cost(from: s.a, to: a))) }
             }
             if case let .to(f) = flipOf(B, s) { next.append((f, 1000 * FoldTally.turnCost)) }
+            for case let f? in flaps(B, s, angles) { next.append((f, 1000)) }   // trifold: the second crease (gen.js explore)
             for nb in rules.neighbours(b, here, p, rules.shadows(b, s.a)) { next.append((FoldState(c: nb.c, r: nb.r, a: s.a, face: s.face, g: s.g), 1)) }
             for (n, w) in next where !done.contains(n) {
                 if let d = dist[n], d <= cost + w { continue }
@@ -259,7 +318,13 @@ public struct Solver: Sendable {
     /// The same, from a live board (vol. 2 ch. 6: after turns the grid is not just "stamped once"). The chain is seeded
     /// with the board as it is now; `closedOnce` keeps g > 0 semantics (a pressed board) for the metrics' sake.
     public func canStillWin(_ level: Level, board: Board, from cell: Cell, angle: Double) -> Bool {
-        var b = board; let face = b.face; b.face = 0
+        var b = board; var face = b.face, cell = cell, angle = angle
+        // trifold: the third page's view laid flat or folded is the book's flat state (the solver's canonical face 0 / 3)
+        if b.trifold && face == 2 && (angle <= 0.5 || angle >= rules.config.foldMin) {
+            let folded = angle >= rules.config.foldMin
+            if let out = rules.flapOut(b, cell, folded: folded) { cell = out; face = folded ? 3 : 0; angle = 0 }
+        }
+        b.face = 0
         let B = GridChain(b, rules)
         return solve(level, angles: Solver.angles, from: FoldState(c: cell.c, r: cell.r, a: angle, face: face, g: 0), chain: B) != nil
     }
@@ -274,7 +339,7 @@ public struct Solver: Sendable {
         let all = level.map.joined()
         func without(_ ch: Character) -> Solution? {
             // like JS row.split(ch).join('.'): every occurrence
-            solve(Level(id: level.id, map: level.map.map { String($0.map { $0 == ch ? "." : $0 }) }, lamp: level.lamp))
+            solve(Level(id: level.id, map: level.map.map { String($0.map { $0 == ch ? "." : $0 }) }, lamp: level.lamp, trifold: level.trifold))
         }
         var e = Expectation(solvable: full != nil, changes: full?.cost, needsFold: noFold == nil, needsPop: noPop == nil,
                             stepped15: solve(level, angles: Solver.steps15) != nil)
@@ -286,7 +351,7 @@ public struct Solver: Sendable {
         }
         if let lamp = level.lamp, lamp != "R" { var r = level; r.lamp = "R"; e.needsLamp = solve(r) == nil }   // the lamp back on the right bank
         if all.contains("r") {   // vol. 3 ch. 9: unsolvable with the loose stones glued down
-            e.needsRoll = solve(Level(id: level.id, map: level.map.map { String($0.map { $0 == "r" ? "x" : $0 }) }, lamp: level.lamp)) == nil
+            e.needsRoll = solve(Level(id: level.id, map: level.map.map { String($0.map { $0 == "r" ? "x" : $0 }) }, lamp: level.lamp, trifold: level.trifold)) == nil
         }
         if all.contains("r") {   // vol. 3 ch. 11: unsolvable, or dearer, without a lean that comes back / a re-close from a lean
             let nf = solve(level, options: Options(noFro: true)), nh = solve(level, options: Options(openPass: true))
@@ -302,7 +367,8 @@ public struct Solver: Sendable {
             e.needsGlue = without("g") == nil
             if var b = try? Board(level: level, columnsPerPage: rules.n) { e.glueFires = rules.stamp(&b).contains { $0.kind == .glue } }
         }
-        if (level.map.first?.count ?? 0) > 2 * rules.n { e.needsFlip = solve(level, angles: Solver.angles, from: nil, noFlip: true) == nil }
+        if level.isTrifold { e.needsTrifold = solve(level, options: Options(noFlap: true)) == nil }   // vol. 3 ch. 12: without the second crease
+        else if (level.map.first?.count ?? 0) > 2 * rules.n { e.needsFlip = solve(level, angles: Solver.angles, from: nil, noFlip: true) == nil }
         if withDifficulty, full != nil { e.difficulty = Difficulty(self).analyse(level)?.summary }
         return e
     }

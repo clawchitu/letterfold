@@ -50,13 +50,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "すべてクリア。Duoが届いたら、本物の折り目でもう一度。"
+            "value": "すべて届いた。Duoが来たら、本物の折り目でもう一度。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "모두 완료. Duo가 오면 진짜 접는 선으로 다시 해 봐요."
+            "value": "모두 닿았어요. Duo가 오면, 진짜 접는 선으로 다시 한번."
           }
         }
       }
@@ -140,13 +140,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "着いた、{pos}"
+            "value": "着いた。{pos}"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "도착, {pos}"
+            "value": "도착했어요. {pos}"
           }
         }
       }
@@ -200,13 +200,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "。左ページは木の音、右ページは紙の音。上の行ほど高く鳴ります。左ページは左耳、右ページは右耳に。矢印キーで各マスを聴き、Enterで歩き、Fで少し折り、Shift+Fで少し開きます。?ですべてのキー。"
+            "value": "。左ページは木の音、右ページは紙の音。上の行ほど高く鳴る。左ページは左の耳に、右ページは右の耳に。矢印キーで各マスを聴き、Enterでそこへ歩く。Fで少し折り、Shift+Fで少し開く。?キーで全部のキー。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": ". 왼쪽 페이지는 나무 소리, 오른쪽은 종이 소리, 위쪽 줄일수록 높은 음이에요. 왼쪽 페이지는 왼쪽 귀, 오른쪽 페이지는 오른쪽 귀로 들려요. 방향키로 각 칸을 듣고, Enter로 걷고, F로 조금 접고, Shift+F로 조금 펴요. 물음표를 누르면 모든 키를 들을 수 있어요."
+            "value": ". 왼쪽 페이지는 나무 소리, 오른쪽 페이지는 종이 소리. 윗줄일수록 높게 울려요. 왼쪽 페이지는 왼쪽 귀에, 오른쪽 페이지는 오른쪽 귀에. 방향키로 칸마다 듣고, Enter로 그 칸까지 걸어요. F는 조금 접기, Shift+F는 조금 펴기. 물음표를 누르면 모든 키를 들을 수 있어요."
           }
         }
       }
@@ -230,13 +230,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "行を聴く"
+            "value": "この行"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "줄 듣기"
+            "value": "이 줄"
           }
         }
       }
@@ -260,13 +260,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "行を聴く"
+            "value": "この行を聴く"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "줄 듣기"
+            "value": "이 줄 듣기"
           }
         }
       }
@@ -296,7 +296,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "내 위치"
+            "value": "내 자리"
           }
         }
       }
@@ -320,13 +320,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "現在地"
+            "value": "いまどこにいるか"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "내 위치"
+            "value": "지금 어디에 있는지"
           }
         }
       }
@@ -380,7 +380,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "一歩"
+            "value": "一歩歩く"
           }
         },
         "ko": {
@@ -440,13 +440,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "本が傾いた、{a}°"
+            "value": "本が傾いている、{a}°"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "책이 기울었어요, {a}°"
+            "value": "책이 기울어 있어요, {a}°"
           }
         }
       }
@@ -476,7 +476,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "책이 열려 있어요, {a}°"
+            "value": "책이 펼쳐져 있어요, {a}°"
           }
         }
       }
@@ -530,13 +530,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "本が立った、{a}°"
+            "value": "本が立っている、{a}°"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "책이 섰어요, {a}°"
+            "value": "책이 서 있어요, {a}°"
           }
         }
       }
@@ -560,13 +560,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "本が立った、{a}°、紙片が橋になった"
+            "value": "本が立っている、{a}°。紙片が橋になった"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "책이 섰어요, {a}°, 종이 조각이 다리가 됐어요"
+            "value": "책이 서 있어요, {a}°. 종이 조각이 다리가 됐어요"
           }
         }
       }
@@ -620,13 +620,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "今はそこへ行けない"
+            "value": "いまはそこへ行けない"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "지금은 거기 갈 수 없어요"
+            "value": "지금은 거기까지 갈 수 없어요"
           }
         }
       }
@@ -650,13 +650,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "そこへは行けない：{pos}は{why}"
+            "value": "そこへは行けない。{pos}は{why}"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "거기로 갈 수 없어요: {pos}에 {why}"
+            "value": "거기까지는 못 가요. {pos:은} {why}"
           }
         }
       }
@@ -710,13 +710,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "鶴がきみを{col}へ運んだ"
+            "value": "鶴があなたを{col}へ運んだ"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "학이 너를 {col:으로} 데려갔어요"
+            "value": "학이 나를 {col:으로} 데려갔어요"
           }
         }
       }
@@ -800,13 +800,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "本を閉じるたび、鶴は向かいの頁へ飛ぶ。"
+            "value": "本を閉じるたび、鶴は向かいのページへ飛ぶ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "책을 닫을 때마다 학은 맞은편 면으로 날아가요."
+            "value": "책을 닫을 때마다, 학은 맞은편 페이지로 날아간다."
           }
         }
       }
@@ -860,13 +860,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "立てて、また寝かせる。何も起きなかったとき、実はすべてが起きていた。"
+            "value": "立てて、また寝かせる。何も起きなかったとき、ほんとうはすべてが起きていた。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "세웠다가, 다시 눕혀요. 아무 일도 없었을 때, 사실은 다 일어났어요."
+            "value": "세웠다가, 다시 눕힌다. 아무 일도 없었을 때, 사실은 모든 일이 있었다."
           }
         }
       }
@@ -896,7 +896,37 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "세 번 접기"
+            "value": "세 겹"
+          }
+        }
+      }
+    },
+    "ch.12.line": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "信太长了，折两次才够小。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The letter was too long; folded twice it is small enough."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "手紙が長すぎた。二度折れば、小さくなる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "편지가 너무 길다. 두 번 접어야 작아진다."
           }
         }
       }
@@ -1016,7 +1046,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자도 길이 된다."
+            "value": "그림자도 길이다."
           }
         }
       }
@@ -1190,13 +1220,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じて、裏返して、開く。"
+            "value": "閉じて、めくって、開く。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫고, 뒤집고, 펼친다."
+            "value": "닫고, 넘기고, 다시 펼친다."
           }
         }
       }
@@ -1310,13 +1340,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "灯をきみの岸へ移した。"
+            "value": "灯りがきみの岸へ移った。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "등불을 네 강가로 옮겼어."
+            "value": "등불이 네 강가로 옮겨 왔다."
           }
         }
       }
@@ -1340,7 +1370,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "転"
+            "value": "転石"
           }
         },
         "ko": {
@@ -1376,7 +1406,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "책을 세우면 모든 게 접힌 금으로 굴러가요."
+            "value": "책을 세우면, 모든 것이 접는 선으로 굴러간다."
           }
         }
       }
@@ -1741,6 +1771,36 @@
         }
       }
     },
+    "chHead.12": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "十二 · 三折"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "12 · Trifold"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "十二 · 三つ折り"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "12장 · 세 겹"
+          }
+        }
+      }
+    },
     "chHead.2": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -1862,7 +1922,7 @@
       }
     },
     "chHead.6": {
-      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1970,7 +2030,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "九 · 転"
+            "value": "九 · 転石"
           }
         },
         "ko": {
@@ -2000,7 +2060,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "隠された手紙"
+            "value": "隠し手紙"
           }
         },
         "ko": {
@@ -2156,7 +2216,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "끝까지 밀어 닫기"
+            "value": "끌어서 닫기"
           }
         }
       }
@@ -2480,13 +2540,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "鶴は墨に染みて、もう飛ばない"
+            "value": "鶴は墨を吸って、もう飛ばない"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "학이 먹에 물들어 더는 못 날아요"
+            "value": "학이 먹에 젖어 더는 날지 않아요"
           }
         }
       }
@@ -2510,13 +2570,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "降り場がふさがっている：鶴は飛べない"
+            "value": "降り場がふさがっていて、鶴は飛べない"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "내려앉을 자리가 막혀서 학이 못 날아요"
+            "value": "내려앉을 자리가 막혀 학이 날지 못해요"
           }
         }
       }
@@ -2540,13 +2600,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じる頁の石が落ちてきて、つぶされた。最初から"
+            "value": "閉じたページの石が落ちてきて、押しつぶされた。最初から"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫히는 페이지의 돌에 눌렸어요. 처음부터 다시"
+            "value": "닫히는 페이지의 돌이 내려와 눌렸어요. 처음부터"
           }
         }
       }
@@ -2570,13 +2630,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "めくった頁の石が、このマスに落ちてきた。本を元に戻して、はじめから"
+            "value": "めくったページの石が、このマスに落ちてきた。本は元に戻る。最初から"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "넘긴 페이지의 돌이 이 칸에 떨어졌어요. 책을 되돌리고 처음으로 돌아가요"
+            "value": "넘긴 페이지의 돌이 이 칸으로 내려왔어요. 책은 되돌아가요. 처음부터"
           }
         }
       }
@@ -2600,13 +2660,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "糊の上に立っていた。閉じると糊が向かいの石をこの枡に引き寄せ、つぶされた。最初から"
+            "value": "糊の上に立っていた。閉じると糊が向かいの石をこのマスに引き寄せ、押しつぶされた。最初から"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "풀 위에 서 있었어요. 닫자 풀이 맞은편 돌을 이 칸으로 끌어와 눌렸어요. 처음부터 다시"
+            "value": "풀 위에 서 있었어요. 닫는 순간 풀이 맞은편 돌을 이 칸으로 끌어와 눌렸어요. 처음부터"
           }
         }
       }
@@ -2630,7 +2690,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じると向かいの石にふさがれる"
+            "value": "閉じると向かいの石に押さえられる"
           }
         },
         "ko": {
@@ -2870,7 +2930,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "隠された手紙 {n} · {name}"
+            "value": "隠し手紙 {n} · {name}"
           }
         },
         "ko": {
@@ -2900,13 +2960,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "隠"
+            "value": "隠し"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "숨"
+            "value": "숨은"
           }
         }
       }
@@ -2930,13 +2990,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "マスごとに音の高さと音色。目を閉じても遊べる（M）"
+            "value": "マスごとに音の高さと音色が違う。目を閉じても遊べる（M）"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "칸마다 음높이와 음색이 달라 눈을 감고도 할 수 있어요 (M)"
+            "value": "칸마다 음높이와 음색이 달라요. 눈을 감고도 할 수 있어요 (M)"
           }
         }
       }
@@ -2966,7 +3026,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "칸을 크게"
+            "value": "칸을 더 크게"
           }
         }
       }
@@ -2996,7 +3056,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "굵은 테두리와 무늬, 색에만 기대지 않아요"
+            "value": "굵은 테두리와 무늬. 색에만 기대지 않아요"
           }
         }
       }
@@ -3020,13 +3080,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "少し折る・少し開く・一歩・戻す"
+            "value": "少し折る・少し開く・一歩・戻す。一押しずつ"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "더 접기, 덜 접기, 한 걸음, 되돌리기"
+            "value": "조금 접기, 조금 펴기, 한 걸음, 되돌리기를 한 번에 하나씩"
           }
         }
       }
@@ -3050,13 +3110,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "スクリーンリーダーがなくても、システムの声でヒントを読み上げる"
+            "value": "スクリーンリーダーがないとき、システムの声でヒントを読む"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "화면 낭독기가 없을 때 시스템 음성으로 안내를 읽어요"
+            "value": "화면 낭독기가 없을 때 시스템 음성으로 힌트를 읽어 줘요"
           }
         }
       }
@@ -3200,13 +3260,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じる"
+            "value": "完了"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫기"
+            "value": "완료"
           }
         }
       }
@@ -3236,7 +3296,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "맞은편에 열쇠가 있어 닫으면 문이 열려요"
+            "value": "맞은편에 열쇠. 닫으면 문이 열려요"
           }
         }
       }
@@ -3260,7 +3320,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "鍵で扉が開いた"
+            "value": "鍵が扉を開けた"
           }
         },
         "ko": {
@@ -3326,7 +3386,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "접는 선 끌기"
+            "value": "접는 선을 끌어요"
           }
         }
       }
@@ -3350,7 +3410,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "別の場所"
+            "value": "どこか別の場所"
           }
         },
         "ko": {
@@ -3410,13 +3470,43 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影が去り、紙の人は落ちた"
+            "value": "影が去って、紙の人形は落ちた"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "그림자가 떠나고, 종이 인형이 떨어졌어요"
+          }
+        }
+      }
+    },
+    "fellOff": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "书合上时第三页还摊着，它甩出左页外沿扣在桌上——你也跟着掉下去了。回到起点，信重新摊平"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The book closed with the third page still open: it swung out past the left page onto the table, with you on it. Back to the start, the letter laid flat again."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三枚目を開いたまま本を閉じた。三枚目は左ページの外へ振り出されて机に伏せ、あなたも一緒に落ちた。最初から、手紙を広げなおす"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "셋째 페이지를 편 채로 책을 닫았어요. 셋째 페이지가 왼쪽 페이지 밖으로 넘어가 책상에 엎어지고, 나도 함께 떨어졌어요. 처음부터, 편지를 다시 펼쳐요"
           }
         }
       }
@@ -3446,7 +3536,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "1단계로"
+            "value": "첫 단계로"
           }
         }
       }
@@ -3620,7 +3710,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "折る角度"
+            "value": "折りの角度"
           }
         },
         "ko": {
@@ -3656,7 +3746,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "덜 접기"
+            "value": "조금 펴기"
           }
         }
       }
@@ -3686,7 +3776,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "덜 접기"
+            "value": "조금 펴기"
           }
         }
       }
@@ -3716,7 +3806,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "더 접기"
+            "value": "조금 접기"
           }
         }
       }
@@ -3746,7 +3836,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "더 접기"
+            "value": "조금 접기"
           }
         }
       }
@@ -3770,7 +3860,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "重なった4列で読みます"
+            "value": "重なった4列で読む"
           }
         },
         "ko": {
@@ -3956,7 +4046,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫으면 맞은편 돌이 여기에 붙어요. 여기 서 있으면 눌려요"
+            "value": "닫으면 맞은편 돌이 여기에 붙어 와요. 여기 서 있으면 눌려요"
           }
         }
       }
@@ -4010,7 +4100,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ゴールは{opp}{bits}"
+            "value": "終点は{opp}{bits}"
           }
         },
         "ko": {
@@ -4070,7 +4160,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "{dir}に{n}マス"
+            "value": "{dir}へ{n}マス"
           }
         },
         "ko": {
@@ -4100,13 +4190,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ゴール"
+            "value": "終点"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "도착"
+            "value": "도착점"
           }
         }
       }
@@ -4160,13 +4250,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "4列と5列のあいだが折り目。閉じると右ページが左ページに重なり、5列は4列に、8列は1列に重なります。矢印キーで各マスを聴き、Enterで歩き、Fで少し折り、Shift+Fで少し開きます。Hはヒント、Rはやり直し、Uは戻す、?ですべてのキー。"
+            "value": "折り目は4列と5列のあいだ。閉じると右ページが左ページに重なる：5列は4列に、8列は1列に。矢印キーで各マスを聴き、Enterでそこへ歩く。Fで少し折り、Shift+Fで少し開く。Hはヒント、Rはやり直し、Uは戻す、?キーで全部のキー。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "4열과 5열 사이가 접는 선이에요. 닫으면 오른쪽 페이지가 왼쪽 위에 겹쳐요: 5열은 4열 위에, 8열은 1열 위에. 방향키로 각 칸을 듣고, Enter로 걷고, F로 조금 접고, Shift+F로 조금 펴요. H 힌트, R 다시, U 되돌리기, 물음표로 모든 키."
+            "value": "접는 선은 4열과 5열 사이에 있어요. 닫으면 오른쪽 페이지가 왼쪽 페이지 위에 겹쳐요: 5열은 4열 위에, 8열은 1열 위에. 방향키로 칸마다 듣고, Enter로 그 칸까지 걸어요. F는 조금 접기, Shift+F는 조금 펴기, H는 힌트, R은 다시 하기, U는 되돌리기, 물음표는 모든 키."
           }
         }
       }
@@ -4310,13 +4400,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "矢印キー：マスを移動して聴く。Enter：そのマスへ歩く。Shift+矢印：一歩進む。F：少し折る。Shift+F：少し開く。C：閉じる。O：開く。T：めくる（閉じているとき）。閉じたまま歩くとき、両方の頁が紙なら同じ頁にとどまり、片方だけが紙なら頁を移る。紙の上の影は、ただの紙。L：この行を聴く。Shift+L：本全体を聴く。W：現在地。H：ヒント。U：戻す。R：やり直し。M：サウンドモード。"
+            "value": "矢印キー：マスを移って聴く。Enter：そのマスへ歩く。Shift+矢印：一歩。F：少し折る。Shift+F：少し開く。C：閉じる、O：開く、T：めくる（閉じているとき）。閉じたまま歩くとき、両方のページが紙なら同じページに残り、片方だけが紙ならそのページへ移る。紙の上の影はただの紙。L：この行を聴く。Shift+L：本全体を聴く。W：現在地。H：ヒント。U：戻す。R：やり直す。M：サウンドモード。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "방향키: 칸 사이를 옮기며 각 칸 듣기. Enter: 그 칸으로 걷기. Shift+방향키: 한 걸음. F: 조금 접기, Shift+F: 조금 펴기, C: 닫기, O: 열기. T: 넘기기(닫혀 있을 때). 닫은 채 걸을 때 두 페이지가 모두 종이면 그 페이지에 머물고, 한쪽만 종이일 때만 페이지를 옮겨요. 종이 위 그림자는 그냥 종이예요. L: 이 줄 듣기, Shift+L: 책 전체 듣기. W: 내 위치. H: 힌트. U: 되돌리기. R: 다시. M: 소리 모드."
+            "value": "방향키: 칸 사이를 옮기며 칸마다 들어요. Enter: 그 칸까지 걷기. Shift+방향키: 한 걸음. F: 조금 접기. Shift+F: 조금 펴기. C: 닫기, O: 펴기, T: 넘기기(닫혀 있을 때). 닫은 채 걸을 때 두 페이지가 모두 종이면 지금 페이지에 머물고, 한쪽만 종이일 때만 그 페이지로 옮겨 가요. 종이 위의 그림자는 그냥 종이예요. L: 이 줄 듣기. Shift+L: 책 전체 듣기. W: 내 자리. H: 힌트. U: 되돌리기. R: 다시 하기. M: 소리 모드."
           }
         }
       }
@@ -4400,13 +4490,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "あなたはこの重なりに"
+            "value": "あなたはこの重なりにいる"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "내가 이 겹침에 있음"
+            "value": "내가 선 겹"
           }
         }
       }
@@ -5060,13 +5150,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "墨がひとまわり滲んだ"
+            "value": "濡れた墨がひとまわり滲んだ"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먹이 한 겹 더 번졌어요"
+            "value": "젖은 먹이 한 겹 번졌어요"
           }
         }
       }
@@ -5180,13 +5270,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ステージ{n}、{name}。{line}あなたは{you}、ゴールは{goal}。本は開いています。"
+            "value": "ステージ{n}、{name}。{line}あなたは{you}、終点は{goal}。本は開いている。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "{n}단계, {name}. {line} 지금 {you}에 있고, 도착점은 {goal}에 있어요. 책은 펼쳐져 있어요."
+            "value": "{n}단계, {name}. {line} 지금 {you}에 있고, 도착점은 {goal}. 책은 펼쳐져 있어요."
           }
         }
       }
@@ -5510,7 +5600,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ゴール"
+            "value": "終点"
           }
         },
         "ko": {
@@ -5666,7 +5756,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "건너편 사람, 책을 닫으면 만나요"
+            "value": "건너편 사람. 책을 닫으면 만나요"
           }
         }
       }
@@ -5720,7 +5810,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "紙の鶴"
+            "value": "折り鶴"
           }
         },
         "ko": {
@@ -6470,7 +6560,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "紙片、立って橋に"
+            "value": "紙片、立って橋になっている"
           }
         },
         "ko": {
@@ -6500,7 +6590,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "灯は左岸に"
+            "value": "灯りは左岸"
           }
         },
         "ko": {
@@ -6530,13 +6620,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "二つの灯がともる"
+            "value": "灯りは両岸"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "두 등불이 켜져 있어요"
+            "value": "두 등불이 다 켜져 있어요"
           }
         }
       }
@@ -6662,7 +6752,7 @@
       }
     },
     "layerRule": {
-      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -6680,7 +6770,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じたまま歩くとき：両方の頁が紙のところでは、いまの頁にとどまる。片方だけが紙のところで、その頁へ移る"
+            "value": "閉じたまま歩くとき：両方のページが紙なら、いまのページにとどまる。片方だけが紙のところで、そのページへ移る"
           }
         },
         "ko": {
@@ -6830,13 +6920,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "石は重すぎたから、鶴を折った。\n本を閉じるたび、きみの頁の同じ場所へ飛ぶ——\n同じ場所は、きみの頁では裏返し。\nその上に立って。"
+            "value": "石は重すぎたから、鶴を折った。\n本を閉じるたび、きみのページの同じ場所へ飛ぶ——\n同じ場所は、きみのページでは裏返し。\nその上に立って。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "돌이 너무 무거워서, 학을 접었어.\n책을 닫을 때마다 네 면의 같은 자리로 날아가——\n같은 자리는, 네 면에선 거꾸로야.\n그 위에 올라서."
+            "value": "돌이 너무 무거워서, 학을 접었어.\n책을 닫을 때마다 네 페이지의 같은 자리로 날아가—\n같은 자리는, 네 페이지에서는 거꾸로야.\n그 위에 올라서."
           }
         }
       }
@@ -6860,13 +6950,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "第三巻『傾』第二章 了。\n次の章、何も起きなかったとき。"
+            "value": "第三巻『傾く』第二章、完。\n次の章、何も起きなかったとき。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "제3권 《기울다》 2장 끝.\n다음 장, 아무 일도 없었을 때."
+            "value": "제3권 《기울기》 2장 끝.\n다음 장, 아무 일도 없었을 때."
           }
         }
       }
@@ -6950,13 +7040,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "立てて、また寝かせた。\n何も起きなかったと思うだろう——\n石はもう川の中、影はもう列を変えた。\n何度か往き来した。数えていた。"
+            "value": "立てて、また寝かせた。\n何も起きなかったと思うだろう——\n石はもう川の中、影はもう列を変えた。\n何度か往き来した。わたしは数えていた。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "세웠다가, 다시 눕혔어.\n아무 일도 없었다고 생각하겠지——\n돌은 벌써 강에 있고, 그림자는 벌써 줄을 바꿨어.\n몇 번을 오갔는지, 세고 있었어."
+            "value": "세웠다가, 다시 눕혔어.\n아무 일도 없었다고 생각하겠지—\n돌은 벌써 강에 있고, 그림자는 벌써 열을 바꿨어.\n몇 번을 오갔는지, 나는 세고 있었어."
           }
         }
       }
@@ -6980,13 +7070,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "第三巻『傾』第三章 了。\n次の章、手紙は二度折る。"
+            "value": "第三巻『傾く』第三章、完。\n次の章、手紙は二度折る。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "제3권 《기울다》 3장 끝.\n다음 장, 편지는 두 번 접어요."
+            "value": "제3권 《기울기》 3장 끝.\n다음 장, 편지를 두 번 접어."
           }
         }
       }
@@ -7047,6 +7137,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "왼쪽 강가에서 온 편지"
+          }
+        }
+      }
+    },
+    "letter.12.body": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "信太长了，我折了两次，又摊开一次。\n石头滚过去，鹤飞过来，书立起又放下——\n最后那一合，碰到你的是我这一页。\n书立够了。放平吧。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The letter was too long; I folded it twice, and opened it once.\nStones rolled over, cranes flew across, the book stood up and lay down again —\nand at the last close, the page that met you was mine.\nThe book has stood long enough. Lay it flat."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "手紙が長すぎて、二度折った。そして一度、ひらいた。\n石は転がり、鶴は飛び、本は立って、また寝た——\n最後に閉じたとき、きみに触れたのはわたしのページ。\n本はもう十分に立った。寝かせて。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "편지가 너무 길어서, 두 번 접었어. 그리고 한 번, 펼쳤어.\n돌은 굴러오고, 학은 날아가고, 책은 섰다가 다시 누웠어—\n마지막으로 닫혔을 때, 너에게 닿은 건 내 페이지였어.\n책은 충분히 섰어. 눕혀 줘."
+          }
+        }
+      }
+    },
+    "letter.12.end": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷三《倾》完。\n卷四，冰。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of Book Three.\nBook Four: ice."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三巻『傾く』、完。\n第四巻は、氷。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제3권 《기울기》 끝.\n제4권, 얼음."
+          }
+        }
+      }
+    },
+    "letter.12.sign": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——右岸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— the Right Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——右岸より"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— 오른쪽 강가에서"
+          }
+        }
+      }
+    },
+    "letter.12.title": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右岸来信"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A Letter from the Right Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右岸からの手紙"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오른쪽 강가에서 온 편지"
           }
         }
       }
@@ -7190,13 +7400,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "灯はきみの岸にある。\nきみの石が影を川向こうへ差し出し、\nわたしはそれを踏んで、少し近づいた。"
+            "value": "灯りはきみの岸にある。\nきみの石が影を川向こうへ差し出して、\nわたしはそれを踏んで、\nまた少し近づいた。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "등불은 네 쪽 강가에 있다.\n네 돌들이 그림자를 강 건너로 건네주어,\n나는 그것을 밟고 조금 더 가까워졌다."
+            "value": "등불은 네 강가에 있어.\n네 돌이 그림자를 강 건너로 건네주어서,\n나는 그걸 밟고\n조금 더 가까워졌어."
           }
         }
       }
@@ -7220,7 +7430,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "第三章 了。\n次の手紙は、まだ途中。"
+            "value": "第三章、完。\n次の手紙は、まだ途中にある。"
           }
         },
         "ko": {
@@ -7310,13 +7520,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じたあの一瞬、わたしたちは同じ枡に立っていた。\n開けば、川はまだそこにある。\nいい——この本には、次の頁がある。\n先にめくって、そこで待っている。"
+            "value": "閉じたあの一瞬、わたしたちは同じマスに立っていた。\n開けば、川はまだそこにある。\nかまわない——この本には次のページがある。\n先にめくって、そこで待っている。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "책이 닫힌 그 순간, 우리는 같은 칸에 서 있었다.\n펼치면, 강은 여전히 거기 있다.\n괜찮아. 이 책에는 다음 페이지가 있다.\n내가 먼저 넘겨서, 거기서 기다릴게."
+            "value": "책이 닫힌 그 순간, 우리는 같은 칸에 서 있었어.\n펼치면, 강은 아직 거기 있어.\n괜찮아—이 책에는 다음 페이지가 있으니까.\n내가 먼저 넘겨서, 거기서 기다릴게."
           }
         }
       }
@@ -7340,13 +7550,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "第一巻『両岸』了。\n次の頁は、まだ折っている。"
+            "value": "第一巻『両岸』、完。\n次のページは、まだ折っている途中。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "제1권 《두 강가》 끝.\n다음 페이지는 아직 접는 중."
+            "value": "제1권 《양안》 끝.\n다음 페이지는 아직 접는 중."
           }
         }
       }
@@ -7430,13 +7640,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "きみのあとから頁をめくろうとしたのに、頁の角が貼りついていた。\n貼りついたものは、頁と一緒に動く——\nなら、石に先に川を渡らせよう。\n影は石について、わたしは影について。"
+            "value": "きみについてめくるつもりだったのに、ページの角が貼りついていた。\n貼りついたものは、ページと一緒に動く——\nなら、先に石に川を渡らせよう。\n影は石について、わたしは影についていく。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "너를 따라 페이지를 넘기려 했는데, 페이지 모서리가 붙어 버렸다.\n붙은 것은 페이지와 함께 움직인다.\n그러니 돌을 먼저 강 건너로 보내자.\n그림자는 돌을 따르고, 나는 그림자를 따른다."
+            "value": "너를 따라 넘어가려 했는데, 페이지 모서리가 붙어 버렸어.\n붙은 것은 페이지와 함께 움직여—\n그러니 돌이 먼저 강을 건너게 할게.\n그림자는 돌을 따르고, 나는 그림자를 따라갈게."
           }
         }
       }
@@ -7460,13 +7670,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "第二巻『頁をめくる』第一章 了。\n頁の角は、まだ貼りついている。"
+            "value": "第二巻『ページをめくる』第一章、完。\nページの角は、まだ貼りついている。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "제2권 《페이지를 넘기다》 제1장 끝.\n모서리는 아직 붙어 있다."
+            "value": "제2권 《책장 넘기기》 1장 끝.\n모서리는 아직 붙어 있어."
           }
         }
       }
@@ -7550,13 +7760,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "めくってくれたね。\nこの頁で長く待ちすぎて、字が裏まで続いた。\nかまわない——閉じたとき、\nどちらの面がきみに向くかは、きみが決める。"
+            "value": "めくってくれたんだね。\nこのページで長く待ちすぎて、字が裏まで続いてしまった。\nかまわない——閉じたとき、\nどちらの面がきみに向くかは、きみが決める。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "네가 페이지를 넘겼구나.\n이 페이지에서 너무 오래 기다려 글이 뒷면까지 이어졌다.\n괜찮아. 책을 닫았을 때\n어느 면이 너를 향할지는 네가 정하니까."
+            "value": "네가 넘겼구나.\n이 페이지에서 너무 오래 기다려서, 글이 뒷면까지 이어졌어.\n괜찮아—책이 닫혔을 때\n어느 면이 너를 향할지는 네가 정하는 거니까."
           }
         }
       }
@@ -7580,13 +7790,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "第二巻『頁をめくる』第二章 了。\n裏にも、まだ字がある。"
+            "value": "第二巻『ページをめくる』第二章、完。\n裏にも、まだ字がある。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "제2권 《페이지를 넘기다》 제2장 끝.\n뒷면에 글이 더 있다."
+            "value": "제2권 《책장 넘기기》 2장 끝.\n뒷면에 글이 더 있어."
           }
         }
       }
@@ -7670,13 +7880,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "墨はまだ乾いていない。\n本を閉じるたび、字はきみのほうへひとまわり滲む——\n頁の端まで、裏まで。\n乾くのを待たないで。閉じて。"
+            "value": "墨はまだ乾いていない。\n本を閉じるたび、字はきみのほうへひとまわり滲む——\nページの端まで、裏まで。\n乾くのを待たないで。閉じて。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먹이 아직 마르지 않았다.\n책을 닫을 때마다 글이 네 쪽으로 한 겹 번진다.\n여백까지, 뒷면까지.\n마르기를 기다리지 마. 닫아 줘."
+            "value": "먹이 아직 마르지 않았어.\n책을 닫을 때마다 글이 네 쪽으로 한 겹 번져—\n여백까지, 뒷면까지.\n마르기를 기다리지 마. 닫아 줘."
           }
         }
       }
@@ -7700,13 +7910,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "第二巻『頁をめくる』第三章 了。\n次の章で、灯が岸を変える。"
+            "value": "第二巻『ページをめくる』第三章、完。\n次の章で、灯りが岸を変える。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "제2권 《페이지를 넘기다》 제3장 끝.\n다음 장에서 등불이 강가를 바꾼다."
+            "value": "제2권 《책장 넘기기》 3장 끝.\n다음 장에서는 등불이 강가를 바꿔."
           }
         }
       }
@@ -7790,13 +8000,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "灯をきみの岸へ移した。\nこれで、きみが頁を持ち上げるたび、そこに落ちるのはこちら側の影。\n二つの灯がともるとき、影は同じ頁で出会う。\n手紙は最後の頁までめくった。灯は、きみに。"
+            "value": "灯りをきみの岸へ移した。\nこれからは、きみがページを持ち上げるたび、そこに落ちるのはこちらの影。\n両方の灯りがともるとき、影は同じページで出会う。\n手紙は最後のページまでめくった。灯りは、きみに。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "등불을 네 강가로 옮겼어.\n이제 네가 페이지를 들어 올릴 때마다, 거기 떨어지는 건 내 쪽의 그림자야.\n두 등불이 함께 켜질 때, 그림자는 같은 페이지에서 만나.\n편지는 마지막 장까지 넘겼어. 등불은 네게 둘게."
+            "value": "등불을 네 강가로 옮겼어.\n이제 네가 페이지를 들어 올릴 때마다, 거기 떨어지는 건 내 쪽의 그림자야.\n두 등불이 함께 켜지면, 그림자는 같은 페이지에서 만나.\n편지는 마지막 페이지까지 넘겼어. 등불은 네게 둘게."
           }
         }
       }
@@ -7820,13 +8030,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "第二巻『頁をめくる』 了。\n第三巻、本を立てて。"
+            "value": "第二巻『ページをめくる』、完。\n第三巻は、本を立てる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "제2권 《페이지를 넘기다》 끝.\n제3권, 책을 세워 봐."
+            "value": "제2권 《책장 넘기기》 끝.\n제3권, 책을 세워."
           }
         }
       }
@@ -7910,13 +8120,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "渡れないなら、ものを送る。\n本を立てると、なにもかも低いほうへ転がる——\n低いほうは折り目、折り目はきみ。\n受け止めないで。最後まで転がして。"
+            "value": "渡れないなら、ものを送る。\n本を立てると、なにもかも低いほうへ転がる——\n低いほうは折り目で、折り目はきみ。\n受け止めないで。最後まで転がして。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "건널 수 없으니, 물건을 보낼게.\n책을 세우면 모든 게 낮은 곳으로 굴러가——\n낮은 곳은 접힌 금, 접힌 금은 너야.\n받지 마. 끝까지 구르게 둬."
+            "value": "건널 수 없으니, 물건을 보낼게.\n책을 세우면 모든 것이 낮은 곳으로 굴러가—\n낮은 곳은 접는 선, 접는 선은 너야.\n받지 마. 끝까지 구르게 둬."
           }
         }
       }
@@ -7940,13 +8150,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "第三巻『傾』第一章 了。\n次の章、石は重すぎる。"
+            "value": "第三巻『傾く』第一章、完。\n次の章、石は重すぎる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "제3권 《기울다》 1장 끝.\n다음 장, 돌이 너무 무거워."
+            "value": "제3권 《기울기》 1장 끝.\n다음 장, 돌이 너무 무거워."
           }
         }
       }
@@ -8240,13 +8450,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "「{name}」クリア"
+            "value": "「{name}」を解いた"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "‘{name}’ 완료"
+            "value": "‘{name}’ 풀었어요"
           }
         }
       }
@@ -8360,7 +8570,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "・"
+            "value": "、"
           }
         },
         "ko": {
@@ -8390,13 +8600,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "道が一部途切れた"
+            "value": "道がいくつか切れた"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "길이 일부 끊겼어요"
+            "value": "길이 몇 군데 끊겼어요"
           }
         }
       }
@@ -8720,13 +8930,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "クリア済み"
+            "value": "解いた"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "완료"
+            "value": "풀었음"
           }
         }
       }
@@ -9140,7 +9350,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じた"
+            "value": "閉じる"
           }
         },
         "ko": {
@@ -9170,13 +9380,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "傾いた"
+            "value": "傾く"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "기울어짐"
+            "value": "기울임"
           }
         }
       }
@@ -9200,13 +9410,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "開いた"
+            "value": "開く"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "열림"
+            "value": "펼침"
           }
         }
       }
@@ -9230,13 +9440,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "立った"
+            "value": "立つ"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "섬"
+            "value": "세움"
           }
         }
       }
@@ -9410,13 +9620,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "石の上に紙が重なっていて進めない"
+            "value": "石の上に紙が重なっていて、通れない"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "돌 위에 종이가 겹쳐 있어 갈 수 없어요"
+            "value": "돌 위에 종이가 겹쳐 있어 지나갈 수 없어요"
           }
         }
       }
@@ -9476,7 +9686,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "문이 잠겼어요"
+            "value": "문이 잠겨 있어요"
           }
         }
       }
@@ -9506,13 +9716,13 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "책 끝이에요"
+            "value": "책의 가장자리예요"
           }
         }
       }
     },
     "no.flip.leaf": {
-      "comment": "VoiceOver / announcement. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -9530,13 +9740,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "めくる頁の上に立っている——閉じたまま左頁へ歩いてから、めくる"
+            "value": "めくるページの上に立っている——閉じたまま左ページへ歩いてから、めくる"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "넘길 페이지 위에 서 있어요. 닫은 채 왼쪽 페이지로 걸어간 뒤 넘기세요"
+            "value": "넘길 페이지 위에 서 있어요. 닫은 채 왼쪽 페이지로 걸어간 다음 넘겨요"
           }
         }
       }
@@ -9590,7 +9800,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "この手紙は二頁しかない"
+            "value": "この手紙は二ページしかない"
           }
         },
         "ko": {
@@ -9650,13 +9860,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "進めない"
+            "value": "そちらへは進めない"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "갈 수 없어요"
+            "value": "그쪽으로는 못 가요"
           }
         }
       }
@@ -9710,7 +9920,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "戻せる操作はありません"
+            "value": "戻すものがない"
           }
         },
         "ko": {
@@ -9830,7 +10040,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ゴール"
+            "value": "終点"
           }
         },
         "ko": {
@@ -9920,7 +10130,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "紙の鶴"
+            "value": "折り鶴"
           }
         },
         "ko": {
@@ -10130,7 +10340,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "なし"
+            "value": "どこへも"
           }
         },
         "ko": {
@@ -10490,7 +10700,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ハイコントラスト"
+            "value": "高コントラスト"
           }
         },
         "ko": {
@@ -10556,7 +10766,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "음성 읽기"
+            "value": "소리 내어 읽기"
           }
         }
       }
@@ -10730,13 +10940,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "厚紙。角で鶴を折った。"
+            "value": "厚紙。角で鶴を折ってある。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "두꺼운 종이. 모서리로 학을 접었어요."
+            "value": "두꺼운 종이. 모서리로 학을 접었다."
           }
         }
       }
@@ -10766,7 +10976,37 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "두꺼운 종이. 세운 적이 있어요. 봐서는 몰라요."
+            "value": "두꺼운 종이. 세운 적이 있다. 봐서는 모른다."
+          }
+        }
+      }
+    },
+    "paper.ch12": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "硬卡纸，右页外沿接了第三页。它有自己的折痕。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Card, with a third page on the right page's outer edge. It has a crease of its own."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "厚紙。右ページの外側に三枚目がつづく。自分の折り目を持っている。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두꺼운 종이. 오른쪽 페이지 바깥에 셋째 페이지가 이어진다. 제 접는 선을 가졌다."
           }
         }
       }
@@ -10820,13 +11060,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "灯にかざした紙。影の上を歩ける。"
+            "value": "灯りにかざした紙。影の上を歩ける。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "등불에 비춘 종이, 그림자 위를 걸을 수 있어요."
+            "value": "등불에 비춘 종이. 그림자 위를 걸을 수 있다."
           }
         }
       }
@@ -10856,7 +11096,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "오래된 종이, 접는 선이 하얗게 바랬어요."
+            "value": "오래된 종이. 접는 선이 하얗게 바랬다."
           }
         }
       }
@@ -10880,13 +11120,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "便箋。薄い罫線、糊が一か所。"
+            "value": "便箋。薄い罫線、糊がひとつ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "편지지, 연한 격자 선, 풀이 한 곳."
+            "value": "편지지. 연한 줄, 풀 한 점."
           }
         }
       }
@@ -10916,7 +11156,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "편지지, 양면에 글이 있다."
+            "value": "편지지. 양면에 글이 있다."
           }
         }
       }
@@ -10946,7 +11186,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "편지지, 먹이 아직 마르지 않았다."
+            "value": "편지지. 먹이 아직 마르지 않았다."
           }
         }
       }
@@ -10970,7 +11210,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "便箋。灯は左に。"
+            "value": "便箋。灯りは左に。"
           }
         },
         "ko": {
@@ -11006,7 +11246,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "두꺼운 종이. 혼자 서 있어요."
+            "value": "두꺼운 종이. 혼자 선다."
           }
         }
       }
@@ -11030,13 +11270,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "このページは便箋。枡は印刷されている"
+            "value": "このページは便箋。罫線は印刷されたもの"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "이 페이지는 편지지, 격자가 인쇄되어 있어요"
+            "value": "이 페이지는 편지지. 줄은 인쇄된 거예요"
           }
         }
       }
@@ -11060,13 +11300,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ページが灯にかざされた"
+            "value": "このページは灯りにかざされている"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "페이지를 등불에 비췄어요"
+            "value": "이 페이지는 등불 앞에 들려 있어요"
           }
         }
       }
@@ -11096,7 +11336,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "이 면은 편지지의 뒷면"
+            "value": "이 면은 편지지의 뒷면이에요"
           }
         }
       }
@@ -11120,7 +11360,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "このページは何度も折られてきた"
+            "value": "このページは何度も折られている"
           }
         },
         "ko": {
@@ -11210,7 +11450,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "紙の鶴"
+            "value": "折り鶴"
           }
         },
         "ko": {
@@ -11300,13 +11540,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "灯の位置"
+            "value": "灯り"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "등불의 자리"
+            "value": "등불"
           }
         }
       }
@@ -11457,6 +11697,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "세우기"
+          }
+        }
+      }
+    },
+    "pre.third": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Third page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三枚目"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "셋째 페이지"
+          }
+        }
+      }
+    },
+    "pre.thirdLabel": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "换折痕：在书和第三页自己的折痕之间切换（P）"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch crease: between the book and the third page’s own crease (P)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折り目を切り替える：本の折り目と三枚目の折り目（P）"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "접는 선 바꾸기: 책의 접는 선과 셋째 페이지의 접는 선 (P)"
           }
         }
       }
@@ -11720,13 +12020,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "やり直し"
+            "value": "やり直す"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "다시"
+            "value": "다시 하기"
           }
         }
       }
@@ -11930,13 +12230,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "きみが石を止めている"
+            "value": "あなたが転がる石を止めている"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "네가 돌을 막고 있어요"
+            "value": "내가 구르는 돌을 막고 있어요"
           }
         }
       }
@@ -11960,13 +12260,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "石が{col}へ転がった"
+            "value": "転がる石が{col}へ転がった"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "돌이 {col:으로} 굴러갔어요"
+            "value": "구르는 돌이 {col:으로} 굴러갔어요"
           }
         }
       }
@@ -11990,13 +12290,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "石が隙間に落ちて、そこは紙になった"
+            "value": "転がる石がすき間に落ちて、そこは紙になった"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "돌이 틈에 떨어져 거기는 종이가 됐어요"
+            "value": "구르는 돌이 틈에 빠져, 거기는 종이가 됐어요"
           }
         }
       }
@@ -12980,13 +13280,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影が{c}列目のすき間をふさいだ"
+            "value": "影が{c}列のすき間をふさいでいる"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자가 {c}열의 틈을 덮었어요"
+            "value": "그림자가 {c}열의 틈을 덮고 있어요"
           }
         }
       }
@@ -13040,7 +13340,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影が{cells}に落ちた"
+            "value": "影が{cells}に落ちている"
           }
         },
         "ko": {
@@ -13052,7 +13352,7 @@
       }
     },
     "shadowOnPaper": {
-      "comment": "VoiceOver / announcement. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -13070,13 +13370,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "紙の上の影は、ただの紙。きみを運べるのは、すき間の上の影だけ"
+            "value": "紙の上の影は、ただの紙。あなたを運べるのは、すき間の上の影だけ"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "종이 위 그림자는 그냥 종이예요. 당신을 실어 나르는 건 틈 위의 그림자뿐이에요"
+            "value": "종이 위의 그림자는 그냥 종이예요. 나를 데려가는 건 틈 위의 그림자뿐이에요"
           }
         }
       }
@@ -13100,13 +13400,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影に乗って{pos}へ滑った"
+            "value": "影があなたを{pos}へ運んだ"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자가 {pos:으로} 데려갔어요"
+            "value": "그림자가 나를 {pos:으로} 데려갔어요"
           }
         }
       }
@@ -13220,13 +13520,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "鶴に折った一枡の紙。立てる。本を閉じるたび——翻すのも数える——向かいの頁の同じ行の鏡の枡へ飛び、上に立つ人も一緒に飛ぶ。降り場に何かあれば飛ばない。"
+            "value": "一マスの紙を折った鶴。上に立てる。本を閉じるたび——めくるのも数える——向かいのページの同じ行、鏡のマスへ飛び、上に立つ人も一緒に飛ぶ。降り場に何かあれば、飛ばない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "학으로 접은 종이 한 칸. 올라설 수 있어요. 책을 닫을 때마다——넘기는 것도 쳐요——맞은편 면 같은 줄의 거울 칸으로 날아가고, 위에 선 사람도 함께 날아요. 내려앉을 자리에 뭔가 있으면 날지 않아요."
+            "value": "종이 한 칸을 접은 학. 올라설 수 있어요. 책을 닫을 때마다—넘기는 것도 쳐요—맞은편 페이지 같은 행의 거울 칸으로 날아가고, 위에 선 사람도 함께 날아요. 내려앉을 자리에 무언가 있으면 날지 않아요."
           }
         }
       }
@@ -13280,13 +13580,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "図：鶴に乗って閉じれば向こうの頁。降り場に石があれば、その場に残る。"
+            "value": "図：鶴に乗って閉じれば、向かいのページ。降り場に石があれば、その場に残る。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림: 학 위에서 닫으면 맞은편 면. 자리에 돌이 있으면 그대로 있어요."
+            "value": "그림: 학 위에서 닫으면 맞은편 페이지. 내려앉을 자리에 돌이 있으면 그 자리에 남아요."
           }
         }
       }
@@ -13340,7 +13640,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "紙の鶴"
+            "value": "折り鶴"
           }
         },
         "ko": {
@@ -13430,13 +13730,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "傾けて、また平らに：頁は二度立ち上がり、本は閉じていない。転がる石はみな二枡転がった——でも圧はない：糊は貼らず、墨は刷らず、鶴は飛ばない。閉じて開くのも二度の立ち上がりだが、間に一度の圧がある。"
+            "value": "傾けて、また寝かせる：ページは二度立ち、本は一度も閉じていない。転がる石はみな二マス転がった——けれど何も押していない。糊は貼らず、墨は写らず、鶴は飛ばない。閉じて開くのも二度立つのは同じだが、あいだに一度、押している。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "기울였다가 다시 눕혀요: 면이 두 번 곧추섰고 책은 닫히지 않았어요. 구르는 돌은 모두 두 칸 굴렀지만 누른 적은 없어요——풀은 안 붙고, 먹은 안 찍히고, 학은 안 날아요. 닫았다 여는 것도 두 번 곧추서지만, 사이에 한 번 눌러요."
+            "value": "기울였다가 다시 눕혀요: 페이지는 두 번 섰고, 책은 한 번도 닫히지 않았어요. 구르는 돌은 모두 두 칸 굴렀지만, 누른 적은 없어요. 풀은 붙지 않고, 먹은 찍히지 않고, 학은 날지 않아요. 닫았다 여는 것도 똑같이 두 번 서지만, 그 사이에 한 번 눌러요."
           }
         }
       }
@@ -13460,13 +13760,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "図：傾けると石が一枡転がる。平らにすると隙間へ落ちる。向かいの糊は何も貼れなかった。"
+            "value": "図：傾けると石が一マス転がる。寝かせるとすき間に落ちる。向かいの糊は何も貼れなかった。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림: 기울이면 돌이 한 칸 굴러요. 눕히면 틈에 빠져요. 맞은편 풀은 아무것도 못 붙였어요."
+            "value": "그림: 기울이면 돌이 한 칸 굴러요. 눕히면 틈에 빠져요. 맞은편 풀은 아무것도 붙이지 못했어요."
           }
         }
       }
@@ -13520,13 +13820,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "紙を折った扉。頁を傾けているあいだだけ立ち、歩ける。平らにするか閉じると、隙間へ倒れる。その上に立ったまま倒さないこと。"
+            "value": "紙を折った扉。ページが傾いているあいだだけ立ち、そのあいだだけ歩ける。平らにするか閉じると、すき間へ倒れる。その上に立ったまま倒さないこと。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "종이를 접어 만든 문. 페이지를 기울이는 동안에만 서 있고, 그때만 걸을 수 있어요. 평평하게 펴거나 닫으면 틈으로 다시 누워요. 그 위에 서 있을 때 눕히지 마세요."
+            "value": "종이를 접어 만든 문. 페이지가 기울어 있는 동안에만 서 있고, 그때만 걸을 수 있어요. 평평하게 펴거나 닫으면 틈으로 도로 누워요. 그 위에 선 채로 눕히지 마세요."
           }
         }
       }
@@ -13550,13 +13850,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "図：傾けると扉が立つ。扉の上で平らにすると落ちる。もう一度傾け、扉を抜けて彼女へ。"
+            "value": "図：傾けると扉が立つ。扉の上で平らにすると落ちる。もう一度傾けて、扉を抜けて彼女へ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림: 기울이면 문이 서요. 문 위에서 펴면 떨어져요. 다시 기울여 문을 지나 그녀에게."
+            "value": "그림: 기울이면 문이 서요. 문 위에서 펴면 떨어져요. 다시 기울여, 문을 지나 그녀에게."
           }
         }
       }
@@ -13820,13 +14120,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "灯が左へ移った。いまは平らな頁の石が、持ち上げた頁に影を落とす——綴じ目から始まり、閉じるほど外へ滑る。"
+            "value": "灯りが左へ移った。いまは平らなページの石が、持ち上げたページに影を落とす——綴じ目から始まり、閉じるほど外へ滑る。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "등불이 왼쪽으로 옮겨 갔어요. 이제 평평한 페이지의 돌이, 들어 올린 페이지에 그림자를 드리워요. 경첩에서 시작해 닫을수록 바깥으로 미끄러져요."
+            "value": "등불이 왼쪽으로 옮겨 갔어요. 이제 평평한 페이지의 돌이, 들어 올린 페이지에 그림자를 드리워요. 접는 선에서 시작해, 닫을수록 바깥으로 미끄러져요."
           }
         }
       }
@@ -13850,13 +14150,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "図：傾けると左頁の石の影が右頁の隙間に落ちる。さらに閉じると影が外へ滑り、彼女の枡へ運ぶ。"
+            "value": "図：傾けると、左ページの石の影が右ページのすき間に落ちる。もう少し閉じると影が外へ滑り、彼女のマスまで運ぶ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림: 기울이면 왼쪽 면 돌의 그림자가 오른쪽 면 틈에 떨어져요. 조금 더 닫으면 그림자가 바깥으로 미끄러져 그녀를 편지까지 데려가요."
+            "value": "그림: 기울이면 왼쪽 페이지 돌의 그림자가 오른쪽 페이지 틈에 떨어져요. 조금 더 닫으면 그림자가 바깥으로 미끄러져 그녀의 칸까지 데려가요."
           }
         }
       }
@@ -13880,13 +14180,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "灯の位置"
+            "value": "灯り"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "등불의 자리"
+            "value": "등불"
           }
         }
       }
@@ -14390,13 +14690,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "糊づけされていない石。本を立てるたび——90° を越えれば、閉じなくても——折り目へ一枡転がる。隙間に落ちれば、そこは紙になる。戻ってはこない。"
+            "value": "糊づけされていない石。本が立つたび——90°を越えれば、閉じなくても——折り目へ一マス転がる。すき間に落ちれば、そこは紙になる。戻ってはこない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "풀로 붙이지 않은 돌. 책을 세울 때마다——90°를 넘으면, 닫지 않아도——접힌 금 쪽으로 한 칸 굴러가요. 틈에 떨어지면 틈은 종이가 돼요. 다시 굴러오지 않아요."
+            "value": "풀로 붙이지 않은 돌. 책이 설 때마다—90°를 넘으면, 닫지 않아도—접는 선 쪽으로 한 칸 굴러요. 틈에 빠지면 거기는 종이가 돼요. 되돌아오지 않아요."
           }
         }
       }
@@ -14480,13 +14780,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "図：傾けると石が一枡転がる。平らに戻すと隙間に落ち、隙間は橋になる。"
+            "value": "図：傾けると石が一マス転がる。寝かせるとすき間に落ちて、すき間は橋になる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림: 기울이면 돌이 한 칸 굴러요. 다시 펴면 틈에 떨어지고, 틈은 다리가 돼요."
+            "value": "그림: 기울이면 돌이 한 칸 굴러요. 눕히면 틈에 빠지고, 틈은 다리가 돼요."
           }
         }
       }
@@ -14731,6 +15031,96 @@
         }
       }
     },
+    "slip.trifold.body": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三页接在右页外沿，有自己的折痕。一次只动一道折痕：书摊平才能折第三页。直接合书，第三页甩到桌上；先把它折到右页上再合，左页碰到的就是第三页——第三页的第 c 列落在你的第 c 列上：折两次，回到原来那列。第三页上的洞里露出右页。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The third page hangs off the right page's outer edge on a crease of its own. One crease moves at a time: the third page only while the book lies flat. Close the book as it is and the third page swings out onto the table; fold it onto the right page first and the left page meets the THIRD page — its column c lands on your column c: folded twice, back in your own column. Through the third page's holes you see the right page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三枚目は右ページの外側に、自分の折り目でつながっている。折り目は一度にひとつ：三枚目を折れるのは本が平らなときだけ。そのまま本を閉じると、三枚目は机へ振り出される。先に右ページへ折ってから閉じれば、左ページが出会うのは三枚目——三枚目のc列はあなたのc列に重なる。二度折れば、元の列。三枚目の穴からは右ページが見える。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "셋째 페이지는 오른쪽 페이지 바깥에 제 접는 선으로 이어져 있어요. 접는 선은 한 번에 하나만: 셋째 페이지는 책이 평평할 때만 접을 수 있어요. 그대로 책을 닫으면 셋째 페이지는 책상으로 넘어가요. 먼저 오른쪽 페이지 위로 접고 닫으면, 왼쪽 페이지가 만나는 건 셋째 페이지—셋째 페이지의 c열이 내 c열 위에 겹쳐요. 두 번 접으면 제자리 열. 셋째 페이지의 구멍으로는 오른쪽 페이지가 보여요."
+          }
+        }
+      }
+    },
+    "slip.trifold.pic": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：第三页折上来，再合书；她在第三页第二列，就在你那一列的叠上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: the third page folded over, then the book closed; she is in the third page's second column, right on your column's stack."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：三枚目を折ってから、本を閉じる。彼女は三枚目の2列目、あなたの列の重なりの上。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 셋째 페이지를 접고, 책을 닫아요. 그녀는 셋째 페이지 2열, 내 열의 겹 위에."
+          }
+        }
+      }
+    },
+    "slip.trifold.title": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三折"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trifold"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三つ折り"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "세 겹 접기"
+          }
+        }
+      }
+    },
     "slip.tuck": {
       "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
       "extractionState": "manual",
@@ -14870,13 +15260,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "この墨はまだ乾いていない。本を閉じるたびに四方へ一枡滲み、向かいにも写る——写ったほうも濡れている。閉じた回数だけ、墨は広がる。"
+            "value": "この墨はまだ乾いていない。本を閉じるたびに四方へ一マス滲み、向かいにも写る——写ったほうも濡れている。二度閉じれば、ふたまわり。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "이 먹은 아직 마르지 않았어요. 책을 닫을 때마다 사방으로 한 칸 번지고, 맞은편에도 찍혀요. 찍힌 쪽도 젖어 있어요. 닫은 횟수만큼 먹이 자라요."
+            "value": "이 먹은 아직 마르지 않았어요. 책을 닫을 때마다 사방으로 한 칸 번지고, 맞은편에도 찍혀요. 찍힌 쪽도 젖어 있어요. 두 번 닫으면 두 겹."
           }
         }
       }
@@ -14900,13 +15290,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "図：一度閉じるとひとまわり滲み、あと一枡届かない。もう一度閉じると道がつながる。"
+            "value": "図：一度閉じるとひとまわり滲み、あと一マス届かない。もう一度閉じると、道がつながる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림: 한 번 닫으면 한 겹 번지고 한 칸이 모자라요. 한 번 더 닫으면 길이 이어져요."
+            "value": "그림: 한 번 닫으면 한 겹 번지고, 한 칸이 모자라요. 한 번 더 닫으면 길이 이어져요."
           }
         }
       }
@@ -14990,13 +15380,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（右ページ、{c}列の上）"
+            "value": "（右ページ、{c}列の上に重なる）"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": " (오른쪽 페이지, {c}열 위)"
+            "value": " (오른쪽 페이지, {c}열 위에 겹침)"
           }
         }
       }
@@ -15206,7 +15596,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫으면 풀에 붙어 맞은편 {col:으로} 옮겨 가요"
+            "value": "닫으면 풀에 붙어 맞은편 {col:으로} 건너가요"
           }
         }
       }
@@ -15230,7 +15620,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "傾けると影を落とす。閉じると{col}をふさぐ"
+            "value": "傾けると影を落とす。閉じると{col}を押さえる"
           }
         },
         "ko": {
@@ -15260,13 +15650,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "スクリーンリーダーで、または目を閉じて遊ぶ？ ここでサウンドモードをオン"
+            "value": "スクリーンリーダーで、あるいは目を閉じて遊ぶなら、ここでサウンドモードをオンに"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "화면 낭독기를 쓰거나 눈을 감고 하나요? 여기서 소리 모드를 켜세요"
+            "value": "화면 낭독기를 쓰거나 눈을 감고 하나요? 여기서 소리 모드를 켤 수 있어요"
           }
         }
       }
@@ -15290,13 +15680,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "目を閉じても遊べます。Mでサウンドモード、?でキーの説明"
+            "value": "目を閉じても遊べる。Mでサウンドモード、?キーでキーの説明"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "눈을 감고도 할 수 있어요: M은 소리 모드, 물음표는 키 안내"
+            "value": "눈을 감고도 할 수 있어요. M은 소리 모드, 물음표는 키 안내"
           }
         }
       }
@@ -15380,13 +15770,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "半分開くと、向かいの紙片と立って橋になる"
+            "value": "半開きで、向かいの紙片と立って橋になる"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "반쯤 열면 맞은편 종이 조각과 서서 다리가 돼요"
+            "value": "반쯤 열면 맞은편 종이 조각과 함께 서서 다리가 돼요"
           }
         }
       }
@@ -15470,13 +15860,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "本は、立てた状態と閉じた状態のあいだのどこでも止められる"
+            "value": "本は、立てた位置と閉じた位置のあいだのどこでも止められる"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "책은 세운 상태와 닫힌 상태 사이 어디에서든 멈출 수 있어요"
+            "value": "책은 세운 자리와 닫힌 자리 사이 어디에서든 멈출 수 있어요"
           }
         }
       }
@@ -15500,13 +15890,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "三枚目の頁"
+            "value": "三枚目のページ"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "세 번째 페이지"
+            "value": "셋째 페이지"
           }
         }
       }
@@ -15560,13 +15950,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "モーションの許可が得られませんでした"
+            "value": "モーションの使用が許可されていません"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "동작 권한을 받지 못했어요"
+            "value": "동작 접근 권한이 없어요"
           }
         }
       }
@@ -15590,13 +15980,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "スマホを左右に傾けて折る"
+            "value": "端末を左右に傾けて折る"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "폰을 좌우로 기울여 접어요"
+            "value": "기기를 좌우로 기울여 접어요"
           }
         }
       }
@@ -15661,6 +16051,426 @@
         }
       }
     },
+    "tri.aside": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三页立着的时候，你在左页上哪儿也去不了"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "While the third page is up you can’t go anywhere on the left page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三枚目が起きているあいだ、左ページではどこへも行けない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "셋째 페이지가 들려 있는 동안 왼쪽 페이지에서는 어디로도 갈 수 없어요"
+          }
+        }
+      }
+    },
+    "tri.blocked": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三页折不下去：你站在它上面，正下方右页是石头。先走开"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The third page won’t fold down: you’re standing on it right over a stone on the right page. Step off first"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三枚目は折れない：その上に立っていて、真下の右ページが石。先にどいて"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "셋째 페이지가 접히지 않아요: 그 위에 서 있고, 바로 아래 오른쪽 페이지는 돌이에요. 먼저 비켜요"
+          }
+        }
+      }
+    },
+    "tri.bookFirst": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先把书摊平，才能折第三页——一次只动一道折痕"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lay the book flat first — one crease moves at a time"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先に本を平らに——折り目は一度にひとつ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 책을 평평하게 펴요—접는 선은 한 번에 하나만"
+          }
+        }
+      }
+    },
+    "tri.covered": {
+      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三页折不下去：它的纸会盖在你身上。站到它的洞下面，或者离开右页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The third page won’t fold down: its paper would lie on you. Stand under one of its holes, or leave the right page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三枚目は折れない：その紙があなたに被さる。穴の下に立つか、右ページから離れて"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "셋째 페이지가 접히지 않아요: 그 종이가 나를 덮게 돼요. 구멍 아래에 서거나, 오른쪽 페이지에서 비켜요"
+          }
+        }
+      }
+    },
+    "tri.flapFirst": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先把第三页放平，或者折到底，才能折书"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lay the third page flat, or fold it all the way, before you fold the book"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三枚目を平らにするか、最後まで折ってから、本を折る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "셋째 페이지를 평평하게 펴거나 끝까지 접은 다음에 책을 접어요"
+          }
+        }
+      }
+    },
+    "tri.flapView": {
+      "comment": "UI. From fold-proto i18n.js. Placeholders: {a}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三页在它自己的折痕上，{a}°；右页平放，左页在一边够不着"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "third page on its own crease at {a}°; the right page lies flat, the left page aside out of reach"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三枚目は自分の折り目で{a}°。右ページは平ら、左ページは脇にあって届かない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "셋째 페이지는 제 접는 선에서 {a}°. 오른쪽 페이지는 평평하고, 왼쪽 페이지는 옆에 있어 닿지 않아요"
+          }
+        }
+      }
+    },
+    "tri.foldedView": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三页折在右页上"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the third page lies folded on the right page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三枚目は右ページに折り重なっている"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "셋째 페이지가 오른쪽 페이지 위에 접혀 있어요"
+          }
+        }
+      }
+    },
+    "tri.help": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这封信有第三页，接在右页外沿，有它自己的折痕：P 在书和第三页之间换折痕。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This letter has a third page on its own crease at the right page’s outer edge: P switches between the book’s crease and the third page’s."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この手紙には三枚目がある。右ページの外側に、自分の折り目でつながっている。Pで本の折り目と三枚目の折り目を切り替える。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 편지에는 셋째 페이지가 있어요. 오른쪽 페이지 바깥에 제 접는 선으로 이어져 있어요. P로 책의 접는 선과 셋째 페이지의 접는 선을 바꿔요."
+          }
+        }
+      }
+    },
+    "tri.layerHole": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右页，透过第三页的洞"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "right page, through a hole in the third page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右ページ、三枚目の穴越し"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오른쪽 페이지, 셋째 페이지의 구멍 너머"
+          }
+        }
+      }
+    },
+    "tri.layerThird": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "third page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三枚目"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "셋째 페이지"
+          }
+        }
+      }
+    },
+    "tri.onBookFlat": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "现在折的是书：第三页摊着，跟右页一起抬"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Now folding the book: the third page lies open and lifts with the right page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "いま折っているのは本：三枚目は開いたまま、右ページと一緒に起きる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금 접는 건 책: 셋째 페이지는 펼친 채 오른쪽 페이지와 함께 들려요"
+          }
+        }
+      }
+    },
+    "tri.onBookFolded": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "现在折的是书：第三页折在右页上，洞里露出右页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Now folding the book: the third page lies folded on the right page; its holes show the right page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "いま折っているのは本：三枚目は右ページに折り重なり、穴から右ページが見える"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금 접는 건 책: 셋째 페이지는 오른쪽 페이지 위에 접혀 있고, 구멍으로 오른쪽 페이지가 보여요"
+          }
+        }
+      }
+    },
+    "tri.onFlap": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "现在折的是第三页：右页平放，第三页抬起"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Now folding the third page: the right page lies flat, the third page lifts"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "いま折っているのは三枚目：右ページは平ら、三枚目が起きる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금 접는 건 셋째 페이지: 오른쪽 페이지는 평평하고, 셋째 페이지가 들려요"
+          }
+        }
+      }
+    },
+    "tri.walkFolded": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三页合在右页上时走不了：按「第三页」换回书的折痕再走"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "With the third page folded down you can’t walk: switch back to the book’s crease (P) first"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三枚目を折り重ねたままでは歩けない：「三枚目」で本の折り目に戻してから"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "셋째 페이지를 접어 둔 채로는 걸을 수 없어요: ‘셋째 페이지’로 책의 접는 선으로 돌아간 다음 걸어요"
+          }
+        }
+      }
+    },
     "turned": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -15680,13 +16490,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "めくった。左頁の向かいは三枚目の頁"
+            "value": "めくった。左ページの向かいは三枚目のページ"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "넘겼어요. 왼쪽 페이지가 세 번째 페이지와 마주 봐요"
+            "value": "넘겼어요. 왼쪽 페이지가 셋째 페이지와 마주 봐요"
           }
         }
       }
@@ -15710,13 +16520,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "めくり戻した。左頁の向かいはまた右頁"
+            "value": "めくり戻した。左ページの向かいはまた右ページ"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "되돌렸어요. 왼쪽 페이지가 다시 오른쪽 페이지와 마주 봐요"
+            "value": "되넘겼어요. 왼쪽 페이지가 다시 오른쪽 페이지와 마주 봐요"
           }
         }
       }
@@ -15800,7 +16610,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "戻しました。あなたは{pos}、本は{a}°"
+            "value": "戻した。あなたは{pos}、本は{a}°"
           }
         },
         "ko": {
@@ -16106,7 +16916,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "지금 {pos}, {page}. 갈 수 있는 쪽: {ways}. 책 {a}°. {goal}."
+            "value": "지금 {pos}, {page}. 갈 수 있는 쪽: {ways}. 책은 {a}°. {goal}."
           }
         }
       }
@@ -16130,7 +16940,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "石の上に紙が重なってふさがっている"
+            "value": "石の上に重なった紙にふさがれている"
           }
         },
         "ko": {
@@ -16160,13 +16970,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "折り目の向こう（閉じるか、紙片を立てないとつながらない）"
+            "value": "折り目の向こう（閉じるか、紙片が立たないとつながらない）"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "접는 선이 있어요(닫거나 종이 조각을 세워야 이어져요)"
+            "value": "접는 선 너머예요 (닫거나 종이 조각이 서야 이어져요)"
           }
         }
       }
@@ -16196,7 +17006,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "잠긴 문이 있어요"
+            "value": "문이 잠겨 있어요"
           }
         }
       }
@@ -16226,7 +17036,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "책 끝이 있어요"
+            "value": "책의 가장자리예요"
           }
         }
       }
@@ -16256,7 +17066,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "틈이 있어요"
+            "value": "틈이에요"
           }
         }
       }
@@ -16280,7 +17090,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "石でふさがっている"
+            "value": "石にふさがれている"
           }
         },
         "ko": {
@@ -16292,7 +17102,7 @@
       }
     },
     "why.stoneTop": {
-      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -16310,19 +17120,19 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "上の頁の石がこの重なりをふさいでいる"
+            "value": "上のページの石がこの重なりを押さえている"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "위 페이지의 돌이 이 겹을 막고 있어요"
+            "value": "위 페이지의 돌이 이 겹을 누르고 있어요"
           }
         }
       }
     },
     "why.stoneUnder": {
-      "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
+      "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -16340,13 +17150,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "この重なりの下に左頁の石がある"
+            "value": "この重なりの下は左ページの石"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "이 겹 아래에 왼쪽 페이지의 돌이 있어요"
+            "value": "이 겹 아래는 왼쪽 페이지의 돌이에요"
           }
         }
       }
@@ -16370,13 +17180,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "{text}！Enterで{next}"
+            "value": "{text}。Enterで{next}"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "{text}! Enter: {next}"
+            "value": "{text}. Enter: {next}"
           }
         }
       }
