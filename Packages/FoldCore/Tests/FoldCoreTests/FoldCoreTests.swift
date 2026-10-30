@@ -142,7 +142,7 @@ final class DifficultyTests: XCTestCase {
     /// The proto solver's shortest solution (exported in levels.json, the XCUITest plays it) wins in FoldGame, one
     /// state at a time: every hinge move lands where the proto says, every step is a legal step.
     func testProtoSolutionsReplayInTheGame() throws {
-        for lv in pack.levels {
+        for lv in pack.levels where !lv.isTrifold {   // ch. 12's crease switches: Chapter12Tests.testSolutionsReplay
             let sol = try XCTUnwrap(lv.solution, lv.id)
             let g = try FoldGame(level: lv, config: pack.config)
             XCTAssertEqual(Cell(sol[0][0], sol[0][1]), g.char, lv.id)

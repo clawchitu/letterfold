@@ -96,6 +96,6 @@ final class CraneTests: XCTestCase {
             XCTAssertFalse(ev.contains(.deadEnd), "\(id): the solution is never a dead end")
             XCTAssertEqual(g.tally.count, lv.expect?.changes, "\(id): 折数 = par")
         }
-        XCTAssertEqual(pack.levels.filter { $0.map.joined().contains("h") }.map(\.id), Self.ch10 + ["hover"], "ch. 10, and 11-3 hover (needsCrane + needsHover)")
+        XCTAssertEqual(pack.levels.filter { $0.map.joined().contains("h") }.map(\.id), Self.ch10 + ["hover", "twofold"], "ch. 10, 11-3 hover (needsCrane + needsHover) and 12-6 twofold (needsCrane + needsTrifold)")
     }
 }
