@@ -96,6 +96,8 @@ public struct Expectation: Sendable, Codable, Equatable {
     public var needsFro: Bool?
     /// Vol. 3 ch. 11: unsolvable, or dearer, when every opening of the closed book rolls (no re-close from a lean).
     public var needsHover: Bool?
+    /// Vol. 3 ch. 12 「三折」: unsolvable without turning the second crease (the third page on its own edge).
+    public var needsTrifold: Bool?
     public var stepped15: Bool
     /// tools/check.js `analyse()` (design-difficulty.md §2); the Swift `Difficulty` port must agree.
     public var difficulty: Difficulty.Summary?
@@ -119,6 +121,7 @@ public struct Expectation: Sendable, Codable, Equatable {
         case "needsCrane": return needsCrane
         case "needsFro": return needsFro
         case "needsHover": return needsHover
+        case "needsTrifold": return needsTrifold
         default: return nil
         }
     }
@@ -140,9 +143,13 @@ public struct Level: Sendable, Codable, Identifiable, Equatable {
     public var solution: [[Int]]?
     /// Vol. 2 ch. 8 「灯位」 (levels.js `lamp`): which bank the lamp hangs on — "R" (default), "L" or "LR".
     public var lamp: String?
+    /// Vol. 3 ch. 12 「三折」 (levels.js `trifold`, fold-proto design-ch12.md §1): the 12-column map is left | right | third,
+    /// the third page hanging off the right page's OUTER edge on a second crease (not ch. 6's back of the right leaf).
+    public var trifold: Bool?
     public var isOptional: Bool { optional == true }
-    public init(id: String, map: [String], expect: Expectation? = nil, tier: String? = nil, needs: [String]? = nil, lamp: String? = nil) {
-        self.id = id; self.map = map; self.expect = expect; self.tier = tier; self.needs = needs; self.lamp = lamp
+    public var isTrifold: Bool { trifold == true }
+    public init(id: String, map: [String], expect: Expectation? = nil, tier: String? = nil, needs: [String]? = nil, lamp: String? = nil, trifold: Bool? = nil) {
+        self.id = id; self.map = map; self.expect = expect; self.tier = tier; self.needs = needs; self.lamp = lamp; self.trifold = trifold
     }
 }
 
@@ -198,11 +205,21 @@ public enum FoldError: Error, Equatable { case badTile(Character), noStart, ragg
 /// The mutable grid of a level. A map row is 2N columns (left | right page) or 3N (left | right | third page, the
 /// back of the right leaf: vol. 2 ch. 6 「翻」, fold-proto design-ch6.md). Only two pages are visible: columns N..<2N
 /// read whichever page faces the left page (`face` 0 = right, 1 = third), so every rule works on the facing page.
+///
+/// Trifold (vol. 3 ch. 12 「三折」, fold-proto design-ch12.md §1, logic.js colOf / vw): the third page hangs off the right
+/// page's outer edge on a second crease. `face` says which two sheets are the flat page and the lifted one:
+///   face 0  the book, the third page flat: left | right + third as one rigid leaf (visible 0..<3N)
+///   face 2  the third page on its own crease, the book flat: right | third (visible c = column c + N; the left page lies
+///           aside at visible −N..−1, out of reach)
+///   face 3  the book, the third page folded onto the right page: left | a two-layer leaf — each square reads the third
+///           page's square over it (column 4N − 1 − c) unless that is a gap; a stone in either layer is a stone.
 public struct Board: Sendable, Equatable {
     public var grid: [[Tile]]
     public let h: Int
-    /// Visible width: always 2N.
-    public let w: Int
+    /// Visible width (logic.js `vw`): 2N, or 3N for a trifold with the third page flat (face 0).
+    public var w: Int { trifold && face == 0 ? 3 * n : 2 * n }
+    /// Vol. 3 ch. 12: the third page is on the right page's outer edge (logic.js `trifold(s)`: s.w = 3N).
+    public let trifold: Bool
     public let start: Cell
     /// 2 or 3.
     public let pages: Int
@@ -225,25 +242,33 @@ public struct Board: Sendable, Equatable {
                 return t
             }
         }
-        guard let start, start.c < 2 * n else { throw FoldError.noStart }
+        trifold = level.isTrifold && width == 3 * n
+        guard let start, start.c < (trifold ? 3 * n : 2 * n) else { throw FoldError.noStart }
         self.start = start
         self.n = n
         lamp = level.lamp ?? "R"
         pages = width / n
         h = grid.count
-        w = 2 * n
     }
 
     /// Ch. 8 「灯位」: the lifted page carries shadows (left lamp) or angle gates, so it is walked on while it leans
     /// (the app keeps its squares tappable through the lean window).
     public var liftedPageLive: Bool { lamp.contains("L") || grid.contains { $0.contains(.gate) } }
 
-    /// The grid column behind a visible column (logic.js colOf).
-    @inline(__always) public func colOf(_ c: Int) -> Int { face == 1 && c >= n ? c + n : c }
+    /// The grid column behind a visible column (logic.js colOf): the facing page's columns N..<2N read from the third page
+    /// when turned; trifold face 2 is shifted one page (right | third); trifold face 3 reads the top layer of the folded leaf
+    /// in row r — the third page's square over it, unless that is a gap over paper (then the right page shows through).
+    @inline(__always) public func colOf(_ c: Int, _ r: Int) -> Int {
+        if face == 2 { return c + n }
+        if c < n || face == 0 { return c }
+        if face == 1 { return c + n }
+        let T = 4 * n - 1 - c, top = grid[r][T]
+        return top.isBlock || (!grid[r][c].isBlock && top != .empty) ? T : c
+    }
 
     public subscript(c: Int, r: Int) -> Tile {
-        get { r >= 0 && r < h && c >= 0 && c < w ? grid[r][colOf(c)] : .empty }
-        set { grid[r][colOf(c)] = newValue }
+        get { r >= 0 && r < h && c >= 0 && c < w ? grid[r][colOf(c, r)] : .empty }
+        set { grid[r][colOf(c, r)] = newValue }
     }
     public subscript(cell: Cell) -> Tile { self[cell.c, cell.r] }
 
@@ -254,8 +279,10 @@ public struct Board: Sendable, Equatable {
     }
 
     /// Where a tile lies on any page: its visible cell and the face it shows on (nil = the left page, always visible).
+    /// Trifold (check.js goalOf): a third-page tile reads as its home column (two mirrors), face nil.
     public func locate(_ t: Tile) -> (cell: Cell, face: Int?)? {
         for r in 0..<h { for c in 0..<grid[r].count where grid[r][c] == t {
+            if trifold { return (Cell(c < 2 * n ? c : c - 2 * n, r), nil) }
             if c < n { return (Cell(c, r), nil) }
             return c < 2 * n ? (Cell(c, r), 0) : (Cell(c - n, r), 1)
         } }

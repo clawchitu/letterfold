@@ -59,7 +59,7 @@ public struct Rules: Sendable {
         let right = b.lamp.contains("R"), left = b.lamp.contains("L")
         for r in 0..<b.h {
             if right {
-                for c in n..<(2 * n) where b[c, r].isOpaque {
+                for c in n..<b.w where b[c, r].isOpaque {   // trifold face 0: the third page's stones shade too (logic.js vw)
                     let q = shadowColumn(c, a)
                     if q >= 0 && out[Cell(q, r)] == nil { out[Cell(q, r)] = c }
                 }
@@ -96,9 +96,11 @@ public struct Rules: Sendable {
     /// Neighbours while open: no crease crossing, except standing tabs; shadows are floor.
     public func openNeighbours(_ b: Board, _ c: Int, _ r: Int, _ p: Posture, _ sh: [Cell: Int]) -> [Cell] {
         var out: [Cell] = []
+        if c < 0 { return out }   // trifold face 2: on the left page, aside from the third page's book — out of reach
         for (dc, dr) in Rules.dirs {
             let nc = c + dc, nr = r + dr
             if nc < 0 || nc >= b.w || nr < 0 || nr >= b.h { continue }
+            if (c == 2 * n - 1 && nc == 2 * n) || (c == 2 * n && nc == 2 * n - 1) { continue }   // trifold face 0: the second crease
             let crosses = (c == n - 1 && nc == n) || (c == n && nc == n - 1)
             if crosses {
                 if p == .standing && b[c, r] == .tab && b[nc, nr] == .tab { out.append(Cell(nc, nr)) }
@@ -120,10 +122,17 @@ public struct Rules: Sendable {
 
     /// Why the book crushed the figure at `from` (fold-proto e613f80 `crushCause`): `.glue` when it stood on top-page
     /// glue and the glue pulled the stone below up onto its square, `.stone` when a top-page stone came down on it.
-    public enum CrushCause: String, Sendable { case glue, stone }
+    /// `.off` (vol. 3 ch. 12): the book closed with the third page lying open and the figure on it — it swung out past
+    /// the left page's outer edge and lies face down on the table (logic.js `offBook`).
+    public enum CrushCause: String, Sendable { case glue, stone, off }
     public func crushCause(_ b: Board, _ from: Cell, _ a: Double) -> CrushCause? {
+        if offBook(b, from, a) { return .off }
         guard crushed(b, from, a) else { return nil }
         return isRight(from.c) ? .glue : .stone
+    }
+    /// Trifold face 0 (logic.js `offBook`): the book closes with the third page flat — whoever stands on it goes with it.
+    public func offBook(_ b: Board, _ from: Cell, _ a: Double) -> Bool {
+        a >= config.foldMin && b.trifold && b.face == 0 && from.c >= 2 * n
     }
 
     /// Why a square cannot be entered or a step is refused (fold-proto e613f80 `cellBlock` / `stepBlock` / `pathBlock`).
@@ -137,7 +146,7 @@ public struct Rules: Sendable {
 
     /// Why the square (c, r) cannot be entered in posture p (shut: its stack), or nil if it can.
     public func cellBlock(_ b: Board, _ c: Int, _ r: Int, _ p: Posture, _ sh: [Cell: Int]) -> Block? {
-        if r < 0 || r >= b.h || c < 0 || c >= b.w { return .edge }
+        if r < 0 || r >= b.h || c < 0 || c >= b.w || (p == .closed && c >= 2 * n) { return .edge }
         if p == .closed {
             let q = proj(c), L = b[q, r], R = b[mirror(q), r]
             if foldOpen(b, q, r) { return nil }
@@ -159,7 +168,7 @@ public struct Rules: Sendable {
         if neighbours(b, from, p, sh).contains(where: { col($0) == col(from) + dc && $0.r == from.r + dr }) { return nil }
         let c = col(from) + dc, r = from.r + dr
         if r < 0 || r >= b.h || c < 0 || c >= (p == .closed ? n : b.w) { return Blocker(.edge, c, r) }
-        if p != .closed && ((from.c == n - 1 && dc == 1) || (from.c == n && dc == -1)) { return Blocker(.crease, c, r) }
+        if p != .closed && ((from.c == n - 1 && dc == 1) || (from.c == n && dc == -1) || (from.c == 2 * n - 1 && dc == 1) || (from.c == 2 * n && dc == -1)) { return Blocker(.crease, c, r) }   // trifold: the second crease too
         return Blocker(cellBlock(b, c, r, p, sh) ?? .gap, c, r)
     }
 
@@ -192,7 +201,8 @@ public struct Rules: Sendable {
     /// On an angle gate the figure stays while the lean lasts and falls when it ends (the flap lies down). The formula
     /// follows the page the source stone is on (ch. 8: left-page stones shade the lifted page).
     public func ride(_ b: Board, _ from: Cell, _ src: Int?, _ a: Double) -> Cell? {
-        if crushed(b, from, a) { return nil }
+        if from.c < 0 { return from }   // trifold face 2: on the left page, beside the third page's book — nothing there moves
+        if crushed(b, from, a) || offBook(b, from, a) { return nil }
         if b[from].isFloor { return from }
         if b[from] == .gate { return lit(a) ? from : nil }
         guard let src, src != Rules.gateSource else { return nil }
@@ -280,12 +290,12 @@ public struct Rules: Sendable {
     @discardableResult
     public func bleed(_ b: inout Board) -> (cells: [Cell], was: [Tile]) {
         var wet: [Cell] = []
-        for r in 0..<b.h { for c in 0..<b.w where b[c, r] == .wetInk { wet.append(Cell(c, r)) } }
+        for r in 0..<b.h { for c in 0..<(2 * n) where b[c, r] == .wetInk { wet.append(Cell(c, r)) } }   // only the two pressed pages (trifold)
         var cells: [Cell] = [], was: [Tile] = [], seen: Set<Cell> = []
         for w in wet {
             for (dc, dr) in Rules.dirs {
                 let nc = w.c + dc, nr = w.r + dr, k = Cell(nc, nr)
-                if nc < 0 || nc >= b.w || nr < 0 || nr >= b.h || isRight(nc) != isRight(w.c) || seen.contains(k) { continue }
+                if nc < 0 || nc >= 2 * n || nr < 0 || nr >= b.h || isRight(nc) != isRight(w.c) || seen.contains(k) { continue }
                 let t = b[nc, nr]
                 if t == .empty || t == .glue { seen.insert(k); b[nc, nr] = .wetInk; cells.append(k); was.append(t) }
             }
@@ -330,7 +340,7 @@ public struct Rules: Sendable {
     /// key, dry ink, her square, the start, another crane): it cannot fly. Mutates the board.
     public func fly(_ b: inout Board) -> [Stamp] {
         var cranes: [Cell] = [], events: [Stamp] = []
-        for r in 0..<b.h { for c in 0..<b.w where b[c, r] == .crane { cranes.append(Cell(c, r)) } }
+        for r in 0..<b.h { for c in 0..<(2 * n) where b[c, r] == .crane { cranes.append(Cell(c, r)) } }   // only the two pressed pages (trifold)
         for x in cranes {
             let m = mirror(x.c), t = b[m, x.r]
             if t == .empty || t == .paper {
@@ -376,7 +386,7 @@ public struct Rules: Sendable {
     public func roll(_ b: inout Board, fig: Cell?) -> [Roll] {
         var out: [Roll] = []
         for r in 0..<b.h {
-            for c in (n + 1)..<(2 * n) where b[c, r] == .loose {
+            for c in (n + 1)..<b.w where b[c, r] == .loose {   // trifold face 0: the third page rolls with the right page
                 if let f = fig, f.c == c - 1, f.r == r { continue }
                 let ahead = b[c - 1, r]
                 guard ahead == .paper || ahead == .empty else { continue }
@@ -392,7 +402,7 @@ public struct Rules: Sendable {
     /// Why the book cannot be turned over: no third page, not closed, or the figure stands on the right leaf.
     public enum FlipBlock: String, Sendable { case single, open, leaf }
     public func flipBlock(_ b: Board, _ char: Cell, _ a: Double) -> FlipBlock? {
-        if b.pages < 3 { return .single }
+        if b.pages < 3 || b.trifold { return .single }
         if a < config.foldMin { return .open }
         if isRight(char.c) { return .leaf }
         return nil
@@ -405,6 +415,35 @@ public struct Rules: Sendable {
         b.face ^= 1
         let crush = crushCause(b, char, config.foldMin)
         return (crush == nil ? stamp(&b) : [], crush)
+    }
+
+    // MARK: the second crease (vol. 3 ch. 12 「三折」, logic.js flapIn / flapOut / flapBlock)
+
+    /// Taking hold of the third page's crease re-reads the figure in its view (face 2): from face 0, one page to the left;
+    /// from face 3 on the folded leaf, on its top layer — the third page where it has paper, the right page through a hole.
+    public func flapIn(_ b: Board, _ fig: Cell) -> Cell {
+        if b.face == 3 && fig.c >= n { return Cell(b.colOf(fig.c, fig.r) - n, fig.r) }
+        return Cell(fig.c - n, fig.r)
+    }
+    /// The third page reached flat (face 0) or folded (face 3): where the figure stands in that view, or nil when the
+    /// folded leaf has a stone under its feet (refused before it gets there: `flapBlock`).
+    public func flapOut(_ b: Board, _ fig: Cell, folded: Bool) -> Cell? {
+        let c = fig.c + n
+        if !folded { return Cell(c, fig.r) }
+        let v = c < 2 * n ? c : 4 * n - 1 - c
+        var w = b; w.face = 3
+        return w[v, fig.r].isFloor ? Cell(v, fig.r) : nil
+    }
+    /// Why the third page will not fold down (logic.js flapBlock; a refused fold with a toast, never a death):
+    /// `.stone` you stand on the lifted third page over a right-page stone (glue under your feet is not a block);
+    /// `.cover` you stand on the flat right page and the third page's square coming down over you is paper — it would lie
+    /// on you (a hole comes down around you; a stone crushes you, as every press does).
+    public enum FlapBlock: String, Sendable { case stone, cover }
+    public func flapBlock(_ b: Board, _ fig: Cell) -> FlapBlock? {
+        guard b.trifold, b.face == 2, fig.c >= 0 else { return nil }
+        if fig.c < n { return b[mirror(fig.c), fig.r].isFloor ? .cover : nil }
+        if b[fig] == .glue { return nil }
+        return b[mirror(fig.c), fig.r].isBlock ? .stone : nil
     }
 
     // MARK: the shadow lock (design-review-ch3 §3, judged as rewritten in design-review-ch4 §2 / design-spec §5)

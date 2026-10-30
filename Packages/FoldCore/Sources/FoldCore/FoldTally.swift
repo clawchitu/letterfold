@@ -21,6 +21,9 @@ public struct FoldTally: Sendable, Equatable {
         let c = Self.cost(from: restAngle, to: angle)
         if c > 0 { count += c; restAngle = angle }
     }
+    /// Vol. 3 ch. 12: the other crease was taken — the hinge in view now rests at `angle` (the third page's 0 / 180, or the
+    /// book's 0). Not a move: costs nothing (check.js prices the crease's moves, never the switch).
+    public mutating func rebase(_ angle: Double) { restAngle = angle }
     /// The closed book was turned over.
     public mutating func turn() { count += Self.turnCost }
 }

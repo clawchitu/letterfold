@@ -32,6 +32,18 @@ public enum GameEvent: Sendable, Equatable {
     /// The crane the figure stood on flew at the press (vol. 3 ch. 10 「鹤」, logic.js `carried`): she is on its landing, on
     /// the other page (closed, the same stack — the open book shows it). Sent after the press's `.stamped` events.
     case carried(to: Cell)
+    /// Vol. 3 ch. 12 「三折」: the other crease was taken (`face` 2 = the third page's own crease; 0 / 3 = the book's, the
+    /// third page flat / folded onto the right page). The figure and the trail are re-read in the new view.
+    case creased(face: Int)
+    /// Vol. 3 ch. 12: the third page will not fold down — it stopped short at foldMin − 5 (logic.js flapBlock, main.js
+    /// setAngle: a refused fold with a toast, never a death). Sent once per setAngle that hit it.
+    case flapRefused(Rules.FlapBlock)
+    /// Vol. 3 ch. 12: the book closed with the third page lying open and the figure on it (logic.js offBook, crushCause
+    /// 'off'). Sent just before its `.fell`.
+    case offBook
+    /// Vol. 3 ch. 12: a trifold starts again laid out flat after a death (main.js fall: F.restart, angle 0) — grids as they
+    /// began, face 0, the figure on the start, the book flat. Sent after `.fell`; the hinge motion that caused it is over.
+    case laidFlat
 }
 
 /// A level being played: the stateful half of main.js (angle, riding shadows, stamping, undo).
@@ -68,6 +80,8 @@ public final class FoldGame {
     /// 折数 so far (the app notes rests and turns). A restart zeroes it and undoing the restart restores it (count and
     /// resting angle); other undos leave it (a fold that was made and taken back was still made).
     public var tally = FoldTally()
+    /// A trifold death laid the book flat inside the current setAngle (the sweep stops there).
+    private var laidFlatNow = false
 
     /// The hinge is simulated in steps of at most this many degrees, so riding a shadow does not depend on frame rate.
     public static let subStep = 5.0
@@ -99,11 +113,21 @@ public final class FoldGame {
     /// Move the hinge to `target` degrees (clamped to 0...180), passing through intermediate angles.
     @discardableResult
     public func setAngle(_ target: Double) -> [GameEvent] {
-        let target = min(180, max(0, target))
+        var target = min(180, max(0, target))
         var events: [GameEvent] = []
         let before = reachable, wasPosture = posture, goalBefore = goalInReach
-        while angle != target {
-            let next = target > angle ? min(target, angle + Self.subStep) : max(target, angle - Self.subStep)
+        laidFlatNow = false
+        while angle != target && !laidFlatNow {
+            var next = target > angle ? min(target, angle + Self.subStep) : max(target, angle - Self.subStep)
+            // ch. 12: the third page will not fold down onto a stone under your feet, nor its paper onto you — it stops
+            // short at foldMin − 5 (judged on the board as it is now: a roll on the way may have changed it)
+            if board.trifold && board.face == 2 && !won && next >= config.foldMin, let why = rules.flapBlock(board, char) {
+                let stop = config.foldMin - 5
+                if !events.contains(.flapRefused(why)) { events.append(.flapRefused(why)) }
+                target = min(target, max(angle, stop))
+                if angle >= stop { break }
+                next = min(next, stop)
+            }
             apply(next, &events)
         }
         if !won {
@@ -149,8 +173,18 @@ public final class FoldGame {
             } else {
                 // crushed only where the stone really comes down: on the figure's own square (design-review-ch4 §3.1:
                 // a shadow giving way under you at the shut is a fall, and only a crush gets the dent)
+                if rules.offBook(board, char, a) { events.append(.offBook) }
                 events.append(.fell(crushed: rules.crushed(board, char, a)))
                 char = board.start; trail = [board.start]; lastCloseStep = 0; rideSrc = nil
+                if board.trifold {
+                    // ch. 12: a trifold starts again laid out flat (the start may be under the folded third page, or in
+                    // another view): the level as it began, the book flat (main.js fall → F.restart, angle 0)
+                    board = try! Board(level: level, columnsPerPage: config.columnsPerPage)
+                    char = board.start; trail = [board.start]; angle = 0; posture = rules.posture(0); shade = rules.shadows(board, 0)
+                    closedOnce = false; stuck = false; laidFlatNow = true; tally.rebase(0)
+                    events.append(.laidFlat)
+                    return
+                }
             }
         } else { rideSrc = nil }
         if Set(shade.keys) != Set(previous.keys) { events.append(.shadeChanged) }
@@ -164,6 +198,12 @@ public final class FoldGame {
                 stamps.forEach { events.append(.stamped($0)) }; closedOnce = true
                 carry(stamps, &events)
                 lastCloseStep = trail.count - 1
+                // ch. 12: the third page pressed down onto the right page. The solver (check.js flapOf) reads a folded third
+                // page as the folded leaf at once (face 3): re-read the figure the same way, staying in the third page's view
+                if board.trifold && board.face == 2, let out = rules.flapOut(board, char, folded: true) {
+                    var b3 = board; b3.face = 3
+                    char = rules.flapIn(b3, out)
+                }
             }
             checkWin(&events)
         }
@@ -187,6 +227,57 @@ public final class FoldGame {
             ? solver.canStillWin(level, board: board, from: char, angle: posture == .closed ? 180 : angle)
             : solver.canStillWin(level, from: char, angle: posture == .closed ? 180 : angle, closedOnce: closedOnce)
         if !ok { stuck = true; events.append(.deadEnd) }
+    }
+
+    // MARK: the second crease (vol. 3 ch. 12 「三折」, main.js switchCrease)
+
+    /// Why the other crease cannot be taken now: `bookFirst` (the book is not flat), `flapFirst` (the third page is
+    /// neither flat nor folded all the way), or the third page's own refusal (`stone` / `cover`, it would not lie folded).
+    public enum CreaseBlock: Equatable, Sendable { case notTrifold, bookFirst, flapFirst, flap(Rules.FlapBlock?) }
+    public var creaseBlock: CreaseBlock? {
+        guard board.trifold else { return .notTrifold }
+        if board.face != 2 { return angle > 3 ? .bookFirst : nil }
+        let folded = angle >= config.foldMin
+        if !folded && angle > 3 { return .flapFirst }
+        let why = rules.flapBlock(board, char)
+        if rules.flapOut(board, char, folded: folded) == nil || why != nil { return .flap(why) }
+        return nil
+    }
+    /// Which crease the hinge in view turns: true = the third page's own (face 2).
+    public var onFlap: Bool { board.trifold && board.face == 2 }
+
+    /// 「第三页」: take hold of the other crease — the third page only while the book lies flat, the book only while the third
+    /// page lies flat or folded all the way onto the right page (logic.js flapIn / flapOut). Re-reads the figure and the
+    /// trail in the new view; the hinge in view starts at the third page's angle (0 flat, 180 folded) or at the book's 0.
+    /// Refused ([.blocked], nothing changes) per `creaseBlock`. Costs no 折数 (the move of a crease does). Call pushUndo first.
+    @discardableResult
+    public func switchCrease() -> [GameEvent] {
+        guard !won, creaseBlock == nil else { return [.blocked] }
+        let old = board, toFace: Int
+        if board.face != 2 {
+            let folded = board.face == 3
+            char = rules.flapIn(board, char); toFace = 2
+            board.face = 2; angle = folded ? 180 : 0
+        } else {
+            let folded = angle >= config.foldMin
+            char = rules.flapOut(board, char, folded: folded)!; toFace = folded ? 3 : 0
+            board.face = toFace; angle = 0
+        }
+        trail = trail.map { relay($0, from: old, to: toFace) }
+        posture = rules.posture(angle); shade = rules.shadows(board, angle); rideSrc = nil
+        tally.rebase(angle)
+        var events: [GameEvent] = [.creased(face: toFace)]
+        checkWin(&events)
+        return events
+    }
+
+    /// A trail cell read in the other view (never fails: a cell with no square there keeps a column off the pages).
+    private func relay(_ c: Cell, from old: Board, to face: Int) -> Cell {
+        if face == 2 { return rules.flapIn(old, c) }
+        let x = c.c + config.columnsPerPage
+        if face == 0 { return Cell(x, c.r) }
+        let n = config.columnsPerPage
+        return Cell(x < 2 * n ? x : 4 * n - 1 - x, c.r)
     }
 
     // MARK: turning the page

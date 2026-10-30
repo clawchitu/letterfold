@@ -140,13 +140,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "同じ行に影が二つ、頁ごとに一つ。一方は紙へ、他方は石の束へ滑る。正しい方に乗り、一度閉じて頁を替え、もう一方に乗る。"
+            "value": "右ページの石が左ページに落とす影は、どれも紙に届かない。右ページの左下へ歩き、30°で左ページの石の影に乗り、60°まで開いて綴じ目側へ戻る：一つ上は紙。閉じれば、重なりがページを替えながら彼女まで続く。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "같은 행에 그림자 둘, 면마다 하나. 하나는 종이로, 하나는 돌의 묶음으로 미끄러져요. 맞는 쪽을 타고, 한 번 닫아 면을 바꾸고, 다른 쪽을 타요."
+            "value": "오른쪽 페이지의 돌이 왼쪽 페이지에 드리우는 그림자는 어느 것도 종이에 닿지 않아요. 오른쪽 페이지 왼쪽 아래로 걸어가, 30°에서 왼쪽 페이지 돌의 그림자에 올라서고, 60°까지 펼쳐 접는 선 쪽으로 돌아와요: 한 칸 위는 종이. 닫으면, 겹이 페이지를 바꿔 가며 그녀까지 이어져요."
           }
         }
       }
@@ -170,13 +170,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影が二つ。道と罠。"
+            "value": "影は二組。道になるのは、一組だけ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자 둘. 하나는 길, 하나는 함정."
+            "value": "그림자는 두 벌. 길이 되는 건 한 벌뿐."
           }
         }
       }
@@ -200,13 +200,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "二つの灯がともっている。"
+            "value": "灯りは両岸にともっている。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "두 등불이 다 켜져 있어요."
+            "value": "두 등불이 다 켜져 있다."
           }
         }
       }
@@ -260,13 +260,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "先に閉じないこと：角の糊が左上の石を引き取り、影も消える。左頁をいちばん上の行の2列目（糊の上）まで歩き、55°まで傾ける。影が3列目2行目に落ちる。踏んで、本を70°まで開く。影がきみを4列目へ運ぶ。下へ一枡、3行目で閉じて裏返し、閉じたまま3番目の重なりのいちばん上へ。"
+            "value": "先に閉じないこと：角の糊が左上の石を持っていき、影も消える。左ページをいちばん上の行の2列目（糊の上）まで歩き、55°に傾ける：影が3列目の2行目に落ちる。乗って、こんどは70°まで開く：影があなたを4列目へ運ぶ。一マス下がって3行目で閉じ、めくって、閉じたまま3つ目の重なりのいちばん上へ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먼저 닫지 마세요. 모서리의 풀이 왼쪽 위 돌을 붙여 가면 그림자도 사라져요. 왼쪽 페이지를 따라 맨 윗줄 2열(풀 위)까지 가서 55°로 기울여요. 그림자가 3열 2행에 떨어져요. 밟고 올라선 뒤 책을 70°까지 펼쳐요. 그림자가 당신을 4열로 옮겨요. 아래로 한 칸, 3행에서 닫고 뒤집은 뒤, 닫은 채 세 번째 겹 맨 위까지."
+            "value": "먼저 닫지 마요: 모서리의 풀이 왼쪽 위 돌을 가져가고, 그림자도 함께 사라져요. 왼쪽 페이지를 따라 맨 윗줄 2열(풀 위)까지 걸어가 55°로 기울여요: 그림자가 3열 2행에 떨어져요. 올라서서, 이번엔 70°까지 펼쳐요: 그림자가 나를 4열로 데려가요. 한 칸 내려가 3행에서 닫고, 넘기고, 닫은 채 셋째 겹 맨 위까지."
           }
         }
       }
@@ -296,7 +296,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "아직 닫지 마세요."
+            "value": "아직 닫지 마요."
           }
         }
       }
@@ -356,7 +356,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "배어 나온 글"
+            "value": "비치는 글"
           }
         }
       }
@@ -386,7 +386,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "폰을 닫으면 오른쪽 종이판이 틈을 꼭 덮어요."
+            "value": "폰을 닫으면 오른쪽 종이판이 틈 위에 꼭 맞게 겹쳐요."
           }
         }
       }
@@ -416,7 +416,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "틈 건너편에 종이판 한 장."
+            "value": "틈 건너편에, 종이판 한 장."
           }
         }
       }
@@ -470,13 +470,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "まず一度閉じて石を向こう岸へ貼りつける。75°くらいまで開く。紙片の橋は立ったまま、新しい石の影がたもとに落ちる。"
+            "value": "まず一度閉じて、石を向こうへ貼りつける。75°ほどまで開く：紙片の橋が立ち、新しい石の影がちょうど橋のたもとに落ちる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먼저 한 번 닫아 돌을 건너편에 붙여요. 75° 정도로 펼쳐요. 종이 조각 다리는 서 있고, 새 돌의 그림자가 다리 밑에 떨어져요."
+            "value": "먼저 한 번 닫아 돌을 건너편에 붙여요. 75°쯤까지 펼쳐요: 종이 조각 다리가 서고, 새 돌의 그림자가 꼭 다리 발치에 떨어져요."
           }
         }
       }
@@ -506,7 +506,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "다리 밑 틈에는 그림자가 필요하다."
+            "value": "다리 발치의 틈에는 그림자가 필요하다."
           }
         }
       }
@@ -560,13 +560,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）左ページを左下へ。60°ほどまで閉じて影に乗り、80°まで開く。4列目へ運ばれ、紙片の橋が立っている。渡れば手紙は橋のたもと。"
+            "value": "左ページを左下へ歩く。60°ほどまで閉じて影に乗り、80°まで開く：影があなたを4列目へ運び、80°では紙片の橋が立っている。渡れば、手紙は橋のたもと。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 왼쪽 페이지를 왼쪽 아래로. 60° 정도까지 닫아 그림자에 올라, 80°까지 펼쳐요. 4열로 데려가고, 종이 다리가 서 있어요. 건너면 편지는 다리 발치에."
+            "value": "왼쪽 페이지를 왼쪽 아래로 걸어가요. 60°쯤까지 닫아 그림자에 올라서고, 80°까지 펼쳐요: 그림자가 나를 4열로 데려가고, 80°에서는 종이 조각 다리가 서 있어요. 건너면, 편지는 다리 발치에."
           }
         }
       }
@@ -596,7 +596,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "조금 펼쳐요. 조금 닫는 게 아니라."
+            "value": "조금 펴요. 조금 닫는 게 아니라."
           }
         }
       }
@@ -620,13 +620,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "橋が立つ間、影もそこに。"
+            "value": "橋が立つあいだ、影もそこにある。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "다리가 서 있는 동안, 그림자도 있다."
+            "value": "다리가 서 있는 동안, 그림자도 거기 있다."
           }
         }
       }
@@ -680,13 +680,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "紙の鶴に乗って本を閉じる：閉じた拍子に鶴は向かいの頁の鏡の枡へ飛び、きみも一緒に。開けば右頁、彼女はひとつ下。"
+            "value": "折り鶴まで歩いて本を閉じる：押す一瞬、鶴は向かいのページの鏡のマスへ飛び、あなたも一緒に。開けば右ページ、彼女は一つ下。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "종이학 위에 올라가 책을 닫아요: 닫히는 순간 학은 맞은편 면의 거울 칸으로 날아가고, 너도 함께요. 열면 오른쪽 면, 그녀는 한 칸 아래."
+            "value": "종이학까지 걸어가 책을 닫아요: 누르는 순간 학은 맞은편 페이지의 거울 칸으로 날아가고, 나도 함께. 펼치면 오른쪽 페이지, 그녀는 한 칸 아래."
           }
         }
       }
@@ -710,13 +710,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "鶴の上で閉じれば、向こうの頁にいる。"
+            "value": "鶴の上で閉じれば、向こうのページにいる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "학 위에서 닫으면 맞은편 면에 있어요."
+            "value": "학 위에서 닫으면, 맞은편 페이지에 있어요."
           }
         }
       }
@@ -740,13 +740,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "上に立つ。"
+            "value": "その上に立つ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "위에 올라서요."
+            "value": "그 위에 올라선다."
           }
         }
       }
@@ -800,13 +800,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）4列目を橋まで下り、立てて渡り、右へ一歩で閉じる。鍵が扉を開け、墨が写り、石の背の上。閉じたまま扉の枡まで上がり、開いて右へ一歩、また閉じる。もう一つの石の背。一歩で手紙。"
+            "value": "4列目を橋まで下り、立てて渡り、右へ一歩、閉じる：鍵が扉を開け、墨が写り、この重なりの下は石。閉じたまま扉のマス（2行目の右側）まで上がり、開いて、右へ一歩でページの端、また閉じる——この重なりの下にも石。一歩で手紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 4열을 따라 다리까지 내려가 세워서 건너고, 오른쪽 한 칸, 닫아요. 열쇠가 문을 열고 먹이 찍히고, 돌의 등 위. 닫은 채 문 칸까지 올라가 펼치고 오른콍 한 칸, 다시 닫아요. 또 다른 돌의 등. 한 걸음이면 편지."
+            "value": "4열을 따라 다리까지 내려가 세워서 건너고, 오른쪽으로 한 칸, 닫아요: 열쇠가 문을 열고, 먹이 찍히고, 이 겹 아래는 돌이에요. 닫은 채 문 칸(2행 오른쪽)까지 올라가, 펼치고, 오른쪽으로 한 칸 가면 페이지 가장자리, 다시 닫아요—이 겹 아래에도 돌. 한 걸음이면 편지."
           }
         }
       }
@@ -860,13 +860,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "覚えたすべてを。"
+            "value": "覚えたことを、ぜんぶ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "배운 모든 것을."
+            "value": "배운 것을, 전부."
           }
         }
       }
@@ -896,7 +896,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "접힌 자국"
+            "value": "접는 선"
           }
         }
       }
@@ -920,13 +920,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "鶴の上で閉じる：左頁の (2,3) に着く。50° に傾ける：右頁の石 (7,2) の影が (3,2) の隙間に落ちる——乗る。80° まで開けば影が (4,2) へ運び、ひとつ上が彼女。"
+            "value": "鶴の上で閉じる：左ページの(2,3)に着く。50°に傾ける：右ページの石(7,2)の影が(3,2)のすき間に落ちる——乗る。80°まで開けば影があなたを(4,2)へ運び、一つ上が彼女。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "학 위에서 닫아요: 왼쪽 면 (2,3)에 도착해요. 50°로 기울이면 오른쪽 돌 (7,2)의 그림자가 (3,2) 틈에 떨어져요. 올라서요. 80°까지 열면 그림자가 (4,2)로 데려가고, 한 칸 위가 그녀예요."
+            "value": "학 위에서 닫아요: 왼쪽 페이지 (2,3)에 닿아요. 50°로 기울여요: 오른쪽 페이지 돌 (7,2)의 그림자가 (3,2) 틈에 떨어져요—올라서요. 80°까지 펼치면 그림자가 나를 (4,2)로 데려가고, 한 칸 위가 그녀."
           }
         }
       }
@@ -950,13 +950,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "鶴は影のある頁へ運ぶ：先に飛び、それから乗る。"
+            "value": "鶴は影の落ちるページへ運ぶ：先に飛び、それから乗る。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "학은 그림자가 있는 면으로 데려가요: 먼저 날고, 그다음 타요."
+            "value": "학은 그림자가 지는 페이지로 데려가요: 먼저 날고, 그다음 타요."
           }
         }
       }
@@ -980,13 +980,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影は左頁にある。"
+            "value": "影は左ページにある。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자는 왼쪽 면에 있어요."
+            "value": "그림자는 왼쪽 페이지에 있다."
           }
         }
       }
@@ -1016,7 +1016,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "건너다"
+            "value": "건너기"
           }
         }
       }
@@ -1040,13 +1040,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "まず40°まで傾け、影を渡って左頁の上の紙へ。閉じる。糊がその石を引き取る。閉じたまま右頁の上の枡へ歩き、開いて、一枡下へ。左頁の石の背に立っている。もう一度閉じる。その重なりには入れないが、出られる。左頁の5行目まで下り、55°まで開いて影に乗り、30°まで閉じ、手紙へ降りる。"
+            "value": "まず40°に傾け、影を歩いて左ページのいちばん上の紙へ。閉じる：糊がその石を持っていく。閉じたまま右ページのいちばん上のマスへ歩き、開いて、一マス下へ：あなたは左ページの石の背に立っている。もう一度閉じる：この重なりには入れないが、出ることはできる。左ページの5行目まで下り、55°まで開いて影に乗り、30°まで閉じて、手紙へ降りる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먼저 40°로 기울여 그림자를 건너 왼쪽 페이지 위 종이로. 닫아요. 풀이 그 돌을 가져가요. 닫은 채 오른쪽 페이지 맨 위 칸으로 가서 펼치고 한 칸 아래로. 왼쪽 페이지 돌의 등 위에 서 있어요. 다시 닫아요. 그 겹에는 들어갈 수 없지만 나갈 수는 있어요. 왼쪽 페이지 5행까지 내려가 55°로 펼쳐 그림자에 오르고, 30°로 닫아 편지로 내려가요."
+            "value": "먼저 40°로 기울여 그림자를 따라 왼쪽 페이지 맨 위 종이로. 닫아요: 풀이 그 돌을 가져가요. 닫은 채 오른쪽 페이지 맨 위 칸으로 걸어가, 펼치고, 한 칸 아래로: 나는 왼쪽 페이지 돌의 등 위에 서 있어요. 다시 닫아요: 이 겹에는 들어갈 수 없지만 나갈 수는 있어요. 왼쪽 페이지 5행까지 내려가 55°까지 펼쳐 그림자에 올라서고, 30°까지 닫아, 편지로 내려서요."
           }
         }
       }
@@ -1070,13 +1070,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "石の背も紙。"
+            "value": "石の背も、紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "돌의 등도 종이."
+            "value": "돌의 등도, 종이예요."
           }
         }
       }
@@ -1160,13 +1160,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "60°まで傾け、右下の石の影に乗り、そのまま閉じ続ける。本が閉じるとき影は紙の上に降ろし、鍵が扉を開け、糊が石を引き取る。閉じたまま左頁の上へ歩く（頁を四度またぐ）。50°まで開き、影で開いた扉を抜け、また閉じ、その重なりから右頁へ、開く。彼女は隣にいる。"
+            "value": "60°に傾け、右下の石の影に乗って、そのまま閉じていく：本が閉じ切るとき影があなたを紙の上に降ろし、鍵が扉を開け、糊が石を持っていく。閉じたまま左ページのいちばん上へ歩く（ページを四度替える）。50°まで開き、影を歩いて開いた扉を抜け、また閉じ、その重なりから右ページへ歩いて、開く：彼女はとなりにいる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "60°로 기울여 오른쪽 아래 돌의 그림자에 오르고 계속 닫아요. 책이 닫히며 그림자가 종이에 내려 주고, 열쇠가 문을 열고, 풀이 돌을 가져가요. 닫은 채 왼쪽 페이지 맨 위로 걸어가요(페이지를 네 번 바꿔요). 50°로 펼쳐 그림자로 열린 문을 지나고, 다시 닫아 그 겹에서 오른쇽 페이지로, 펼쳐요. 그녀가 옆에 있어요."
+            "value": "60°로 기울여 오른쪽 아래 돌의 그림자에 올라서고, 그대로 계속 닫아요: 책이 닫히는 순간 그림자가 나를 종이 위에 내려놓고, 열쇠가 문을 열고, 풀이 돌을 가져가요. 닫은 채 왼쪽 페이지 맨 위까지 걸어가요(페이지를 네 번 바꿔요). 50°까지 펼쳐 그림자를 따라 열린 문을 지나고, 다시 닫아, 그 겹에서 오른쪽 페이지로 걸어가 펼쳐요: 그녀가 옆에 있어요."
           }
         }
       }
@@ -1190,13 +1190,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影に乗ったまま閉じる。"
+            "value": "影に乗ったまま、閉じる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자를 탄 채 닫아요."
+            "value": "그림자를 탄 채로 닫아요."
           }
         }
       }
@@ -1220,7 +1220,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "……扉の向こうには誰もいない。"
+            "value": "……扉の向こうに、誰もいない。"
           }
         },
         "ko": {
@@ -1280,13 +1280,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "右頁の墨に乗って閉じる。墨が左頁に写り、糊が石を右へ引く。閉じたまま写った墨へ歩き、55°まで開き、4列目を上って頂上の影へ、40°まで開くと3列目、もう一つの墨へ。墨の上で閉じ、重なりを右頁の上の枡まで歩き、開いて一枡下、また閉じる。左頁の石の背に立っている。そこから彼女の重なりへ。"
+            "value": "右ページの墨に乗って閉じる：墨が左ページに写り、糊が石を右ページへ引き寄せる。閉じたまま写った墨へ歩き、55°まで開いて、4列目を上がっていちばん上の影へ。40°まで開く：影があなたを3列目へ、もう一つの墨の跡へ運ぶ。墨の上で閉じ、重なりを右ページのいちばん上まで歩き、開いて、一マス下へ、また閉じる：あなたは左ページの石の背に立っている。そこから、彼女の重なりへ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "오른쪽 페이지의 먹에 올라 닫아요. 먹이 왼쪽에 찍히고 풀이 돌을 오른쪽으로 붙여요. 닫은 채 찍힌 먹으로 가서 55°로 펼치고 4열을 따라 맨 위 그림자로, 40°로 펼치면 3열, 다른 먹 자리로. 먹 위에서 닫고 겹을 따라 오른쪽 페이지 맨 위로, 펼치고 한 칸 아래, 다시 닫아요. 왼쪽 페이지 돌의 등 위에 서 있어요. 거기서 그녀의 겹으로."
+            "value": "오른쪽 페이지의 먹에 올라서서 닫아요: 먹이 왼쪽 페이지에 찍히고, 풀이 돌을 오른쪽 페이지로 끌어가요. 닫은 채 찍힌 먹으로 걸어가, 55°까지 펼치고, 4열을 따라 맨 위 그림자로 올라가요. 40°까지 펼쳐요: 그림자가 나를 3열로, 또 하나의 먹 자국으로 데려가요. 먹 위에서 닫고, 겹을 따라 오른쪽 페이지 맨 위까지 걸어가, 펼치고, 한 칸 아래로, 다시 닫아요: 나는 왼쪽 페이지 돌의 등 위에 서 있어요. 거기서, 그녀의 겹으로."
           }
         }
       }
@@ -1310,13 +1310,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "三度閉じ、二つの墨。"
+            "value": "三度閉じて、墨は二つ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "세 번 닫기, 두 먹."
+            "value": "세 번 닫고, 먹은 둘."
           }
         }
       }
@@ -1340,7 +1340,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "……墨が乾いたら閉じて。"
+            "value": "……墨が乾いてから、閉じて。"
           }
         },
         "ko": {
@@ -1400,13 +1400,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）鍵の枡まで歩いて閉じる。扉が開く。半分開いて渡り、扉を抜けて右ページの角へ、また閉じる。石の背の上に立つ。閉じたまま右へ一歩で左ページ、手紙はとなり。"
+            "value": "鍵と紙片のマスまで歩いて閉じる：扉が開く。半開きで橋を渡り、扉を抜けて右ページを角まで下り、また閉じる——この重なりの下は石、あなたはその背に立っている。閉じたまま右へ一歩で左ページ、手紙はとなり。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 열쇠 칸까지 걸어가 닫아요. 문이 열려요. 반쯤 열어 건너고 문을 지나 오른쪽 페이지 모서리로, 다시 닫아요. 돌의 등 위에 서 있어요. 닫은 채 오른쪽 한 칸이면 왼쪽 페이지, 편지는 옆에."
+            "value": "열쇠와 종이 조각이 있는 칸까지 걸어가 닫아요: 문이 열려요. 반쯤 열어 다리를 건너, 문을 지나 오른쪽 페이지를 모서리까지 내려가 다시 닫아요—이 겹 아래는 돌, 나는 그 등 위에 서 있어요. 닫은 채 오른쪽으로 한 칸이면 왼쪽 페이지, 편지는 옆에."
           }
         }
       }
@@ -1430,7 +1430,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "先に閉じるか、先に渡るか？"
+            "value": "先に閉じる？ 先に渡る？"
           }
         },
         "ko": {
@@ -1501,6 +1501,126 @@
         }
       }
     },
+    "drop.hint": {
+      "comment": "Level \"drop\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "别把石头往折痕滚：第三页自己的折痕和书的折痕都在它左边，往左两格是 (9,2) 的洞，掉进去就没了。先折第三页，再合书：折着的第三页上低处是书的折痕——它向右滚，(10,2)→(11,2)；打开时再滚一格，进 (12,2) 的洞、穿过去，掉在右页的缺口 (5,2) 上，那里成了纸。合书时站 (2,1)，别站 (3,2)：它滚到的那格正压在你头上。合上后从第 2 叠走上第三页，打开，沿折起的那叶走——洞里露出的右页 (5,2) 就是桥——到 (8,5)，把第三页抬起一点，她在 (8,4)。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do not roll the stone towards a crease: the third page's own crease and the book's are both to its left, and two squares left is the hole at (9,2) — it drops in and is gone. Fold the third page first, then close the book: on the folded third page the low side is the book's crease, so it rolls RIGHT, (10,2) → (11,2); as the book opens it rolls once more, into the hole at (12,2), through it, onto the right page's gap (5,2) — paper now. Close standing on (2,1), not (3,2): the square it rolls onto comes down on you. Closed, walk from stack 2 onto the third page; open; walk the folded leaf — the right page showing through the hole at (5,2) is the bridge — to (8,5), lift the third page a little, and she is at (8,4)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石を折り目へ転がさない：三枚目の折り目も本の折り目も石の左にあり、左へ二マスは穴(9,2)——落ちて、消える。先に三枚目を折り、それから本を閉じる：折った三枚目の上では低い側は本の折り目だから、石は右へ、(10,2)→(11,2)。本を開く一瞬にもう一マス転がって穴(12,2)に入り、抜けて、右ページのすき間(5,2)に落ちる——そこは紙になる。閉じるときは(2,1)に立つ。(3,2)ではない：石が転がり着くマスが、あなたの上に落ちてくる。閉じたまま2つ目の重なりから三枚目へ。開いて、折った葉を歩く——穴から見える右ページ(5,2)が橋——(8,5)まで。三枚目を少し起こせば、彼女は(8,4)。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌을 접는 선 쪽으로 굴리지 마요: 셋째 페이지의 접는 선도 책의 접는 선도 돌의 왼쪽에 있고, 왼쪽으로 두 칸은 구멍 (9,2)—빠지면, 사라져요. 먼저 셋째 페이지를 접고, 그다음 책을 닫아요: 접힌 셋째 페이지 위에서 낮은 쪽은 책의 접는 선이라 돌은 오른쪽으로, (10,2)→(11,2). 책이 열리는 순간 한 칸 더 굴러 구멍 (12,2)에 들어가, 빠져나와, 오른쪽 페이지의 틈 (5,2)에 떨어져요—거기는 종이가 돼요. 닫을 때는 (2,1)에 서요. (3,2)가 아니라: 돌이 굴러 닿는 칸이 내 위로 내려와요. 닫은 채 둘째 겹에서 셋째 페이지로. 펼치고, 접힌 장을 걸어요—구멍으로 보이는 오른쪽 페이지 (5,2)가 다리—(8,5)까지. 셋째 페이지를 조금 들면, 그녀는 (8,4)."
+          }
+        }
+      }
+    },
+    "drop.hint1": {
+      "comment": "Level \"drop\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "往折痕滚的石头会掉进 (9,2) 的洞。第三页折着的时候，石头往另一边滚。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A stone rolled towards a crease falls into the hole at (9,2). With the third page folded, it rolls the other way."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折り目へ転がした石は穴(9,2)に落ちる。三枚目を折っているあいだ、石は逆へ転がる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "접는 선 쪽으로 굴린 돌은 구멍 (9,2)에 빠져요. 셋째 페이지가 접혀 있는 동안, 돌은 반대로 굴러요."
+          }
+        }
+      }
+    },
+    "drop.line": {
+      "comment": "Level \"drop\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石头掉到了没画它的那一页。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The stone fell onto a page it was never drawn on."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石は、描かれていないページに落ちた。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌이 그려진 적 없는 페이지에 떨어졌다."
+          }
+        }
+      }
+    },
+    "drop.name": {
+      "comment": "Level \"drop\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "漏"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Through"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "抜ける"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "빠짐"
+          }
+        }
+      }
+    },
     "facing.hint": {
       "comment": "Level \"facing\": hint. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -1520,13 +1640,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）まっすぐの重なりは石でふさがれている。上の列を右ページの最初の枡まで歩いて閉じる。閉じたまま下へ歩くと左ページに移り、さらに下・右で右ページに戻る。開けば手紙はとなり。"
+            "value": "まっすぐの重なりは石にふさがれている。上の行を右ページの最初のマス（2行目）まで歩いて、そこで閉じる：この重なりの下は石だが、あなたはその背に立っている。閉じたまま下へ歩くと、紙があなたを左ページへ渡す。さらに下、右で右ページへ戻る。開けば、手紙はとなり。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 곧장 가는 겹은 돌에 막혀 있어요. 윗줄을 따라 오른쪽 페이지 첫 칸까지 가서 닫아요. 닫은 채 아래로 걸으면 왼쪽 페이지로 옮겨지고, 다시 아래·오른쪽으로 가면 오른쪽으로 돌아와요. 펼치면 편지가 옆에."
+            "value": "곧장 가는 겹은 돌에 막혀 있어요. 윗줄을 따라 오른쪽 페이지 첫 칸(2행)까지 걸어가 거기서 닫아요: 이 겹 아래는 돌이지만, 나는 그 등 위에 서 있어요. 닫은 채 아래로 걸으면 종이가 나를 왼쪽 페이지로 건네줘요. 다시 아래로, 오른쪽으로 가면 오른쪽 페이지로 돌아와요. 펼치면, 편지는 옆에."
           }
         }
       }
@@ -1550,13 +1670,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じたあと、あなたはどの重なりに？"
+            "value": "閉じたあと、あなたはどの重なりにいる？"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫은 뒤, 나는 어느 겹에 있지?"
+            "value": "닫고 나면, 나는 어느 겹에 있지?"
           }
         }
       }
@@ -1580,13 +1700,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "手紙は同じページに。道は違う。"
+            "value": "手紙は同じページに。道は、ない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "편지는 같은 페이지에, 길은 아니다."
+            "value": "편지는 같은 페이지에. 길은, 없다."
           }
         }
       }
@@ -1640,13 +1760,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "まず閉じる。糊が石を右頁へ引く。閉じたまま左頁の左下へ歩き、50°まで開く。新しい影が3列目に落ちる。石の元の場所から影に乗り、さらに70°まで開く。影は4列目へ運び、70°では紙片の橋が立っている。影を下り、橋を渡る。手紙は橋のたもとに。"
+            "value": "まず閉じる：糊が石を右ページへ引き寄せる。閉じたまま左ページの左下へ歩き、50°まで開く：新しい石の影が3列目に落ちる。石の元の場所から影に乗り、こんどは70°まで開く——影があなたを4列目へ運び、70°では紙片の橋が立っている。影を下り、橋を渡る。手紙は橋のたもと。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먼저 닫아요. 풀이 돌을 오른쪽 페이지로 붙여요. 닫은 채 왼쪽 페이지 왼쪽 아래로 걸어가 50°로 펼쳐요. 새 그림자가 3열에 떨어져요. 돌의 옛 자리에서 그림자에 올라, 더 펼쳐 70°로. 그림자가 4열로 데려가고, 70°에서는 종이 조각 다리가 서 있어요. 그림자를 따라 내려가 다리를 건너요. 편지는 다리 밑에."
+            "value": "먼저 닫아요: 풀이 돌을 오른쪽 페이지로 끌어가요. 닫은 채 왼쪽 페이지 왼쪽 아래로 걸어가 50°까지 펼쳐요: 새 돌의 그림자가 3열에 떨어져요. 돌의 옛 자리에서 그림자에 올라서고, 이번엔 70°까지 펼쳐요—그림자가 나를 4열로 데려가고, 70°에서는 종이 조각 다리가 서 있어요. 그림자를 따라 내려가 다리를 건너요. 편지는 다리 발치에."
           }
         }
       }
@@ -1670,13 +1790,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "少し閉じるのではなく、少し開く。"
+            "value": "少し開く。少し閉じるのではなく。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "조금 닫지 말고, 조금 펼쳐요."
+            "value": "조금 펴요. 조금 닫는 게 아니라."
           }
         }
       }
@@ -1706,7 +1826,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "강은 좁고 길은 길다."
+            "value": "강은 좁고, 길은 길다."
           }
         }
       }
@@ -1760,13 +1880,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "60° まで傾ける：頁が一度立ち、石は (6,1)——糊 (3,1) の向かい——へ転がる。寝かせる：二度目、石は隙間 (5,1) に落ちて紙になる。渡って、一つ下が彼女。閉じて開いても二度立つが、間の圧で糊が石を取る。"
+            "value": "60°まで傾ける：ページが一度立ち、転がる石は(6,1)へ——糊(3,1)の向かいのマス。寝かせる：二度目、石はすき間(5,1)に落ちて、紙になる。渡れば、彼女は一つ下。閉じて開くのも二度立つのは同じだが、あいだの押しで糊が石を持っていく。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "60°로 기울여요: 면이 한 번 서고, 돌은 (6,1)——풀 (3,1)의 맞은편——으로 굴러요. 다시 눕혀요: 두 번째, 돌이 틈 (5,1)에 빠져 종이가 돼요. 건너가면 한 칸 아래가 그녀예요. 닫았다 열어도 두 번 서지만, 그 사이의 누름에 풀이 돌을 가져가요."
+            "value": "60°로 기울여요: 페이지가 한 번 서고, 구르는 돌이 (6,1)로—풀 (3,1)이 마주 보는 칸. 눕혀요: 두 번째, 돌이 틈 (5,1)에 빠져 종이가 돼요. 건너가면, 그녀는 한 칸 아래. 닫았다 여는 것도 똑같이 두 번 서지만, 그 사이의 누름에 풀이 돌을 가져가요."
           }
         }
       }
@@ -1790,13 +1910,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "傾けて寝かせる：二度立って、一度も押さない。"
+            "value": "傾けて、寝かせる：二度立って、一度も押さない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "기울였다 눕히기: 두 번 서고, 한 번도 누르지 않아요."
+            "value": "기울였다가, 눕혀요: 두 번 서고, 한 번도 누르지 않아요."
           }
         }
       }
@@ -1826,7 +1946,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "풀이 기다려요."
+            "value": "풀이 기다린다."
           }
         }
       }
@@ -1856,7 +1976,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "오가다"
+            "value": "오가기"
           }
         }
       }
@@ -1880,13 +2000,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "扉は傾けているあいだだけ床。同じ傾きの中で扉を抜け影に乗り、閉じる前に紙へ。"
+            "value": "40°：左ページの石の影が扉の下のすき間に落ち、扉が立っている。その一度の傾きのうちに影を渡り、扉を抜けて、扉の上の紙へ——左ページの石のちょうど向かい。そこで閉じる：ふさがった重なりの中にいる。歩いて左ページへ出て、開けば、彼女は一歩先。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "문은 기울인 동안에만 바닥이에요. 한 번의 기울임 안에서 문을 지나고 그림자를 타고, 닫기 전에 종이에 닿아요."
+            "value": "40°: 왼쪽 페이지 돌의 그림자가 문 아래 틈에 놓이고, 문이 서 있어요. 그 한 번의 기울임 안에 그림자를 건너고, 문을 지나, 문 위의 종이로—왼쪽 페이지 돌의 바로 맞은편. 거기서 닫아요: 나는 막힌 겹 안에 있어요. 걸어서 왼쪽 페이지로 나와 펼치면, 그녀는 한 걸음 앞에."
           }
         }
       }
@@ -1910,13 +2030,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "扉の上では本を閉じられない。"
+            "value": "扉の上では閉じられない。扉の先の紙は、石の背。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "문 위에서는 책을 닫을 수 없어요."
+            "value": "문 위에서는 닫을 수 없어요. 문 너머의 종이는 돌의 등."
           }
         }
       }
@@ -1940,13 +2060,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "灯がともるあいだ、扉は立つ。"
+            "value": "灯りがともるあいだ、扉は立つ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "등불이 켜진 동안 문이 서 있어요."
+            "value": "등불이 켜져 있는 동안, 문은 서 있다."
           }
         }
       }
@@ -2000,13 +2120,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "一度閉じる。向かいの糊が石を引き寄せる。開けば、道は空いている。"
+            "value": "一度閉じる：向かいの糊が石を引き寄せる。開けば、道は空いている。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "한 번 닫아요. 맞은편 풀이 돌을 붙여 가요. 펼치면 길이 비어 있어요."
+            "value": "한 번 닫아요: 맞은편 풀이 돌을 끌어가요. 펼치면, 길이 비어 있어요."
           }
         }
       }
@@ -2036,7 +2156,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "길에 돌, 건너편에 풀."
+            "value": "길에는 돌, 건너편에는 풀."
           }
         }
       }
@@ -2090,13 +2210,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "55° に傾ける：転がる石がみな一枡動く。(5,5) の石の影が (4,5) に落ちるから乗って上がり、(4,3) の影を回って左上へ、(3,1) の鶴に立つ。まだ閉じない——閉じるのも一度の「立ち」で、(6,1) の石が先に降り場へ転がる。まず平らに戻し（石は折り目際へ、後ろの石は (5,1) に落ちる）、それから閉じる：閉じる拍子にもう一枡転がり、降り場があく——鶴がきみを (6,1) へ。束で右頁の (7,3) へ、開けば彼女はひとつ下。"
+            "value": "55°に傾ける：転がる石がみな一マス転がる。(5,5)の石の影が(4,5)に落ちるから乗って上がり、(4,3)の影を回って左上の角へ、(3,1)の鶴に立つ。まだ閉じない——閉じるのも一度立つことで、(6,1)の石が先に降り場へ転がる。まず寝かせる（石は折り目の際へ、後ろの石は(5,1)に落ちる）。それから閉じる：押す一瞬にもう一マス転がって、降り場が空く——鶴があなたを(6,1)へ運ぶ。重なりで右ページの(7,3)へ、開けば、彼女は一つ下。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "55°로 기울여요: 구르는 돌이 모두 한 칸 굴러요. (5,5) 돌의 그림자가 (4,5)에 떨어지니 밟고 올라가, (4,3) 그림자를 돌아 왼쪽 위로, (3,1) 학 위에 서요. 아직 닫지 마요. 닫는 것도 한 번 세우는 것이라 (6,1) 돌이 먼저 자리로 굴러와요. 먼저 펴고(돌은 접힌 금 옆으로, 뒤의 돌은 (5,1)에 떨어져요), 그다음 닫아요: 닫히는 순간 한 칸 더 굴러 자리가 비고, 학이 너를 (6,1)로 데려가요. 묶음으로 오른쪽 면 (7,3)까지, 열면 그녀는 한 칸 아래."
+            "value": "55°로 기울여요: 구르는 돌이 모두 한 칸 굴러요. (5,5) 돌의 그림자가 (4,5)에 떨어지니 올라서서 위로, (4,3) 그림자를 돌아 왼쪽 위 모서리로, (3,1)의 학 위에 서요. 아직 닫지 마요—닫는 것도 한 번 서는 것이라, (6,1)의 돌이 먼저 내려앉을 자리로 굴러와요. 먼저 눕혀요(돌은 접는 선 가장자리로, 뒤의 돌은 (5,1)에 빠져요). 그다음 닫아요: 누르는 순간 한 칸 더 굴러 자리가 비어요—학이 나를 (6,1)로 데려가요. 겹을 따라 오른쪽 페이지 (7,3)으로, 펼치면 그녀는 한 칸 아래."
           }
         }
       }
@@ -2120,13 +2240,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "降り場は閉じる前はあいている。閉じる拍子に石が先に来る——転がり過ぎるのを待つ。"
+            "value": "降り場は閉じる前には空いている。押す一瞬、石が先に来る——転がり過ぎるのを待つ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "자리는 닫기 전엔 비어 있어요. 닫히는 순간 돌이 먼저 와요. 굴러 지나가길 기다려요."
+            "value": "내려앉을 자리는 닫기 전엔 비어 있어요. 누르는 순간 돌이 먼저 와요—굴러 지나가길 기다려요."
           }
         }
       }
@@ -2180,13 +2300,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ふさがる"
+            "value": "先客"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "막히다"
+            "value": "차지"
           }
         }
       }
@@ -2210,13 +2330,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "(6,1) に立つ——上の石のすぐ前。傾けて戻すと、下の石は折り目まで二枡転がり、上の石はきみに止められて動かない。その場で閉じれば束が彼女へ続く。"
+            "value": "(6,1)に立つ——上の転がる石のすぐ前。傾けて寝かせると、下の石は折り目まで二マス転がり、上の石はあなたの後ろで待っている。その場で閉じれば、重なりが彼女へ続く。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(6,1)에 서요, 위쪽 돌 바로 앞에: 기울였다 펴면 아래 돌은 접힌 금까지 두 칸 구르고, 위 돌은 네가 막아서 그대로예요. 그 자리에서 닫으면 묶음이 그녀에게 이어져요."
+            "value": "(6,1)에 서요—위쪽 구르는 돌 바로 앞. 기울였다 눕히면 아래 돌은 접는 선까지 두 칸 구르고, 위 돌은 내 뒤에서 기다려요. 그 자리에서 닫으면, 겹이 그녀에게 이어져요."
           }
         }
       }
@@ -2240,13 +2360,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "紙人が石の前に立てば、石は転がらない。"
+            "value": "紙の人形が石の前に立てば、石は転がらない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "종이 사람이 돌 앞에 서면 돌은 구르지 않아요."
+            "value": "종이 인형이 돌 앞에 서면, 돌은 구르지 않아요."
           }
         }
       }
@@ -2270,13 +2390,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "上の石を下ろすな。"
+            "value": "上の石を、下ろさないで。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "위의 돌을 내려오게 하지 마요."
+            "value": "위의 돌을 내려오게 하지 마."
           }
         }
       }
@@ -2300,13 +2420,253 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "止"
+            "value": "止める"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "막기"
+          }
+        }
+      }
+    },
+    "hole.hint": {
+      "comment": "Level \"hole\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "把第三页折上来，它把右页的缺口都搭上了。可是站到 (12,2)——正在她头顶——你是在第三页上，她在下面；从那儿把第三页放平，你就在外面的第三页上了。绕着折好的那一叶走到 (7,3)：那里第三页有个洞 (10,3)，你脚下是洞里露出来的右页。从那儿放平第三页，你就站在右页上、缺口的另一边。合上，叠合走到她。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fold the third page over and it bridges all the right page's gaps. But standing on (12,2) — right over her — you are on the third page and she is under it; lay it flat from there and you are out on the third page. Go round the folded leaf to (7,3): the third page has a hole there, (10,3), and what you stand on is the right page showing through. Lay the third page flat from there: you are on the right page, past its gaps. Close; the stacks lead to her."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三枚目を折ると、右ページのすき間はみな橋になる。けれど(12,2)——彼女の真上——に立てば、あなたは三枚目の上、彼女はその下。そこで三枚目を寝かせると、外の三枚目に出てしまう。折った葉を回って(7,3)へ：そこには三枚目の穴(10,3)があり、足もとは穴から見える右ページ。そこで三枚目を寝かせれば、あなたは右ページの、すき間の向こう側。閉じて、重なりで彼女へ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "셋째 페이지를 접으면 오른쪽 페이지의 틈이 모두 다리가 돼요. 하지만 (12,2)—그녀 바로 위—에 서면 나는 셋째 페이지 위, 그녀는 그 아래. 거기서 셋째 페이지를 펴면 바깥의 셋째 페이지로 나가 버려요. 접힌 장을 돌아 (7,3)으로: 거기 셋째 페이지의 구멍 (10,3)이 있고, 발밑은 구멍으로 보이는 오른쪽 페이지예요. 거기서 셋째 페이지를 펴면, 나는 오른쪽 페이지의, 틈 건너편에. 닫고, 겹을 따라 그녀에게."
+          }
+        }
+      }
+    },
+    "hole.hint1": {
+      "comment": "Level \"hole\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "洞里露出来的是右页。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Through a hole, you stand on the right page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "穴の中は、右ページ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "구멍 속은, 오른쪽 페이지."
+          }
+        }
+      }
+    },
+    "hole.line": {
+      "comment": "Level \"hole\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "她在右页上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "She is on the right page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "彼女は右ページにいる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그녀는 오른쪽 페이지에 있다."
+          }
+        }
+      }
+    },
+    "hole.name": {
+      "comment": "Level \"hole\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "洞"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Holes"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "穴"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "구멍"
+          }
+        }
+      }
+    },
+    "home.hint": {
+      "comment": "Level \"home\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先把第三页折到右页上（书摊平时才折得动），再合书：这回左页碰到的是第三页。她在 (10,2)——折两次，镜像两次，回到你自己那列：走到第 2 列第 2 行那一叠，她就在上面。直接合书的话，第三页甩到桌上，她跟着出去了；右页的 (7,2) 是卷一的答案，可她不在那儿。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fold the third page onto the right page first (it moves only while the book lies flat), then close: this time the left page meets the third page. She is at (10,2) — folded twice, mirrored twice, back in your own column: walk to the stack at column 2, row 2 and she is on top. Close the book as it is and the third page swings out onto the table, with her; the right page's (7,2) is the Book One answer, and she is not there."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先に三枚目を右ページへ折る（動くのは本が平らなときだけ）。それから閉じる：こんど左ページが出会うのは三枚目。彼女は(10,2)——二度折り、二度映して、あなた自身の列に戻る。2列目の2行目の重なりへ歩けば、彼女はその上。そのまま本を閉じれば三枚目は机へ振り出され、彼女も一緒に出ていく。右ページの(7,2)は第一巻の答えで、彼女はそこにいない。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 셋째 페이지를 오른쪽 페이지 위로 접어요(책이 평평할 때만 움직여요). 그다음 닫아요: 이번에 왼쪽 페이지가 만나는 건 셋째 페이지예요. 그녀는 (10,2)—두 번 접고, 두 번 비추면, 내 열로 돌아와요. 2열 2행 겹까지 걸어가면 그녀는 그 위에. 그대로 책을 닫으면 셋째 페이지는 책상으로 넘어가고, 그녀도 함께 나가요. 오른쪽 페이지의 (7,2)는 1권의 답이고, 그녀는 거기 없어요."
+          }
+        }
+      }
+    },
+    "home.hint1": {
+      "comment": "Level \"home\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折两次，回到原来那列。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folded twice, back in your own column."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "二度折れば、元の列。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "두 번 접으면, 제자리 열."
+          }
+        }
+      }
+    },
+    "home.line": {
+      "comment": "Level \"home\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "她在第三页。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "She is on the third page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "彼女は三枚目のページにいる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그녀는 셋째 페이지에 있다."
+          }
+        }
+      }
+    },
+    "home.name": {
+      "comment": "Level \"home\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本列"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home Column"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "元の列"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제자리 열"
           }
         }
       }
@@ -2330,13 +2690,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "60° に傾け（ただ一度の立ち）、鶴 (8,3) に乗って閉じる：(1,3) へ。30° まで開く——寝かせない。飛んできた鶴 (3,4) に乗ってまた閉じる：(6,4) へ。55° まで開いて、一つ下が彼女。"
+            "value": "60°に傾け（この手紙でただ一度の立ち）、鶴(8,3)に乗って閉じる：(1,3)へ。開くのは30°まで——寝かせない。寝かせればもう一度立って、転がる石があなたの道に転がり込む。飛んできた鶴(3,4)に乗って、また閉じる：(6,4)へ。55°まで開けば、彼女は一つ下。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "60°로 기울이고(단 한 번 서기), 학 (8,3)에 올라 닫아요: (1,3)으로. 30°까지만 열어요——눕히지 말고요. 날아온 학 (3,4)에 올라 다시 닫아요: (6,4)로. 55°까지 열면 한 칸 아래가 그녀예요."
+            "value": "60°로 기울이고(이 편지에서 단 한 번 서는 것), 학 (8,3)에 올라서서 닫아요: (1,3)으로. 30°까지만 열어요—눕히지 말고요. 눕히면 한 번 더 서고, 구르는 돌이 내가 갈 칸으로 굴러와요. 날아온 학 (3,4)에 올라서서 다시 닫아요: (6,4)로. 55°까지 펼치면, 그녀는 한 칸 아래."
           }
         }
       }
@@ -2360,13 +2720,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じた本を傾けるまで開いても、90° は越えない。"
+            "value": "閉じた本を傾けるまでなら、立たない。もう一度閉じても、石は一マスも動かない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫힌 책을 기울기까지만 열면 90°를 넘지 않아요."
+            "value": "닫힌 책을 기울이기까지는 한 번 서는 게 아니에요. 다시 닫아도 돌은 한 칸도 움직이지 않아요."
           }
         }
       }
@@ -2390,13 +2750,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "また飛んで戻る。"
+            "value": "また飛んで、戻ってくる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "다시 날아 돌아와요."
+            "value": "다시 날아, 돌아온다."
           }
         }
       }
@@ -2450,13 +2810,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）すぐ閉じる。墨が右ページに写る。閉じたまま右上の角まで歩き、開いて一枡下がり、また閉じる。写った墨を伝って右ページの下の列へ。半分開けば右の一枡が手紙。"
+            "value": "すぐ閉じる：墨が右ページに写る。閉じたまま右上の角まで歩き、開いて、一マス下（3行目）、また閉じる：この重なりは写った墨を通って右ページのいちばん下の行へ下りる。半開きにすれば、右へ一歩で手紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 바로 닫아요. 먹이 오른쪽에 찍혀요. 닫은 채 오른쪽 위 모서리까지 걷고, 펼쳐 한 칸 내려가 다시 닫아요. 찍힌 먹을 타고 오른쪽 페이지 맨 아랫줄로. 반쯤 열면 오른쪽 한 칸이 편지."
+            "value": "바로 닫아요: 먹이 오른쪽 페이지에 찍혀요. 닫은 채 오른쪽 위 모서리까지 걸어가, 펼치고, 한 칸 아래(3행), 다시 닫아요: 이 겹이 찍힌 먹을 지나 오른쪽 페이지 맨 아랫줄까지 내려가요. 반쯤 열면, 오른쪽 한 칸이 편지."
           }
         }
       }
@@ -2480,13 +2840,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "墨が写る枡は、どの重なりの道？"
+            "value": "墨が写るマスは、どの重なりの道？"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먹이 찍힌 칸은 어느 겹의 길?"
+            "value": "먹이 찍힌 칸은 어느 겹의 길이지?"
           }
         }
       }
@@ -2570,13 +2930,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）墨を踏んで紙片まで歩き、閉じる。墨が写る。半分開いて渡り、写った墨を踏んで右ページを下り、また閉じる。石の背の上。閉じたまま右へ一歩が手紙。"
+            "value": "墨を踏んで紙片まで歩き、閉じる：墨が右ページに写る。半開きで渡り、右ページを下りながら写った墨を踏んで、また閉じる——この重なりの下は石。閉じたまま右へ一歩が手紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 먹을 밟고 종이 조각까지 가서 닫아요. 먹이 찍혀요. 반쯤 열어 건너고, 찍힌 먹을 밟아 오른왽 페이지를 내려가 다시 닫아요. 돌의 등 위. 닫은 채 오른쪽 한 칸이 편지."
+            "value": "먹을 밟고 종이 조각까지 걸어가 닫아요: 먹이 오른쪽 페이지에 찍혀요. 반쯤 열어 건너고, 오른쪽 페이지를 내려가며 찍힌 먹을 밟고, 다시 닫아요—이 겹 아래는 돌이에요. 닫은 채 오른쪽으로 한 칸이 편지."
           }
         }
       }
@@ -2600,7 +2960,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "橋の先の足りない一枡は、誰が埋める？"
+            "value": "橋の先の足りない一マスを、誰が埋める？"
           }
         },
         "ko": {
@@ -2630,13 +2990,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "橋の先で道は途切れる。"
+            "value": "橋の先で、道が切れている。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "다리 너머 길이 끊긴다."
+            "value": "다리 너머에서 길이 끊긴다."
           }
         }
       }
@@ -2690,13 +3050,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）右ページを回って右上で閉じる。墨が左に写り、石の背の上。閉じたまま左ページへ、40°まで開いて2列目の影に乗る。55°まで開くと3列目へ。写った墨を越えて下の影へ、左下の紙で閉じる。"
+            "value": "右ページを回って右上で閉じる：墨が左ページに写り、この重なりの下は石。閉じたまま左ページへ渡り、40°まで開く：2列目の影に乗る。55°まで開く：影があなたを3列目へ運ぶ。写った墨を越えて下の影へ、左下の紙まで歩いて閉じる——手紙は向かい。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 오른쪽 페이지를 돌아 오른쪽 위에서 닫아요. 먹이 왼쪽에 찍히고, 돌의 등 위. 닫은 채 왼쪽 페이지로, 40°까지 펼쳐 2열 그림자에 올라요. 55°까지 펼치면 3열로. 찍힌 먹을 지나 아래 그림자로, 왼쪽 아래 종이에서 닫아요."
+            "value": "오른쪽 페이지를 돌아 오른쪽 위에서 닫아요: 먹이 왼쪽 페이지에 찍히고, 이 겹 아래는 돌이에요. 닫은 채 왼쪽 페이지로 건너가 40°까지 펼쳐요: 2열 그림자에 올라서요. 55°까지 펼쳐요: 그림자가 나를 3열로 데려가요. 찍힌 먹을 지나 아래 그림자로, 왼쪽 아래 종이까지 걸어가 닫아요—편지는 맞은편에."
           }
         }
       }
@@ -2750,13 +3110,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "二つの影の間に、墨が一枡。"
+            "value": "二つの影のあいだに、墨が一マス。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "두 그림자 사이, 먹 한 칸."
+            "value": "두 그림자 사이에, 먹 한 칸."
           }
         }
       }
@@ -2810,13 +3170,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）足もとの紙片で閉じる。墨が写る。半分開いて渡り、写った墨に乗り、右ページを回って右下へ、また閉じる。石の背の上。閉じたまま左へ一歩が手紙。"
+            "value": "出発点の下の紙片で閉じる：墨が右ページに写る。半開きで渡り、写った墨に乗って、右ページをぐるりと回って右下へ、また閉じる——この重なりの下は石。閉じたまま左へ一歩が手紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 발밑 종이 조각에서 닫아요. 먹이 찍혀요. 반쯤 열어 건너고 찍힌 먹에 올라, 오른쪽 페이지를 돌아 오른쪽 아래로, 다시 닫아요. 돌의 등 위. 닫은 채 왼쪽 한 칸이 편지."
+            "value": "출발점 아래 종이 조각에서 닫아요: 먹이 오른쪽 페이지에 찍혀요. 반쯤 열어 건너고, 찍힌 먹에 올라서서 오른쪽 페이지를 빙 돌아 오른쪽 아래로, 다시 닫아요—이 겹 아래는 돌이에요. 닫은 채 왼쪽으로 한 칸이 편지."
           }
         }
       }
@@ -2840,13 +3200,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "墨はどこに写った？そこから。"
+            "value": "墨はどこに写った？ そこから始める。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먹은 어디에 찍혔지? 거기서부터."
+            "value": "먹은 어디에 찍혔지? 거기서 시작해요."
           }
         }
       }
@@ -2870,7 +3230,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "墨、橋、あと一枡。"
+            "value": "墨、橋、あと一マス。"
           }
         },
         "ko": {
@@ -2930,13 +3290,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "左頁3行目の左端まで歩き、40°まで傾ける。二つの石の影が一緒にいちばん上の行を敷く。右上の紙まで歩いて、閉じて裏返し、閉じたまま下へ二枡。"
+            "value": "左ページの3行目の左端まで歩き、40°に傾ける：二つの石の影が同時にいちばん上の行を敷く。右上の紙まで歩き、閉じて、めくって、閉じたまま下へ二マス。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "왼쪽 페이지 3행 왼쪽 끝까지 가서 40°로 기울여요. 두 돌의 그림자가 함께 맨 윗줄을 깔아요. 오른쪽 위 종이까지 걸어가 닫고 뒤집은 뒤, 닫은 채 아래로 두 칸."
+            "value": "왼쪽 페이지 3행 왼쪽 끝까지 걸어가 40°로 기울여요: 두 돌의 그림자가 한꺼번에 맨 윗줄을 깔아요. 오른쪽 위 종이까지 걸어가, 닫고, 넘기고, 닫은 채 아래로 두 칸."
           }
         }
       }
@@ -2960,13 +3320,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "いちばん上の行は、閉じてではなく歩いて行く。"
+            "value": "いちばん上の行は、閉じてではなく、歩いて行く。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "맨 윗줄은 닫아서가 아니라 걸어서 간다."
+            "value": "맨 윗줄은 닫아서가 아니라, 걸어서 가요."
           }
         }
       }
@@ -2996,7 +3356,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "돌 둘, 각도 하나."
+            "value": "돌은 둘, 각도는 하나."
           }
         }
       }
@@ -3050,13 +3410,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "50° まで傾ける：途中で頁が立ち、遠い石は 7 列目へ転がっている——影は (3,4) の隙間に落ちる。近い石の影 (4,3) を渡り、(3,4) へ、(2,4) へ。平らにして閉じれば束が彼女へ続く。"
+            "value": "50°まで傾ける：その途中でページが立ち、遠い石は7列目へ転がっている——影は(3,4)のすき間に落ちる。図から読んだ場所ではなく。近い石の影(4,3)を歩き、(3,4)へ下り、(2,4)へ。寝かせて、閉じれば、重なりが彼女へ続く。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "50°까지 기울여요: 가는 길에 페이지가 한 번 섰고, 먼 돌은 7열로 굴러갔어요. 그림자는 (3,4) 틈에 떨어져요. 가까운 돌의 그림자 (4,3)을 지나 (3,4)로, (2,4)로. 펴고 닫으면 묶음이 그녀에게 이어져요."
+            "value": "50°까지 기울여요: 가는 길에 페이지가 한 번 섰고, 먼 돌은 7열로 굴러가 있어요—그림자는 (3,4) 틈에 떨어져요. 그림을 보고 계산한 자리가 아니라. 가까운 돌의 그림자 (4,3)을 걸어, (3,4)로 내려가, (2,4)로. 눕히고, 닫으면, 겹이 그녀에게 이어져요."
           }
         }
       }
@@ -3080,13 +3440,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影は転がったあとの石の位置に落ちる。"
+            "value": "影が落ちるのは転がったあとの石の場所。描かれた場所ではない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자는 구른 뒤의 돌 자리에 떨어져요."
+            "value": "그림자는 구른 뒤의 돌 자리에 떨어져요. 그려진 자리가 아니라."
           }
         }
       }
@@ -3116,7 +3476,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자는 돌을 따라가요."
+            "value": "그림자는 돌을 따라간다."
           }
         }
       }
@@ -3140,13 +3500,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "跳"
+            "value": "跳ぶ"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "뛰기"
+            "value": "건너뜀"
           }
         }
       }
@@ -3170,13 +3530,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）鍵があるのは左ページの扉だけ。右ページの下を角まで歩いて閉じる。扉が開く。閉じたまま左ページへ上がり、開いた扉を抜けて開き、右に一歩、また閉じる。右ページの扉には鍵がない。ただの壁。"
+            "value": "鍵があるのは左ページの扉だけ。右ページの下の行を角まで歩いて閉じる：扉が開き、この重なりの下は石。閉じたまま左ページへ上がり、開いた扉を抜けて、開き、右へ一歩、また閉じる：その重なりが手紙へ続く。右ページの扉に鍵はない。ただの壁。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 열쇠가 있는 건 왼쪽 페이지 문만이에요. 오른쪽 페이지 아래를 따라 모서리까지 가서 닫아요. 문이 열려요. 닫은 채 왼쪽 페이지로 올라가 열린 문을 지나 펼치고, 오른쪽 한 칸, 다시 닫아요. 오른쪽 페이지 문은 열쇠가 없어요. 그냥 벽이에요."
+            "value": "열쇠가 있는 건 왼쪽 페이지의 문뿐이에요. 오른쪽 페이지 아랫줄을 모서리까지 걸어가 닫아요: 문이 열리고, 이 겹 아래는 돌이에요. 닫은 채 왼쪽 페이지로 올라가 열린 문을 지나고, 펼치고, 오른쪽으로 한 칸, 다시 닫아요: 그 겹이 편지로 이어져요. 오른쪽 페이지의 문에는 열쇠가 없어요. 그냥 벽이에요."
           }
         }
       }
@@ -3410,13 +3770,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "きみは左頁、鶴は右頁——本を閉じる：鶴はこちらの頁の鏡の枡、ちょうど隙間へ降りる。開けば隙間は紙。渡る。"
+            "value": "あなたは左ページ、鶴は右ページ——本を閉じる：鶴はこちらのページの鏡のマス、ちょうどすき間へ降りる。開けば、すき間は紙。渡る。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "너는 왼쪽 면, 학은 오른쪽 면——책을 닫아요: 학이 이쪽 면의 거울 칸, 바로 그 틈에 내려앉아요. 열면 틈은 종이예요. 건너가요."
+            "value": "나는 왼쪽 페이지, 학은 오른쪽 페이지—책을 닫아요: 학이 이쪽 페이지의 거울 칸, 바로 그 틈에 내려앉아요. 펼치면, 틈은 종이. 건너가요."
           }
         }
       }
@@ -3440,13 +3800,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "鶴が降りたところは紙。"
+            "value": "鶴が降りたところは、紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "학이 내려앉은 곳은 종이예요."
+            "value": "학이 내려앉은 곳은, 종이."
           }
         }
       }
@@ -3476,7 +3836,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "학이 이쪽으로 와요."
+            "value": "학이 이쪽으로 온다."
           }
         }
       }
@@ -3506,7 +3866,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "내려앉다"
+            "value": "내려앉기"
           }
         }
       }
@@ -3650,13 +4010,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "(3,1) で 60° に傾ける：遠い石が一枡転がり、その影が (4,3) の隙間に落ちる——近い石は折り目まであと一枡、60° ではまだ影がない。影に立って閉じる：図では近い石に潰されるはずが、影が先にきみを (3,3) へ運び、石は隣に落ちる。束で右頁へ渡り、平らにして（遠い石がまた転がる）、左頁の石の背でもう一度閉じれば下の束が彼女へ続く。"
+            "value": "(3,1)で60°に傾ける：遠い石が一マス転がり、その影が(4,3)のすき間に落ちる——近い石は折り目まであと一マスで、60°ではまだ影がない。影に立って閉じる：図では近い石があなたを押しつぶすはずが、影が先にあなたを(3,3)へ運び、石はとなりに落ちる。重なりで右ページへ渡り、寝かせて（遠い石がまた転がる）、左ページの石の背でもう一度閉じれば、下の重なりが彼女へ続く。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(3,1)에서 60°로 기울여요: 먼 돌이 한 칸 굴러 그 그림자가 (4,3) 틈에 떨어져요. 가까운 돌은 접힌 금까지 한 칸, 60°에선 아직 그림자가 없어요. 그림자 위에서 닫아요: 그림엔 가까운 돌이 널 누른다고 돼 있지만, 그림자가 먼저 (3,3)으로 데려가고 돌은 옆에 떨어져요. 묶음으로 오른쪽 면에 건너가, 펴고(먼 돌이 또 굴러요), 왼쪽 돌의 등 위에서 한 번 더 닫으면 아래 묶음이 그녀에게 이어져요."
+            "value": "(3,1)에서 60°로 기울여요: 먼 돌이 한 칸 굴러 그 그림자가 (4,3) 틈에 떨어져요—가까운 돌은 접는 선까지 한 칸 남았고, 60°에서는 아직 그림자가 없어요. 그림자 위에 서서 닫아요: 그림대로라면 가까운 돌이 나를 누르겠지만, 그림자가 먼저 나를 (3,3)으로 데려가고 돌은 옆에 떨어져요. 겹을 따라 오른쪽 페이지로 건너가, 눕히고(먼 돌이 또 굴러요), 왼쪽 페이지 돌의 등 위에서 한 번 더 닫으면 아래 겹이 그녀에게 이어져요."
           }
         }
       }
@@ -3680,7 +4040,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "潰すのは転がったあとの石、運ぶのは転がったあとの影。"
+            "value": "押しつぶすのは転がったあとの石、運ぶのは転がったあとの影。"
           }
         },
         "ko": {
@@ -3710,7 +4070,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "石はまだ頭の上。"
+            "value": "石はまだ、頭の上。"
           }
         },
         "ko": {
@@ -3740,7 +4100,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "遅"
+            "value": "遅れ"
           }
         },
         "ko": {
@@ -3890,13 +4250,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "まず一度閉じて、糊でこちらの石を向こう岸へ送る。開いて、30°〜50°まで傾ける。その影がすき間に落ちる。"
+            "value": "まず一度閉じて、糊でこちらの石を向こうのページへ送る。開いて、30°〜50°に傾ける：その石の影がすき間に落ちる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먼저 한 번 닫아요. 풀이 이쪽 돌을 건너편으로 보내요. 펼치고 30°~50°로 기울여요. 그 그림자가 틈 위에 떨어져요."
+            "value": "먼저 한 번 닫아요: 풀이 이쪽 돌을 건너편 페이지로 데려가요. 펼치고, 30°~50°로 기울여요: 그 돌의 그림자가 틈 위에 떨어져요."
           }
         }
       }
@@ -3920,13 +4280,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "向こうの頁に石がなければ、影もない。"
+            "value": "向こうのページに石がなければ、影もない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "건너편 페이지에 돌이 없으면 그림자도 없다."
+            "value": "건너편 페이지에 돌이 없으면, 그림자도 없다."
           }
         }
       }
@@ -3980,13 +4340,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じると綴じ目から遠ざかる。影に乗って外へ、石の束に着く前に降りる。"
+            "value": "50°に傾ける：左ページの石の影が、あなたの下の行のすき間に落ちる。乗る。70°まで開くと影は綴じ目のほうへ滑り戻り、あなたを一マスの紙の上に降ろす。閉じれば、重なりが彼女へ続く。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫으면 경첩에서 멀어져요. 그림자를 타고 바깥으로, 돌의 묶음에 닿기 전에 내려요."
+            "value": "50°로 기울여요: 왼쪽 페이지 돌의 그림자가 내 아랫줄 틈에 놓여요. 올라서요. 70°까지 펼치면 그림자가 접는 선 쪽으로 미끄러져 돌아와, 나를 종이 한 칸 위에 내려놓아요. 닫으면, 겹이 그녀에게 이어져요."
           }
         }
       }
@@ -4010,13 +4370,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "向きが逆。影は外へ滑り、端で落ちる。"
+            "value": "閉じると影は外へ滑り、開くと戻ってくる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "방향이 반대예요. 그림자는 바깥으로 미끄러지고 끝에서 떨어져요."
+            "value": "닫으면 그림자가 바깥으로 미끄러지고, 펼치면 돌아와요."
           }
         }
       }
@@ -4040,13 +4400,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "持ち上げた頁にも影がある。"
+            "value": "持ち上げたページにも、影がある。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "들어 올린 면에도 그림자가 있어요."
+            "value": "들어 올린 페이지에도 그림자가 있다."
           }
         }
       }
@@ -4076,7 +4436,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "들어 올림"
+            "value": "들기"
           }
         }
       }
@@ -4100,13 +4460,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）左ページを回って4列目へ。80°ほどに傾けると遠い石の影だけが届く。乗って上へ。40°ほどまで閉じると近い石の影が3列目に。渡って左上の3枡目で閉じる。"
+            "value": "左ページを回って4列目へ。まず80°ほどに傾ける：遠い石の影だけが4列目のすき間に届く。乗って、上へ。次に40°ほどまで閉じる：近い石の影が3列目に落ちる。渡って、左上の3つ目のマスで閉じる——この重なりはまっすぐ手紙へ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 왼쪽 페이지를 돌아 4열로. 80° 정도 기울이면 먼 돌의 그림자만 닿아요. 올라서 위로. 40° 정도까지 닫으면 가까운 돌의 그림자가 3열에. 건너 왼쪽 위 셋째 칸에서 닫아요."
+            "value": "왼쪽 페이지를 돌아 4열로. 먼저 80°쯤 기울여요: 먼 돌의 그림자만 4열 틈에 닿아요. 올라서서 위로. 그다음 40°쯤까지 닫아요: 가까운 돌의 그림자가 3열에 떨어져요. 건너서 왼쪽 위 셋째 칸에서 닫아요—이 겹이 곧장 편지로 이어져요."
           }
         }
       }
@@ -4136,7 +4496,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "두 그림자, 각각 어느 각도?"
+            "value": "두 그림자, 각각 어느 각도에서?"
           }
         }
       }
@@ -4160,13 +4520,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "遠い影は速い。"
+            "value": "遠い影ほど、速く動く。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먼 그림자가 빠르다."
+            "value": "먼 그림자가 더 빨리 움직인다."
           }
         }
       }
@@ -4196,7 +4556,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "멀고 가까운"
+            "value": "멀고 가까움"
           }
         }
       }
@@ -4220,13 +4580,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "石がなければ影もない。まず閉じて、二つの石を向こうへ送る。右頁いちばん下の紙の上で閉じる（糊の上では押しつぶされる）。閉じたまま左頁の下の紙へ歩き、70°まで開く。新しい石の影が4列目に落ちる。乗って、ゆっくり50°まで閉じる。影が2列目まで運ぶ。石がいた場所は今は紙。歩いて帰る。"
+            "value": "石がなければ影もない——まず閉じて、二つの石を向こうへ送る。右ページのいちばん下の紙で閉じる（糊の上では押しつぶされる）。閉じたまま左ページの下の角の紙へ歩き、70°まで開く：新しい石の影が4列目に落ちる。乗って、ゆっくり50°まで閉じる：影があなたを2列目へ運ぶ。石が立っていた場所は、いまは紙。歩いて帰る。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "돌이 없으면 그림자도 없어요. 먼저 닫아서 돌 두 개를 건너 보내요. 오른쪽 페이지 맨 아래 종이에서 닫아요(풀 위에서는 눌려요). 닫은 채 왼쪽 페이지 아래 종이로 걸어가 70°로 펼쳐요. 새 돌의 그림자가 4열에 떨어져요. 올라서서 천천히 50°까지 닫으면 2열로 데려가요. 돌이 있던 자리는 이제 종이예요. 걸어서 돌아가요."
+            "value": "돌이 없으면 그림자도 없어요—먼저 닫아서 돌 둘을 건너 보내요. 오른쪽 페이지 맨 아래 종이에서 닫아요(풀 위에서는 눌려요). 닫은 채 왼쪽 페이지 아래 모서리 종이로 걸어가 70°까지 펼쳐요: 새 돌의 그림자가 4열에 떨어져요. 올라서서 천천히 50°까지 닫아요: 그림자가 나를 2열로 데려가요. 돌이 서 있던 자리는 이제 종이예요. 걸어서 돌아가요."
           }
         }
       }
@@ -4250,13 +4610,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "糊が石を引き取ると、石のいた枡は紙になる。手紙のとなりで、石だったのはどの枡？"
+            "value": "糊が石を持っていくと、石のいたマスは紙になる。手紙のとなりで、石だったのはどのマス？"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "풀이 돌을 가져가면 돌이 있던 칸은 종이가 돼요. 편지 옆에서 원래 돌이었던 칸은 어디일까요?"
+            "value": "풀이 돌을 가져가면 돌이 있던 칸은 종이가 돼요. 편지 옆에서 원래 돌이었던 칸은 어디일까?"
           }
         }
       }
@@ -4280,7 +4640,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "向こうの頁に石はひとつもない。"
+            "value": "向こうのページに、石はひとつもない。"
           }
         },
         "ko": {
@@ -4340,13 +4700,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "糊の上で閉じれば石が頭に落ちる。糊の上側で閉じれば石が道に落ち、戻れなくなる。まず糊の下まで歩いて、閉じる。"
+            "value": "糊の上で閉じれば、石が頭に落ちる。糊の上側で閉じれば、石が道に落ちて戻れなくなる。まず糊の下まで歩いて、それから閉じる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "풀 위에서 닫으면 돌이 머리 위로 떨어져요. 풀 위쪽에서 닫으면 돌이 길에 떨어져 돌아갈 수 없어요. 먼저 풀 아래까지 걸어가서 닫아요."
+            "value": "풀 위에서 닫으면 돌이 머리 위로 떨어져요. 풀 위쪽에서 닫으면 돌이 길에 떨어져 돌아갈 수 없어요. 먼저 풀 아래까지 걸어간 다음, 닫아요."
           }
         }
       }
@@ -4376,7 +4736,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "한 번만 닫아요. 그런데 어디서?"
+            "value": "한 번만 닫는다. 그런데 어디서?"
           }
         }
       }
@@ -4430,13 +4790,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "(1,2) で閉じる：上の糊が向かいの四角い石を取り、転がる石の道があく。開いて（7 列目へ転がる）、また閉じる（途中で 6 列目へ転がり、「死んだ」糊の正面に来て貼りつく）。束で右頁の上角へ上がり、開いて右端を彼女へ。"
+            "value": "(1,2)で閉じる：上の糊が向かいの四角い石を持っていき、転がる石の道が空く。開いて（石は7列目へ転がる）、また閉じる（その途中で6列目へ転がり、「死んだ」糊の真ん前に来て、貼りつく）。重なりで右ページの上の角へ上がり、開いて、右端を下れば彼女。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(1,2)에서 닫아요: 위쪽 풀이 맞은편 네모난 돌을 붙여 가고, 구르는 돌의 길이 비어요. 열고(7열로 굴러요), 다시 닫아요(가는 길에 6열로 굴러 \"죽은\" 풀 앞에 서고, 붙어요). 묶음으로 오른쪽 면 위 모서리로 올라가, 열고, 오른쪽 가장자리를 따라 그녀에게."
+            "value": "(1,2)에서 닫아요: 위쪽 풀이 맞은편 네모난 돌을 가져가고, 구르는 돌의 길이 비어요. 펼치고(돌은 7열로 굴러요), 다시 닫아요(가는 길에 6열로 굴러 ‘죽은’ 풀 바로 앞에 서고, 붙어요). 겹을 따라 오른쪽 페이지 위 모서리로 올라가, 펼치고, 오른쪽 가장자리를 따라 내려가면 그녀."
           }
         }
       }
@@ -4460,13 +4820,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "同じ一回の閉じで、転がりが糊より先。"
+            "value": "一度の閉じの中で、転がりは糊より先。閉じる前は紙に向いていた糊が、押す一瞬には石に向いている。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "한 번 닫는 동안 구르기가 풀보다 먼저예요."
+            "value": "한 번 닫는 동안 구르기가 풀보다 먼저예요. 닫기 전에 종이를 보던 풀이, 누르는 순간에는 돌을 봐요."
           }
         }
       }
@@ -4490,13 +4850,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "糊は紙に向いている。"
+            "value": "糊は、紙に向いている。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "풀이 종이를 보고 있어요."
+            "value": "풀이 종이를 마주 보고 있다."
           }
         }
       }
@@ -4520,7 +4880,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "先後"
+            "value": "順番"
           }
         },
         "ko": {
@@ -4550,13 +4910,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "左頁の石の背 (5,4) で閉じる：鶴は右頁の (6,1) へ飛ぶ。束でそこへ歩けば、きみは鶴の上。少し開いてまた閉じる：鶴はきみを左頁の (3,1) へ連れ戻す——本は左頁からしか翻せない。翻す：翻すのも圧、鶴は第三頁の (6,1) へ飛び、きみも一緒。開いて彼女のところへ。"
+            "value": "左ページの石の背(5,4)で閉じる：鶴が右ページの(6,1)へ飛ぶ。重なりでそこまで歩けば、あなたは鶴の上。少し開いて、また閉じる：鶴があなたを左ページの(3,1)へ連れ戻す——本は左ページからしかめくれない。めくる：めくるのも一度の押し。鶴は三枚目のページの(6,1)へ飛び、あなたも一緒に。開いて、彼女のところへ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "왼쪽 면 돌의 등 (5,4)에서 닫아요: 학이 오른쪽 면 (6,1)로 날아가요. 묶음으로 거기까지 걸어가면 너는 학 위에 서 있어요. 조금 열었다 다시 닫아요: 학이 너를 왼쪽 면 (3,1)로 데려가요. 책은 왼쪽 면에서만 넘길 수 있으니까요. 넘겨요: 넘기는 것도 누르는 것, 학은 세 번째 면 (6,1)로 날아가고 너도 함께. 열고 그녀에게 걸어가요."
+            "value": "왼쪽 페이지 돌의 등 (5,4)에서 닫아요: 학이 오른쪽 페이지 (6,1)로 날아가요. 겹을 따라 거기까지 걸어가면 나는 학 위에 서 있어요. 조금 열었다가 다시 닫아요: 학이 나를 왼쪽 페이지 (3,1)로 데려와요—책은 왼쪽 페이지에서만 넘길 수 있어요. 넘겨요: 넘기는 것도 한 번의 누름. 학은 셋째 페이지의 (6,1)로 날아가고, 나도 함께. 펼치고, 그녀에게 걸어가요."
           }
         }
       }
@@ -4580,13 +4940,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "翻す拍子にも鶴は飛ぶ——第三頁へ、きみを乗せて。"
+            "value": "めくる一瞬にも鶴は飛ぶ——三枚目のページへ、あなたを乗せて。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "넘기는 순간에도 학은 날아요. 세 번째 면으로, 너를 태우고."
+            "value": "넘기는 순간에도 학은 날아요—셋째 페이지로, 나를 태우고."
           }
         }
       }
@@ -4610,13 +4970,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "翻すのも一度の圧。"
+            "value": "めくるのも、一度の押し。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "넘기는 것도 한 번 누르는 거예요."
+            "value": "넘기는 것도 한 번의 누름."
           }
         }
       }
@@ -4646,7 +5006,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "넘기다"
+            "value": "넘어서"
           }
         }
       }
@@ -4670,13 +5030,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じる。閉じたまま歩くとき、両方の頁が紙ならいまの頁にとどまり、片方だけが紙の重なりでだけ頁を移る。右頁がすき間の重なりへ歩けば左頁に移る——そこでめくる。それから閉じたまま下まで歩く。彼女は三枚目の頁の角にいる。"
+            "value": "閉じる。閉じたまま歩くとき、両方のページが紙ならいまのページにとどまる。片方だけが紙の重なりでだけ、ページを移る。右ページがすき間の重なりへ歩けば左ページに降りる——そこでめくる。それから閉じたまま下まで歩く。彼女は三枚目のページの角にいる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫아요. 닫은 채 걸을 때 두 페이지가 모두 종이면 지금 페이지에 머물고, 한쪽만 종이인 겹에서만 페이지를 옮겨요. 오른쪽 페이지가 틈인 겹으로 가면 왼쪽 페이지에 닿아요. 거기서 넘겨요. 그다음 닫은 채 맨 아래까지 걸어요. 그녀는 세 번째 페이지 모서리에 있어요."
+            "value": "닫아요. 닫은 채 걸을 때 두 페이지가 모두 종이면 지금 페이지에 머물러요. 한쪽만 종이인 겹에서만 페이지를 옮겨요. 오른쪽 페이지가 틈인 겹으로 걸어가면 왼쪽 페이지에 내려서요—거기서 넘겨요. 그다음 닫은 채 맨 아래까지 걸어요. 그녀는 셋째 페이지의 모서리에 있어요."
           }
         }
       }
@@ -4700,13 +5060,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "めくる前に、左頁へ。"
+            "value": "めくる前に、左ページへ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "넘기기 전에 먼저 왼쪽 페이지로."
+            "value": "넘기기 전에, 왼쪽 페이지로."
           }
         }
       }
@@ -4730,13 +5090,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "立っている頁は、めくれない。"
+            "value": "足もとのページは、めくれない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "서 있는 페이지는 넘어가지 않는다."
+            "value": "발밑의 페이지는 넘어가지 않는다."
           }
         }
       }
@@ -4790,13 +5150,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "(7,3) で 90° まで立て、(6,2) で閉じる——先に寝かせない：二度目の立ち上がりで (6,1) が埋まり、その重ねは両側とも紙になって左頁へ移れず、翻せない。重ねの道で (4,1)、翻す。上がるのは第三頁：寝かせ、30°、寝かせる——三度とも第三頁の石だけが転がる。彼女へ。"
+            "value": "(7,3)で本を90°まで立て（右ページの転がる石が一マス転がる）、(6,2)で閉じる——先に寝かせない：二度目の立ちで(6,1)が埋まり、その重なりは両側とも紙になって左ページへ替われず、めくれない。重なりで(4,1)へ、めくる。こんど持ち上がるのは三枚目のページ：寝かせ、30°、寝かせる——三度の立ちはすべて三枚目のもので、右ページの石は葉の裏に貼りついたまま動かない。三枚目のすき間が埋まる。彼女へ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(7,3)에서 90°까지 세우고, (6,2)에서 닫아요——먼저 눕히지 말고요: 두 번째 곧추서기에 (6,1)이 메워지고, 그 겹은 양쪽 다 종이가 되어 왼쪽 면으로 못 건너가요, 못 넘겨요. 겹친 길로 (4,1), 넘겨요. 이제 들리는 건 셋째 면: 눕히고, 30°, 눕히고——세 번 모두 셋째 면의 돌만 굴러요. 그녀에게."
+            "value": "(7,3)에서 책을 90°까지 세우고(오른쪽 페이지의 구르는 돌이 한 칸 굴러요), (6,2)에서 닫아요—먼저 눕히지 말고요: 두 번째로 설 때 (6,1)이 메워지고, 그 겹은 양쪽 다 종이가 되어 왼쪽 페이지로 바뀌지 않아, 넘길 수 없어요. 겹을 따라 (4,1)로, 넘겨요. 이제 들리는 건 셋째 페이지: 눕히고, 30°, 눕혀요—세 번 다 셋째 페이지만 서고, 오른쪽 페이지의 돌은 장의 뒷면에 붙은 채 움직이지 않아요. 셋째 페이지의 틈이 메워져요. 그녀에게."
           }
         }
       }
@@ -4820,13 +5180,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "埋まった隙間も紙：両側が紙の重ねでは頁を移れない。一度立てたら、閉じる。"
+            "value": "埋まったすき間も紙：両側が紙の重なりでは、ページを替えられない。一度立てたら、閉じる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "메워진 틈도 종이예요: 양쪽이 다 종이인 겹에서는 면을 못 바꿔요. 한 번 세웠으면, 닫아요."
+            "value": "메워진 틈도 종이예요: 양쪽이 다 종이인 겹에서는 페이지를 바꿀 수 없어요. 한 번 세웠으면, 닫아요."
           }
         }
       }
@@ -4850,13 +5210,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "翻せば、その頁は止まる。"
+            "value": "めくれば、そのページは動かない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "넘기면 그 면은 멈춰요."
+            "value": "넘기면, 그 페이지는 움직이지 않는다."
           }
         }
       }
@@ -4880,7 +5240,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "止"
+            "value": "停まる"
           }
         },
         "ko": {
@@ -4910,13 +5270,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じるたび右頁の糊が向かいの石を取る。先に転がす：(8,3) で 55°、(8,4) へ下り、寝かせる。(7,4) で初めて閉じ、重ねの道で (2,3)、80° で彼女まで二歩。"
+            "value": "閉じるたび、右ページの糊が向かいの石を引き寄せる。先に転がらせる：(8,3)で55°、(8,4)へ下りて、寝かせる——二度立って、何も押していない。(7,4)へ一歩、ここで初めて閉じる。重なりで(2,3)へ、80°に傾ければ、彼女まで二歩。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫을 때마다 오른쪽 풀이 맞은편 돌을 가져가요. 먼저 굴려요: (8,3)에서 55°, (8,4)로 내려가 눕혀요. (7,4)에서 처음 닫고, 겹친 길로 (2,3), 80°면 그녀까지 두 걸음."
+            "value": "닫을 때마다 오른쪽 페이지의 풀이 맞은편 돌을 끌어가요. 먼저 돌을 굴려요: (8,3)에서 55°, (8,4)로 내려가, 눕혀요—두 번 서고, 아무것도 누르지 않았어요. (7,4)로 한 칸, 이제야 닫아요. 겹을 따라 (2,3)으로, 80°로 기울이면, 그녀까지 두 걸음."
           }
         }
       }
@@ -4940,13 +5300,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "転がすものを転がしてから閉じる。"
+            "value": "転がるものを転がらせてから、閉じる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "구를 것을 다 굴리고 닫아요."
+            "value": "구를 것을 다 굴린 다음, 닫아요."
           }
         }
       }
@@ -4970,13 +5330,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "右頁に糊。"
+            "value": "右ページに糊。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "오른쪽 면에 풀."
+            "value": "오른쪽 페이지에 풀."
           }
         }
       }
@@ -5000,13 +5360,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "過"
+            "value": "過ぎる"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "지나"
+            "value": "지나감"
           }
         }
       }
@@ -5030,13 +5390,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）すぐ閉じる：墨が左頁に写り、束の道は右端の墨を通って上の束で左頁へ移る。50° に傾ける：糊が引いた石が、残した穴のそばに影を落とす。80° まで乗って 4 列目の隙間へ、下の枡は孤島の紙。そこで二度目を閉じると、束が彼女の戸口へ続く。"
+            "value": "すぐ閉じる：墨が向かいに写り、重なりの道は右端の写りを通って、いちばん上の重なりで左ページへ替わる。50°に傾ける：糊が引き寄せた石が、残した穴のとなりに影を落とす。80°まで乗って4列目のすき間へ。下のマスは孤島の紙。そこで二度目を閉じれば、重なりが彼女の戸口へ続く。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 바로 닫아요: 먹이 왼쪽 면에 찍히고, 묶음 길은 오른쪽 가장자리의 먹을 지나 맨 위 묶음에서 왼쪽 면으로 건너가요. 50°로 기울여요: 풀이 끌어온 돌이 자기가 남긴 구멍 옆에 그림자를 드리워요. 80°까지 타고 4열 틈으로, 아래 칸은 외딴 종이. 거기서 두 번째로 닫으면 묶음이 그녀의 문 앞까지 이어져요."
+            "value": "바로 닫아요: 먹이 맞은편에 찍히고, 겹의 길은 오른쪽 가장자리의 찍힌 먹을 지나 맨 위 겹에서 왼쪽 페이지로 바뀌어요. 50°로 기울여요: 풀이 끌어온 돌이 자기가 남긴 구멍 옆에 그림자를 드리워요. 80°까지 타고 4열 틈으로. 아래 칸은 외딴 종이. 거기서 두 번째로 닫으면, 겹이 그녀의 문 앞까지 이어져요."
           }
         }
       }
@@ -5060,13 +5420,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "墨が届く前に糊が貼りつく——引いた石が彼女の戸口を塞ぐ。"
+            "value": "墨が届く前に糊が貼りつく——引き寄せた石が、彼女の戸口をふさぐ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먹이 닿기 전에 풀이 붙어요. 끌려온 돌이 그녀의 문을 막아요."
+            "value": "먹이 닿기 전에 풀이 붙어요—끌려온 돌이 그녀의 문 앞을 막아요."
           }
         }
       }
@@ -5090,13 +5450,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "墨は糊から二枡。"
+            "value": "墨は、糊から二マス。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먹은 풀에서 두 칸."
+            "value": "먹은, 풀에서 두 칸."
           }
         }
       }
@@ -5150,13 +5510,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）出発点で閉じないこと。向かいの石が落ちる。左ページを上まで歩き、30°ほどに傾ける。遠い石の影が1列目に落ちる。影を渡って左上の角へ、そこで閉じ、閉じたまままっすぐ下へ。"
+            "value": "出発点で閉じないこと——向かいの石が落ちてくる。左ページを上まで歩き、30°ほどに傾ける：遠い石の影が1列目に落ちる。影を渡って左上の角へ、そこで閉じる。閉じたまま、まっすぐ下へ歩けば手紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 시작점에서 닫지 마세요. 맞은편 돌이 떨어져요. 왼쪽 페이지를 끝까지 올라가 30° 정도 기울여요. 먼 돌의 그림자가 1열에 떨어져요. 그림자를 건너 왼쪽 위 모서리에서 닫고, 닫은 채 곧장 내려가요."
+            "value": "출발점에서 닫지 마요—맞은편 돌이 내려와요. 왼쪽 페이지를 끝까지 올라가 30°쯤 기울여요: 먼 돌의 그림자가 1열에 떨어져요. 그림자를 건너 왼쪽 위 모서리로, 거기서 닫아요. 닫은 채 곧장 내려가면 편지."
           }
         }
       }
@@ -5180,13 +5540,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "どの枡なら閉じても安全？"
+            "value": "閉じても安全なのは、どのマス？"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "어느 칸에서 닫으면 안전할까?"
+            "value": "어느 칸에서 닫아야 안전할까?"
           }
         }
       }
@@ -5216,7 +5576,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "머리 위에 돌, 건너편에도."
+            "value": "머리 위에 돌. 건너편에도."
           }
         }
       }
@@ -5240,7 +5600,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "圧"
+            "value": "重し"
           }
         },
         "ko": {
@@ -5270,13 +5630,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "先に閉じると糊が石を引き寄せ、道が切れる。はじめの位置から左下の角へ歩き、40°まで傾けて影に乗り、60°まで開く。影がきみを2列目へ運ぶ。4列目2行目まで歩いて、閉じて裏返し、閉じたまま下まで。"
+            "value": "先に閉じると、糊が石を引き寄せて道が切れる。出発点から左下の角へ歩き、40°に傾けて影に乗り、60°まで開く：影があなたを2列目へ運ぶ。4列目の2行目まで歩いて、閉じて、めくって、閉じたまま下まで歩く。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먼저 닫으면 풀이 돌을 끌어와 길이 끊겨요. 출발점에서 왼쪽 아래 모서리까지 가서 40°로 기울여 그림자에 올라선 뒤 60°까지 펼쳐요. 그림자가 당신을 2열로 옮겨요. 4열 2행까지 걸어가 닫고 뒤집은 뒤, 닫은 채 맨 아래까지."
+            "value": "먼저 닫으면 풀이 돌을 끌어와 길이 끊겨요. 출발점에서 왼쪽 아래 모서리로 걸어가, 40°로 기울여 그림자에 올라서고, 60°까지 펼쳐요: 그림자가 나를 2열로 데려가요. 4열 2행까지 걸어가, 닫고, 넘기고, 닫은 채 맨 아래까지."
           }
         }
       }
@@ -5306,7 +5666,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫기 전에 그림자를 끝까지 걸어요."
+            "value": "닫기 전에, 그림자를 끝까지 걸어요."
           }
         }
       }
@@ -5330,7 +5690,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "頁の角に糊。急がないで。"
+            "value": "ページの角に糊。急がないで。"
           }
         },
         "ko": {
@@ -5390,13 +5750,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "右頁に写った墨も滲む。一度では足りない。二度閉じると、二周目が右下の角に届く。"
+            "value": "墨が右ページに写ると、その写りもまた滲む。一度では足りない。二度閉じれば、二つ目の輪が右下の角に届く。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "오른쪽 면에 찍힌 먹도 번져요. 한 번으로는 모자라요. 두 번 닫으면 두 번째 겹이 오른쪽 아래 모서리에 닿아요."
+            "value": "먹이 오른쪽 페이지에 찍히고 나면, 그 찍힌 먹도 번져요. 한 번으로는 모자라요. 두 번 닫으면 두 번째 테가 오른쪽 아래 모서리에 닿아요."
           }
         }
       }
@@ -5420,13 +5780,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "向こうの墨も育つ。"
+            "value": "向かいの墨も、育つ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "건너편 먹도 자라요."
+            "value": "맞은편의 먹도, 자라요."
           }
         }
       }
@@ -5450,13 +5810,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "写ったほうも濡れている。"
+            "value": "写ったほうも、濡れている。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "찍힌 쪽도 젖어 있어요."
+            "value": "찍힌 쪽도, 젖어 있다."
           }
         }
       }
@@ -5480,13 +5840,133 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "写"
+            "value": "写り"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
             "value": "찍힘"
+          }
+        }
+      }
+    },
+    "return.hint": {
+      "comment": "Level \"return\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "站到 (2,2)——你要从这一叠合书。先别折第三页：先折它，(10,2) 那颗松石往它自己的折痕滚到 (9,2)，离开你那一列；可第三页折着的时候，低处是书的折痕，在第三页上是往右——合书那一下它滚回 (10,2)，正落在你身上。第三页摊着时把书合上再打开：两次过立，它滚到 (9,2)，再滚过第二道折痕掉进右页的缺口 (8,2)。这才折第三页，在 (2,2) 合书，叠合沿着第三页绕到她。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stand on (2,2) — this is the stack you close from. Do not fold the third page yet: fold it and the loose stone (10,2) rolls to its own crease, (9,2), off your column — but with the third page folded the low side is the book's crease, which on the third page is to the right, and the close rolls it back onto (10,2), onto you. With the third page lying flat, close the book and open it: two passes, it rolls to (9,2) and on over the second crease into the right page's gap (8,2). Only now fold the third page, close on (2,2), and the stacks take you round the third page to her."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(2,2)に立つ——閉じるのはこの重なりから。まだ三枚目を折らない：折れば転がる石(10,2)は自分の折り目へ(9,2)まで転がり、あなたの列を離れる——けれど三枚目を折っているあいだ低い側は本の折り目で、三枚目の上ではそれは右。閉じる一瞬に石は(10,2)へ戻り、あなたの上に落ちる。三枚目を平らにしたまま本を閉じて開く：二度立って、石は(9,2)へ、さらに二つ目の折り目を越えて右ページのすき間(8,2)に落ちる。ここで初めて三枚目を折り、(2,2)で閉じれば、重なりが三枚目を回って彼女へ続く。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(2,2)에 서요—닫는 건 이 겹에서. 아직 셋째 페이지를 접지 마요: 접으면 구르는 돌 (10,2)는 제 접는 선 쪽 (9,2)로 굴러 내 열을 떠나요—하지만 셋째 페이지가 접혀 있는 동안 낮은 쪽은 책의 접는 선이고, 셋째 페이지 위에서 그건 오른쪽. 닫는 순간 돌이 (10,2)로 돌아와 내 위로 떨어져요. 셋째 페이지를 편 채로 책을 닫았다 열어요: 두 번 서고, 돌은 (9,2)로, 다시 둘째 접는 선을 넘어 오른쪽 페이지의 틈 (8,2)에 빠져요. 이제야 셋째 페이지를 접고, (2,2)에서 닫으면, 겹이 셋째 페이지를 돌아 그녀에게 이어져요."
+          }
+        }
+      }
+    },
+    "return.hint1": {
+      "comment": "Level \"return\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折着的第三页，石头往反方向滚。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folded over, the third page rolls the other way."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "折った三枚目の上で、石は逆へ転がる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "접힌 셋째 페이지 위에서, 돌은 반대로 굴러요."
+          }
+        }
+      }
+    },
+    "return.line": {
+      "comment": "Level \"return\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石头在你那一列。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The stone is in your column."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "石は、あなたの列にある。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌이 내 열에 있다."
+          }
+        }
+      }
+    },
+    "return.name": {
+      "comment": "Level \"return\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "戻る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "돌아옴"
           }
         }
       }
@@ -5510,13 +5990,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）左端を3行目まで歩く。30°ほどまで閉じると影が足もとに。乗って、本を70°まで開く。影が4列目まで運ぶ。左上の紙へ歩いて閉じ、重なりを回って手紙へ。"
+            "value": "左端を3行目の左端まで歩く。30°ほどまで閉じる：影が足もとに届く。乗って、こんどは本を70°まで開く：影があなたを4列目まで運ぶ。左上の紙まで歩いて閉じ、重なりを回って手紙へ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 왼쪽 끝을 따라 3행까지. 30° 정도까지 닫으면 그림자가 발밑에. 올라서서 책을 70°까지 펼쳐요. 그림자가 4열까지 데려가요. 왼쪽 위 종이로 걸어가 닫고, 겹을 돌아 편지로."
+            "value": "왼쪽 가장자리를 따라 3행 왼쪽 끝까지 걸어가요. 30°쯤까지 닫아요: 그림자가 발밑에 닿아요. 올라서서, 이번엔 책을 70°까지 펼쳐요: 그림자가 나를 4열까지 데려가요. 왼쪽 위 종이까지 걸어가 닫고, 겹을 돌아 편지로."
           }
         }
       }
@@ -5540,13 +6020,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影の上に立って、本を動かす。"
+            "value": "影の上に立って、それから本を動かす。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자 위에 서서, 책을 움직여요."
+            "value": "그림자 위에 선 다음, 책을 움직여요."
           }
         }
       }
@@ -5606,7 +6086,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자를 타고"
+            "value": "그림자 타기"
           }
         }
       }
@@ -5630,13 +6110,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）左端を左下まで。50°ほどまで閉じて影に乗り、80°まで開く。影が4列目へ運ぶ。となりの紙が唯一の岸。降りて岸で閉じ、右へ歩けば手紙。"
+            "value": "左端を左下の角まで歩く。50°ほどまで閉じて影に乗り、80°まで開く：影があなたを4列目へ運ぶ。となりの紙が、たった一つの岸。降りて、岸で閉じ、閉じたまま右へ歩けば手紙。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 왼쪽 끝을 따라 왼쪽 아래로. 50° 정도까지 닫아 그림자에 올라, 80°까지 펼쳐요. 4열로 데려가요. 옆의 종이가 유일한 강가. 내려가 거기서 닫고, 오른쪽으로 걸으면 편지."
+            "value": "왼쪽 가장자리를 따라 왼쪽 아래 모서리까지. 50°쯤까지 닫아 그림자에 올라서고, 80°까지 펼쳐요: 그림자가 나를 4열로 데려가요. 옆의 종이가 하나뿐인 강가. 내려서서 강가에서 닫고, 닫은 채 오른쪽으로 걸으면 편지."
           }
         }
       }
@@ -5660,13 +6140,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "その一枡の紙へ、どうやって？"
+            "value": "その一マスの紙へ、どうやって？"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그 한 칸 종이, 어떻게 가지?"
+            "value": "그 한 칸 종이에, 어떻게 가지?"
           }
         }
       }
@@ -5690,7 +6170,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "岸は一枡だけ。"
+            "value": "岸は一マスだけ。"
           }
         },
         "ko": {
@@ -5750,13 +6230,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じれば糊が石をこちらの頁へ引き寄せ、影も消える。だからまず60°まで傾けて影に乗り、ゆっくり45°まで閉じる。影が運んでくれる。紙に降りて、閉じる。鍵が扉を開ける。"
+            "value": "閉じれば糊が石をこちらへ引き寄せて、影も消える。だからまず60°まで傾けて影に乗り、ゆっくり45°まで閉じる：影があなたを向こうへ運ぶ。紙に降りて、閉じる：鍵が扉を開ける。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫으면 풀이 돌을 이쪽 페이지로 붙여 가고 그림자도 사라져요. 그러니 먼저 60°로 기울여 그림자에 올라서고, 천천히 45°까지 닫아요. 그림자가 데려다 줘요. 종이로 내려와서 닫아요. 열쇠가 문을 열어요."
+            "value": "닫으면 풀이 돌을 이쪽으로 끌어오고, 그림자도 사라져요. 그러니 먼저 60°로 기울여 그림자에 올라서고, 천천히 45°까지 닫아요: 그림자가 나를 건너편으로 데려가요. 종이에 내려서서 닫아요: 열쇠가 문을 열어요."
           }
         }
       }
@@ -5810,13 +6290,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "先に影に乗る"
+            "value": "先に乗る"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먼저 그림자를 타다"
+            "value": "먼저 타기"
           }
         }
       }
@@ -5960,13 +6440,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "右頁左下の紙の上で閉じる——左頁の石の真上、石の背だ。重ねたまま左頁の 3 行目へ。40° に傾けて 3 列目の影に乗り、80° まで開くと影が 4 列目へ運ぶ。その一つ上が彼女。"
+            "value": "右ページの左下の紙で閉じる——左ページの石の向かい、あなたはその背にいる。閉じたまま重なりを左ページの3行目へ。40°に傾けて3列目の影に乗り、80°まで開く：影があなたを4列目へ運ぶ。一つ上が彼女。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "오른쪽 면 왼쪽 아래 종이 위에서 닫아요 — 왼쪽 면 돌 바로 위, 돌의 등이에요. 겹친 채 왼쪽 면 3행으로. 40°로 기울여 3열 그림자에 올라서고, 80°까지 열면 그림자가 4열로 데려가요. 한 칸 위가 그녀예요."
+            "value": "오른쪽 페이지 왼쪽 아래 종이에서 닫아요—왼쪽 페이지 돌의 맞은편, 나는 그 등 위에 있어요. 닫은 채 겹을 따라 왼쪽 페이지 3행으로. 40°로 기울여 3열 그림자에 올라서고, 80°까지 펼쳐요: 그림자가 나를 4열로 데려가요. 한 칸 위가 그녀."
           }
         }
       }
@@ -5990,13 +6470,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "二度目に閉じると、影の下の隙間が消える。"
+            "value": "二度目に閉じると、影の下のすき間が消える。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "두 번째로 닫으면 그림자 아래 빈칸이 사라져요."
+            "value": "두 번째로 닫으면, 그림자 아래의 틈이 사라져요."
           }
         }
       }
@@ -6026,7 +6506,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "한 겹이면 돼요."
+            "value": "한 겹이면 된다."
           }
         }
       }
@@ -6056,7 +6536,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "고리"
+            "value": "테"
           }
         }
       }
@@ -6080,13 +6560,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "80° まで傾ける：頁が立った拍子に石が折り目へ一枡転がり、隣の隙間に落ちる——隙間は紙になった。渡る。"
+            "value": "80°まで傾ける：ページが立つ一瞬、転がる石が折り目へ一マス転がり、あなたのとなりのすき間に落ちる——すき間は紙になった。渡る。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "80°까지 기울여요: 페이지가 서는 순간 돌이 접힌 금 쪽으로 한 칸 굴러 옆 틈에 떨어져요. 틈은 종이가 됐어요. 건너가요."
+            "value": "80°까지 기울여요: 페이지가 서는 순간 구르는 돌이 접는 선 쪽으로 한 칸 굴러 내 옆 틈에 빠져요—틈은 종이가 됐어요. 건너가요."
           }
         }
       }
@@ -6110,13 +6590,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "本を立てれば石は折り目へ転がる。閉じなくていい。"
+            "value": "本を立てれば、石は折り目へ転がる。閉じなくていい。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "책을 세우면 돌이 접힌 금으로 굴러요. 닫지 않아도 돼요."
+            "value": "책을 세우면 돌은 접는 선으로 굴러요. 닫지 않아도 돼요."
           }
         }
       }
@@ -6140,13 +6620,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "石は貼られていない。"
+            "value": "石は、貼りついていない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "돌이 붙어 있지 않아요."
+            "value": "돌이 붙어 있지 않다."
           }
         }
       }
@@ -6170,7 +6650,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "転"
+            "value": "転がる"
           }
         },
         "ko": {
@@ -6200,13 +6680,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "まだ閉じない——(7,1) まで歩いてから閉じる：途中で石は転がって逃げ、左下の糊は何も取れない。取るのは右頁の糊で、左頁の石を引き寄せる。束で左頁の (1,2) へ、55° に傾け、引き寄せた石の影に乗って 80° で (4,4) へ、(4,5) へ下り、閉じ、束で右頁の (6,5) へ——そして本を完全に開く：その開きも一度の「立ち」、遠い石が (6,4) に落ちて道がつながる。"
+            "value": "まだ閉じない——まず(7,1)まで歩く：閉じに向かう途中で転がる石は逃げ、左下の糊は何も持っていけない。貼りつくのは右ページの糊で、左ページの石を引き寄せる。重なりで左ページの(1,2)へ、55°に傾け、引き寄せられた石の影に乗って80°で(4,4)へ、(4,5)へ下りて、閉じ、重なりで右ページの(6,5)へ——そして本をいちばん奥まで開く：その開きも一度立つこと。遠い石が(6,4)に落ちて、道がつながる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "아직 닫지 마요. (7,1)까지 걸어가서 닫아요: 가는 길에 돌이 굴러 달아나 왼쪽 아래 풀은 아무것도 못 붙여요. 붙이는 건 오른쪽 면의 풀이고, 왼쪽 돌을 끌어와요. 묶음으로 왼쪽 면 (1,2)로, 55°로 기울여 끌려온 돌의 그림자를 타고 80°에서 (4,4)로, (4,5)로 내려가, 닫고, 묶음으로 오른쪽 면 (6,5)로. 그리고 책을 끝까지 펴요: 그것도 한 번 세우는 것, 먼 돌이 (6,4)에 떨어지고 길이 이어져요."
+            "value": "아직 닫지 마요—먼저 (7,1)까지 걸어가요: 닫으러 가는 길에 구르는 돌은 굴러 달아나고, 왼쪽 아래 풀은 아무것도 가져가지 못해요. 붙는 건 오른쪽 페이지의 풀이고, 왼쪽 페이지의 돌을 끌어와요. 겹을 따라 왼쪽 페이지 (1,2)로, 55°로 기울여 끌려온 돌의 그림자를 타고 80°에서 (4,4)로, (4,5)로 내려가, 닫고, 겹을 따라 오른쪽 페이지 (6,5)로—그리고 책을 끝까지 펼쳐요: 그 펼침도 한 번 서는 것. 먼 돌이 (6,4)에 빠지고, 길이 이어져요."
           }
         }
       }
@@ -6230,13 +6710,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "開くのも一度の「立ち」。道は平らに戻した拍子につながる。"
+            "value": "開くのも一度立つこと。道がつながるのは、寝かせた一瞬。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "펴는 것도 한 번 세우는 것. 길은 책을 눕히는 순간 이어져요."
+            "value": "펼치는 것도 한 번 서는 것. 길은 책을 눕히는 순간 이어져요."
           }
         }
       }
@@ -6260,13 +6740,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "糊は転がる石に向いている。"
+            "value": "糊は、転がる石に向いている。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "풀이 구르는 돌을 보고 있어요."
+            "value": "풀이 구르는 돌을 마주 보고 있다."
           }
         }
       }
@@ -6290,13 +6770,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "落ち着く"
+            "value": "落着"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "가라앉다"
+            "value": "자리 잡음"
           }
         }
       }
@@ -6320,13 +6800,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）右下の角で閉じる。鍵が扉を開け、石の背の上。閉じたまま左ページの3行目へ。40°まで閉じて3列目の影に乗り、70°まで開く。開いた扉を抜けて3列目の上で閉じる。石の真向かいではなく。"
+            "value": "右下の角で閉じる：鍵が扉を開け、この重なりの下は石。閉じたまま左ページの3行目へ上がり、40°まで閉じて3列目の影に乗り、70°まで開く：影があなたを4列目へ運ぶ。開いた扉を抜けて上へ、3列目のいちばん上で閉じる——石の真向かいでは、閉じない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 오른쪽 아래 모서리에서 닫아요. 열쇠가 문을 열고, 돌의 등 위. 닫은 채 왼쪽 페이지 3행으로. 40°까지 닫아 3열 그림자에 올라, 70°까지 펼쳐요. 열린 문을 지나 3열 꼭대기에서 닫아요. 돌 맞은편은 안 돼요."
+            "value": "오른쪽 아래 모서리에서 닫아요: 열쇠가 문을 열고, 이 겹 아래는 돌이에요. 닫은 채 왼쪽 페이지 3행으로 올라가, 40°까지 닫아 3열 그림자에 올라서고, 70°까지 펼쳐요: 그림자가 나를 4열로 데려가요. 열린 문을 지나 위로, 3열 맨 위에서 닫아요—돌의 바로 맞은편에서는 닫지 않아요."
           }
         }
       }
@@ -6350,13 +6830,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "扉が開いたあとでなければできないのは？"
+            "value": "扉が開いてからでないとできないのは、どの一歩？"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "문이 열린 뒤에만 되는 건 어느 걸음?"
+            "value": "문이 열린 다음에야 할 수 있는 한 걸음은?"
           }
         }
       }
@@ -6410,13 +6890,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "扉の下の影"
+            "value": "扉の影"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "문 아래 그림자"
+            "value": "문 앞 그림자"
           }
         }
       }
@@ -6440,13 +6920,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "本をゆっくり、半分より少しだけ閉じると、右ページの石の影がすき間に落ちる。影は歩ける。"
+            "value": "本をゆっくり、半分より少し先まで閉じる：右ページの石の影がすき間に落ちる。影は歩ける。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "책을 천천히 반보다 조금 더 닫으면 오른쪽 돌의 그림자가 틈에 드리워요. 그림자 위로는 걸을 수 있어요."
+            "value": "책을 천천히, 반보다 조금 더 닫아요: 오른쪽 페이지 돌의 그림자가 틈 위에 드리워요. 그림자 위는 걸을 수 있어요."
           }
         }
       }
@@ -6470,13 +6950,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "紙のうしろに、灯がある。"
+            "value": "紙のうしろに、灯りがある。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "종이 뒤에 등불이 있다."
+            "value": "종이 뒤에, 등불이 있다."
           }
         }
       }
@@ -6530,13 +7010,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "この石の影がただ一つの橋。けれど閉じれば糊が石を持っていく。まず40°くらいまで傾け、影を渡って向こうの紙に立ち、それから閉じる。"
+            "value": "この石の影がただ一つの橋——けれど閉じれば、糊が石を持っていく。まず40°ほどに傾け、影を渡って向こうの紙に立ってから、閉じる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "이 돌의 그림자가 유일한 다리인데, 닫으면 풀이 돌을 가져가요. 먼저 40° 정도로 기울여 그림자를 건너 건너편 종이에 서고, 그다음 닫아요."
+            "value": "이 돌의 그림자가 하나뿐인 다리—그런데 닫으면 풀이 돌을 가져가요. 먼저 40°쯤 기울여 그림자를 건너 건너편 종이에 선 다음, 닫아요."
           }
         }
       }
@@ -6566,7 +7046,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "아직 닫지 마세요."
+            "value": "아직 닫지 마요."
           }
         }
       }
@@ -6650,13 +7130,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "右頁の鶴の上で閉じる：左頁の (1,2) に着く。左頁の鶴 (3,4) は隙間に向いている——が、隙間の隣は湿った墨：閉じた拍子に墨が先に降り場へ滲み、鶴は染みて飛べない。鶴は一滴の墨になる。30° に傾け (2,1) の影で (3,1) へ、もう一度閉じる：その墨が広がり (4,4) が紙になる。70° に傾け (4,1) の影から 4 列目を下って彼女へ。"
+            "value": "右ページの鶴の上で閉じる：左ページの(1,2)に着く。左ページの鶴(3,4)はすき間に向いている——けれどすき間のとなりは濡れた墨：押す一瞬、墨が先に降り場へ滲み、鶴は墨を吸って飛べない。鶴は一滴の墨になる。30°に傾け、(2,1)の影で(3,1)へ渡り、もう一度閉じる：その墨が広がって、(4,4)が紙になる。70°に傾け、(4,1)の影に乗って4列目を下れば、彼女。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "오른쪽 면 학 위에서 닫아요: 왼쪽 면 (1,2)에 도착해요. 왼쪽 학 (3,4)은 틈을 보고 있지만 틈 옆엔 젖은 먹: 닫히는 순간 먹이 먼저 내려앉을 자리로 번지고, 학은 물들어 못 날아요. 학은 먹 한 방울이 돼요. 30°로 기울여 (2,1) 그림자로 (3,1)에 가서 다시 닫아요: 그 먹이 번져 (4,4)가 종이가 돼요. 70°로 기울여 (4,1) 그림자를 밟고 4열을 따라 내려가 그녀에게."
+            "value": "오른쪽 페이지 학 위에서 닫아요: 왼쪽 페이지 (1,2)에 닿아요. 왼쪽 페이지의 학 (3,4)은 틈을 마주 보고 있어요—그런데 틈 옆은 젖은 먹: 누르는 순간 먹이 먼저 내려앉을 자리로 번지고, 학은 먹에 젖어 날지 못해요. 학은 먹 한 방울이 돼요. 30°로 기울여 (2,1) 그림자로 (3,1)에 건너가 다시 닫아요: 그 먹이 번져 (4,4)가 종이가 돼요. 70°로 기울여 (4,1) 그림자에 올라서서 4열을 따라 내려가면, 그녀."
           }
         }
       }
@@ -6680,13 +7160,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "飛べない鶴は墨。次に閉じれば滲む。"
+            "value": "飛べない鶴は墨。次に閉じれば、滲む。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "못 나는 학은 먹 한 방울. 다음에 닫으면 번져요."
+            "value": "날지 못하는 학은 먹. 다음에 닫으면, 번져요."
           }
         }
       }
@@ -6716,7 +7196,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먹이 학보다 빨라요."
+            "value": "먹이 학보다 빠르다."
           }
         }
       }
@@ -6746,7 +7226,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "물들다"
+            "value": "물듦"
           }
         }
       }
@@ -6770,13 +7250,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "濡れた墨が糊に接している：閉じた瞬間、墨が先に糊へ滲み、糊は石を引けない——しかも墨は糊の上は通るが紙は通らない。最初は 4 列目 2 行目で閉じ（70° に傾けて影で上がる）、重ねたまま右頁へ。50° に傾けて 7 列目 4 行目へ歩き、もう一度閉じる：二周目が下の行を伝って彼女の横まで届く。"
+            "value": "濡れた墨が糊に接している：閉じ切る一瞬、墨が先に糊へ滲み、糊は石を引けない——しかも墨は糊の上を越えるが、紙の上は越えない。一度目は4列目の2行目で閉じる（70°に傾けて影で上がる）。閉じたまま右ページへ。50°に傾けて7列目の4行目まで歩き、もう一度閉じる：二つ目の輪がいちばん下の行を伝って、彼女のとなりまで届く。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "젖은 먹이 풀에 닿아 있어요: 닫는 순간 먹이 먼저 풀로 번져서 풀은 돌을 끌지 못해요 — 게다가 먹은 풀 위로는 번지고 종이 위로는 못 번져요. 첫 번째는 4열 2행에서 닫고(70°로 기울여 그림자로 올라가요) 겹친 채 오른쪽 면으로. 50°로 기울여 7열 4행으로 가서 한 번 더 닫아요: 두 번째 겹이 아랫줄을 따라 그녀 옆까지 와요."
+            "value": "젖은 먹이 풀에 닿아 있어요: 닫히는 순간 먹이 먼저 풀로 번져서, 풀은 돌을 끌지 못해요—게다가 먹은 풀 위로는 번지고 종이 위로는 번지지 않아요. 첫 번째는 4열 2행에서 닫아요(70°로 기울여 그림자로 올라가요). 닫은 채 오른쪽 페이지로. 50°로 기울여 7열 4행까지 걸어가 한 번 더 닫아요: 두 번째 테가 맨 아랫줄을 따라 그녀 옆까지 닿아요."
           }
         }
       }
@@ -6830,13 +7310,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "墨のとなりに糊がある。"
+            "value": "墨のとなりに、糊がある。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먹 옆에 풀이 있어요."
+            "value": "먹 옆에, 풀이 있다."
           }
         }
       }
@@ -6890,13 +7370,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "スマホを半分だけ開くと、折り目の紙片が立ち上がり、橋になる。"
+            "value": "スマホを半分だけ開くと、折り目の紙片が立ち上がって、橋になる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "폰을 반쯤 열면 접는 선의 종이 조각이 일어서서 다리가 돼요."
+            "value": "폰을 반쯤 열면 접는 선 위의 종이 조각이 일어서서 다리가 돼요."
           }
         }
       }
@@ -6926,7 +7406,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫아도 건널 수 없다."
+            "value": "닫아도, 건널 수 없다."
           }
         }
       }
@@ -6956,7 +7436,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "일어서다"
+            "value": "서다"
           }
         }
       }
@@ -6980,13 +7460,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）上の列を橋まで歩き、立てて渡り、立った右ページを隅まで下りて閉じる。閉じたまま左端へ、一枡下がって開く。手紙は一枡上。"
+            "value": "上の行を橋まで歩き、立てて渡り、立った右ページを端の角まで下りて、閉じる。閉じたまま左端まで歩き、一マス下がって開く：あなたは右ページ、手紙は一マス上。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 윗줄을 따라 다리로, 세워서 건너고, 선 오른쪽 페이지를 구석까지 내려가 닫아요. 닫은 채 왼쪽 끝으로, 한 칸 내려가 펼쳐요. 편지는 한 칸 위."
+            "value": "윗줄을 따라 다리까지 걸어가 세워서 건너고, 선 오른쪽 페이지를 끝 모서리까지 내려가 닫아요. 닫은 채 왼쪽 끝까지 걸어가 한 칸 내려간 다음 펼쳐요: 나는 오른쪽 페이지에, 편지는 한 칸 위에."
           }
         }
       }
@@ -7010,13 +7490,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "立ったページをどこまで歩いて閉じる？"
+            "value": "立ったページをどこまで歩いてから閉じる？"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "선 페이지를 어디까지 걷고 닫을까?"
+            "value": "선 페이지를 어디까지 걷고 나서 닫을까?"
           }
         }
       }
@@ -7100,13 +7580,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "(6,1) で 50° に傾ける：左岸の灯が左頁の石の影を右頁に落とす——左頁の石は転がらない。同じ一拍で (7,3) の石がどき、影の道が (7,3) へ通じる。寝かせ、左へ一つ、閉じて、重ねの道で彼女へ。"
+            "value": "(6,1)まで歩いて50°に傾ける：左岸の灯りが左ページの石の影を右ページに落とす——左ページの石は転がらないから、影は描かれた場所にある。同じ一度の立ちで(7,3)の転がる石が道からどき、影の道が(7,3)まで通る。寝かせて、左へ一歩、閉じて、重なりで彼女へ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(6,1)에서 50°로 기울여요: 왼쪽 등불이 왼쪽 면 돌의 그림자를 오른쪽 면에 드리워요——왼쪽 돌은 구르지 않아요. 같은 순간 (7,3)의 돌이 비켜나고 그림자 길이 (7,3)까지 이어져요. 눕히고, 왼쪽으로 한 칸, 닫고, 겹친 길로 그녀에게."
+            "value": "(6,1)까지 걸어가 50°로 기울여요: 왼쪽 강가의 등불이 왼쪽 페이지 돌의 그림자를 오른쪽 페이지에 드리워요—왼쪽 페이지의 돌은 구르지 않으니, 그림자는 그려진 자리에 있어요. 같은 한 번 서는 동안 (7,3)의 구르는 돌이 길에서 비켜나, 그림자 길이 (7,3)까지 이어져요. 눕히고, 왼쪽으로 한 칸, 닫고, 겹을 따라 그녀에게."
           }
         }
       }
@@ -7130,7 +7610,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "左の灯の影は石と一緒に動かない。"
+            "value": "左の灯りの影は、石と一緒には動かない。"
           }
         },
         "ko": {
@@ -7160,13 +7640,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "灯は左岸に。"
+            "value": "灯りは左岸に。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "등불은 왼쪽 기슭에."
+            "value": "등불은 왼쪽 강가에."
           }
         }
       }
@@ -7220,13 +7700,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）閉じてもどこもつながらない。左ページの石の背の上で閉じる以外は。右ページの4行目右で閉じ、閉じたまま左下へ。55°まで閉じて影に乗り、80°まで開く。左ページを回って3列目の上で閉じる。"
+            "value": "閉じてもどこもつながらない——左ページの石の背で閉じるほかは。右ページの4行目の右で閉じ、閉じたまま左下の角へ。55°まで閉じて影に乗り、80°まで開く：影があなたを4列目へ運ぶ。左ページを回って3列目のいちばん上で閉じる——手紙は向かい。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 닫아도 어디도 이어지지 않아요. 왼쪽 페이지 돌의 등 위에서 닫는 것 말고는. 오른쪽 페이지 4행 오른쪽에서 닫고, 닫은 채 왼쪽 아래로. 55°까지 닫아 그림자에 올라 80°까지 펼쳐요. 왼쪽 페이지를 돌아 3열 꼭대기에서 닫아요."
+            "value": "닫아도 아무 데도 이어지지 않아요—왼쪽 페이지 돌의 등 위에서 닫는 것 말고는. 오른쪽 페이지 4행 오른쪽에서 닫고, 닫은 채 왼쪽 아래 모서리로. 55°까지 닫아 그림자에 올라서고, 80°까지 펼쳐요: 그림자가 나를 4열로 데려가요. 왼쪽 페이지를 돌아 3열 맨 위에서 닫아요—편지는 맞은편에."
           }
         }
       }
@@ -7250,13 +7730,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "重なりの道はふさがれている。どの重なりが石の上？"
+            "value": "重なりの道はふさがれている。石の上にあるのは、どの重なり？"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "겹친 길이 막혔어요. 어느 겹이 돌 위일까?"
+            "value": "겹의 길이 막혔어요. 돌 위에 있는 건 어느 겹일까?"
           }
         }
       }
@@ -7280,13 +7760,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "三つの石が重なりの道の上に。"
+            "value": "重なりの道の上に、石が三つ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "돌 셋이 겹친 길 위에 걸려 있다."
+            "value": "겹의 길 위에 돌 셋이 걸려 있다."
           }
         }
       }
@@ -7340,13 +7820,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "糊の上で閉じれば押しつぶされ、糊の上側で閉じれば石が道に落ちる。糊の下の紙まで歩いて閉じる。扉が開き、石が向こう岸に貼りつく。60°まで傾け、新しい影を渡って扉へ、最後に閉じる。"
+            "value": "糊の上で閉じれば押しつぶされる。糊の上側で閉じれば石が道に落ちる。糊の下の紙まで歩いて閉じる：扉が開き、石が向こうのページに貼りつく。60°まで傾け、新しい影を歩いて扉まで、最後に閉じる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "풀 위에서 닫으면 눌리고, 풀 위쪽에서 닫으면 돌이 길에 떨어져요. 풀 아래 종이까지 걸어가서 닫아요. 문이 열리고 돌이 건너편에 붙어요. 60°로 기울여 새 그림자를 밟고 문까지 간 뒤, 마지막으로 닫아요."
+            "value": "풀 위에서 닫으면 눌려요. 풀 위쪽에서 닫으면 돌이 길에 떨어져요. 풀 아래 종이까지 걸어가 닫아요: 문이 열리고, 돌이 건너편 페이지에 붙어요. 60°로 기울여 새 그림자를 따라 문까지 가서, 마지막으로 닫아요."
           }
         }
       }
@@ -7400,7 +7880,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "貼りついた頁"
+            "value": "貼りついたページ"
           }
         },
         "ko": {
@@ -7430,13 +7910,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）50° で右頁の石の影に乗って左頁の上の隅へ、そこで閉じる。糊がその石を引く——来た影は消えるが、同じ石が岸を変え、持ち上げた頁の 2 行目を照らす。1 列目の束で右頁へ移り、石の跡の穴を歩き、新しい影に乗って 60° まで開き、綴じ目側へ。下へ歩けば写った墨、その隣に彼女。"
+            "value": "50°で右ページの石の影に乗って左ページの上の角へ、そこで閉じる：糊がその石を引き寄せる——乗ってきた影は消えるが、同じ石が岸を替えて、持ち上げたページの2行目に影を落とす。1列目の重なりで右ページへ替わり、石の残した穴を歩き、新しい影に乗って60°まで開き、綴じ目側へ戻る。下へ歩けば写った墨、そのとなりに彼女。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 50°에서 오른쪽 면 돌의 그림자를 타고 왼쪽 면 위 모서리로 가서 닫아요. 풀이 그 돌을 끌어와요. 타고 온 그림자는 사라지지만 같은 돌이 강가를 바꿔 들어 올린 면 2행을 비춰요. 1열 묶음으로 오른쪽 면에 건너가, 돌이 남긴 구멍을 걷고, 새 그림자에 올라 60°까지 펼쳐 경첩 쪽으로. 내려가면 찍힌 먹, 그 옆이 그녀예요."
+            "value": "50°에서 오른쪽 페이지 돌의 그림자를 타고 왼쪽 페이지 위 모서리까지 가서 거기서 닫아요: 풀이 그 돌을 끌어가요—타고 온 그림자는 사라지지만, 같은 돌이 강가를 바꿔 들어 올린 페이지 2행에 그림자를 드리워요. 1열 겹으로 오른쪽 페이지에 건너가, 돌이 남긴 구멍을 걷고, 새 그림자에 올라서서 60°까지 펼쳐 접는 선 쪽으로 돌아와요. 아래로 걸으면 찍힌 먹, 그 옆에 그녀."
           }
         }
       }
@@ -7460,13 +7940,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影を奪った石が、別の頁に影を落とす。"
+            "value": "影をひとつ奪った石が、別のページに影をひとつ落とす。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자를 빼앗은 돌이 다른 면에 그림자를 드리워요."
+            "value": "그림자 하나를 가져간 돌이, 다른 페이지에 그림자 하나를 드리워요."
           }
         }
       }
@@ -7496,7 +7976,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "한 번 닫으면 그림자 하나가 사라져요."
+            "value": "한 번 닫으면, 그림자 하나가 사라진다."
           }
         }
       }
@@ -7550,13 +8030,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）左頁の石の向かいの紙で閉じ、塞がった束から出る。4 行目の束は向かいが隙間で、左頁に降ろされる。本を返す：第三頁が向いているときに束を歩くと 3 行目で左頁の隅へ移れる。第三頁からもう一度閉じ、左上へ歩き、返して、閉じたまま彼女へ。"
+            "value": "左ページの石の向かいの紙で閉じる：ふさがった重なり、歩いて出る——4行目の重なりは向かいがすき間で、あなたを左ページに降ろす。本をめくる：三枚目のページが向かいのとき、3行目の重なりは左ページの遠い角へページを替える。三枚目からもう一度閉じ、左上まで歩き、めくり戻して、閉じたまま彼女へ。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 왼쪽 면 돌 맞은편 종이에서 닫고, 막힌 묶음에서 걸어 나와요. 4행 묶음은 맞은편이 틈이라 왼쪽 면에 내려줘요. 책을 뒤집어요: 셋째 면이 마주할 때 묶음을 걸으면 3행에서 왼쪽 면 모서리로 건너가요. 셋째 면에서 한 번 더 닫고 왼쪽 위로 걸어가 다시 뒤집으면, 닫은 채로 그녀에게 닿아요."
+            "value": "왼쪽 페이지 돌의 맞은편 종이에서 닫아요: 막힌 겹, 걸어서 나와요—4행 겹은 맞은편이 틈이라 나를 왼쪽 페이지에 내려놓아요. 책을 넘겨요: 셋째 페이지가 마주 보고 있을 때 3행 겹은 왼쪽 페이지 먼 모서리로 페이지를 바꿔요. 셋째 페이지에서 한 번 더 닫고, 왼쪽 위까지 걸어가, 되넘기고, 닫은 채 그녀에게."
           }
         }
       }
@@ -7580,13 +8060,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "返すのは第三頁へ行くためではなく、別の束の地図のため。"
+            "value": "めくるのは三枚目へ行くためではない。別の重なりの地図のため。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "뒤집는 건 셋째 면에 가려는 게 아니라, 다른 묶음 지도를 쓰려는 거예요."
+            "value": "넘기는 건 셋째 페이지에 가려는 게 아니라, 다른 겹의 지도를 쓰려는 것."
           }
         }
       }
@@ -7610,13 +8090,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "手紙はこちら側、それでもめくる。"
+            "value": "手紙はこちらの面。それでも、めくる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "편지는 이쪽에 있는데, 그래도 넘겨요."
+            "value": "편지는 이쪽 면에. 그래도, 넘긴다."
           }
         }
       }
@@ -7640,7 +8120,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "透"
+            "value": "透かし"
           }
         },
         "ko": {
@@ -7670,13 +8150,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じて、裏返して、閉じたまま下へ歩く。5行目は左頁がすき間で三枚目の頁が紙——その重なりへ歩けば三枚目の頁に移る。手紙はそこに。"
+            "value": "閉じて、めくって、閉じたまま下へ歩く：5行目は左ページがすき間で、三枚目のページが紙。その重なりへ歩けば、三枚目のページに移る——手紙はそこに。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫고, 뒤집고, 닫은 채 아래로 걸어요. 5행은 왼쪽 페이지가 틈이고 세 번째 페이지가 종이예요. 그 겹으로 가면 세 번째 페이지로 옮겨 가요. 편지는 거기 있어요."
+            "value": "닫고, 넘기고, 닫은 채 아래로 걸어요: 5행은 왼쪽 페이지가 틈이고 셋째 페이지가 종이예요. 그 겹으로 걸어가면 셋째 페이지로 옮겨 가요—편지는 거기에."
           }
         }
       }
@@ -7700,13 +8180,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "閉じた本は、裏返すこともできる。"
+            "value": "閉じた本は、めくれる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "닫힌 책은 뒤집을 수도 있다."
+            "value": "닫힌 책은, 넘길 수 있어요."
           }
         }
       }
@@ -7730,13 +8210,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "この頁に手紙はない。"
+            "value": "このページに、手紙はない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "이 페이지에는 편지가 없다."
+            "value": "이 페이지에, 편지는 없다."
           }
         }
       }
@@ -7790,13 +8270,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "傾けて（一枡）、平らに戻す（もう一枡）：石が隙間に落ちて橋になる。閉じて開いても同じ二度。"
+            "value": "傾けて（一マス転がる）、寝かせる（もう一マス）：石がすき間に落ちて、橋ができる。閉じて開いても、同じ二度。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "기울이고(한 칸), 다시 펴요(한 칸 더): 돌이 틈에 떨어져 다리가 돼요. 닫았다 열어도 같은 두 번이에요."
+            "value": "기울이고(한 칸 굴러요), 눕혀요(한 칸 더): 돌이 틈에 빠져 다리가 생겨요. 닫았다 열어도, 같은 두 번이에요."
           }
         }
       }
@@ -7820,13 +8300,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "往復は二度の「立ち」。戻すほうも数える。"
+            "value": "傾けて戻すのは、二度立つこと。寝かせるほうも数える。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "한 번 오가는 건 두 번 세우는 것. 펴는 쪽도 세요."
+            "value": "기울였다 눕히는 건 두 번 서는 것. 눕히는 쪽도 세요."
           }
         }
       }
@@ -7850,13 +8330,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "二枡足りない。"
+            "value": "二マス、足りない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "두 칸 모자라요."
+            "value": "두 칸이 모자라다."
           }
         }
       }
@@ -7910,13 +8390,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "一度閉じる。糊が石を右頁の上へ引く。閉じたまま左頁の3行目へ歩き、30°まで開く。影は2列目。石の元の場所から乗り、55°まで開くと3列目へ。下へ歩くと、下の石の影が最後の紙に届く。閉じて安全なのはその一枡だけ。そこで閉じれば、手紙は足元に。"
+            "value": "まず一度閉じる：糊が石を右ページのいちばん上へ引き寄せる。閉じたまま左ページの3行目へ歩き、30°まで開く：影が2列目に落ちる。石の元の場所から乗って55°まで開くと、影があなたを3列目へ運ぶ。下へ歩くと、下の石の影が最後の紙まで届く。閉じて安全なのは、そのマスだけ。そこで閉じれば、手紙は足もとに。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "한 번 닫아요. 풀이 돌을 오른쪽 페이지 위로 붙여요. 닫은 채 왼쇽 페이지 3행으로 걸어가 30°로 펼쳐요. 그림자는 2열. 돌의 옛 자리에서 올라서고 55°로 펼치면 3열로. 아래로 걸으면 아래 돌의 그림자가 마지막 종이에 닿아요. 닫아도 안전한 칸은 그 한 칸뿐. 거기서 닫으면 편지는 발밑에."
+            "value": "먼저 한 번 닫아요: 풀이 돌을 오른쪽 페이지 맨 위로 끌어가요. 닫은 채 왼쪽 페이지 3행으로 걸어가 30°까지 펼쳐요: 그림자가 2열에 떨어져요. 돌의 옛 자리에서 올라서서 55°까지 펼치면 그림자가 나를 3열로 데려가요. 아래로 걸으면 아래 돌의 그림자가 마지막 종이까지 닿아요. 닫아도 안전한 칸은 거기뿐. 거기서 닫으면, 편지는 발밑에."
           }
         }
       }
@@ -7946,7 +8426,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "두 번째 닫기, 어디서?"
+            "value": "두 번째는, 어디서 닫을까?"
           }
         }
       }
@@ -7970,13 +8450,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "頁には三つしかない。"
+            "value": "ページには、三つしかない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "페이지에는 세 가지뿐."
+            "value": "페이지에는 셋뿐."
           }
         }
       }
@@ -8030,13 +8510,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "半分だけ開くと、橋が二つ立つ。上の橋を渡り、立ったページを端まで歩いて、下の橋で戻る。"
+            "value": "半分だけ開く：橋が二つ立つ。上の橋を渡り、立ったページを下まで歩いて、下の橋で戻る。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "반쯤 열면 다리 두 개가 서요. 위 다리를 건너 선 페이지를 끝까지 걷고, 아래 다리로 돌아와요."
+            "value": "반쯤 열어요: 다리 둘이 서요. 위 다리를 건너, 선 페이지를 끝까지 걸어 내려가, 아래 다리로 돌아와요."
           }
         }
       }
@@ -8120,13 +8600,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "左頁を左下の角まで歩き、60°まで傾ける。石の影が4列目につながる。影をたどって3行目へ、閉じて裏返し、閉じたまま上まで歩く——手紙は三枚目の頁のいちばん上の行。"
+            "value": "左ページを左下まで歩き、60°に傾ける：石の影が4列目まで届く。影をたどって3行目へ上がり、閉じて、めくって、閉じたまま上まで歩く——手紙は三枚目のページのいちばん上の行。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "왼쪽 페이지를 따라 왼쪽 아래 모서리까지 가서 60°로 기울여요. 돌의 그림자가 4열에 이어져요. 그림자를 따라 3행까지 가서 닫고 뒤집은 뒤, 닫은 채 맨 위까지 걸어요. 편지는 세 번째 페이지 맨 윗줄에 있어요."
+            "value": "왼쪽 페이지를 왼쪽 아래까지 걸어가 60°로 기울여요: 돌의 그림자가 4열까지 닿아요. 그림자를 따라 3행으로 올라가, 닫고, 넘기고, 닫은 채 맨 위까지 걸어요—편지는 셋째 페이지 맨 윗줄에."
           }
         }
       }
@@ -8150,7 +8630,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "まずこの面の影を使ってから、めくる。"
+            "value": "まずこの面の影を使って、それからめくる。"
           }
         },
         "ko": {
@@ -8186,7 +8666,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "등불이 비추는 건 이 면이다."
+            "value": "등불이 비추는 건 이 면."
           }
         }
       }
@@ -8360,13 +8840,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "まず閉じる。石が渡り、墨が写る。閉じたまま左頁の下の角へ歩き、40°まで開く。二つの石はどちらも4枡先、影はどちらも2列目に落ちる。下の影に乗り、60°まで開く。3列目へ運ばれる。写った墨を通って上の影へ歩き、40°まで閉じ戻す。影が彼女の戸口へ降ろしてくれる。"
+            "value": "まず閉じる：石が渡り、墨が写る。閉じたまま左ページの下の角へ歩き、40°まで開く：二つの石はどちらも4列先、影はどちらも2列目に落ちる。下の影に乗って60°まで開く：影があなたを3列目へ運ぶ。写った墨を抜けて上の影まで歩き、40°まで閉じ戻す——影が彼女の戸口へ降ろしてくれる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "먼저 닫아요. 돌이 건너가고 먹이 찍혀요. 닫은 채 왼쪽 페이지 아래 모서리로 가서 40°로 펼쳐요. 두 돌 모두 네 칸 밖, 그림자는 둘 다 2열에. 아래 그림자에 올라 60°로 펼치면 3열로. 찍힌 먹을 지나 위 그림자까지 올라가 다시 40°로 닫아요. 그림자가 그녀의 문 앞에 내려 줘요."
+            "value": "먼저 닫아요: 돌이 건너가고, 먹이 찍혀요. 닫은 채 왼쪽 페이지 아래 모서리로 걸어가 40°까지 펼쳐요: 두 돌 다 네 열 밖에 있고, 그림자는 둘 다 2열에 떨어져요. 아래 그림자에 올라서서 60°까지 펼쳐요: 그림자가 나를 3열로 데려가요. 찍힌 먹을 지나 위 그림자까지 올라가, 다시 40°로 닫아요—그림자가 나를 그녀의 문 앞에 내려 줘요."
           }
         }
       }
@@ -8420,13 +8900,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "頁の角は貼りつき、墨はまだ乾かない。"
+            "value": "ページの角は貼りつき、墨はまだ乾かない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "페이지 모서리는 붙어 있고, 먹은 아직 젖어 있다."
+            "value": "페이지 모서리는 붙어 있고, 먹은 아직 마르지 않았다."
           }
         }
       }
@@ -8450,7 +8930,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "二つの灯"
+            "value": "二つの灯り"
           }
         },
         "ko": {
@@ -8480,13 +8960,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）左端を左上まで。55°ほどに傾けると影が3列目に。乗って70°まで開く。影が4列目へ運ぶ。4列目を下れば手紙は左。"
+            "value": "左端を左上の角まで歩く。55°ほどに傾ける：影が3列目に落ちる。乗って、70°まで開く：影があなたを4列目へ運ぶ。4列目を下れば、手紙は左に。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 왼쪽 끝을 따라 왼왽 위로. 55° 정도 기울이면 그림자가 3열에. 올라서 70°까지 펼쳐요. 4열로 데려가요. 4열을 내려가면 편지는 왼쪽에."
+            "value": "왼쪽 가장자리를 따라 왼쪽 위 모서리까지. 55°쯤 기울여요: 그림자가 3열에 떨어져요. 올라서서 70°까지 펼쳐요: 그림자가 나를 4열로 데려가요. 4열을 따라 내려가면 편지는 왼쪽에."
           }
         }
       }
@@ -8510,13 +8990,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "影がどちらへ運ぶかは、本をどちらへ動かすか。"
+            "value": "影がどちらへ運ぶかは、本をどちらへ動かすかで決まる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "그림자가 어디로 데려가는지는 책을 어디로 움직이는지에 달려요."
+            "value": "그림자가 어디로 데려가는지는 책을 어느 쪽으로 움직이느냐에 달렸어요."
           }
         }
       }
@@ -8540,7 +9020,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "一つの影、一本の狭い岸。"
+            "value": "影がひとつ、狭い岸がひとつ。"
           }
         },
         "ko": {
@@ -8581,6 +9061,126 @@
         }
       }
     },
+    "twofold.hint": {
+      "comment": "Level \"twofold\": hint. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "走到鹤 (2,1)——你脚下这条路，右页上还有一模一样的一条，所以叠合换不了页，只有鹤能带你过去。先折第三页：(11,2) 的松石往它自己的折痕滚到 (10,2)。第三页折着，把书斜到 50° 再放平：两次过立，它向右滚回 (11,2)，进 (12,2) 的洞、穿过去，掉在右页的缺口 (5,2) 上，成了桥。然后把第三页放平，站在鹤上合书：第三页摊着，左页碰到的是右页，鹤带你飞到 (7,1)。合着沿叠走到 (7,4)，打开一点，她在 (8,4)。第三页折着站在鹤上合：鹤的落点是第三页的石头 (10,1)，压死。一上来就站在鹤上合：鹤带你过去了，可第三页跟着右页一起抬，松石往左滚进 (9,2) 的洞，桥没了。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Walk to the crane (2,1) — the path under your feet has an exact twin on the right page, so no stack switches page: only the crane takes you across. Fold the third page first: its loose stone (11,2) rolls to its own crease, (10,2). With the third page folded, lean the book to 50° and lay it flat again: two passes, and it rolls RIGHT, back to (11,2), into the hole at (12,2), through it onto the right page's gap (5,2) — the bridge. Now lay the third page flat and close standing on the crane: with the third page open the left page meets the right page, and the crane carries you to (7,1). Closed, walk the stacks to (7,4), open a little: she is at (8,4). Close on the crane with the third page folded and it lands on the third page's stone (10,1): crushed. Close on the crane at once and it carries you — but the third page lifts with the right page and the stone rolls left into the hole at (9,2): no bridge."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鶴(2,1)まで歩く——足もとの道は右ページにそっくり同じものがあって、どの重なりもページを替えない。渡れるのは鶴だけ。先に三枚目を折る：転がる石(11,2)が自分の折り目へ(10,2)まで転がる。三枚目を折ったまま本を50°に傾け、また寝かせる：二度立って、石は右へ、(11,2)へ戻り、穴(12,2)に入って、抜けて、右ページのすき間(5,2)に落ちる——橋。それから三枚目を寝かせ、鶴の上で閉じる：三枚目が開いていれば左ページが出会うのは右ページで、鶴があなたを(7,1)へ運ぶ。閉じたまま重なりを(7,4)まで歩き、少し開けば、彼女は(8,4)。三枚目を折ったまま鶴の上で閉じれば、降り場は三枚目の石(10,1)：押しつぶされる。いきなり鶴の上で閉じれば運ばれはする——けれど三枚目が右ページと一緒に持ち上がり、石は左の穴(9,2)に落ちて、橋がない。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "학 (2,1)까지 걸어가요—발밑의 길은 오른쪽 페이지에 똑같은 쌍이 있어서, 어느 겹도 페이지를 바꾸지 않아요. 건너게 해 주는 건 학뿐. 먼저 셋째 페이지를 접어요: 구르는 돌 (11,2)가 제 접는 선 쪽 (10,2)로 굴러요. 셋째 페이지를 접은 채 책을 50°로 기울였다가 다시 눕혀요: 두 번 서고, 돌은 오른쪽으로, (11,2)로 돌아와, 구멍 (12,2)에 들어가, 빠져나와, 오른쪽 페이지의 틈 (5,2)에 떨어져요—다리. 그다음 셋째 페이지를 눕히고, 학 위에서 닫아요: 셋째 페이지가 펼쳐져 있으면 왼쪽 페이지가 만나는 건 오른쪽 페이지고, 학이 나를 (7,1)로 데려가요. 닫은 채 겹을 따라 (7,4)까지 걸어가, 조금 열면, 그녀는 (8,4). 셋째 페이지를 접은 채 학 위에서 닫으면 내려앉을 자리는 셋째 페이지의 돌 (10,1): 눌려요. 처음부터 학 위에서 닫으면 건너가기는 해요—하지만 셋째 페이지가 오른쪽 페이지와 함께 들려 돌이 왼쪽 구멍 (9,2)에 빠지고, 다리가 없어요."
+          }
+        }
+      }
+    },
+    "twofold.hint1": {
+      "comment": "Level \"twofold\": first hint (the 「?」 ladder, before the hint). From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这一章每次都先折第三页。最后这次，折了再摊平。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All chapter long you folded the third page first. This last time, fold it — then lay it flat again."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この章ではいつも、先に三枚目を折った。最後は、折って——また寝かせる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 장에서는 늘 셋째 페이지를 먼저 접었어요. 마지막에는, 접고—다시 눕혀요."
+          }
+        }
+      }
+    },
+    "twofold.line": {
+      "comment": "Level \"twofold\": one-line teaser. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左页这次碰到的是右页。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This time the left page meets the right."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "こんど左ページがふれるのは、右ページ。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이번에 왼쪽 페이지가 닿는 건, 오른쪽 페이지."
+          }
+        }
+      }
+    },
+    "twofold.name": {
+      "comment": "Level \"twofold\": title. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Facing Page"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "見開き"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "맞은편"
+          }
+        }
+      }
+    },
     "twolamps.hint": {
       "comment": "Level \"twolamps\": hint. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
@@ -8600,13 +9200,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "（TODO ja）出発は左頁の石の背、まず閉じる。糊が向かいの石を引き、その穴が持ち上げた頁への道。50° で隅の石の影に乗り、閉じ切るとその石の背へ。そこで閉じ、隅へ出て、返す。返すのも一押し：第三頁の糊がその石を奪い、第三頁には影が落ちない。最後の隙間を照らすのは、一度目の閉じで引いた石。"
+            "value": "出発点は左ページの石の背——まず閉じる：糊が向かいの石を持っていき、その穴が持ち上げたページを上がる道になる。50°で角の石の影に乗り、閉じ切ればその石の背に降りる。そこで閉じ、角へ出て、めくる。めくるのも一度の押し：三枚目のページの糊がその石を持っていくから、三枚目に影は落ちない。最後のすき間を照らすのは、一度目の閉じで貼りついた石。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "(TODO ko) 출발점이 왼쪽 면 돌의 등이에요. 먼저 닫아요: 풀이 맞은편 돌을 끌어가고, 그 구멍이 들어 올린 면을 오르는 길. 50°에서 모서리 돌의 그림자를 타고 끝까지 닫으면 그 돌의 등에 내려요. 거기서 닫고 모서리로 걸어 나와 뒤집어요. 뒤집기도 한 번의 누름: 셋째 면의 풀이 그 돌을 빼앗아 셋째 면에는 그림자가 없어요. 마지막 틈을 비추는 건 첫 닫음이 끌어온 돌이에요."
+            "value": "출발점은 왼쪽 페이지 돌의 등—먼저 닫아요: 풀이 맞은편 돌을 가져가고, 그 구멍이 들어 올린 페이지를 오르는 길이 돼요. 50°에서 모서리 돌의 그림자에 올라서고, 끝까지 닫으면 그 돌의 등에 내려서요. 거기서 닫고, 모서리로 나와, 넘겨요. 넘기는 것도 한 번의 누름: 셋째 페이지의 풀이 그 돌을 가져가서, 셋째 페이지에는 그림자가 지지 않아요. 마지막 틈을 비추는 건 첫 번째 닫음에 붙어 온 돌이에요."
           }
         }
       }
@@ -8630,13 +9230,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "返す一拍で、第三頁の糊も貼りつく。"
+            "value": "めくる一瞬、三枚目の糊も貼りつく。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "뒤집는 순간 셋째 면의 풀도 붙어요."
+            "value": "넘기는 순간, 셋째 페이지의 풀도 붙어요."
           }
         }
       }
@@ -8660,13 +9260,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "手紙は最後の頁まで。"
+            "value": "手紙は、最後のページまでめくられた。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "편지는 마지막 장까지."
+            "value": "편지는 마지막 페이지까지 넘겨졌다."
           }
         }
       }
@@ -8690,7 +9290,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "二つの灯"
+            "value": "二つの灯り"
           }
         },
         "ko": {
@@ -8720,13 +9320,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "本を閉じる：墨が一枡外へ滲み、スタート横の隙間が墨になる。開いて歩いて渡る。"
+            "value": "本を閉じる：墨が一マス外へ滲み、出発点のとなりのすき間が墨になる。開いて、歩いて渡る。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "책을 닫아요: 먹이 한 칸 밖으로 번지고, 출발점 옆 빈칸이 먹이 돼요. 열고 건너가요."
+            "value": "책을 닫아요: 먹이 한 칸 밖으로 번지고, 출발점 옆 틈이 먹이 돼요. 펼치고, 걸어서 건너요."
           }
         }
       }
@@ -8750,7 +9350,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "一度閉じて、広がるのを見て。"
+            "value": "一度閉じて、広がるのを見る。"
           }
         },
         "ko": {
@@ -8780,13 +9380,13 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "この墨はまだ乾いていない。"
+            "value": "この墨は、まだ乾いていない。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "이 먹은 아직 마르지 않았어요."
+            "value": "이 먹은, 아직 마르지 않았다."
           }
         }
       }
@@ -8810,7 +9410,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "濡"
+            "value": "湿り"
           }
         },
         "ko": {

@@ -4358,6 +4358,313 @@
         [7, 2, 0, 1, 1],
         [6, 2, 0, 1, 1]
       ]
+    },
+    {
+      "id": "home",
+      "map": [
+        "S..--..-.--.",
+        "-.-..-.-.G-.",
+        "..-.-..-r..-"
+      ],
+      "tier": "teach",
+      "needs": [
+        "needsTrifold"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 2,
+        "needsFold": true,
+        "needsPop": false,
+        "needsShade": false,
+        "needsRide": false,
+        "needsRoll": false,
+        "needsFro": false,
+        "needsHover": false,
+        "needsTrifold": true,
+        "stepped15": true,
+        "difficulty": {
+          "score": 2,
+          "tier": "teach",
+          "dead": 0,
+          "deadEnds": 0,
+          "forks": 1,
+          "walk": 2,
+          "window": 7,
+          "combo": 2,
+          "greedy": 11,
+          "misdirect": false,
+          "undo": 0,
+          "away": 0,
+          "before": false,
+          "made": false
+        }
+      },
+      "trifold": true,
+      "len": 4,
+      "solution": [
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 3],
+        [0, 0, 180, 1, 3],
+        [7, 1, 180, 1, 3],
+        [6, 1, 180, 1, 3]
+      ]
+    },
+    {
+      "id": "hole",
+      "map": [
+        "...--..S.---",
+        "x.x-G--.x-..",
+        ".x-.--.-.--.",
+        "-..-.----..."
+      ],
+      "tier": "mid",
+      "needs": [
+        "needsTrifold"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 3,
+        "needsFold": true,
+        "needsPop": false,
+        "needsShade": false,
+        "needsRide": false,
+        "needsTrifold": true,
+        "stepped15": true,
+        "difficulty": {
+          "score": 10,
+          "tier": "mid",
+          "dead": 50,
+          "deadEnds": 2,
+          "forks": 1,
+          "walk": 14,
+          "window": 7,
+          "combo": 2,
+          "greedy": 112,
+          "misdirect": true,
+          "undo": 0,
+          "away": 5,
+          "before": false,
+          "made": false
+        }
+      },
+      "trifold": true,
+      "len": 17,
+      "solution": [
+        [7, 0, 0, 0, 0],
+        [6, 0, 0, 0, 0],
+        [5, 0, 0, 0, 0],
+        [5, 0, 0, 1, 3],
+        [5, 1, 0, 1, 3],
+        [4, 1, 0, 1, 3],
+        [4, 2, 0, 1, 3],
+        [4, 3, 0, 1, 3],
+        [5, 3, 0, 1, 3],
+        [6, 3, 0, 1, 3],
+        [6, 2, 0, 1, 3],
+        [6, 2, 0, 1, 0],
+        [6, 2, 180, 1, 0],
+        [1, 3, 180, 1, 0],
+        [2, 3, 180, 1, 0],
+        [4, 3, 180, 1, 0],
+        [3, 2, 180, 1, 0],
+        [4, 1, 180, 1, 0]
+      ]
+    },
+    {
+      "id": "return",
+      "map": [
+        "S.------.---",
+        "..------.r..",
+        "-----------.",
+        "--------G..."
+      ],
+      "tier": "mid",
+      "needs": [
+        "needsTrifold",
+        "needsRoll"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 4,
+        "needsFold": true,
+        "needsPop": false,
+        "needsShade": false,
+        "needsRide": false,
+        "needsRoll": true,
+        "needsFro": false,
+        "needsHover": false,
+        "needsTrifold": true,
+        "stepped15": true,
+        "difficulty": {
+          "score": 7,
+          "tier": "mid",
+          "dead": 0,
+          "deadEnds": 0,
+          "forks": 1,
+          "walk": 9,
+          "window": 7,
+          "combo": 3,
+          "greedy": 149,
+          "misdirect": false,
+          "undo": 1,
+          "away": 3,
+          "before": false,
+          "made": false
+        }
+      },
+      "trifold": true,
+      "len": 13,
+      "solution": [
+        [0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0],
+        [1, 1, 0, 0, 0],
+        [1, 1, 180, 1, 0],
+        [1, 1, 0, 1, 0],
+        [1, 1, 0, 1, 3],
+        [1, 1, 180, 1, 3],
+        [5, 1, 180, 1, 3],
+        [4, 1, 180, 1, 3],
+        [4, 2, 180, 1, 3],
+        [4, 3, 180, 1, 3],
+        [5, 3, 180, 1, 3],
+        [6, 3, 180, 1, 3],
+        [7, 3, 180, 1, 3]
+      ]
+    },
+    {
+      "id": "drop",
+      "map": [
+        "S..---------",
+        "--.------.r-",
+        "----.-------",
+        "----.--G.---",
+        "----....----"
+      ],
+      "tier": "hard",
+      "needs": [
+        "needsTrifold",
+        "needsRoll"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 4,
+        "needsFold": true,
+        "needsPop": false,
+        "needsShade": false,
+        "needsRide": false,
+        "needsRoll": true,
+        "needsFro": false,
+        "needsHover": false,
+        "needsTrifold": true,
+        "stepped15": true,
+        "difficulty": {
+          "score": 11,
+          "tier": "mid",
+          "dead": 82,
+          "deadEnds": 1,
+          "forks": 1,
+          "walk": 11,
+          "window": 7,
+          "combo": 3,
+          "greedy": 108,
+          "misdirect": true,
+          "undo": 0,
+          "away": 3,
+          "before": false,
+          "made": false
+        }
+      },
+      "trifold": true,
+      "len": 15,
+      "solution": [
+        [0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0],
+        [1, 0, 0, 1, 3],
+        [1, 0, 180, 1, 3],
+        [6, 1, 180, 1, 3],
+        [6, 1, 0, 1, 3],
+        [5, 1, 0, 1, 3],
+        [4, 1, 0, 1, 3],
+        [4, 2, 0, 1, 3],
+        [4, 3, 0, 1, 3],
+        [4, 4, 0, 1, 3],
+        [5, 4, 0, 1, 3],
+        [6, 4, 0, 1, 3],
+        [7, 4, 0, 1, 3],
+        [3, 4, 125, 1, 2],
+        [3, 3, 125, 1, 2]
+      ]
+    },
+    {
+      "id": "twofold",
+      "map": [
+        "-h.....--x--",
+        "-...-----.r-",
+        "---..-------",
+        "xS.....G----"
+      ],
+      "tier": "final",
+      "needs": [
+        "needsTrifold",
+        "needsRoll",
+        "needsCrane"
+      ],
+      "expect": {
+        "solvable": true,
+        "changes": 6,
+        "needsFold": true,
+        "needsPop": false,
+        "needsShade": false,
+        "needsRide": false,
+        "needsRoll": true,
+        "needsFro": false,
+        "needsHover": false,
+        "needsCrane": true,
+        "needsTrifold": true,
+        "stepped15": true,
+        "difficulty": {
+          "score": 13,
+          "tier": "mid",
+          "dead": 390,
+          "deadEnds": 1,
+          "forks": 1,
+          "walk": 15,
+          "window": 7,
+          "combo": 4,
+          "greedy": 601,
+          "misdirect": true,
+          "undo": 1,
+          "away": 7,
+          "before": false,
+          "made": false
+        }
+      },
+      "trifold": true,
+      "len": 21,
+      "solution": [
+        [1, 3, 0, 0, 0],
+        [2, 3, 0, 0, 0],
+        [3, 3, 0, 0, 0],
+        [3, 2, 0, 0, 0],
+        [3, 1, 0, 0, 0],
+        [2, 1, 0, 0, 0],
+        [1, 1, 0, 0, 0],
+        [1, 0, 0, 0, 0],
+        [1, 0, 0, 1, 3],
+        [1, 0, 130, 1, 3],
+        [1, 0, 0, 1, 3],
+        [1, 0, 0, 1, 0],
+        [6, 0, 180, 1, 0],
+        [5, 0, 180, 1, 0],
+        [4, 0, 180, 1, 0],
+        [4, 1, 180, 1, 0],
+        [4, 2, 180, 1, 0],
+        [4, 3, 180, 1, 0],
+        [5, 3, 180, 1, 0],
+        [6, 3, 180, 1, 0],
+        [6, 3, 120, 1, 0],
+        [7, 3, 120, 1, 0]
+      ]
     }
   ]
 }
