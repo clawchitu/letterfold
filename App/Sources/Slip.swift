@@ -101,6 +101,14 @@ struct SlipLayer: View {
     /// 328 pt on a 393 pt phone (the book's width less 24), its foot just above the crease, at most the top page's
     /// height less 16 (design-onboarding §2.1). Landscape: over the right page, the small book on its side above the text.
     private func slipBox(_ a: SlipAnchor) -> CGRect {
+        let box = phoneSlipBox(a)
+        // design-duo.md §2: on the Duo's inner display the lid carries only paper — the slip hangs below the hinge, its
+        // head just under the crease, over the fixed page (the first touch tucks it away as anywhere else)
+        guard model.duoLayout, a.horizontal else { return box }
+        let h = min(box.height, max(120, size.height - a.crease - 16))
+        return CGRect(x: box.minX, y: a.crease + 8, width: box.width, height: h)
+    }
+    private func phoneSlipBox(_ a: SlipAnchor) -> CGRect {
         if a.horizontal {
             // the page's own width at the crease, edge on edge with it; a narrow board (7-1's two columns) would squeeze
             // the slip and push 「下一张 ›」 out of it, so it is never narrower than 320 pt (or the screen less its margins),
