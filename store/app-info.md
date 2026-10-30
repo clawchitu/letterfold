@@ -27,7 +27,7 @@ Korea (GRAC): Apple's self-rating covers it; nothing to file.
 (Songti SC is Apple's on-demand system font, downloaded by iOS, not bundled). Level/letter text is original (fold-proto).
 
 ## Copyright
-`2026 Haoqiang Lyu` (ASC adds ©). Use the exact legal/seller name on the developer account if it differs.
+**`2026 Haoqiang Lyu`** (owner's decision; ASC adds ©).
 
 ## Export compliance
 `ITSAppUsesNonExemptEncryption = false` is in App/Info.plist (and project.yml); ASC already reports
