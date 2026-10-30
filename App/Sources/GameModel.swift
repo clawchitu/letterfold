@@ -1226,7 +1226,7 @@ final class GameModel {
                 hingeActive = true
                 freezeCamera()
                 stopGhost(); hasFolded = true
-                move(to: f, .bezier(0.2, 0.7, 0.2, 1, duration: 0.16))
+                move(to: f, .bezier(0.2, 0.7, 0.2, 1, duration: 0.16)) { [weak self] in self?.hingeCaughtUp() }
                 break
             }
             finishFlipNow()
@@ -1235,13 +1235,7 @@ final class GameModel {
             freezeCamera()
             stopWalk(); stopGhost(); hasFolded = true
             pushUndo()   // one undo step per hinge fold, on the same stack as the finger
-            move(to: f, .bezier(0.2, 0.7, 0.2, 1, duration: 0.16)) { [weak self] in
-                // the hinge kept turning during the catch-up: land on where it is now
-                guard let self, self.hingeActive, abs(self.hingeTarget - self.angle) > 0.1 else { return }
-                let was = self.angle
-                self.setAngle(self.hingeTarget)
-                if was < 179.5 && self.angle >= 179.5 { self.contact() }
-            }
+            move(to: f, .bezier(0.2, 0.7, 0.2, 1, duration: 0.16)) { [weak self] in self?.hingeCaughtUp() }
         case .follow(let f):
             guard motionTarget == nil else { break }
             let was = angle
@@ -1290,6 +1284,13 @@ final class GameModel {
     }
 
     /// Back in the foreground (design-duo.md §5): what the phone did meanwhile is not a fold.
+    /// The hinge kept turning during the 160 ms catch-up (follow updates wait for it): land on where it is now.
+    private func hingeCaughtUp() {
+        guard hingeActive, abs(hingeTarget - angle) > 0.1 else { return }
+        let was = angle
+        setAngle(hingeTarget)
+        if was < 179.5 && angle >= 179.5 { contact() }
+    }
     func hingeForeground() { releaseHinge() }
     /// The model lets go of the page: no idle hand-back pending, the tracker forgets the move (Codex review P2).
     private func releaseHinge() { hingeIdle?.cancel(); hingeIdle = nil; hingeActive = false; hinge.reset() }

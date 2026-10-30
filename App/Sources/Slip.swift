@@ -13,17 +13,21 @@ struct SlipAnchor: Equatable {
     var page: CGRect
     var crease: CGFloat { horizontal ? page.maxY : page.minX }
 
-    static func make(geo: BookGeometry, container: CGSize, origin: CGPoint) -> SlipAnchor {
+    /// `tri` / `duo`: the same camera as the drawn book (a Duo trifold's crease is pinned on the hinge with its own fit).
+    static func make(geo: BookGeometry, container: CGSize, origin: CGPoint, tri: Int? = nil, duo: Bool = false) -> SlipAnchor {
         let W = Double(geo.pageSize.width), H = Double(geo.pageSize.height)
         guard geo.horizontal else {
             return SlipAnchor(horizontal: false, page: CGRect(x: origin.x + W, y: origin.y, width: W, height: H))
         }
         // the camera book at rest (12°, flat): the crease stays put on screen whatever the page does
         let s = AppSettings.shared
-        let cam = BookCamera.make(fold: 0, pitch: GameModel.handPitch, page: geo.pageSize, container: container, reduceMotion: s.motionReduced, large: s.largeGrid)
+        let cam = BookCamera.make(fold: 0, pitch: GameModel.handPitch, page: geo.pageSize, container: container, reduceMotion: s.motionReduced, large: s.largeGrid,
+                                  tri: duo ? tri : nil, duo: duo)
         let crease = cam.project(.zero), top = cam.project(SIMD3(0, -H, 0))
         let l = cam.project(SIMD3(-W / 2, 0, 0)), r = cam.project(SIMD3(W / 2, 0, 0))
-        return SlipAnchor(horizontal: true, page: CGRect(x: origin.x + l.x, y: origin.y + top.y, width: r.x - l.x, height: crease.y - top.y))
+        // Duo face 2: the crease in hand is the third page's, a page above the book's crease on the hinge
+        let dy = duo && tri == 2 ? cam.k * H : 0
+        return SlipAnchor(horizontal: true, page: CGRect(x: origin.x + l.x, y: origin.y + top.y + dy, width: r.x - l.x, height: crease.y - top.y))
     }
 }
 
