@@ -196,6 +196,15 @@ final class GameModel {
     /// What BookView turns the folding page by: the virtual angle less the lid's own (design-duo.md §2).
     /// Face 2 of ch. 12 turns the third page on its own anchor on the lid, never relative to it (design-duo.md §4).
     var drawnOffset: Double { duoLayout && !onFlap ? physicalFold : 0 }
+    /// The lid offset a finger drag solves in (BookView's pan.off), frozen for the drag: CameraBook draws the page at
+    /// exactly `angle − dragLid` meanwhile, so the grabbed point follows the touch (Codex review 3). nil: no drag.
+    var dragLid: Double?
+    /// The angle the folding page is drawn at (design-duo.md §2): relative to the lid up to 90°, floored at the glass;
+    /// past 90° the lid has turned its back and the leaf is drawn where it lands. Off the Duo it is the fold itself.
+    func drawnFold(_ th: Double) -> Double {
+        if let l = dragLid { return th - l }
+        return th > 90 ? th : max(0, th - drawnOffset)
+    }
     var spread: Spread { Spread(orientation, columnsPerPage: config.columnsPerPage, rows: board.h) }
 
     private(set) var toast: String?
@@ -770,7 +779,7 @@ final class GameModel {
     /// The per-level transient state a new level and a restart both clear.
     private func clearTransient() {
         cancelFlip()
-        quiet = false; dragging = false; angleHint = false; walking = false
+        quiet = false; dragging = false; dragLid = nil; angleHint = false; walking = false
         threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]; inkBledAt = [:]; clearCraneFX()
         pending = Pending(); nopes = 0; hingeBookSaid = false
         hingeHintTask?.cancel(); hingeHint = false
@@ -1326,7 +1335,7 @@ final class GameModel {
     /// Release: snap to the nearest of 0 / 90 / 130 / 180 after projecting the throw a little (velocity in °/s).
     func dragEnded(velocity: Double) {
         guard dragging else { return }
-        dragging = false
+        dragging = false; dragLid = nil
         released = (CACurrentMediaTime(), velocity)
         // chapter 3 aims at 5° windows: a finger that came to rest (no angle change for 60 ms) throws nothing, whatever
         // speed the recogniser still reports from before the pause
@@ -1346,7 +1355,7 @@ final class GameModel {
     /// finger came down, including ink printed or a key used on the way (the undo snapshot from dragBegan).
     func dragCancelled() {
         guard dragging else { return }
-        dragging = false
+        dragging = false; dragLid = nil
         angleHint = false
         stopMotion()
         if game.undo() {
@@ -1846,7 +1855,7 @@ final class GameModel {
                 // and a finger still on the page no longer holds it
                 clearCrush(); haptics.crush()
                 stopMotion(); rubber = 0
-                if dragging { dragging = false; angleHint = false }
+                if dragging { dragging = false; dragLid = nil; angleHint = false }
                 rollFlight = nil; fillRings = [:]
                 angle = game.angle; sync()
                 aimCamera(at: angle)

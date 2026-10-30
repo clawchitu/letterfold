@@ -221,8 +221,9 @@ struct BookView: View {
         pan = PanState()
         pan.scroll0 = scrollY
         guard model.canDrag else { return }
-        // the drawn angle never goes below the lid's (CameraBook floors it at 0): solve from where it is drawn
-        pan.off = min(model.drawnOffset, max(0, model.angle))
+        // solve from where the page is drawn (GameModel.drawnFold: floored at the lid, absolute past 90°); the offset is
+        // frozen for the drag and CameraBook draws angle − off meanwhile, so the mapping and its inverse are one
+        pan.off = model.angle - model.drawnFold(model.angle)
         let rel = model.angle - pan.off
         // the grabbed point's distance from the crease (at least a third of the page, so a grab near the crease is not twitchy)
         let local = CGPoint(x: loc.x - origin.x, y: loc.y - origin.y)
@@ -236,6 +237,7 @@ struct BookView: View {
         pan.proj0 = pan.d * cos(a)
         pan.active = true
         model.dragBegan()
+        if model.dragging { model.dragLid = pan.off }
         if geo.horizontal {
             // design-review-3 §4: the camera is frozen for the whole drag; above the pitch the grabbed point's screen y
             // follows the finger 1:1, below it the table projection (acos) as before
@@ -1390,7 +1392,7 @@ private struct CameraBook: View {
         // the lower half (a hinge-shut book shows its stacked map there), not relative to the lid any more
         // never below the lid: a virtual page opened past the phone's own fold lies flat on the glass (the drag solver
         // uses the same floor, so a grab there starts where it is drawn)
-        let rel = th > 90 ? th : max(0, th - model.drawnOffset)
+        let rel = model.drawnFold(th)
         let cam = BookCamera.make(fold: rel, pitch: model.cameraPitch, page: page, container: geo.bookSize, reduceMotion: AppSettings.shared.motionReduced,
                                   large: AppSettings.shared.largeGrid, tri: model.trifoldFace, duo: model.duoLayout, lid: model.drawnOffset)
         let t = rel * .pi / 180
