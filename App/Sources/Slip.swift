@@ -218,6 +218,15 @@ struct SlipView: View {
         ids.filter { twoBeats.contains($0) }.map(pictureHeight).max()
     }
 
+    /// The column's height for `text` at `width`: the body's lines (15 pt, 7 pt apart) plus the title row and 「收起」.
+    static func textRoom(_ text: String, width: CGFloat) -> CGFloat {
+        let style = NSMutableParagraphStyle(); style.lineSpacing = 7
+        let r = (text as NSString).boundingRect(with: CGSize(width: max(1, width), height: .greatestFiniteMagnitude),
+                                                options: [.usesLineFragmentOrigin, .usesFontLeading],
+                                                attributes: [.font: UIFont.systemFont(ofSize: 15), .paragraphStyle: style], context: nil)
+        return ceil(r.height * 1.25) + 12 + 32 + 10 + 34 + 10   // Songti and Hangul set taller than the system face
+    }
+
     @ViewBuilder private var beats: some View {
         switch id {
         case .crane: CraneSlipPicture()
@@ -237,7 +246,8 @@ struct SlipView: View {
                 // side above the text, not a film
                 // never more than the slip can hold above at least ~130 pt of text: a short slip scales the beats down
                 let tall = Self.pictureHeight(id)
-                let k = min(1, max(0.4, (size.height - 24 - 10 - 130) / tall))
+                // a long body (三折笺's runs ~11 lines) gets the room its lines need, the beats scaling down for it
+                let k = min(1, max(0.4, (size.height - 24 - 10 - max(130, Self.textRoom(text, width: size.width - 26))) / tall))
                 VStack(alignment: .leading, spacing: 10) {
                     beats.scaleEffect(k, anchor: .top).frame(height: tall * k, alignment: .top).frame(maxWidth: .infinity)
                     column(text, last: last)
