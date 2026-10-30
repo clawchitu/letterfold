@@ -3391,6 +3391,36 @@
         }
       }
     },
+    "duo.hint": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "也可以把手机合一点。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can also fold the phone a little."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "スマホを少し閉じても折れる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "휴대폰을 조금 접어도 돼요."
+          }
+        }
+      }
+    },
     "elsewhere": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -16287,6 +16317,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "이 편지에는 셋째 페이지가 있어요. 오른쪽 페이지 바깥에 제 접는 선으로 이어져 있어요. P로 책의 접는 선과 셋째 페이지의 접는 선을 바꿔요."
+          }
+        }
+      }
+    },
+    "tri.hingeIsBook": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第三页用手指折；铰链折的是书。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fold the third page with your finger; the hinge folds the book."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三枚目は指で折る。スマホの綴じ目が折るのは本。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "셋째 페이지는 손가락으로 접어요. 휴대폰의 접는 선은 책을 접어요."
           }
         }
       }

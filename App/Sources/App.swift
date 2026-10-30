@@ -4,11 +4,57 @@ import FoldCore
 @main
 struct LetterfoldApp: App {
     @State private var model = GameModel.launch()
+    @Environment(\.scenePhase) private var scenePhase
     @State private var router = Router.launch()
     var body: some Scene {
-        WindowGroup { RootView(model: model, router: router) }
+        WindowGroup {
+            #if DEBUG
+            if let path = UserDefaults.standard.string(forKey: "duoShot") { DuoShotHost(model: model, router: router, path: path) }
+            else { root }
+            #else
+            root
+            #endif
+        }
+    }
+    private var root: some View {
+        Group {
+            RootView(model: model, router: router)
+                // design-duo.md §5: back in the foreground, the hinge's motion while away is forgotten
+                .onChange(of: scenePhase) { _, p in if p == .active { model.hingeForeground() } }
+        }
     }
 }
+
+#if DEBUG
+/// -duoShot <file.png> (debug only): the level drawn as the Duo's inner display — 669 × 951 pt, safe areas 59 / 34, the
+/// hinge line at 475.5 — through ImageRenderer, so the inner layout can be checked on a simulator that boots folded.
+/// Pair with -hinge fake -hingeSequence (a move, so the hinge takes the book over) for the lid's angle. Writes the PNG.
+private struct DuoShotHost: View {
+    let model: GameModel
+    let router: Router
+    let path: String
+    @State private var done = false
+    var body: some View {
+        Text(done ? "duoShot done" : "duoShot…").accessibilityIdentifier("duoShot")
+            .task {
+                let size = CGSize(width: 669, height: 951)
+                DuoScreen.forced = size
+                try? await Task.sleep(for: .seconds(2.5))   // a -hingeSequence takes over and rests
+                let content = LevelScreen(model: model, router: router)
+                    .environment(\.locale, L10n.locale)
+                    .padding(.top, 59).padding(.bottom, 34)
+                    .frame(width: size.width, height: size.height)
+                    .background(TableBackground())
+                    .overlay { Rectangle().fill(Color.red.opacity(0.5)).frame(height: 1).position(x: size.width / 2, y: size.height / 2) }
+                let r = ImageRenderer(content: content)
+                r.scale = 2
+                for _ in 0..<4 { _ = r.uiImage; try? await Task.sleep(for: .milliseconds(400)) }   // geometry callbacks settle
+                if let png = r.uiImage?.pngData() { try? png.write(to: URL(fileURLWithPath: path)) }
+                done = true
+            }
+    }
+}
+#endif
 
 @Observable
 final class Router {

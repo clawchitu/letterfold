@@ -60,6 +60,18 @@ struct FoldDriver {
         return phys()
     }
 
+    /// design-duo.md §6: turn the fake device hinge (-hinge fake) from `from` to `to` physical degrees (180 flat, 0 shut)
+    /// in ~10° steps 30 ms apart, like a hand, through Darwin notifications the app's FakeHinge listens for.
+    func hinge(from: Int, to: Int, step: Int = 10) {
+        let center = CFNotificationCenterGetDarwinNotifyCenter()
+        var d = from
+        while d != to {
+            d = to > d ? min(to, d + step) : max(to, d - step)
+            CFNotificationCenterPostNotification(center, CFNotificationName("com.haoqianglyu.letterfold.hinge.\(d)" as CFString), nil, nil, true)
+            usleep(30_000)
+        }
+        Thread.sleep(forTimeInterval: 1.0)   // the hinge at rest: idle hand-back + the rest snap
+    }
     func tile(_ c: Int, _ r: Int) -> XCUIElement { app.descendants(matching: .any)["tile-\(c)-\(r)"] }
     func isHere(_ c: Int, _ r: Int) -> Bool { tile(c, r).label.contains("你在这里") }
     func walk(_ c: Int, _ r: Int, wait: TimeInterval = 1.6) {

@@ -25,6 +25,8 @@ final class AppSettings {
     var hingeFold: Bool { didSet { d.set(hingeFold, forKey: "set.hinge") } }
     /// A device hinge reported itself (set by GameModel).
     var hingePresent = false
+    /// The Duo's one quiet line 「也可以把手机合一点。」 has been shown (or the hinge has folded the book): once per install.
+    var hingeHintSeen: Bool { didSet { d.set(hingeHintSeen, forKey: "set.hingeHintSeen") } }
 
     // system state
     private(set) var voiceOver = UIAccessibility.isVoiceOverRunning
@@ -57,6 +59,7 @@ final class AppSettings {
         reduceMotion = d.bool(forKey: "reduceMotion") || d.bool(forKey: "set.rm")
         language = d.string(forKey: "set.lang") ?? ""
         hingeFold = d.object(forKey: "set.hinge") as? Bool ?? true
+        hingeHintSeen = d.bool(forKey: "set.hingeHintSeen")
         if d.bool(forKey: "onOffLabels") { onOffLabels = true }
         let nc = NotificationCenter.default
         nc.addObserver(forName: UIAccessibility.voiceOverStatusDidChangeNotification, object: nil, queue: .main) { _ in

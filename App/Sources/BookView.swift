@@ -48,9 +48,9 @@ struct BookGeometry {
     /// grows to ⌈0.3 × tile⌉ and the tile gives way to fit (72 → ~66 pt on a 402 pt phone), so a mark never overlaps a
     /// square or gets clipped. It is set by the chapter, not by high contrast / reduce transparency (which only hide the
     /// marks), so toggling those never reflows the board. Every other case keeps the 10 pt pad and draws no marks.
-    static func make(rows: Int, orientation: Spread.Orientation, available: CGSize, large: Bool, columnsPerPage n: Int = 4, margins: Bool = false, leaves: Int = 2) -> BookGeometry {
+    static func make(rows: Int, orientation: Spread.Orientation, available: CGSize, large: Bool, columnsPerPage n: Int = 4, margins: Bool = false, leaves: Int = 2, duo: Bool = false) -> BookGeometry {
         let s = Spread(orientation, columnsPerPage: n, rows: rows)
-        var pad = 10.0
+        var pad = duo && leaves == 3 ? 6.0 : 10.0
         let gap = 4.0
         let across = Double(s.slotsAcross), down = Double(s.slotsDown)
         let horizontal = orientation == .horizontalCrease
@@ -58,7 +58,8 @@ struct BookGeometry {
         let fitW = (pageW - 2 * pad - (across - 1) * gap) / across
         let pageH = horizontal ? available.height / Double(leaves) : available.height
         let fitH = (pageH - 2 * pad - (down - 1) * gap) / down
-        var tile = horizontal ? (rows >= 5 ? 63.0 : 80.0) : 76.0
+        // design-duo.md §2: the Duo's inner display, 80 pt squares for 4 or 5 rows; ch. 12's lid holds two pages: 45 pt
+        var tile = duo ? (leaves == 3 ? 45.0 : 80.0) : horizontal ? (rows >= 5 ? 63.0 : 80.0) : 76.0
         if large {
             tile = rows >= 5 ? max(64, min(92, fitW)) : 92
             // never wider than the page: a 6-row board (5-7, the 暗信) gets the widest tile that still fits across
@@ -86,6 +87,8 @@ struct BookView: View {
     @Namespace private var rotorSpace
     @State private var scrollY: Double = 0
     @State private var pan = PanState()
+    /// design-duo.md §2: this view's top in screen coordinates, to pin the crease on the hinge.
+    @State private var globalTop: Double = 0
 
     struct PanState {
         var active = false, twoFinger = false, d = 1.0, proj0 = 0.0, scroll0 = 0.0
@@ -94,20 +97,41 @@ struct BookView: View {
         /// Screen points per degree past `high`: the finger's gain is capped there (0.1 (7))
         var rate = 1.0
         var edge0: Double?
+        /// The Duo's lid fold at grab time (design-duo.md §2): the solver works in the drawn, lid-relative angle and
+        /// hands game degrees back (Codex review: the grabbed point follows the finger on a half-open phone).
+        var off = 0.0
     }
 
     var body: some View {
-        let orientation: Spread.Orientation = model.hingeKind == .device || available.width > available.height * 1.15 ? .verticalCrease : .horizontalCrease
-        let geo = BookGeometry.make(rows: model.board.h, orientation: orientation, available: available, large: settings.largeGrid,
-                                    columnsPerPage: model.config.columnsPerPage, margins: !model.paper.margin.isEmpty, leaves: model.isTrifold ? 3 : 2)
+        let orientation: Spread.Orientation = available.width > available.height * 1.15 ? .verticalCrease : .horizontalCrease
+        // design-duo.md §2: on the Duo's inner display the book's crease sits on the hinge; the lid carries only paper
+        // (one page, ch. 12 two), the fixed page and the chrome band share the lower half
+        let hingeY = orientation == .horizontalCrease && !settings.largeGrid ? DuoScreen.hingeY.map(Double.init) : nil
+        let leaves = model.isTrifold ? 3 : 2
+        let fitted: CGSize = {
+            guard let hingeY else { return available }
+            let lid = hingeY - globalTop - 4, below = globalTop + available.height - hingeY - DuoScreen.chromeBand
+            let pageH = max(120, min(model.isTrifold ? lid / 2 : lid, below))
+            return CGSize(width: available.width, height: pageH * Double(leaves))
+        }()
+        let geo = BookGeometry.make(rows: model.board.h, orientation: orientation, available: fitted, large: settings.largeGrid,
+                                    columnsPerPage: model.config.columnsPerPage, margins: !model.paper.margin.isEmpty, leaves: leaves, duo: hingeY != nil)
         let book = geo.bookSize
         // the camera book is shorter on screen than its layout: measure what it really covers
-        let overflow = orientation == .horizontalCrease
+        let overflow = hingeY != nil ? 0 : orientation == .horizontalCrease
             ? max(0, BookCamera.flatHeight(page: geo.pageSize, container: book, reduceMotion: settings.motionReduced, large: settings.largeGrid, tri: model.trifoldFace) + 8 - available.height)
             : max(0, book.height - available.height)
-        let y0 = overflow > 0 ? 0 : (available.height - book.height) / 2
+        let y0: Double = {
+            if let hingeY {
+                // the book's crease (face 2: one page below the third page's crease in hand) lands on the hinge line
+                let cam = BookCamera.make(fold: 0, pitch: 0, page: geo.pageSize, container: book, reduceMotion: true, large: false, tri: model.trifoldFace, duo: true)
+                let crease = cam.cy + (model.trifoldFace == 2 ? cam.k * Double(geo.pageSize.height) : 0)
+                return hingeY - globalTop - crease
+            }
+            return overflow > 0 ? 0 : (available.height - book.height) / 2
+        }()
         let x0 = (available.width - book.width) / 2
-        let slipAnchor = SlipAnchor.make(geo: geo, container: book, origin: CGPoint(x: x0, y: y0))
+        let slipAnchor = SlipAnchor.make(geo: geo, container: book, origin: CGPoint(x: x0, y: y0), tri: model.trifoldFace, duo: hingeY != nil)
         ZStack(alignment: .topLeading) {
             BookBody(model: model, geo: geo, rotorSpace: rotorSpace)
                 // 「翻」 (ch. 6): the whole closed book turns over about the vertical axis; past 90° the content is
@@ -120,6 +144,7 @@ struct BookView: View {
                 .offset(x: x0, y: y0 + scrollY)
         }
         .frame(width: available.width, height: available.height, alignment: .topLeading)
+        .onGeometryChange(for: Double.self) { Double($0.frame(in: .global).minY) } action: { globalTop = $0 }
         .clipped()
         .contentShape(Rectangle())
         .gesture(BookPan(began: { loc in panBegan(loc, geo: geo, origin: CGPoint(x: x0, y: y0 + scrollY)) },
@@ -154,6 +179,7 @@ struct BookView: View {
         .environment(\.envelopeBack, model.isDark)
         .environment(\.envelopeOpened, model.level.id == "twolamps")
         .onChange(of: orientation, initial: true) { _, o in model.orientation = o }
+        .onChange(of: hingeY != nil, initial: true) { _, d in model.duoLayout = d }
         .onChange(of: slipAnchor, initial: true) { _, a in model.slipAnchor = a }
         .onChange(of: model.index) { _, _ in scrollY = 0 }
         .accessibilityElement(children: .contain)
@@ -195,18 +221,23 @@ struct BookView: View {
         pan = PanState()
         pan.scroll0 = scrollY
         guard model.canDrag else { return }
+        // solve from where the page is drawn (GameModel.drawnFold: floored at the lid, absolute past 90°); the offset is
+        // frozen for the drag and CameraBook draws angle − off meanwhile, so the mapping and its inverse are one
+        pan.off = model.angle - model.drawnFold(model.angle)
+        let rel = model.angle - pan.off
         // the grabbed point's distance from the crease (at least a third of the page, so a grab near the crease is not twitchy)
         let local = CGPoint(x: loc.x - origin.x, y: loc.y - origin.y)
         // ch. 12: the crease in hand is not mid-book on a trifold — read it off the camera (face 2: the second crease)
-        let crease = geo.horizontal ? (model.isTrifold ? Double(camera(model.angle, geo: geo).project(SIMD3(0, 0, 0)).y) : geo.pageSize.height)
+        let crease = geo.horizontal ? (model.isTrifold ? Double(camera(rel, geo: geo).project(SIMD3(0, 0, 0)).y) : geo.pageSize.height)
             : (model.isTrifold && model.trifoldFace == 2 ? 2 * geo.pageSize.width : geo.pageSize.width)
         let dist = geo.horizontal ? abs(crease - local.y) : abs(local.x - crease)
-        let a = model.angle * .pi / 180
+        let a = rel * .pi / 180
         // a grab on the closed book or on the fixed page counts from the crease too
         pan.d = min(geo.depth, max(geo.depth * 0.35, dist))
         pan.proj0 = pan.d * cos(a)
         pan.active = true
         model.dragBegan()
+        if model.dragging { model.dragLid = pan.off }
         if geo.horizontal {
             // design-review-3 §4: the camera is frozen for the whole drag; above the pitch the grabbed point's screen y
             // follows the finger 1:1, below it the table projection (acos) as before
@@ -226,10 +257,10 @@ struct BookView: View {
                 if grabY(t + 0.5, geo: geo) - grabY(t, geo: geo) < pan.rate * 0.5 { pan.high = t; break }
                 t += 0.5
             }
-            pan.screen = model.angle >= pan.low
+            pan.screen = rel >= pan.low
             pan.anchorT = 0
-            pan.anchorV = pan.screen ? grabY(model.angle, geo: geo) : pan.proj0
-            if probing { pan.edge0 = edgeY(model.angle + model.rubber, geo: geo) }
+            pan.anchorV = pan.screen ? grabY(rel, geo: geo) : pan.proj0
+            if probing { pan.edge0 = edgeY(rel + model.rubber, geo: geo) }
         }
     }
 
@@ -237,7 +268,7 @@ struct BookView: View {
 
     private func camera(_ fold: Double, geo: BookGeometry) -> BookCamera {
         BookCamera.make(fold: fold, pitch: model.isTrifold && !pan.active ? model.cameraPitch : pan.pitch, page: geo.pageSize, container: geo.bookSize,
-                        reduceMotion: settings.motionReduced, large: settings.largeGrid, tri: model.trifoldFace)
+                        reduceMotion: settings.motionReduced, large: settings.largeGrid, tri: model.trifoldFace, duo: model.duoLayout, lid: model.drawnOffset)
     }
     /// Screen y (book frame) of the grabbed point G, d from the crease on the top page, at fold angle `t`.
     private func grabY(_ t: Double, geo: BookGeometry) -> Double {
@@ -264,7 +295,9 @@ struct BookView: View {
 
     /// design-review-3 §4: t < pitch → the table projection follows the finger (acos); t ≥ pitch → G's screen y
     /// follows it 1:1, solved by bisection on [pitch, 180] where it is monotonic. Re-anchored where they meet.
-    private func cameraRaw(_ ty: Double, geo: BookGeometry) -> Double {
+    /// Everything below runs in lid-relative degrees (`pan.off` = 0 off the Duo); the result is game degrees.
+    private func cameraRaw(_ ty: Double, geo: BookGeometry) -> Double { cameraRel(ty, geo: geo) + pan.off }
+    private func cameraRel(_ ty: Double, geo: BookGeometry) -> Double {
         let d = pan.d, p = pan.low
         for _ in 0..<3 {
             if !pan.screen {
@@ -293,7 +326,7 @@ struct BookView: View {
                 return (lo + hi) / 2
             }
         }
-        return model.angle
+        return model.angle - pan.off
     }
 
     private func panChanged(_ t: CGPoint, touches: Int, geo: BookGeometry, overflow: Double) {
@@ -310,7 +343,7 @@ struct BookView: View {
         if geo.horizontal {
             model.dragChanged(cameraRaw(Double(t.y), geo: geo))
             if let e0 = pan.edge0 {
-                model.probeRise = e0 - edgeY(model.angle + model.rubber, geo: geo)
+                model.probeRise = e0 - edgeY(model.angle - pan.off + model.rubber, geo: geo)
                 model.probeAngle = max(model.probeAngle, model.angle)
             }
             return
@@ -1221,11 +1254,15 @@ struct BookCamera {
         return tri == 2 ? (2, 1) : (1, 2)
     }
 
-    static func make(fold: Double, pitch: Double, page: CGSize, container: CGSize, reduceMotion rm: Bool, large: Bool, tri: Int? = nil) -> BookCamera {
+    /// `duo` (design-duo.md §2): paper on glass, the camera looks straight down (pitch 0, yaw 0, no wall pose) at scale 1.
+    /// `lid`: the phone's own fold. Lying flat (< 45°) the Duo is one wide iPhone and a page the finger stands up would be
+    /// edge-on at pitch 0, so the camera still tilts towards the wall there — 0 at the hand pitch, up to 40° at the wall
+    /// pitch (Codex review: 2-1 must stay playable without the hinge); the crease stays pinned (ref is the pitch-0 frame).
+    static func make(fold: Double, pitch: Double, page: CGSize, container: CGSize, reduceMotion rm: Bool, large: Bool, tri: Int? = nil, duo: Bool = false, lid: Double = 0) -> BookCamera {
         let W = Double(page.width), H = Double(page.height), Wc = Double(container.width), Hc = Double(container.height)
         let f = 2.6 * Hc
-        func yaw(_ a: Double) -> Double { rm ? 0 : 18 * max(0, sin(a * .pi / 180)) * .pi / 180 }
-        func pose(_ a: Double, _ p: Double) -> (Double, Double) { (p * .pi / 180, yaw(a)) }
+        func yaw(_ a: Double) -> Double { rm || duo ? 0 : 18 * max(0, sin(a * .pi / 180)) * .pi / 180 }
+        func pose(_ a: Double, _ p: Double) -> (Double, Double) { (duo ? 0 : p * .pi / 180, yaw(a)) }
         func box(_ c: BookCamera, _ a: Double, _ ext: (behind: Double, ahead: Double) = (1, 1)) -> CGRect {
             let t = a * .pi / 180, e = SIMD3<Double>(0, -cos(t), sin(t))
             let l = SIMD3<Double>(-W / 2, 0, 0), r = SIMD3<Double>(W / 2, 0, 0), B = ext.behind * H, A = ext.ahead * H
@@ -1246,7 +1283,11 @@ struct BookCamera {
         let stand = box(BookCamera(pitch: p1, yaw: q1, f: f, k: 1, cx: 0, cy: 0), 90, fit)
         var k = min(1, (Wc - 6) / Double(max(flat.width, stand.width)))
         if !large { k = min(k, Hc / Double(flat.height)) }
-        let (p, q) = pose(fold, pitch)
+        if duo { k = 1 }
+        var (p, q) = pose(fold, pitch)
+        if duo && lid < 45 {
+            p = max(0, (pitch - GameModel.handPitch) / (GameModel.wallPitch - GameModel.handPitch)) * GameModel.wallPitch * .pi / 180
+        }
         var c = BookCamera(pitch: p, yaw: q, f: f, k: k, cx: 0, cy: 0)
         let ref = box(BookCamera(pitch: p0, yaw: q0, f: f, k: k, cx: 0, cy: 0), 0, ext)
         c.cx = Wc / 2 - Double(box(c, fold).midX)
@@ -1343,13 +1384,23 @@ private struct CameraBook: View {
 
     var body: some View {
         let page = geo.pageSize, W = Double(page.width), H = Double(page.height)
-        let th = model.angle + model.rubber + model.tease            // fold degrees (0 flat … 180 shut)
-        let cam = BookCamera.make(fold: th, pitch: model.cameraPitch, page: page, container: geo.bookSize, reduceMotion: AppSettings.shared.motionReduced,
-                                  large: AppSettings.shared.largeGrid, tri: model.trifoldFace)
-        let t = th * .pi / 180
-        let fold = SIMD3<Double>(0, -cos(t), sin(t))                  // from the crease along the folding page
+        // fold degrees (0 flat … 180 shut): `th` is the game's fold and decides every content / posture question (the stack,
+        // the bridges, the targets); `rel` is what the projection turns the page by — on the Duo relative to the lid, which
+        // is itself the folding page (design-duo.md §2; Codex review P1: never feed `rel` to gameplay drawing decisions)
+        let th = model.angle + model.rubber + model.tease
+        // §2: past 90° the lid turns its back to the reader — the leaf is drawn where it lands, over the fixed page on
+        // the lower half (a hinge-shut book shows its stacked map there), not relative to the lid any more
+        // never below the lid: a virtual page opened past the phone's own fold lies flat on the glass (the drag solver
+        // uses the same floor, so a grab there starts where it is drawn)
+        let rel = model.drawnFold(th)
+        let cam = BookCamera.make(fold: rel, pitch: model.cameraPitch, page: page, container: geo.bookSize, reduceMotion: AppSettings.shared.motionReduced,
+                                  large: AppSettings.shared.largeGrid, tri: model.trifoldFace, duo: model.duoLayout, lid: model.drawnOffset)
+        let t = rel * .pi / 180
+        let fold = SIMD3<Double>(0, -cos(t), sin(t))                  // from the crease along the folding page (drawn)
         let ex = SIMD3<Double>(1, 0, 0), edge0 = SIMD3<Double>(-W / 2, 0, 0)
-        let showBack = th > 90 + cam.pitchDegrees
+        // which side of the drawn leaf faces the eye is geometry (`rel`): on the Duo the paper on the lid shows its front;
+        // a hinge-shut book still shows its stack on the fixed page below (FixedPage gets `th`)
+        let showBack = rel > 90 + cam.pitchDegrees
         let rise = max(0, 1 - abs(th - 90) / 30)                      // the tabs: up between 120° and 60° (physical)
         let tri = model.trifoldFace
         ZStack(alignment: .topLeading) {
@@ -1483,8 +1534,8 @@ private struct CameraBook: View {
                 .position(x: (x0 + x1) / 2, y: (y0 + y1) / 2)
                 .allowsHitTesting(false).accessibilityHidden(true)
             ProjectedTargets(model: model, geo: geo, rotorSpace: rotorSpace, cam: cam, fold: fold, th: th)
-            // UI tests: where the crease in hand is on screen (a trifold moves it with the face)
-            if model.isTrifold {
+            // UI tests: where the crease in hand is on screen (a trifold moves it with the face; the Duo pins it on the hinge)
+            if model.isTrifold || model.duoLayout {
                 Color.clear.frame(width: 1, height: 1)
                     .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { model.probeCreaseY = Double($0.midY) }
                     .position(cam.project(SIMD3(0, 0, 0)))

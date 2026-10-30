@@ -13,17 +13,21 @@ struct SlipAnchor: Equatable {
     var page: CGRect
     var crease: CGFloat { horizontal ? page.maxY : page.minX }
 
-    static func make(geo: BookGeometry, container: CGSize, origin: CGPoint) -> SlipAnchor {
+    /// `tri` / `duo`: the same camera as the drawn book (a Duo trifold's crease is pinned on the hinge with its own fit).
+    static func make(geo: BookGeometry, container: CGSize, origin: CGPoint, tri: Int? = nil, duo: Bool = false) -> SlipAnchor {
         let W = Double(geo.pageSize.width), H = Double(geo.pageSize.height)
         guard geo.horizontal else {
             return SlipAnchor(horizontal: false, page: CGRect(x: origin.x + W, y: origin.y, width: W, height: H))
         }
         // the camera book at rest (12°, flat): the crease stays put on screen whatever the page does
         let s = AppSettings.shared
-        let cam = BookCamera.make(fold: 0, pitch: GameModel.handPitch, page: geo.pageSize, container: container, reduceMotion: s.motionReduced, large: s.largeGrid)
+        let cam = BookCamera.make(fold: 0, pitch: GameModel.handPitch, page: geo.pageSize, container: container, reduceMotion: s.motionReduced, large: s.largeGrid,
+                                  tri: duo ? tri : nil, duo: duo)
         let crease = cam.project(.zero), top = cam.project(SIMD3(0, -H, 0))
         let l = cam.project(SIMD3(-W / 2, 0, 0)), r = cam.project(SIMD3(W / 2, 0, 0))
-        return SlipAnchor(horizontal: true, page: CGRect(x: origin.x + l.x, y: origin.y + top.y, width: r.x - l.x, height: crease.y - top.y))
+        // Duo face 2: the crease in hand is the third page's, a page above the book's crease on the hinge
+        let dy = duo && tri == 2 ? cam.k * H : 0
+        return SlipAnchor(horizontal: true, page: CGRect(x: origin.x + l.x, y: origin.y + top.y + dy, width: r.x - l.x, height: crease.y - top.y))
     }
 }
 
@@ -73,7 +77,8 @@ struct SlipLayer: View {
             let box = slipBox(a)
             ZStack(alignment: .topLeading) {
                 if model.slipOut {
-                    SlipView(model: model, id: id, page: page, pages: model.slipPages.count, horizontal: a.horizontal, size: box.size)
+                    SlipView(model: model, id: id, page: page, pages: model.slipPages.count, horizontal: a.horizontal, size: box.size,
+                             scrolls: model.duoLayout && a.horizontal && box.height < phoneSlipBox(a).height)
                         .frame(width: box.width, height: box.height)
                         .transition(.modifier(active: SlipPull(p: 0, reduced: rm, horizontal: a.horizontal),
                                               identity: SlipPull(p: 1, reduced: rm, horizontal: a.horizontal)))
@@ -101,6 +106,14 @@ struct SlipLayer: View {
     /// 328 pt on a 393 pt phone (the book's width less 24), its foot just above the crease, at most the top page's
     /// height less 16 (design-onboarding §2.1). Landscape: over the right page, the small book on its side above the text.
     private func slipBox(_ a: SlipAnchor) -> CGRect {
+        let box = phoneSlipBox(a)
+        // design-duo.md §2: on the Duo's inner display the lid carries only paper — the slip hangs below the hinge, its
+        // head just under the crease, over the fixed page (the first touch tucks it away as anywhere else)
+        guard model.duoLayout, a.horizontal else { return box }
+        let h = min(box.height, max(120, size.height - a.crease - 16))
+        return CGRect(x: box.minX, y: a.crease + 8, width: box.width, height: h)
+    }
+    private func phoneSlipBox(_ a: SlipAnchor) -> CGRect {
         if a.horizontal {
             // the page's own width at the crease, edge on edge with it; a narrow board (7-1's two columns) would squeeze
             // the slip and push 「下一张 ›」 out of it, so it is never narrower than 320 pt (or the screen less its margins),
@@ -194,6 +207,8 @@ struct SlipView: View {
     let size: CGSize
     /// The 「物件」 page: the paper of the chapter that introduces the object, and its own tuck.
     var paperOverride: PaperState? = nil
+    /// The Duo's inner display caps the slip below the hinge (Codex review 4): its text scrolls there at any type size.
+    var scrolls = false
     var onNext: (() -> Void)? = nil
     var onTuck: (() -> Void)? = nil
     @Environment(\.highContrast) private var hc
@@ -330,10 +345,10 @@ struct SlipView: View {
                         .padding(.trailing, 8).padding(.bottom, 12)
                 }
                 .scrollBounceBehavior(.basedOnSize)
-                .scrollIndicators(big ? .visible : .hidden)
+                .scrollIndicators(big || scrolls ? .visible : .hidden)
                 .mask { VStack(spacing: 0) { Rectangle(); LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom).frame(height: 12) } }
                 .frame(height: shown, alignment: .top)
-                .allowsHitTesting(big)
+                .allowsHitTesting(big || scrolls)
                 .simultaneousGesture(TapGesture().onEnded { (onTuck ?? { model.tuckSlip() })() })
             }
             .background(alignment: .topLeading) {

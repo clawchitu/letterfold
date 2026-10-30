@@ -17,8 +17,10 @@ struct LevelScreen: View {
 
     var body: some View {
         let big = typeSize.isAccessibilitySize || settings.largeGrid
+        // design-duo.md §2: on the Duo's inner display the lid carries only paper; the top bar sits below the fixed page
+        let duo = model.duoLayout
         VStack(spacing: 0) {
-            TopBar(model: model, router: router, nameFaded: nameFaded && !big && !settings.contrastHigh, inline: !big)
+            if !duo { TopBar(model: model, router: router, nameFaded: nameFaded && !big && !settings.contrastHigh, inline: !big) }
             if big {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(model.titleText)
@@ -70,6 +72,9 @@ struct LevelScreen: View {
                 }
             }
             .frame(maxHeight: .infinity)
+            .overlay(alignment: .bottom) {
+                if duo { TopBar(model: model, router: router, nameFaded: nameFaded && !big && !settings.contrastHigh, inline: !big).frame(height: DuoScreen.chromeBand) }
+            }
             // the rule line floats in the larger empty band above or below the book, never over a square (b20: on 7-6
             // and twolamps it hid the bottom row); if neither band fits it, one smaller line, else at the top edge
             .overlay { if let toast = model.toast { ToastBand(text: toast, board: model.boardRect).transition(.opacity) } }
@@ -77,6 +82,13 @@ struct LevelScreen: View {
             // appears (Shuai 10/27: 「出现时 别移动游戏棋盘」)
             .overlay(alignment: .bottom) {
                 VStack(spacing: 8) {
+                if model.hingeHint {
+                    // design-duo.md §3: the Duo's one quiet line, no popup, no lesson
+                    Text(L10n.t("duo.hint")).font(FontBook.shared.songti(.regular, 15)).foregroundStyle(Tok.ink700)
+                        .padding(.bottom, 6).allowsHitTesting(false)
+                        .accessibilityIdentifier("duo.hint")
+                        .transition(.opacity)
+                }
                 if settings.soundMode, let a = model.lastAnnouncement { SoundCaption(text: a).allowsHitTesting(false) }
                 // the win's 下一封 knot floats too, so it never lifts the board (b19: a footer kept at its height cost
                 // every board 26 pt instead)
@@ -91,6 +103,9 @@ struct LevelScreen: View {
                     .transition(.opacity)
                 }
                 }
+                // the Duo's toolbar sits in the bottom band (design-duo.md §2): the hint, caption and 下一封 float above
+                // it, never over the title or the controls (Codex review 4)
+                .padding(.bottom, duo ? DuoScreen.chromeBand : 0)
             }
             VStack(spacing: 8) {
                 // the footer keeps the same height before and after the win (the 下一封 knot floats over the board
