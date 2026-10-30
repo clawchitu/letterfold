@@ -31,7 +31,7 @@
 - **Codex review**（`codex review --base main`，输出 `~/.tomo/workspace/tmp/lf26/codex-review.txt`）：P1 TrifoldTests `turn()` 遇拒绝/摊平死循环 → 已修；P2 ×5 已修：FoldTally 计数断言过滤三折、第三页**摊平**时换回书不再查 flapBlock（**与 proto 不同，需回传 main.js**）、撤销换折痕后 tally 以恢复角度为基准（三折）、横屏第三页可读屏、三折离开两页的格不播 Rules.facts 预测。
 
 ## 没做（下一班按顺序）
-1. 确认 `~/.tomo/workspace/tmp/lf26/st2.log`（定向 FoldCore 套件）与 `ui2.log`（twofold）都绿；不绿按报错修。然后**全量** `cd Packages/FoldCore && swift test`（约 20 分钟，DifficultyTests.shared 分析 77 关很慢；别和别的 swift test 并跑）。
+1. 定向 FoldCore 套件（Trifold / Chapter12 / Slips / FoldTally / Par / Progress / Solver / Playtest / Roll / Crane / UIPlan，61 个）**已全绿**（`st2.log`），twofold UI 也绿。还差**全量** `cd Packages/FoldCore && swift test`（约 20 分钟，DifficultyTests.shared 分析 77 关很慢；别和别的 swift test 并跑）。
 2. ja / ko 页脚截图（未做）：`~/.tomo/workspace/tmp/lf26/run.sh <name> -startLevel 76 -buttonControl YES -AppleLanguages "(ko)" -AppleLocale ko_KR`（再 ja），看 되돌리기 / 기울이기 / 셋째 페이지 是否被 minimumScaleFactor 缩得太小；**coachSlider（ドラッグして閉じる）原生 App 不用**（Sources 里无引用），只影响 proto。溢出才去 fold-proto i18n.js 缩短并 `tools/sync-from-proto.sh`。
 3. 看一眼章首（`-startLevel 73` 不带 `-noOpener`）+ 三折笺（不带 `-noSlips`）的普通 / Reduce Motion / 高对比截图。
 4. 可选二次 Codex：`codex review --base main`（不能同时带 prompt）。
