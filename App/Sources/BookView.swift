@@ -97,6 +97,9 @@ struct BookView: View {
         /// Screen points per degree past `high`: the finger's gain is capped there (0.1 (7))
         var rate = 1.0
         var edge0: Double?
+        /// The Duo's lid fold at grab time (design-duo.md §2): the solver works in the drawn, lid-relative angle and
+        /// hands game degrees back (Codex review: the grabbed point follows the finger on a half-open phone).
+        var off = 0.0
     }
 
     var body: some View {
@@ -218,13 +221,15 @@ struct BookView: View {
         pan = PanState()
         pan.scroll0 = scrollY
         guard model.canDrag else { return }
+        pan.off = model.drawnOffset
+        let rel = model.angle - pan.off
         // the grabbed point's distance from the crease (at least a third of the page, so a grab near the crease is not twitchy)
         let local = CGPoint(x: loc.x - origin.x, y: loc.y - origin.y)
         // ch. 12: the crease in hand is not mid-book on a trifold — read it off the camera (face 2: the second crease)
-        let crease = geo.horizontal ? (model.isTrifold ? Double(camera(model.angle, geo: geo).project(SIMD3(0, 0, 0)).y) : geo.pageSize.height)
+        let crease = geo.horizontal ? (model.isTrifold ? Double(camera(rel, geo: geo).project(SIMD3(0, 0, 0)).y) : geo.pageSize.height)
             : (model.isTrifold && model.trifoldFace == 2 ? 2 * geo.pageSize.width : geo.pageSize.width)
         let dist = geo.horizontal ? abs(crease - local.y) : abs(local.x - crease)
-        let a = model.angle * .pi / 180
+        let a = rel * .pi / 180
         // a grab on the closed book or on the fixed page counts from the crease too
         pan.d = min(geo.depth, max(geo.depth * 0.35, dist))
         pan.proj0 = pan.d * cos(a)
@@ -249,10 +254,10 @@ struct BookView: View {
                 if grabY(t + 0.5, geo: geo) - grabY(t, geo: geo) < pan.rate * 0.5 { pan.high = t; break }
                 t += 0.5
             }
-            pan.screen = model.angle >= pan.low
+            pan.screen = rel >= pan.low
             pan.anchorT = 0
-            pan.anchorV = pan.screen ? grabY(model.angle, geo: geo) : pan.proj0
-            if probing { pan.edge0 = edgeY(model.angle + model.rubber, geo: geo) }
+            pan.anchorV = pan.screen ? grabY(rel, geo: geo) : pan.proj0
+            if probing { pan.edge0 = edgeY(rel + model.rubber, geo: geo) }
         }
     }
 
@@ -287,7 +292,9 @@ struct BookView: View {
 
     /// design-review-3 §4: t < pitch → the table projection follows the finger (acos); t ≥ pitch → G's screen y
     /// follows it 1:1, solved by bisection on [pitch, 180] where it is monotonic. Re-anchored where they meet.
-    private func cameraRaw(_ ty: Double, geo: BookGeometry) -> Double {
+    /// Everything below runs in lid-relative degrees (`pan.off` = 0 off the Duo); the result is game degrees.
+    private func cameraRaw(_ ty: Double, geo: BookGeometry) -> Double { cameraRel(ty, geo: geo) + pan.off }
+    private func cameraRel(_ ty: Double, geo: BookGeometry) -> Double {
         let d = pan.d, p = pan.low
         for _ in 0..<3 {
             if !pan.screen {
@@ -316,7 +323,7 @@ struct BookView: View {
                 return (lo + hi) / 2
             }
         }
-        return model.angle
+        return model.angle - pan.off
     }
 
     private func panChanged(_ t: CGPoint, touches: Int, geo: BookGeometry, overflow: Double) {
@@ -333,7 +340,7 @@ struct BookView: View {
         if geo.horizontal {
             model.dragChanged(cameraRaw(Double(t.y), geo: geo))
             if let e0 = pan.edge0 {
-                model.probeRise = e0 - edgeY(model.angle + model.rubber, geo: geo)
+                model.probeRise = e0 - edgeY(model.angle - pan.off + model.rubber, geo: geo)
                 model.probeAngle = max(model.probeAngle, model.angle)
             }
             return
@@ -1368,14 +1375,19 @@ private struct CameraBook: View {
 
     var body: some View {
         let page = geo.pageSize, W = Double(page.width), H = Double(page.height)
-        // fold degrees (0 flat … 180 shut); on the Duo relative to the lid, which is itself the folding page (design-duo.md §2)
-        let th = model.angle + model.rubber + model.tease - model.drawnOffset
-        let cam = BookCamera.make(fold: th, pitch: model.cameraPitch, page: page, container: geo.bookSize, reduceMotion: AppSettings.shared.motionReduced,
+        // fold degrees (0 flat … 180 shut): `th` is the game's fold and decides every content / posture question (the stack,
+        // the bridges, the targets); `rel` is what the projection turns the page by — on the Duo relative to the lid, which
+        // is itself the folding page (design-duo.md §2; Codex review P1: never feed `rel` to gameplay drawing decisions)
+        let th = model.angle + model.rubber + model.tease
+        let rel = th - model.drawnOffset
+        let cam = BookCamera.make(fold: rel, pitch: model.cameraPitch, page: page, container: geo.bookSize, reduceMotion: AppSettings.shared.motionReduced,
                                   large: AppSettings.shared.largeGrid, tri: model.trifoldFace, duo: model.duoLayout)
-        let t = th * .pi / 180
-        let fold = SIMD3<Double>(0, -cos(t), sin(t))                  // from the crease along the folding page
+        let t = rel * .pi / 180
+        let fold = SIMD3<Double>(0, -cos(t), sin(t))                  // from the crease along the folding page (drawn)
         let ex = SIMD3<Double>(1, 0, 0), edge0 = SIMD3<Double>(-W / 2, 0, 0)
-        let showBack = th > 90 + cam.pitchDegrees
+        // which side of the drawn leaf faces the eye is geometry (`rel`): on the Duo the paper on the lid shows its front;
+        // a hinge-shut book still shows its stack on the fixed page below (FixedPage gets `th`)
+        let showBack = rel > 90 + cam.pitchDegrees
         let rise = max(0, 1 - abs(th - 90) / 30)                      // the tabs: up between 120° and 60° (physical)
         let tri = model.trifoldFace
         ZStack(alignment: .topLeading) {

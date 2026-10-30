@@ -194,7 +194,8 @@ final class GameModel {
     /// on the Duo the page is drawn relative to the lid (`drawnFold`).
     private(set) var physicalFold: Double = 0
     /// What BookView turns the folding page by: the virtual angle less the lid's own (design-duo.md §2).
-    var drawnOffset: Double { duoLayout ? physicalFold : 0 }
+    /// Face 2 of ch. 12 turns the third page on its own anchor on the lid, never relative to it (design-duo.md §4).
+    var drawnOffset: Double { duoLayout && !onFlap ? physicalFold : 0 }
     var spread: Spread { Spread(orientation, columnsPerPage: config.columnsPerPage, rows: board.h) }
 
     private(set) var toast: String?
@@ -1203,6 +1204,8 @@ final class GameModel {
         let blocked = !settings.hingeFold || dragging || aha
         let action = hinge.update(physical: physical, status: status, at: CACurrentMediaTime(), blocked: blocked)
         hingeTarget = hinge.target
+        // a blocked update resets the tracker (setting off, a finger, the aha): the model lets go of the page too
+        if blocked && hingeActive { releaseHinge() }
         switch action {
         case .ignore: return
         case .takeOver(let f):
@@ -1252,6 +1255,8 @@ final class GameModel {
         hingeIdle = Task { [weak self] in
             try? await Task.sleep(for: .milliseconds(Int(wait * 1000) + 10))
             guard let self, !Task.isCancelled, self.hinge.idle(at: CACurrentMediaTime()) else { return }
+            // the setting went off (or the aha began) mid-move with no sample since: let go, move nothing
+            guard self.settings.hingeFold, !self.aha else { self.releaseHinge(); return }
             if self.motionTarget == nil && abs(self.hingeTarget - self.angle) > 0.5 { self.setAngle(self.hingeTarget) }
             self.hingeActive = false
             let target = self.restTarget(self.angle)
@@ -1285,7 +1290,9 @@ final class GameModel {
     }
 
     /// Back in the foreground (design-duo.md §5): what the phone did meanwhile is not a fold.
-    func hingeForeground() { hingeIdle?.cancel(); hinge.reset(); hingeActive = false }
+    func hingeForeground() { releaseHinge() }
+    /// The model lets go of the page: no idle hand-back pending, the tracker forgets the move (Codex review P2).
+    private func releaseHinge() { hingeIdle?.cancel(); hingeIdle = nil; hingeActive = false; hinge.reset() }
 
     func dragBegan() {
         tuckSlip()
@@ -1872,6 +1879,7 @@ final class GameModel {
     func startAha() {
         ahaTask?.cancel()
         aha = true; quiet = true
+        releaseHinge()   // an aha mid hinge move: the hinge no longer owns the page
         if isFinale { startFinale(); return }
         let rm = settings.motionReduced
         ahaTask = Task { [weak self] in
