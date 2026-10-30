@@ -4,9 +4,14 @@ import FoldCore
 @main
 struct LetterfoldApp: App {
     @State private var model = GameModel.launch()
+    @Environment(\.scenePhase) private var scenePhase
     @State private var router = Router.launch()
     var body: some Scene {
-        WindowGroup { RootView(model: model, router: router) }
+        WindowGroup {
+            RootView(model: model, router: router)
+                // design-duo.md §5: back in the foreground, the hinge's motion while away is forgotten
+                .onChange(of: scenePhase) { _, p in if p == .active { model.hingeForeground() } }
+        }
     }
 }
 

@@ -97,7 +97,7 @@ struct BookView: View {
     }
 
     var body: some View {
-        let orientation: Spread.Orientation = model.hingeKind == .device || available.width > available.height * 1.15 ? .verticalCrease : .horizontalCrease
+        let orientation: Spread.Orientation = available.width > available.height * 1.15 ? .verticalCrease : .horizontalCrease
         let geo = BookGeometry.make(rows: model.board.h, orientation: orientation, available: available, large: settings.largeGrid,
                                     columnsPerPage: model.config.columnsPerPage, margins: !model.paper.margin.isEmpty, leaves: model.isTrifold ? 3 : 2)
         let book = geo.bookSize
