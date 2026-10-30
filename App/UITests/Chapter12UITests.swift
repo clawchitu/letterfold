@@ -31,7 +31,7 @@ final class Chapter12UITests: XCTestCase {
                       .walk(5, 4), .walk(6, 4), .walk(7, 4), .crease, .lean(55, tol: 8), .walk(3, 3)]),
         ("twofold", 77, [.walk(2, 3), .walk(3, 3), .walk(3, 2), .walk(3, 1), .walk(2, 1), .walk(1, 1), .walk(1, 0), .crease, .close, .lean(50, tol: 14),
                          .open, .crease, .open, .crease, .close, .walk(2, 0), .walk(3, 0), .walk(3, 1), .walk(3, 2), .walk(3, 3), .walk(2, 3), .walk(1, 3),
-                         .lean(60, tol: 8), .walk(7, 3)]),
+                         .lean(64, tol: 3), .walk(7, 3)]),
     ]
 
     override func setUp() { continueAfterFailure = false }

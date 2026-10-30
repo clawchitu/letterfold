@@ -16,3 +16,24 @@
 4. UIPlanTests 生成器跳过三折关（或加 `crease` 动作）；`Chapter12UITests` 用 levels.json solution（脚本见 `Chapter12Tests.reach`：换折痕免费，第三页 / 书的每次停靠一折），截图到 `~/.tomo/workspace/tmp/lf26/`。
 5. 协调者要的 ja / ko 页脚截图（ko 되돌리기 / 기울이기 / 셋째 페이지，ja coachSlider ドラッグして閉じる 会不会溢出）。
 6. Codex review → 修 P1/P2 → 打包前再跑一次 `tools/sync-from-proto.sh` → `upload.sh 26` → `asc.py 26` VALID → 合 main。
+
+
+---
+
+# 第二班（2026-10-29 晚）交接 —— 停在回合上限，未打包
+
+## 做完了
+- **App 层**（commit 294017e / 7916608 + 本次 WIP）：`Chapter.all` 第十二章 5 关（印「叠」占位）、`opener.12`（`home`）、`-resetProgress` 清到 12；`GameModel.switchCrease()`（底部「第三页」胶囊按钮 id `crease` / 页脚 `crease` / 键盘 P / 读屏动作 `pre.thirdLabel`；拒绝 toast tri.bookFirst / flapFirst / covered / blocked）、`autoCrease`（折到底且落定 450 ms 后自动换回书，拖动中不换）、`.flapRefused`（一次 toast，开到 foldMin−10 再复位）、`.offBook` → `fellOff`、`.laidFlat`（停动画、放开手指、settle）、tri.walkFolded / tri.aside、读屏按地图列（`mapCol`）+ 折叠叶的层（tri.layerHole / layerThird）、whereAmI 页名、`-replayTo` 支持三折（`reach`）。`hasThirdPage` 排除三折（不出「翻」）。
+- **BookView**：`BookGeometry.leaves = 3`（竖屏框宽占满）、`center()` 支持 c ≥ 2N（face 0 第三页）与 c < 0（face 2 左页在一边）；`BookCamera.extents(tri)` 让整张纸在换折痕时不动、缩放按最长姿态；`TrifoldPage`（.third / .thirdBack / .aside）、第二道折痕线、face 3 洞里格 `ThroughHoleMark`、第三页暖色 `ThirdPageTint`；`ProjectedTargets` 加第三页目标；横屏 legacy 也画第三页 / 左页。probe 加 `crease=`。
+- **Chapter12Marks.swift**：`TrifoldBook` 章首（2.4 s：第三页折进 → 合书 → 两点相会一圈；Reduce Motion 三帧；HC 白面黑线、第三页虚线）、`TrifoldSlipPicture`（三折笺两拍：pre.third / closeAll）、`TrifoldGlyph` / `TrifoldOutline`。FoldCore `SlipID.trifold` + `SlipDemo` 胶片（`.crease` beat，`trifold:` 参数），`turn` 笺不再在三折关触发。
+- **测试**：`Chapter12UITests`（真点「第三页」+ 真拖页）：**home / hole / return / drop 四关模拟器全绿**；twofold 停在最后一步 `lean(60)` 后 tile-7-3 不在（fold 120 = 立姿窗口边缘，折叶格不可点）→ 已改 `lean(64, tol: 3)`，**重跑结果未确认**（`~/.tomo/workspace/tmp/lf26/ui2.log`）。截图在 `~/.tomo/workspace/tmp/lf26/shots/`。FoldCore 测试：加了 ch.12 到 testTheCurve / 章预算 / ids / 77 关 / roll 列表；FoldTally / Playtest 的「翻页式」重放跳过三折；UIPlanTests 生成器跳过三折（plan 文件不变）。
+- **修了 FoldCore 两个真 bug**（TrifoldTests 抓到）：① 站在摊平的第三页上合书不死（`apply` 只在非纸/压死时查 offBook）→ 加 `|| rules.offBook`；② 拒绝时停在 154 而不是 foldMin−5（150）→ 回落到 stop。TrifoldTests 第 131 行笔误（[6,0]→[5,0]）。
+- **Codex review**（`codex review --base main`，输出 `~/.tomo/workspace/tmp/lf26/codex-review.txt`）：P1 TrifoldTests `turn()` 遇拒绝/摊平死循环 → 已修；P2 ×5 已修：FoldTally 计数断言过滤三折、第三页**摊平**时换回书不再查 flapBlock（**与 proto 不同，需回传 main.js**）、撤销换折痕后 tally 以恢复角度为基准（三折）、横屏第三页可读屏、三折离开两页的格不播 Rules.facts 预测。
+
+## 没做（下一班按顺序）
+1. 确认 `~/.tomo/workspace/tmp/lf26/st2.log`（定向 FoldCore 套件）与 `ui2.log`（twofold）都绿；不绿按报错修。然后**全量** `cd Packages/FoldCore && swift test`（约 20 分钟，DifficultyTests.shared 分析 77 关很慢；别和别的 swift test 并跑）。
+2. ja / ko 页脚截图（未做）：`~/.tomo/workspace/tmp/lf26/run.sh <name> -startLevel 76 -buttonControl YES -AppleLanguages "(ko)" -AppleLocale ko_KR`（再 ja），看 되돌리기 / 기울이기 / 셋째 페이지 是否被 minimumScaleFactor 缩得太小；**coachSlider（ドラッグして閉じる）原生 App 不用**（Sources 里无引用），只影响 proto。溢出才去 fold-proto i18n.js 缩短并 `tools/sync-from-proto.sh`。
+3. 看一眼章首（`-startLevel 73` 不带 `-noOpener`）+ 三折笺（不带 `-noSlips`）的普通 / Reduce Motion / 高对比截图。
+4. 可选二次 Codex：`codex review --base main`（不能同时带 prompt）。
+5. 发布：`tools/sync-from-proto.sh` → 若有改动重建 → `~/.tomo/workspace/tmp/lf/upload.sh 26`（project.yml / Info.plist 已是 26）→ `python3 ~/.tomo/workspace/tmp/lf/asc.py 26` 等 VALID → `git checkout main && git merge --no-ff wip-0.1-26` → push。版本 0.1。
+- 模拟器：自己的 `tomo-lf26` UDID 在 `~/.tomo/workspace/tmp/lf26/udid`（只按 UDID 操作）。

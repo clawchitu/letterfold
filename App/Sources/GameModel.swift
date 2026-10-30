@@ -2183,7 +2183,10 @@ final class GameModel {
         case .throughGap?: extra = L10n.t("stack.under")
         case nil: extra = ""
         }
-        return L10n.cap(parts.joined(separator: L10n.t("sep")) + (extra.isEmpty ? "" : L10n.t("semi") + extra))
+        // ch. 12: Rules.facts predicts with the two-page mirror; off the two pages in view (the flat third page, the left
+        // page aside) a prediction would name squares that do not meet — say none there (Codex review 26)
+        let extraSaid = isTrifold && (c < 0 || c >= 2 * config.columnsPerPage) ? "" : extra
+        return L10n.cap(parts.joined(separator: L10n.t("sep")) + (extraSaid.isEmpty ? "" : L10n.t("semi") + extraSaid))
     }
 
     /// 「听一行」: every square of the character's row, low to high page by page.

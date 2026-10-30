@@ -206,7 +206,7 @@ final class FoldTallyTests: XCTestCase {
             XCTAssertEqual(g.tally.count, par, "\(lv.id): folds = par")
             checked += 1
         }
-        XCTAssertEqual(checked, pack.levels.filter { $0.solution != nil }.count)
+        XCTAssertEqual(checked, pack.levels.filter { $0.solution != nil && !$0.isTrifold }.count)
         XCTAssertGreaterThanOrEqual(checked, 40)
     }
 

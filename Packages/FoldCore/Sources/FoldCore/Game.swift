@@ -124,9 +124,10 @@ public final class FoldGame {
             if board.trifold && board.face == 2 && !won && next >= config.foldMin, let why = rules.flapBlock(board, char) {
                 let stop = config.foldMin - 5
                 if !events.contains(.flapRefused(why)) { events.append(.flapRefused(why)) }
-                target = min(target, max(angle, stop))
-                if angle >= stop { break }
-                next = min(next, stop)
+                // main.js: a = FOLD_MIN − 5 — it settles back to the stop even from a sub-step past it
+                target = stop
+                if angle == stop { break }
+                next = stop
             }
             apply(next, &events)
         }
@@ -161,7 +162,8 @@ public final class FoldGame {
         }
         shade = rules.shadows(board, a)
         // on nothing but a shadow, or (closing) under a stone: on the bottom page, or on top-page glue facing one
-        if !board[char].isFloor || rules.crushed(board, char, a) {
+        // ch. 12: or closing with the third page flat under her (offBook: it swings out past the left page)
+        if !board[char].isFloor || rules.crushed(board, char, a) || rules.offBook(board, char, a) {
             if rideSrc == nil { rideSrc = previous[char] ?? shade[char] }
             if let to = rules.ride(board, char, rideSrc, a) {
                 if to.c != char.c {
@@ -239,7 +241,9 @@ public final class FoldGame {
         if board.face != 2 { return angle > 3 ? .bookFirst : nil }
         let folded = angle >= config.foldMin
         if !folded && angle > 3 { return .flapFirst }
-        let why = rules.flapBlock(board, char)
+        // the third page's own refusals are about folding it down: laid flat, the book's crease can always be taken back
+        // (Codex review 26; main.js asks flapBlock either way — port upstream)
+        let why = folded ? rules.flapBlock(board, char) : nil
         if rules.flapOut(board, char, folded: folded) == nil || why != nil { return .flap(why) }
         return nil
     }
@@ -363,6 +367,9 @@ public final class FoldGame {
         board = s.board; char = s.char; angle = s.angle; trail = s.trail; closedOnce = s.closedOnce; stuck = s.stuck
         lastCloseStep = s.lastCloseStep
         if let t = s.tally { tally = t }
+        // ch. 12: a crease switch rebased the rest angle into the other hinge's degrees — undoing it must rest at the
+        // restored hinge's angle again, or the next move of that hinge is not counted (Codex review 26)
+        else if board.trifold { tally.rebase(angle) }
         posture = rules.posture(angle); shade = rules.shadows(board, angle); rideSrc = nil; won = false
         return true
     }

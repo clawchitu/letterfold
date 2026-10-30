@@ -106,8 +106,10 @@ final class TrifoldTests: XCTestCase {
         var ev: [GameEvent] = []
         while abs(g.angle - a) > 0.01 {
             let before = g.angle
-            ev += g.setAngle(abs(a - g.angle) <= 1 ? a : g.angle + (a > g.angle ? 1 : -1))
-            if g.angle == before { break }
+            let e = g.setAngle(abs(a - g.angle) <= 1 ? a : g.angle + (a > g.angle ? 1 : -1))
+            ev += e
+            // a refused third page settles back at its stop, a death lays the book flat: the turn ends there
+            if g.angle == before || e.contains(.laidFlat) || e.contains(where: { if case .flapRefused = $0 { return true } else { return false } }) { break }
         }
         return ev
     }
@@ -128,7 +130,7 @@ final class TrifoldTests: XCTestCase {
         XCTAssertEqual(g.posture, .closed)
         XCTAssertEqual(g.switchCrease(), [.creased(face: 3)])
         XCTAssertEqual(g.char, Cell(0, 0)); XCTAssertEqual(g.angle, 0)
-        XCTAssertEqual(g.board[6, 0], .empty)
+        XCTAssertEqual(g.board[5, 0], .empty, "a gap on both layers")
         XCTAssertEqual(g.board[rules.mirror(1), 0], .goal)
         _ = turn(g, to: 180)
         g.walk(to: Cell(1, 0))

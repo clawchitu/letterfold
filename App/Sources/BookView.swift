@@ -1809,7 +1809,7 @@ private struct TrifoldPage: View {
             }
         }
         .frame(width: page.width, height: page.height, alignment: .topLeading)
-        .accessibilityHidden(true)
+        .accessibilityHidden(!interactive)   // landscape: the third page's squares are their own targets (Codex review 26)
     }
 }
 
