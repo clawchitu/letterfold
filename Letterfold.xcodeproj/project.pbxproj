@@ -30,6 +30,7 @@
 		632B7BC5D43A1FE091458D59 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */; };
 		7C677CF2FF97368F1172CDA0 /* Chapter11UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CBFCF4DC6EB77948082A067 /* Chapter11UITests.swift */; };
 		83E16CC195AEC3EC5512860E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B5BC6A962BF940695C18366 /* Assets.xcassets */; };
+		8DC4BE00E5EA6DDE9727F073 /* DuoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA230EEF3170E4CA7BC8708 /* DuoUITests.swift */; };
 		940B2DA1796BB58F3B8FCFAD /* Chapter3UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33328FA03A6FDAE3C9019CD5 /* Chapter3UITests.swift */; };
 		95BDB217EE07141E153788C9 /* SlipUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EBA74BD18A4CCAC6C76307B /* SlipUITests.swift */; };
 		99273F2D8C732350A8BCA85B /* Screens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CBDC31A0224AF98A0B8641 /* Screens.swift */; };
@@ -119,6 +120,7 @@
 		D182D97E9762DC8C6D7AA780 /* Chapter9Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter9Marks.swift; sourceTree = "<group>"; };
 		D7F376A74B6D07769C3C7A89 /* LetterfoldUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LetterfoldUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8FF8C2C6BDE8074179A5B56 /* Chapter7UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter7UITests.swift; sourceTree = "<group>"; };
+		DFA230EEF3170E4CA7BC8708 /* DuoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuoUITests.swift; sourceTree = "<group>"; };
 		E36B0909E3FBA8D453FDC2A5 /* Chapter12UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter12UITests.swift; sourceTree = "<group>"; };
 		EABD85E9AF4932093EFF07E7 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		EF748F41958AB1E89B0C34D9 /* Petals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Petals.swift; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 				9CBFCF4DC6EB77948082A067 /* Chapter11UITests.swift */,
 				E36B0909E3FBA8D453FDC2A5 /* Chapter12UITests.swift */,
 				86874352C30014FFF456BE3E /* ContentsUITests.swift */,
+				DFA230EEF3170E4CA7BC8708 /* DuoUITests.swift */,
 				76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */,
 				3015C80653E030579E65FC8D /* LayoutStabilityUITests.swift */,
 				B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */,
@@ -391,6 +394,7 @@
 				BD62CB81468AD08351DF824C /* Chapter8UITests.swift in Sources */,
 				081963E1758A65BB7EEF708D /* Chapter9UITests.swift in Sources */,
 				B06253E7629EEE0DFA262540 /* ContentsUITests.swift in Sources */,
+				8DC4BE00E5EA6DDE9727F073 /* DuoUITests.swift in Sources */,
 				ACE672D75211636A787E4B4A /* FoldDriver.swift in Sources */,
 				A96D787350289A485576F1F0 /* LayoutStabilityUITests.swift in Sources */,
 				325A01DF0182BD81C710BC54 /* LetterfoldUITests.swift in Sources */,
