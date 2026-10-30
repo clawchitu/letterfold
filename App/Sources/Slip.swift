@@ -77,7 +77,8 @@ struct SlipLayer: View {
             let box = slipBox(a)
             ZStack(alignment: .topLeading) {
                 if model.slipOut {
-                    SlipView(model: model, id: id, page: page, pages: model.slipPages.count, horizontal: a.horizontal, size: box.size)
+                    SlipView(model: model, id: id, page: page, pages: model.slipPages.count, horizontal: a.horizontal, size: box.size,
+                             scrolls: model.duoLayout && a.horizontal && box.height < phoneSlipBox(a).height)
                         .frame(width: box.width, height: box.height)
                         .transition(.modifier(active: SlipPull(p: 0, reduced: rm, horizontal: a.horizontal),
                                               identity: SlipPull(p: 1, reduced: rm, horizontal: a.horizontal)))
@@ -206,6 +207,8 @@ struct SlipView: View {
     let size: CGSize
     /// The 「物件」 page: the paper of the chapter that introduces the object, and its own tuck.
     var paperOverride: PaperState? = nil
+    /// The Duo's inner display caps the slip below the hinge (Codex review 4): its text scrolls there at any type size.
+    var scrolls = false
     var onNext: (() -> Void)? = nil
     var onTuck: (() -> Void)? = nil
     @Environment(\.highContrast) private var hc
@@ -342,10 +345,10 @@ struct SlipView: View {
                         .padding(.trailing, 8).padding(.bottom, 12)
                 }
                 .scrollBounceBehavior(.basedOnSize)
-                .scrollIndicators(big ? .visible : .hidden)
+                .scrollIndicators(big || scrolls ? .visible : .hidden)
                 .mask { VStack(spacing: 0) { Rectangle(); LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom).frame(height: 12) } }
                 .frame(height: shown, alignment: .top)
-                .allowsHitTesting(big)
+                .allowsHitTesting(big || scrolls)
                 .simultaneousGesture(TapGesture().onEnded { (onTuck ?? { model.tuckSlip() })() })
             }
             .background(alignment: .topLeading) {

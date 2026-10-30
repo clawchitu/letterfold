@@ -103,6 +103,9 @@ struct LevelScreen: View {
                     .transition(.opacity)
                 }
                 }
+                // the Duo's toolbar sits in the bottom band (design-duo.md §2): the hint, caption and 下一封 float above
+                // it, never over the title or the controls (Codex review 4)
+                .padding(.bottom, duo ? DuoScreen.chromeBand : 0)
             }
             VStack(spacing: 8) {
                 // the footer keeps the same height before and after the win (the 下一封 knot floats over the board
