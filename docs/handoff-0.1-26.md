@@ -37,3 +37,12 @@
 4. 可选二次 Codex：`codex review --base main`（不能同时带 prompt）。
 5. 发布：`tools/sync-from-proto.sh` → 若有改动重建 → `~/.tomo/workspace/tmp/lf/upload.sh 26`（project.yml / Info.plist 已是 26）→ `python3 ~/.tomo/workspace/tmp/lf/asc.py 26` 等 VALID → `git checkout main && git merge --no-ff wip-0.1-26` → push。版本 0.1。
 - 模拟器：自己的 `tomo-lf26` UDID 在 `~/.tomo/workspace/tmp/lf26/udid`（只按 UDID 操作）。
+
+---
+
+# 第三班（2026-10-29 20:20）交接 —— 回合上限，未打包
+
+- 全量 `swift test` 在后台跑（PID 见 `~/.tomo/workspace/tmp/lf26/full.pid`，日志 `full.log`）；停时到 CraneTests，此前 22 个 passed 0 失败。下一班先看日志结尾（`grep -E "failed|Executed" full.log | tail`），没跑完就等它，**别另起一个 swift test**。
+- ja / ko 页脚（12-4，`ko-full.png` / `ko-crop.png` / `ja-footer.png`）：**没有截断**；ko 셋째 페이지 被 minimumScaleFactor 缩到约 75%，되돌리기 / 기울이기 正常；ja 全部正常。i18n.js 未改。
+- 章首 + 三折笺 普通 / RM / HC 截图在 `shots/ch12-*`、`slip-*`、`slipfix-*`。章首三种模式都正常。**修了**：三折笺正文在图下被截掉（两拍笺只给正文留 130 pt）→ `SlipView.textRoom` 按正文量留空间、两拍图缩小（commit d022770）；en / ko / ja / HC / RM 复查都放得下。
+- 剩下：第 4 步（sync-from-proto → upload.sh 26 → asc.py 26 VALID → merge --no-ff「Merge wip-0.1-26: Letterfold 0.1 (26)」→ push）；第 5 步 fold-proto main.js 第 593 行附近：`const why = folded ? F.flapBlock(state) : null; if (!out || why) return no(why === 'cover' ? 'tri.covered' : 'tri.blocked');`（第三页摊平时换回书不查 flapBlock），并跑 fold-proto 的 check / test（在 tools/ 下找），commit。
