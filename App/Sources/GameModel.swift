@@ -299,6 +299,9 @@ final class GameModel {
     @ObservationIgnored private var motionDone: (() -> Void)?
     /// The player has folded the page at least once this session (the ghost hand stops offering).
     @ObservationIgnored private var hasFolded = false
+    /// Duo discovery (design-duo.md §3): one quiet line under the book on 1-2, once per install.
+    private(set) var hingeHint = false
+    @ObservationIgnored private var hingeHintTask: Task<Void, Never>?
 
     // the ghost hand on 1-1 (design-spec §5: not autoplayed with reduce motion)
     /// 0 hidden · 1 a fingertip resting on the top page · 2 the fingertip drawn down towards the crease.
@@ -759,6 +762,7 @@ final class GameModel {
         quiet = false; dragging = false; angleHint = false; walking = false
         threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]; inkBledAt = [:]; clearCraneFX()
         pending = Pending(); nopes = 0; hingeBookSaid = false
+        hingeHintTask?.cancel(); hingeHint = false
         rollFlight = nil; fillRings = [:]   // a roll belongs to the board it happened on (Codex review 21 #1)
         toastTask?.cancel(); toastTask = nil; toast = nil
         clearGlue()
@@ -1192,6 +1196,7 @@ final class GameModel {
         switch action {
         case .ignore: return
         case .takeOver(let f):
+            hingeFolded()
             // ch. 12 (design-duo.md §4): the hinge is the book's crease, the third page is always the thumb's. On the
             // third page's crease a hinge turn goes back to the book's (the autoCrease path, inside the same one undo
             // step) when the third page lies flat or folded all the way; half folded, the hinge is ignored with one
@@ -1243,6 +1248,30 @@ final class GameModel {
             if abs(target - self.angle) > 0.5 && !self.dragging { self.move(to: target, .release) }
             else { if !self.dragging { self.aimCamera(at: target) }; self.settle() }
         }
+    }
+
+    /// design-duo.md §3: on a Duo, on 1-2 (1-1 belongs to the ghost hand), the phone flat, the player has folded with the
+    /// thumb and never with the hinge: 「也可以把手机合一点。」 fades in under the book for 6 s (or until the hinge moves),
+    /// once per install; under VoiceOver it is one announcement instead.
+    private func offerHingeHint() {
+        guard settings.hingePresent, settings.hingeFold, !settings.hingeHintSeen, hingeKind == .device, level.id == "facing",
+              hasFolded, angle < 0.5, !dragging, !hingeActive, !won,
+              ((device as? any PhysicalHinge)?.lastAngle ?? 1) < 0.5 else { return }
+        settings.hingeHintSeen = true
+        if settings.voiceOver { announce(L10n.t("duo.hint"), delay: 0.6); return }
+        withAnimation(.easeInOut(duration: 0.4)) { hingeHint = true }
+        hingeHintTask?.cancel()
+        hingeHintTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(6))
+            guard let self, !Task.isCancelled else { return }
+            withAnimation(.easeInOut(duration: 0.6)) { self.hingeHint = false }
+        }
+    }
+
+    /// The hinge folded the book: the discovery line has done its job (or is no longer needed).
+    private func hingeFolded() {
+        if !settings.hingeHintSeen { settings.hingeHintSeen = true }
+        if hingeHint { hingeHintTask?.cancel(); withAnimation(.easeInOut(duration: 0.3)) { hingeHint = false } }
     }
 
     /// Back in the foreground (design-duo.md §5): what the phone did meanwhile is not a fold.
@@ -1960,6 +1989,7 @@ final class GameModel {
 
     func settle() {
         noteRest()
+        offerHingeHint()
         settleTask?.cancel(); settleTask = nil
         let a = Int(angle.rounded())
         let p = pending

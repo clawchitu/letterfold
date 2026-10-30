@@ -77,6 +77,13 @@ struct LevelScreen: View {
             // appears (Shuai 10/27: 「出现时 别移动游戏棋盘」)
             .overlay(alignment: .bottom) {
                 VStack(spacing: 8) {
+                if model.hingeHint {
+                    // design-duo.md §3: the Duo's one quiet line, no popup, no lesson
+                    Text(L10n.t("duo.hint")).font(FontBook.shared.songti(.regular, 15)).foregroundStyle(Tok.ink700)
+                        .padding(.bottom, 6).allowsHitTesting(false)
+                        .accessibilityIdentifier("duo.hint")
+                        .transition(.opacity)
+                }
                 if settings.soundMode, let a = model.lastAnnouncement { SoundCaption(text: a).allowsHitTesting(false) }
                 // the win's 下一封 knot floats too, so it never lifts the board (b19: a footer kept at its height cost
                 // every board 26 pt instead)
