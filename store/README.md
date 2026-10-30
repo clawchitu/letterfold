@@ -4,7 +4,7 @@ Nothing here has been submitted, uploaded or deployed. ASC was only read (store/
 
 | deliverable | path |
 |---|---|
-| 1. Metadata (name, subtitle, promo, description, keywords, What's New) — zh-Hans, en-US final drafts; ja, ko drafts | `metadata/<locale>/*.txt` (fastlane-deliver layout); regenerate + limit check: `python3 tools/write_metadata.py` |
+| 1. Metadata (name, subtitle, promo, description, keywords, What's New) — zh-Hans, en-US final drafts; ja, ko polished against fold-proto `docs/l10n-glossary.md` (still want one native read) | `metadata/<locale>/*.txt` (fastlane-deliver layout); regenerate + limit check: `python3 tools/write_metadata.py` |
 | 2. Category, age rating answers, content rights, copyright, export compliance, pricing/territories advice | `app-info.md` |
 | 3. App Privacy label (Data Not Collected) + evidence | `privacy.md` |
 | 4. Support + privacy pages (bilingual static HTML) | `site/letterfold/index.html`, `site/letterfold/privacy/index.html` → host at `https://haoqianglyu.com/letterfold/` and `…/letterfold/privacy/` (or GitHub Pages `/letterfold/`). Replace `[[SUPPORT_EMAIL]]` first. |
