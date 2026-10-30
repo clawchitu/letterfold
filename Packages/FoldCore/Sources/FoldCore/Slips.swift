@@ -14,6 +14,9 @@ public enum SlipID: String, CaseIterable, Sendable, Codable {
     case crane
     /// Ch. 11 「来回」 (fold-proto design-ch11 §5, tools/slips.js 'fro'): to and fro, a lean that comes back (first in 11-1). Slip fifteen.
     case fro
+    /// Ch. 12 「三折」 (fold-proto design-ch12 §5, tools/slips.js 'trifold'): the second crease, a posture slip (first in
+    /// 12-1). Slip sixteen.
+    case trifold
 }
 
 /// The slips' triggers and the save logic around them (design-onboarding §7.2–7.3), pure so they are tested here.
@@ -42,7 +45,7 @@ public enum Slips {
             case .press: return crushable(level, columnsPerPage: n)
             case .ride: return needs.contains("needsRide")
             case .glue: return s.contains("g")
-            case .turn: return pages == 3
+            case .turn: return pages == 3 && !level.isTrifold   // ch. 12's 12 columns are a trifold, not a back face
             case .wet: return s.contains("I")
             case .lamp: return (level.lamp ?? "R").contains("L")
             case .gate: return s.contains("A")
@@ -51,6 +54,7 @@ public enum Slips {
             // a posture slip like ride (tools/slips.js `fro`, tile null): the *declared* needs (levels.js), only on
             // fro / past / park — not expect.needsFro, which check.js also finds on ch. 9/10 jump / late / ground
             case .fro: return needs.contains("needsFro")
+            case .trifold: return level.isTrifold && pages == 3
             }
         }
     }
@@ -172,6 +176,8 @@ public struct SlipDemo: Sendable {
         case angle(Double, ms: Int, stamp: Rules.Stamp.Kind? = nil, crushed: Bool? = nil, shadowAt: Cell? = nil, falls: Bool = false,
                    rolled: [Cell]? = nil)
         case walk(Cell), walkStack(Cell), flip, at(Cell), win, pause(Int), still
+        /// Ch. 12: take hold of the other crease (FoldGame.switchCrease; tools/slips.js `flap` beats).
+        case crease
     }
     public enum Failure: Error, CustomStringConvertible {
         case rule(SlipID, String)
@@ -184,6 +190,12 @@ public struct SlipDemo: Sendable {
     /// The level's lamp (ch. 8 `lamp`): nil = the right bank.
     public var lamp: String? = nil
     public let beats: [Beat]
+    /// Ch. 12: the map is left | right | third on two creases (levels.js `trifold`).
+    public var trifold = false
+
+    public init(id: SlipID, level: String, map: [String], lamp: String? = nil, beats: [Beat], trifold: Bool = false) {
+        self.id = id; self.level = level; self.map = map; self.lamp = lamp; self.beats = beats; self.trifold = trifold
+    }
 
     /// tools/slips.js, beat for beat (plus pauses, a still marker and the closing opens the storyboards ask for).
     public static let all: [SlipDemo] = [
@@ -251,13 +263,20 @@ public struct SlipDemo: Sendable {
         SlipDemo(id: .fro, level: "11-1", map: [".-g--.rS", "----G--."], beats: [
             .bump(-1, 0, .stone), .pause(300), .angle(120, ms: 500, rolled: [Cell(6, 0), Cell(5, 0)]), .pause(250),
             .angle(0, ms: 500, rolled: [Cell(5, 0), Cell(4, 0)]), .still, .pause(300), .walk(Cell(4, 1)), .win]),
+        // 三折: close as it is — the third page swings out past your page, she is out on the table, in none of your
+        // stacks; open; fold the third page onto the right page (the book lies flat); take the book's crease again and
+        // close: the left page meets the third page, her (9,0) is stack 1, your own column — two mirrors bring it home
+        // (tools/slips.js `trifold`). The still: the third page folded, the book flat (an ordinary two-page view)
+        SlipDemo(id: .trifold, level: "12-1", map: ["S---.--.-G--", "............"], beats: [
+            .angle(180, ms: 420), .pause(250), .angle(0, ms: 300), .crease, .angle(180, ms: 420), .crease, .still, .pause(200),
+            .angle(180, ms: 420), .walkStack(Cell(1, 0)), .win], trifold: true),
     ]
 
     public static func demo(_ id: SlipID) -> SlipDemo { all.first { $0.id == id }! }
 
     /// Plays the script on the real engine; throws on the first move the rules refuse.
     public func film(config: FoldConfig = .standard) throws -> SlipFilm {
-        let game = try FoldGame(level: Level(id: "slip.\(id.rawValue)", map: map, lamp: lamp), config: config)
+        let game = try FoldGame(level: Level(id: "slip.\(id.rawValue)", map: map, lamp: lamp, trifold: trifold ? true : nil), config: config)
         var frames: [SlipFrame] = []
         var still: Int?
         func fail(_ m: String) -> Failure { .rule(id, m) }
@@ -312,6 +331,10 @@ public struct SlipDemo: Sendable {
                 add(.hold, ms)
             case .still:
                 still = frames.count - 1
+            case .crease:
+                if let why = game.creaseBlock { throw fail("cannot take the other crease: \(why)") }
+                game.switchCrease()
+                add(.turn, 200)
             }
         }
         return SlipFilm(id: id, frames: frames, still: still ?? frames.count - 1)

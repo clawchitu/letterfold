@@ -350,17 +350,17 @@ extension GameModel {
     /// On screen now; said in the press's one announcement, in place of 「鹤飞到了…」 (Codex review 22 #3: a separate
     /// announcement was cut off by it).
     func noteCarried(_ to: Cell) {
-        show(L10n.t("carried", ["col": L10n.t("col", ["c": to.c + 1])]), speak: false)
+        show(L10n.t("carried", ["col": L10n.t("col", ["c": mapCol(to.c, to.r) + 1])]), speak: false)
         craneCarriedTo = to
     }
 
     /// What a crane did at the press, in words (VoiceOver): flew to its landing, soaked by wet ink, stuck on glue.
     func craneWords(_ s: Rules.Stamp) -> String {
         if s.inked { return L10n.t("craneSoaked") }
-        let carried = s.to != nil && s.to == craneCarriedTo ? L10n.t("carried", ["col": L10n.t("col", ["c": s.to!.c + 1])]) : nil
+        let carried = s.to != nil && s.to == craneCarriedTo ? L10n.t("carried", ["col": L10n.t("col", ["c": mapCol(s.to!.c, s.to!.r) + 1])]) : nil
         if s.glued { return (carried.map { [$0] } ?? []).appending(L10n.t("craneGlued")).joined(separator: L10n.t("sep")) }
         if let carried { return carried }
-        return L10n.t("craneFlew", ["col": L10n.t("col", ["c": (s.to ?? s.cells[0]).c + 1])])
+        return L10n.t("craneFlew", ["col": L10n.t("col", ["c": mapCol((s.to ?? s.cells[0]).c, (s.to ?? s.cells[0]).r) + 1])])
     }
 
     /// `craneStuck` once per press, if a crane could not fly (consumed by stampWords).

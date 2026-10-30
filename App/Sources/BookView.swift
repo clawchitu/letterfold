@@ -8,20 +8,36 @@ struct BookGeometry {
     let tile: Double
     let gap = 4.0
     let pad: Double
+    /// Pages laid end to end on the table: 3 on a ch. 12 trifold (left | right | third), else 2.
+    var leaves = 2
 
     var horizontal: Bool { spread.orientation == .horizontalCrease }
     var pageSize: CGSize {
         CGSize(width: Double(spread.slotsAcross) * tile + Double(spread.slotsAcross - 1) * gap + 2 * pad,
                height: Double(spread.slotsDown) * tile + Double(spread.slotsDown - 1) * gap + 2 * pad)
     }
-    var bookSize: CGSize { horizontal ? CGSize(width: pageSize.width, height: pageSize.height * 2) : CGSize(width: pageSize.width * 2, height: pageSize.height) }
+    var bookSize: CGSize { horizontal ? CGSize(width: pageSize.width, height: pageSize.height * Double(leaves)) : CGSize(width: pageSize.width * Double(leaves), height: pageSize.height) }
     /// Page depth measured away from the crease.
     var depth: Double { horizontal ? pageSize.height : pageSize.width }
 
     func center(x: Int, y: Int) -> CGPoint {
         CGPoint(x: pad + Double(x) * (tile + gap) + tile / 2, y: pad + Double(y) * (tile + gap) + tile / 2)
     }
-    func center(_ cell: Cell) -> CGPoint { let s = spread.slot(cell); return center(x: s.x, y: s.y) }
+    /// Ch. 12 trifold: a column past the folding page (≥ 2N, face 0: the third page on the right page's outer edge) lies a
+    /// page further out along it; a column before the fixed page (< 0, face 2: the left page aside) a page further out
+    /// beyond the fixed one. Both stay in their page's coordinates, so the page's own projection carries them.
+    func center(_ cell: Cell) -> CGPoint {
+        let n = spread.columnsPerPage
+        if cell.c >= 2 * n {
+            let p = center(Cell(cell.c - n, cell.r))
+            return horizontal ? CGPoint(x: p.x, y: p.y - pageSize.height) : CGPoint(x: p.x + pageSize.width, y: p.y)
+        }
+        if cell.c < 0 {
+            let p = center(Cell(cell.c + n, cell.r))
+            return horizontal ? CGPoint(x: p.x, y: p.y + pageSize.height) : CGPoint(x: p.x - pageSize.width, y: p.y)
+        }
+        let s = spread.slot(cell); return center(x: s.x, y: s.y)
+    }
     func stackCenter(_ cell: Cell) -> CGPoint { let s = spread.stackSlot(cell); return center(x: s.x, y: s.y) }
 
     /// `margins`: the chapter has margin marks (二 桥栏 · 三 挂灯 · 四 芦苇 + 渡船). design-review-skins §1.2 #2 sets the
@@ -29,15 +45,15 @@ struct BookGeometry {
     /// grows to ⌈0.3 × tile⌉ and the tile gives way to fit (72 → ~66 pt on a 402 pt phone), so a mark never overlaps a
     /// square or gets clipped. It is set by the chapter, not by high contrast / reduce transparency (which only hide the
     /// marks), so toggling those never reflows the board. Every other case keeps the 10 pt pad and draws no marks.
-    static func make(rows: Int, orientation: Spread.Orientation, available: CGSize, large: Bool, columnsPerPage n: Int = 4, margins: Bool = false) -> BookGeometry {
+    static func make(rows: Int, orientation: Spread.Orientation, available: CGSize, large: Bool, columnsPerPage n: Int = 4, margins: Bool = false, leaves: Int = 2) -> BookGeometry {
         let s = Spread(orientation, columnsPerPage: n, rows: rows)
         var pad = 10.0
         let gap = 4.0
         let across = Double(s.slotsAcross), down = Double(s.slotsDown)
         let horizontal = orientation == .horizontalCrease
-        let pageW = horizontal ? available.width : available.width / 2
+        let pageW = horizontal ? available.width : available.width / Double(leaves)
         let fitW = (pageW - 2 * pad - (across - 1) * gap) / across
-        let pageH = horizontal ? available.height / 2 : available.height
+        let pageH = horizontal ? available.height / Double(leaves) : available.height
         let fitH = (pageH - 2 * pad - (down - 1) * gap) / down
         var tile = horizontal ? (rows >= 5 ? 63.0 : 80.0) : 76.0
         if large {
@@ -52,7 +68,7 @@ struct BookGeometry {
                 tile = max(30, min(tile, fw, fh))
             }
         }
-        return BookGeometry(spread: s, tile: floor(tile), pad: pad)
+        return BookGeometry(spread: s, tile: floor(tile), pad: pad, leaves: leaves)
     }
 }
 
@@ -80,11 +96,11 @@ struct BookView: View {
     var body: some View {
         let orientation: Spread.Orientation = model.hingeKind == .device || available.width > available.height * 1.15 ? .verticalCrease : .horizontalCrease
         let geo = BookGeometry.make(rows: model.board.h, orientation: orientation, available: available, large: settings.largeGrid,
-                                    columnsPerPage: model.config.columnsPerPage, margins: !model.paper.margin.isEmpty)
+                                    columnsPerPage: model.config.columnsPerPage, margins: !model.paper.margin.isEmpty, leaves: model.isTrifold ? 3 : 2)
         let book = geo.bookSize
         // the camera book is shorter on screen than its layout: measure what it really covers
         let overflow = orientation == .horizontalCrease
-            ? max(0, BookCamera.flatHeight(page: geo.pageSize, container: book, reduceMotion: settings.motionReduced, large: settings.largeGrid) + 8 - available.height)
+            ? max(0, BookCamera.flatHeight(page: geo.pageSize, container: book, reduceMotion: settings.motionReduced, large: settings.largeGrid, tri: model.trifoldFace) + 8 - available.height)
             : max(0, book.height - available.height)
         let y0 = overflow > 0 ? 0 : (available.height - book.height) / 2
         let x0 = (available.width - book.width) / 2
@@ -178,7 +194,9 @@ struct BookView: View {
         guard model.canDrag else { return }
         // the grabbed point's distance from the crease (at least a third of the page, so a grab near the crease is not twitchy)
         let local = CGPoint(x: loc.x - origin.x, y: loc.y - origin.y)
-        let crease = geo.horizontal ? geo.pageSize.height : geo.pageSize.width
+        // ch. 12: the crease in hand is not mid-book on a trifold — read it off the camera (face 2: the second crease)
+        let crease = geo.horizontal ? (model.isTrifold ? Double(camera(model.angle, geo: geo).project(SIMD3(0, 0, 0)).y) : geo.pageSize.height)
+            : (model.isTrifold && model.trifoldFace == 2 ? 2 * geo.pageSize.width : geo.pageSize.width)
         let dist = geo.horizontal ? abs(crease - local.y) : abs(local.x - crease)
         let a = model.angle * .pi / 180
         // a grab on the closed book or on the fixed page counts from the crease too
@@ -215,8 +233,8 @@ struct BookView: View {
     private var probing: Bool { UserDefaults.standard.bool(forKey: "probe") }
 
     private func camera(_ fold: Double, geo: BookGeometry) -> BookCamera {
-        BookCamera.make(fold: fold, pitch: pan.pitch, page: geo.pageSize, container: geo.bookSize,
-                        reduceMotion: settings.motionReduced, large: settings.largeGrid)
+        BookCamera.make(fold: fold, pitch: model.isTrifold && !pan.active ? model.cameraPitch : pan.pitch, page: geo.pageSize, container: geo.bookSize,
+                        reduceMotion: settings.motionReduced, large: settings.largeGrid, tri: model.trifoldFace)
     }
     /// Screen y (book frame) of the grabbed point G, d from the crease on the top page, at fold angle `t`.
     private func grabY(_ t: Double, geo: BookGeometry) -> Double {
@@ -375,6 +393,11 @@ private struct BookBody: View {
         let showBack = va > 90
         let pressed = model.press * 2
         ZStack(alignment: .topLeading) {
+            // ch. 12, the third page's crease in hand: the left page lies aside beyond the right one
+            if model.trifoldFace == 2 {
+                TrifoldPage(model: model, geo: geo, rotorSpace: rotorSpace, part: .aside)
+                    .frame(width: page.width, height: page.height).offset(x: -page.width)
+            }
             // the fixed page, with the folding page's shadow creeping over it
             FixedPage(model: model, geo: geo, rotorSpace: rotorSpace, angle: va)
                 .frame(width: page.width, height: page.height)
@@ -386,6 +409,11 @@ private struct BookBody: View {
                 if showBack {
                     BackFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: va).scaleEffect(x: -1, y: 1)
                 } else {
+                    // ch. 12, face 0: the third page lies flat beyond the right page and turns with it
+                    if model.trifoldFace == 0 {
+                        TrifoldPage(model: model, geo: geo, rotorSpace: rotorSpace, part: .third, angle: va, interactive: true)
+                            .frame(width: page.width, height: page.height).offset(x: page.width)
+                    }
                     FrontFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: va)
                     if model.finaleSealSplit, let g = model.goalStackSlot {
                         FinaleSealHalf(edge: .trailing, at: CGPoint(x: 0, y: geo.center(x: 0, y: g.y).y))
@@ -416,6 +444,7 @@ private struct BookBody: View {
                 .frame(width: 24, height: page.height)
                 .offset(x: page.width - 12, y: 0)
         }
+        .offset(x: model.trifoldFace == 2 ? page.width : 0)   // ch. 12: the sheet stays put, the crease in hand moves
         .frame(width: geo.bookSize.width, height: geo.bookSize.height, alignment: .topLeading)
     }
 }
@@ -428,7 +457,8 @@ private struct FoldControl: View {
             .contentShape(Rectangle())
             .allowsHitTesting(false)
             .accessibilityElement()
-            .accessibilityLabel(L10n.t("fold.page"))
+            // ch. 12: in the third page's view the hinge in hand is the third page's (a11y.js)
+            .accessibilityLabel(L10n.t("fold.page") + (model.onFlap ? L10n.t("sep") + L10n.t("tri.layerThird") : ""))
             .accessibilityValue(model.foldValue)
             .accessibilityHint(L10n.t("fold.pageHint"))
             .accessibilityIdentifier("fold.page")
@@ -441,7 +471,8 @@ private struct FoldControl: View {
                 }
             }
             .accessibilityActions { if model.canLean { Button(L10n.t("pre.leanLabel")) { model.lean() } } }
-            .accessibilityActions { if model.board.pages == 3 { Button(L10n.t("flip.action")) { model.flipAccessibilityAction() } } }
+            .accessibilityActions { if model.hasThirdPage { Button(L10n.t("flip.action")) { model.flipAccessibilityAction() } } }
+            .accessibilityActions { if model.isTrifold { Button(L10n.t("pre.thirdLabel")) { model.switchCrease() } } }
             .accessibilityAction(named: L10n.t("closeAllLabel")) { model.foldTo(180) }
             .accessibilityAction(named: L10n.t("openAllLabel")) { model.foldTo(0) }
             .accessibilityAction(named: L10n.t("undo")) { model.undo() }
@@ -535,6 +566,8 @@ private struct TileItem: View {
         ZStack {
             face
             if shaded { ShadeMark(size: geo.tile) }
+            // ch. 12, the folded leaf: a square of the right page seen through a hole of the third page over it
+            if model.seenThroughHole(c) { ThroughHoleMark(size: geo.tile) }
             // the shadows lock onto this gap: its outline lights up for 400 ms (design-review-ch3 §3)
             if !veiled && model.lockFlash.contains(c) { LockFlash(size: geo.tile) }
         }
@@ -609,7 +642,8 @@ private struct TileAccessibility: ViewModifier {
             .accessibilityAction(named: L10n.t("foldMoreLabel")) { model.foldBy(1) }
             .accessibilityAction(named: L10n.t("foldLessLabel")) { model.foldBy(-1) }
             .accessibilityActions { if model.canLean { Button(L10n.t("pre.leanLabel")) { model.lean() } } }
-            .accessibilityActions { if model.board.pages == 3 { Button(L10n.t("flip.action")) { model.flipAccessibilityAction() } } }
+            .accessibilityActions { if model.hasThirdPage { Button(L10n.t("flip.action")) { model.flipAccessibilityAction() } } }
+            .accessibilityActions { if model.isTrifold { Button(L10n.t("pre.thirdLabel")) { model.switchCrease() } } }
             .accessibilityAction(named: L10n.t("closeAllLabel")) { model.foldTo(180) }
             .accessibilityAction(named: L10n.t("openAllLabel")) { model.foldTo(0) }
             .accessibilityAction(named: L10n.t("undo")) { model.undo() }
@@ -808,6 +842,8 @@ private struct FrontFace: View {
             MarginLayer(model: model, geo: geo, page: .folding)
             if model.board.lamp.contains("L") { LampCorner(geo: geo, fixed: false, lamp: model.board.lamp) }
             if model.shownFace == 1 { TurnedFace(model: model, geo: geo, bleed: true) }
+            // ch. 12: the lifted sheet is the third page (face 2) or the third page folded over the right one (face 3)
+            if let f = model.trifoldFace, f != 0 { ThirdPageTint() }
             // the top page stays tappable (and in VoiceOver) while it lies flat or stands: 2-1's goal is up there
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: targets && (angle < 20 || model.posture == .standing || (model.liftedPageLive && model.rules.lit(model.angle))))
             ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .folding),
@@ -1164,36 +1200,47 @@ struct BookCamera {
     }
 
     /// How tall the flat book is on screen (large grid: it may scroll).
-    static func flatHeight(page: CGSize, container: CGSize, reduceMotion: Bool, large: Bool) -> Double {
-        let c = make(fold: 0, pitch: GameModel.handPitch, page: page, container: container, reduceMotion: reduceMotion, large: large)
-        let W = Double(page.width), H = Double(page.height)
-        let ys = [SIMD3<Double>(-W / 2, H, 0), SIMD3(W / 2, H, 0), SIMD3(-W / 2, -H, 0), SIMD3(W / 2, -H, 0)].map { Double(c.project($0).y) }
+    static func flatHeight(page: CGSize, container: CGSize, reduceMotion: Bool, large: Bool, tri: Int? = nil) -> Double {
+        let c = make(fold: 0, pitch: GameModel.handPitch, page: page, container: container, reduceMotion: reduceMotion, large: large, tri: tri)
+        let W = Double(page.width), H = Double(page.height), (behind, ahead) = extents(tri)
+        let ys = [SIMD3<Double>(-W / 2, behind * H, 0), SIMD3(W / 2, behind * H, 0), SIMD3(-W / 2, -ahead * H, 0), SIMD3(W / 2, -ahead * H, 0)].map { Double(c.project($0).y) }
         return ys.max()! - min(0, ys.min()!)
     }
 
     /// `pitch` in degrees (the model's camera pose). The scale is fitted once for the flat book @12° and the standing
     /// book @40°, so nothing zooms while the page turns or the camera moves; the crease stays put on screen (cy is
     /// anchored to the flat frame) and the book only slides sideways with the yaw.
-    static func make(fold: Double, pitch: Double, page: CGSize, container: CGSize, reduceMotion rm: Bool, large: Bool) -> BookCamera {
+    /// Pages on the table behind the crease in view (the fixed side) and along the folding leaf. A ch. 12 trifold (`tri` =
+    /// its face) keeps all three pages in frame and the sheet still on screen whichever crease is in hand: face 0 / 3 the
+    /// book's crease (left behind; right + third ahead), face 2 the third page's (left aside + right behind; third ahead).
+    static func extents(_ tri: Int?) -> (behind: Double, ahead: Double) {
+        guard let tri else { return (1, 1) }
+        return tri == 2 ? (2, 1) : (1, 2)
+    }
+
+    static func make(fold: Double, pitch: Double, page: CGSize, container: CGSize, reduceMotion rm: Bool, large: Bool, tri: Int? = nil) -> BookCamera {
         let W = Double(page.width), H = Double(page.height), Wc = Double(container.width), Hc = Double(container.height)
         let f = 2.6 * Hc
         func yaw(_ a: Double) -> Double { rm ? 0 : 18 * max(0, sin(a * .pi / 180)) * .pi / 180 }
         func pose(_ a: Double, _ p: Double) -> (Double, Double) { (p * .pi / 180, yaw(a)) }
-        func box(_ c: BookCamera, _ a: Double) -> CGRect {
+        func box(_ c: BookCamera, _ a: Double, _ ext: (behind: Double, ahead: Double) = (1, 1)) -> CGRect {
             let t = a * .pi / 180, e = SIMD3<Double>(0, -cos(t), sin(t))
-            let l = SIMD3<Double>(-W / 2, 0, 0), r = SIMD3<Double>(W / 2, 0, 0)
-            let pts = [l + SIMD3(0, H, 0), r + SIMD3(0, H, 0), l, r, l + H * e, r + H * e].map(c.project)
+            let l = SIMD3<Double>(-W / 2, 0, 0), r = SIMD3<Double>(W / 2, 0, 0), B = ext.behind * H, A = ext.ahead * H
+            let pts = [l + SIMD3(0, B, 0), r + SIMD3(0, B, 0), l, r, l + A * e, r + A * e].map(c.project)
             let xs = pts.map(\.x), ys = pts.map(\.y)
             return CGRect(x: xs.min()!, y: ys.min()!, width: xs.max()! - xs.min()!, height: ys.max()! - ys.min()!)
         }
+        // the scale fits the trifold's longest pose (the book's crease, the leaf two pages long) in every face, so
+        // nothing zooms when the crease in hand changes; the crease's place on screen follows the face's extents
+        let fit = tri == nil ? (behind: 1.0, ahead: 1.0) : (behind: 1.0, ahead: 2.0), ext = extents(tri)
         let (p0, q0) = pose(0, GameModel.handPitch), (p1, q1) = pose(90, GameModel.wallPitch)
-        let flat = box(BookCamera(pitch: p0, yaw: q0, f: f, k: 1, cx: 0, cy: 0), 0)
-        let stand = box(BookCamera(pitch: p1, yaw: q1, f: f, k: 1, cx: 0, cy: 0), 90)
+        let flat = box(BookCamera(pitch: p0, yaw: q0, f: f, k: 1, cx: 0, cy: 0), 0, fit)
+        let stand = box(BookCamera(pitch: p1, yaw: q1, f: f, k: 1, cx: 0, cy: 0), 90, fit)
         var k = min(1, (Wc - 6) / Double(max(flat.width, stand.width)))
         if !large { k = min(k, Hc / Double(flat.height)) }
         let (p, q) = pose(fold, pitch)
         var c = BookCamera(pitch: p, yaw: q, f: f, k: k, cx: 0, cy: 0)
-        let ref = box(BookCamera(pitch: p0, yaw: q0, f: f, k: k, cx: 0, cy: 0), 0)
+        let ref = box(BookCamera(pitch: p0, yaw: q0, f: f, k: k, cx: 0, cy: 0), 0, ext)
         c.cx = Wc / 2 - Double(box(c, fold).midX)
         c.cy = large ? 4 - Double(ref.minY) : Hc / 2 - Double(ref.midY)
         return c
@@ -1290,13 +1337,20 @@ private struct CameraBook: View {
         let page = geo.pageSize, W = Double(page.width), H = Double(page.height)
         let th = model.angle + model.rubber + model.tease            // fold degrees (0 flat … 180 shut)
         let cam = BookCamera.make(fold: th, pitch: model.cameraPitch, page: page, container: geo.bookSize, reduceMotion: AppSettings.shared.motionReduced,
-                                  large: AppSettings.shared.largeGrid)
+                                  large: AppSettings.shared.largeGrid, tri: model.trifoldFace)
         let t = th * .pi / 180
         let fold = SIMD3<Double>(0, -cos(t), sin(t))                  // from the crease along the folding page
         let ex = SIMD3<Double>(1, 0, 0), edge0 = SIMD3<Double>(-W / 2, 0, 0)
         let showBack = th > 90 + cam.pitchDegrees
         let rise = max(0, 1 - abs(th - 90) / 30)                      // the tabs: up between 120° and 60° (physical)
+        let tri = model.trifoldFace
         ZStack(alignment: .topLeading) {
+            // ch. 12, the third page's crease in hand: the left page lies aside, flat, beyond the right page
+            if tri == 2 {
+                TrifoldPage(model: model, geo: geo, rotorSpace: rotorSpace, part: .aside)
+                    .frame(width: page.width, height: page.height)
+                    .projectionEffect(cam.transform(o: edge0 + SIMD3(0, H, 0), eu: ex, ev: SIMD3(0, 1, 0)))
+            }
             FixedPage(model: model, geo: geo, rotorSpace: rotorSpace, angle: th, targets: false)
                 .frame(width: page.width, height: page.height)
                 .overlay { if model.finaleSealSplit, let g = model.goalStackSlot {
@@ -1304,6 +1358,20 @@ private struct CameraBook: View {
                 } }
                 .projectionEffect(cam.transform(o: edge0, eu: ex, ev: SIMD3(0, 1, 0)))
             Group {
+                // ch. 12, the book's crease with the third page flat: it lifts with the right page, one page further
+                // out along the leaf (its front up to 90°, its bare back beyond — shut, it lies past the left page)
+                if tri == 0 {
+                    if showBack {
+                        TrifoldPage(model: model, geo: geo, rotorSpace: rotorSpace, part: .thirdBack)
+                            .frame(width: page.width, height: page.height)
+                            .projectionEffect(cam.transform(o: edge0 + H * fold, eu: ex, ev: fold))
+                    } else {
+                        TrifoldPage(model: model, geo: geo, rotorSpace: rotorSpace, part: .third, angle: th)
+                            .frame(width: page.width, height: page.height)
+                            .environment(\.looseUpright, model.paper.card)
+                            .projectionEffect(cam.transform(o: edge0 + 2 * H * fold, eu: ex, ev: -fold))
+                    }
+                }
                 if showBack {
                     BackFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: th, targets: false, stones: !(model.paper.backlit && th < 160))
                         .frame(width: page.width, height: page.height)
@@ -1550,6 +1618,11 @@ private struct ProjectedTargets: View {
                 out.append(target(fc, quad(c) { u, v in SIMD3(u - W / 2, v, 0) }))
                 if showFolding {
                     upper.append(target(s.cell(page: .folding, x: x, y: y), quad(c) { u, v in SIMD3(u - W / 2, 0, 0) + (H - v) * fold }))
+                    // ch. 12, face 0: the third page, a page further out along the same leaf
+                    if model.trifoldFace == 0 {
+                        let fc = s.cell(page: .folding, x: x, y: y)
+                        upper.append(target(Cell(fc.c + s.columnsPerPage, fc.r), quad(c) { u, v in SIMD3(u - W / 2, 0, 0) + (2 * H - v) * fold }))
+                    }
                 }
             }
         } }
@@ -1666,4 +1739,79 @@ private struct GluePullLayer: View {
 nonisolated struct QuadShape: Shape {
     let points: [CGPoint]
     func path(in r: CGRect) -> Path { Path { p in p.addLines(points.map { CGPoint(x: r.minX + $0.x, y: r.minY + $0.y) }); p.closeSubpath() } }
+}
+
+// MARK: - ch. 12 「三折」: the third page and the left page aside
+
+/// Vol. 3 ch. 12 (fold-proto design-ch12 §1, main.js paintTiles): the sheet that is not one of the two pages in view.
+/// `.third` — face 0, the third page lying flat beyond the right page's outer edge, lifting with it (its squares are map
+/// columns 8–11, drawn in the folding page's slots: column c + 4 where the right page has c). `.thirdBack` — its bare
+/// back once the leaf is past upright (shut, it lies face down beyond the left page). `.aside` — face 2, the left page
+/// lying flat beyond the right page, out of reach (visible columns −4…−1). Taps and VoiceOver go to ProjectedTargets.
+private struct TrifoldPage: View {
+    enum Part { case third, thirdBack, aside }
+    let model: GameModel
+    let geo: BookGeometry
+    let rotorSpace: Namespace.ID
+    let part: Part
+    var angle = 0.0
+    /// The side-on turn (landscape) has no projected targets: the third page's squares take taps themselves.
+    var interactive = false
+    @Environment(\.highContrast) private var hc
+
+    var body: some View {
+        let s = geo.spread, page = geo.pageSize, n = s.columnsPerPage
+        let a = max(0, min(180, angle)) * .pi / 180
+        let cells = (0..<s.slotsAcross).flatMap { x in (0..<s.slotsDown).map { y -> (cell: Cell, slot: CGPoint) in
+            let c = s.cell(page: part == .aside ? .fixed : .folding, x: x, y: y)
+            return (cell: Cell(part == .aside ? c.c - n : c.c + n, c.r), slot: geo.center(x: x, y: y))
+        } }
+        ZStack(alignment: .topLeading) {
+            switch part {
+            case .thirdBack:
+                if hc { Tok.hcGround.overlay(Rectangle().strokeBorder(.black, style: StrokeStyle(lineWidth: 1.5, dash: [6, 3]))) }
+                else {
+                    PaperSurface(color: Tok.paperBack, back: true)
+                    Color.black.opacity(0.10 * sin(a)).allowsHitTesting(false)
+                }
+            case .third, .aside:
+                PageSheet(horizontal: geo.horizontal, isFixed: part == .aside, color: model.paper.color)
+                if part == .third { ThirdPageTint() }
+                if hc && part == .third { Rectangle().strokeBorder(.black, style: StrokeStyle(lineWidth: 3, dash: [7, 5])).padding(6) }
+                if model.paper.ruled && !hc { RuledGrid(tile: geo.tile, gap: geo.gap, pad: geo.pad, across: s.slotsAcross, down: s.slotsDown) }
+                TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: interactive && part == .third && angle < 20, dim: part == .aside ? 0.55 : 1)
+                if part == .third && !hc {
+                    // turning away from the light, like the right page it is joined to
+                    Color.black.opacity(0.13 * sin(a)).allowsHitTesting(false)
+                }
+                if part == .aside && !hc { Color.white.opacity(0.18).allowsHitTesting(false) }
+            }
+        }
+        .frame(width: page.width, height: page.height, alignment: .topLeading)
+        .accessibilityHidden(true)
+    }
+}
+
+/// The third page's sheet a shade warmer than the right page (its own card), so the two read apart wherever they meet.
+private struct ThirdPageTint: View {
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        if !hc { Color(hex: 0xB98A4E).opacity(0.10).blendMode(.multiply).allowsHitTesting(false).accessibilityHidden(true) }
+    }
+}
+
+/// Face 3: a square of the right page seen through a hole of the third page folded over it (main.js `.through`): the
+/// hole's cut edge as a dashed ring inside the square, a little shade in the hole.
+private struct ThroughHoleMark: View {
+    let size: Double
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        RoundedRectangle(cornerRadius: 3, style: .continuous)
+            .strokeBorder(hc ? Color.black : Tok.ink700.opacity(0.55), style: StrokeStyle(lineWidth: hc ? 2.5 : 1.4, dash: [4, 3]))
+            .background(RoundedRectangle(cornerRadius: 3, style: .continuous).fill(Color.black.opacity(hc ? 0 : 0.05)))
+            .padding(size * 0.07)
+            .frame(width: size, height: size)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+    }
 }

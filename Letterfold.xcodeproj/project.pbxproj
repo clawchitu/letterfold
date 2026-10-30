@@ -11,6 +11,7 @@
 		089C73E24BB02BF7002C67DC /* Chapter8Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAF188A41CB92A6FB2A0D7D /* Chapter8Marks.swift */; };
 		0ACF1846232647123A81BF6B /* Skins.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD058B4451F306D134BBAF38 /* Skins.swift */; };
 		11BE4B3530A847817165737B /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDBB77B419ABE4C00953E0 /* App.swift */; };
+		16991211E73EA1ECC8352380 /* Chapter12Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9528175E86BD342A9AD5C46 /* Chapter12Marks.swift */; };
 		23541C263217811CE7EE57A7 /* BookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9649A387FE6D80E352CD3FC9 /* BookView.swift */; };
 		2440B5FB027790D0976AF907 /* Hinge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2991315D14E1D1169059EEE2 /* Hinge.swift */; };
 		287378E19EFCA32706FC4E35 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4097B0AC06804266642AEB30 /* Settings.swift */; };
@@ -111,6 +112,7 @@
 		AD2ACD110F34C4648B09D796 /* PlaythroughPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaythroughPlan.swift; sourceTree = "<group>"; };
 		B298358295F0A825501A00E9 /* LevelScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelScreen.swift; sourceTree = "<group>"; };
 		B3987D3141BCF95FDDC471FE /* LetterfoldUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterfoldUITests.swift; sourceTree = "<group>"; };
+		B9528175E86BD342A9AD5C46 /* Chapter12Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter12Marks.swift; sourceTree = "<group>"; };
 		BB9E90E2E937D22C60176674 /* Chapter11Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter11Marks.swift; sourceTree = "<group>"; };
 		CC0494484CEC40B87ECCEA13 /* Chapter4UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter4UITests.swift; sourceTree = "<group>"; };
 		D182D97E9762DC8C6D7AA780 /* Chapter9Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter9Marks.swift; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 				D182D97E9762DC8C6D7AA780 /* Chapter9Marks.swift */,
 				1A59202716B0AC3485A116A1 /* Chapter10Marks.swift */,
 				BB9E90E2E937D22C60176674 /* Chapter11Marks.swift */,
+				B9528175E86BD342A9AD5C46 /* Chapter12Marks.swift */,
 				31779719E8C773D36D2CFC1B /* Contents.swift */,
 				45EBF8A2E746E16AE1153A20 /* GameModel.swift */,
 				578B23505A90DB23ECB3C2A4 /* Haptics.swift */,
@@ -347,6 +350,7 @@
 				23541C263217811CE7EE57A7 /* BookView.swift in Sources */,
 				FEF3E51D6AE2D0172801FBE4 /* Chapter10Marks.swift in Sources */,
 				DCD8669646E4544F20D36916 /* Chapter11Marks.swift in Sources */,
+				16991211E73EA1ECC8352380 /* Chapter12Marks.swift in Sources */,
 				089C73E24BB02BF7002C67DC /* Chapter8Marks.swift in Sources */,
 				E19FF7E22BAF0B7F47038916 /* Chapter9Marks.swift in Sources */,
 				47335045E1361AE66BF22A79 /* Contents.swift in Sources */,
