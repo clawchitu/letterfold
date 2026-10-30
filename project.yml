@@ -31,22 +31,21 @@ targets:
         CFBundleDisplayName: Letterfold
         CFBundleDevelopmentRegion: en
         CFBundleLocalizations: [en, zh-Hans, ja, ko]
-        CFBundleShortVersionString: "0.1"
-        CFBundleVersion: "26"
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "27"
         ITSAppUsesNonExemptEncryption: false
         UILaunchScreen:
           UIColorName: LaunchBackground
         CADisableMinimumFrameDurationOnPhone: true
         UIApplicationSupportsIndirectInputEvents: true
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
-        UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.haoqianglyu.letterfold
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        MARKETING_VERSION: "0.1"
-        CURRENT_PROJECT_VERSION: "25"
-        TARGETED_DEVICE_FAMILY: "1,2"
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "27"
+        TARGETED_DEVICE_FAMILY: "1"
         SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
         SWIFT_APPROACHABLE_CONCURRENCY: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
