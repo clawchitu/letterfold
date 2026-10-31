@@ -11,12 +11,16 @@ final class DuoUITests: XCTestCase {
 
     override func setUp() { continueAfterFailure = false }
 
-    func launch(_ level: Int, hingeStart: Int = 180) {
+    /// `mode`: "outer" (-hingeOuter YES: the hinge mechanics, exercised in the outer window the folded simulator
+    /// gives us), "inner" (-duoInnerSim YES: the real inner display's book-spine layout, vertical hinge at mid-window),
+    /// "phone" (no flag: the outer display as it ships — the hinge is not an input there).
+    func launch(_ level: Int, hingeStart: Int = 180, mode: String = "outer") {
         app = XCUIApplication()
         app.launchArguments = ["-resetProgress", "YES", "-noOpener", "YES", "-noSlips", "YES", "-probe", "YES", "-startLevel", "\(level)",
                                "-hinge", "fake", "-hingeStart", "\(hingeStart)", "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
+            + (mode == "outer" ? ["-hingeOuter", "YES"] : mode == "inner" ? ["-duoInnerSim", "YES"] : [])
         app.launch()
-        f = FoldDriver(app: app)
+        f = FoldDriver(app: app, vertical: mode == "inner")
         XCTAssertTrue(app.descendants(matching: .any)["fold.page"].waitForExistence(timeout: 8))
         Thread.sleep(forTimeInterval: 1)
     }
@@ -35,6 +39,52 @@ final class DuoUITests: XCTestCase {
         guard w >= 600 else { print("DUO \(what): window \(Int(w)) pt wide, not the inner display: phone layout"); return }
         let y = Double(f.probe("crease")) ?? -1
         XCTAssertLessThanOrEqual(abs(y - h / 2), 1, "\(what): crease \(y) on the hinge line \(h / 2)")
+    }
+
+    /// 3-3 远近 on the outer display (the tester's report on build 27): the half-open phone's hinge no longer drives the
+    /// book there, and the level plays like any iPhone with the finger (the playthrough's plan).
+    func testOuterDisplayIsAPhone() {
+        launch(16, mode: "phone")
+        f.hinge(from: 180, to: 80)
+        XCTAssertEqual(f.phys(), 180, "3-3 outer: the hinge is not an input on the outer display")
+        shot("outer-3-3-hinge-ignored")
+        f.walk(3, 3, wait: 7)
+        f.lean(to: 76, tol: 7)
+        shot("outer-3-3-standing")
+        f.walk(3, 1, wait: 2)
+        f.lean(to: 33, tol: 8)
+        shot("outer-3-3-lock")
+        f.walk(2, 0, wait: 2)
+        f.drag(0.30, 0.86)
+        XCTAssertEqual(f.phys(), 0, "3-3 outer: closed")
+        shot("outer-3-3-closed")
+        f.walk(1, 0, wait: 1); f.walk(0, 0, wait: 1)
+        won("outer-3-3")
+    }
+
+    /// 3-3 远近 on the inner display as the real Duo presents it (a landscape window, a vertical hinge = the book's
+    /// spine): the crease sits on the hinge, the page lies on the glass (relative angle) and the whole level is played
+    /// with the hinge for every fold and real taps for every walk.
+    func testInnerBookSpinePlaysThreeThree() {
+        launch(16, mode: "inner")
+        let mid = Double(app.frame.width) / 2
+        XCTAssertEqual(Double(f.probe("creaseX")) ?? -1, mid, accuracy: 1, "3-3 inner: the crease on the vertical hinge")
+        shot("inner-3-3-flat")
+        f.walk(3, 3, wait: 7)
+        f.hinge(from: 180, to: 81)                 // fold 103.5 (the 30°–90° squeeze): the page past standing
+        XCTAssertEqual(Double(f.phys()), 77, accuracy: 4, "3-3 inner: the hinge leans the page")
+        shot("inner-3-3-90")
+        f.walk(3, 1, wait: 2)
+        XCTAssertTrue(f.isHere(3, 1), f.tile(3, 1).label)
+        f.hinge(from: 81, to: 52)                  // fold 147: the lock window (146.5–151)
+        shot("inner-3-3-lock")
+        f.walk(2, 0, wait: 2)
+        XCTAssertTrue(f.isHere(2, 0), "3-3 inner: the shadow square is tappable: \(f.tile(2, 0).label)")
+        f.hinge(from: 52, to: 0)
+        XCTAssertEqual(f.phys(), 0, "3-3 inner: the hinge shut the book")
+        shot("inner-3-3-closed")
+        f.walk(1, 0, wait: 1); f.walk(0, 0, wait: 1)
+        won("inner-3-3")
     }
 
     func won(_ what: String) {

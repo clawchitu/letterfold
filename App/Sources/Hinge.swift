@@ -5,19 +5,46 @@ import FoldCore
 
 let hingeLog = Logger(subsystem: "com.haoqianglyu.letterfold", category: "hinge")
 
-/// design-duo.md §2: the Duo's inner display. The SDK has no hinge geometry, so the hinge is where the long side halves:
-/// in the portrait window a horizontal line at screen.bounds.height / 2 (475.5 pt). Only with a hinge that reported
-/// itself and a window on a display ≥ 600 pt wide (the inner one); the outer display and every other iPhone: nil.
+/// design-duo.md §0/§2: the Duo's inner display. The SDK has no hinge geometry, so the hinge is where the long side
+/// halves. The real inner panel (2007 × 2853 px, nativeOrientation 270) presents a portrait-only app LANDSCAPE:
+/// a 951 × 669 pt window with a VERTICAL hinge at x = 475.5 — the book-spine grip, the vertical-crease spread. (Build 27
+/// assumed a 669 × 951 portrait window with a horizontal hinge; the portrait branch is kept should a window ever
+/// come portrait.) The inner display is the one whose short side is ≥ 600 pt; the outer display (466 × 678) and every
+/// other iPhone: nil.
 enum DuoScreen {
-    /// Debug (-duoShot): the inner display's size, forced, for ImageRenderer snapshots off the real Duo.
+    enum Axis { case vertical, horizontal }
+    struct Hinge: Equatable { let axis: Axis; let at: CGFloat }
+    /// Debug (-duoShot): the inner display's window size, forced, for ImageRenderer snapshots off the real Duo.
     @MainActor static var forced: CGSize?
-    @MainActor static var hingeY: CGFloat? {
-        if let f = forced { return f.width >= 600 ? f.height / 2 : nil }
-        guard AppSettings.shared.hingePresent,
-              let screen = (UIApplication.shared.connectedScenes.first { $0 is UIWindowScene } as? UIWindowScene)?.screen,
-              screen.bounds.width >= 600 else { return nil }
-        return screen.bounds.height / 2
+    /// The window this app draws in: the foreground scene's key window (never a stale or other scene's screen).
+    @MainActor static var windowSize: CGSize? {
+        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+        let scene = scenes.first { $0.activationState == .foregroundActive && $0.keyWindow != nil }
+            ?? scenes.first { $0.keyWindow != nil } ?? scenes.first
+        return (scene?.keyWindow ?? scene?.windows.first)?.bounds.size
     }
+    /// The hinge line in window (= global) coordinates, only on the inner display with a hinge that reported itself.
+    @MainActor static var hinge: Hinge? {
+        if let f = forced { return hinge(in: f) }
+        guard AppSettings.shared.hingePresent, let size = windowSize else { return nil }
+        // UI tests (-duoInnerSim YES): the simulator boots folded (the app on the 466 pt outer display) and its hinge
+        // only turns in Device Hub, so the inner display's book-spine layout is played in the outer window: a vertical
+        // hinge at the window's middle, exactly the code path of the real 951 × 669 inner window
+        if UserDefaults.standard.bool(forKey: "duoInnerSim") { return Hinge(axis: .vertical, at: size.width / 2) }
+        return hinge(in: size)
+    }
+    static func hinge(in size: CGSize) -> Hinge? {
+        guard min(size.width, size.height) >= 600 else { return nil }
+        return size.width >= size.height ? Hinge(axis: .vertical, at: size.width / 2) : Hinge(axis: .horizontal, at: size.height / 2)
+    }
+    /// The portrait-window case only (lid above the hinge): the horizontal line.
+    @MainActor static var hingeY: CGFloat? { hinge.flatMap { $0.axis == .horizontal ? $0.at : nil } }
+    /// The book-spine case: the vertical line.
+    @MainActor static var hingeX: CGFloat? { hinge.flatMap { $0.axis == .vertical ? $0.at : nil } }
+    /// The window is on the inner display (whatever the hinge's axis): only there does the hinge drive the book. On the
+    /// outer display the hinge has nothing to do with the glass the player looks at (the tester's 3-3: a half-open phone
+    /// used on the outer display stood the page edge-on and its squares could not be tapped).
+    @MainActor static var inner: Bool { hinge != nil }
     /// The band under the fixed page kept for the top bar (「书」「?」), which moves below the hinge on the Duo.
     static let chromeBand: CGFloat = 56
 }

@@ -3,6 +3,8 @@ import XCTest
 /// Real one-finger drags on the book, shared by the chapter 3–4 tests and the playthrough.
 struct FoldDriver {
     let app: XCUIApplication
+    /// The vertical-crease spread (the Duo's inner display, -duoInnerSim): columns 0–3 left of the crease, 4–7 right.
+    var vertical = false
     var fold: XCUIElement { app.descendants(matching: .any)["fold.page"] }
     /// The physical angle on the fold control (180 flat … 0 shut).
     func phys() -> Int { Int((fold.value as? String ?? "").filter(\.isNumber)) ?? -1 }
@@ -76,7 +78,8 @@ struct FoldDriver {
     func isHere(_ c: Int, _ r: Int) -> Bool { tile(c, r).label.contains("你在这里") }
     func walk(_ c: Int, _ r: Int, wait: TimeInterval = 1.6) {
         XCTAssertTrue(tile(c, r).waitForExistence(timeout: 3), "tile-\(c)-\(r)")
-        tile(c, r).tapVisible(c)
+        if vertical { tile(c, r).coordinate(withNormalizedOffset: CGVector(dx: c < 4 ? 0.3 : 0.7, dy: 0.5)).tap() }
+        else { tile(c, r).tapVisible(c) }
         Thread.sleep(forTimeInterval: wait)
     }
     /// The UI-test probe (-probe YES): the locked gaps, the camera pitch and the finale seal.
