@@ -203,6 +203,10 @@ final class GameModel {
     /// past 90° the lid has turned its back and the leaf is drawn where it lands. Off the Duo it is the fold itself.
     func drawnFold(_ th: Double) -> Double {
         if let l = dragLid { return th - l }
+        // the book-spine grip (the real inner display, vertical hinge): both halves face the player until the phone
+        // shuts, so the leaf stays on the right half's glass; once the rules call the book shut (≥ foldMin) it is drawn
+        // as the stack over the left half, with the stack's targets (Codex review: a restart at 40° seeds 165°)
+        if duoLayout && orientation == .verticalCrease { return rules.posture(th) == .closed ? th : max(0, th - drawnOffset) }
         return th > 90 ? th : max(0, th - drawnOffset)
     }
     var spread: Spread { Spread(orientation, columnsPerPage: config.columnsPerPage, rows: board.h) }
@@ -336,6 +340,8 @@ final class GameModel {
     var probeAngle: Double = 0
     /// UI tests: the crease in hand's screen y (global points), ch. 12 only.
     var probeCreaseY: Double = 0
+    /// UI tests: the book's crease screen x (global points) in the vertical-crease spread on the Duo's inner display.
+    var probeCreaseX: Double = 0
     /// The 2-1 ghost hand is drawing the page: like a finger, it holds the camera until it lets go.
     @ObservationIgnored private var ghostDriving = false
     @ObservationIgnored private(set) var motionTarget: Double?
@@ -360,6 +366,11 @@ final class GameModel {
     /// for a while before it settles and `contact()` runs).
     @ObservationIgnored private var landing: (t: Double, v: Double)?
     @ObservationIgnored private var hingeActive = false
+    /// design-duo.md §2: the hinge drives the book only while the window is on the Duo's inner display — the glass it
+    /// folds. On the outer display the Duo is an ordinary iPhone, finger only (the tester's 3-3 on build 27: a half-open
+    /// phone used on the outer display stood the page edge-on and left its squares untappable). -hingeOuter YES (UI
+    /// tests: the simulator boots folded, so the fake hinge is exercised on the outer display) lifts the gate.
+    var hingeDrives: Bool { DuoScreen.inner || UserDefaults.standard.bool(forKey: "hingeOuter") }
     @ObservationIgnored private var hingeTarget = 0.0
     @ObservationIgnored private var hingeIdle: Task<Void, Never>?
 
@@ -570,7 +581,7 @@ final class GameModel {
         MusicDirector.shared.setChapter(chapter.id)   // the chapter's timbre, crossfading over 2 s
         // a trifold restarts laid flat on the book's crease (face 0, f 0: game.restart rebuilds the board), so the
         // phone's angle goes on as the book's fold, which face 0 allows (design-duo.md §5)
-        if hingeKind == .device, settings.hingeFold, let a = (device as? any PhysicalHinge)?.lastAngle {
+        if hingeKind == .device, settings.hingeFold, hingeDrives, let a = (device as? any PhysicalHinge)?.lastAngle {
             setAngle(a); pending = Pending()
             if looksAtWall(angle) { cameraPitch = Self.wallPitch }   // a hinge already standing: look at the wall
         }
@@ -762,7 +773,7 @@ final class GameModel {
             sync()
         }
         forgetMotion()
-        if hingeKind == .device, settings.hingeFold, let a = (device as? any PhysicalHinge)?.lastAngle {
+        if hingeKind == .device, settings.hingeFold, hingeDrives, let a = (device as? any PhysicalHinge)?.lastAngle {
             setAngle(a); pending = Pending()
         }
         aimCamera(at: angle)
@@ -1210,7 +1221,7 @@ final class GameModel {
     /// 160 ms (one undo step), then follows 1:1; once no update came for max(300 ms, 2 × the update interval) the finger
     /// has the page again and the virtual angle snaps to its rest (the paper on the glass does not move).
     private func hingeMoved(physical: Double, status: HingeStatus) {
-        let blocked = !settings.hingeFold || dragging || aha
+        let blocked = !settings.hingeFold || dragging || aha || !hingeDrives
         let action = hinge.update(physical: physical, status: status, at: CACurrentMediaTime(), blocked: blocked)
         hingeTarget = hinge.target
         // a blocked update resets the tracker (setting off, a finger, the aha): the model lets go of the page too
@@ -1272,7 +1283,7 @@ final class GameModel {
     /// thumb and never with the hinge: 「也可以把手机合一点。」 fades in under the book for 6 s (or until the hinge moves),
     /// once per install; under VoiceOver it is one announcement instead.
     private func offerHingeHint() {
-        guard settings.hingePresent, settings.hingeFold, !settings.hingeHintSeen, hingeKind == .device, level.id == "facing",
+        guard settings.hingePresent, settings.hingeFold, hingeDrives, !settings.hingeHintSeen, hingeKind == .device, level.id == "facing",
               hasFolded, angle < 0.5, !dragging, !hingeActive, !won,
               ((device as? any PhysicalHinge)?.lastAngle ?? 1) < 0.5 else { return }
         settings.hingeHintSeen = true

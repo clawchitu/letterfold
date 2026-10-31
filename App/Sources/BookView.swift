@@ -89,6 +89,8 @@ struct BookView: View {
     @State private var pan = PanState()
     /// design-duo.md §2: this view's top in screen coordinates, to pin the crease on the hinge.
     @State private var globalTop: Double = 0
+    /// design-duo.md §2: this view's leading edge in screen coordinates, to pin the vertical crease on the hinge.
+    @State private var globalLeft: Double = 0
 
     struct PanState {
         var active = false, twoFinger = false, d = 1.0, proj0 = 0.0, scroll0 = 0.0
@@ -103,12 +105,22 @@ struct BookView: View {
     }
 
     var body: some View {
-        let orientation: Spread.Orientation = available.width > available.height * 1.15 ? .verticalCrease : .horizontalCrease
+        // the Duo's vertical hinge is the book's spine whatever the window's shape (design-duo.md §2)
+        let orientation: Spread.Orientation = DuoScreen.hingeX != nil || available.width > available.height * 1.15 ? .verticalCrease : .horizontalCrease
         // design-duo.md §2: on the Duo's inner display the book's crease sits on the hinge; the lid carries only paper
         // (one page, ch. 12 two), the fixed page and the chrome band share the lower half
         let hingeY = orientation == .horizontalCrease && !settings.largeGrid ? DuoScreen.hingeY.map(Double.init) : nil
+        // the real inner display is a landscape window with a vertical hinge (design-duo.md §0): the book's spine, the
+        // vertical-crease spread. The fixed (left) page lies left of the hinge, the folding page on the right half
+        // (ch. 12 face 0: the right page and the third page beyond it, both on the right half)
+        let hingeX = orientation == .verticalCrease && !settings.largeGrid ? DuoScreen.hingeX.map(Double.init) : nil
         let leaves = model.isTrifold ? 3 : 2
         let fitted: CGSize = {
+            if let hingeX {
+                let left = hingeX - globalLeft - 4, right = globalLeft + available.width - hingeX - 4
+                let pageW = max(120, min(model.isTrifold ? right / 2 : right, left))
+                return CGSize(width: pageW * Double(leaves), height: available.height)
+            }
             guard let hingeY else { return available }
             let lid = hingeY - globalTop - 4, below = globalTop + available.height - hingeY - DuoScreen.chromeBand
             let pageH = max(120, min(model.isTrifold ? lid / 2 : lid, below))
@@ -130,7 +142,9 @@ struct BookView: View {
             }
             return overflow > 0 ? 0 : (available.height - book.height) / 2
         }()
-        let x0 = (available.width - book.width) / 2
+        // the book's crease (left | right) sits at book x = one page in every face (face 2 included: the left page
+        // aside at 0, the crease in hand one page further), so it lands on the hinge line
+        let x0 = hingeX.map { $0 - globalLeft - Double(geo.pageSize.width) } ?? (available.width - book.width) / 2
         let slipAnchor = SlipAnchor.make(geo: geo, container: book, origin: CGPoint(x: x0, y: y0), tri: model.trifoldFace, duo: hingeY != nil)
         ZStack(alignment: .topLeading) {
             BookBody(model: model, geo: geo, rotorSpace: rotorSpace)
@@ -145,6 +159,7 @@ struct BookView: View {
         }
         .frame(width: available.width, height: available.height, alignment: .topLeading)
         .onGeometryChange(for: Double.self) { Double($0.frame(in: .global).minY) } action: { globalTop = $0 }
+        .onGeometryChange(for: Double.self) { Double($0.frame(in: .global).minX) } action: { globalLeft = $0 }
         .clipped()
         .contentShape(Rectangle())
         .gesture(BookPan(began: { loc in panBegan(loc, geo: geo, origin: CGPoint(x: x0, y: y0 + scrollY)) },
@@ -171,7 +186,7 @@ struct BookView: View {
                 // UI tests: the shadow lock, the camera's pose and the finale's seal (design-review-ch4 §4.3–4.5)
                 Color.clear.frame(width: 2, height: 2)
                     .accessibilityElement().accessibilityIdentifier("probe.state")
-                    .accessibilityValue("lock=\(model.lockedCells.map { "\($0.c),\($0.r)" }.joined(separator: " "));cam=\(Int(model.cameraPitch.rounded()));seal=\(model.finaleSeal ? 1 : 0);split=\(model.finaleSealSplit ? 1 : 0);aha=\(model.aha ? 1 : 0);me=\(model.figureCell.c),\(model.figureCell.r);stuck=\(model.stuck ? 1 : 0);glued=\(model.gluePulls.count);face=\(model.shownFace);crease=\(Int(model.probeCreaseY.rounded()));said=\(model.lastAnnouncement ?? "");toast=\(model.toast ?? "");flight=\(model.rollFlight?.rolls.count ?? 0);balls=\(model.loosePoses().count)")
+                    .accessibilityValue("lock=\(model.lockedCells.map { "\($0.c),\($0.r)" }.joined(separator: " "));cam=\(Int(model.cameraPitch.rounded()));seal=\(model.finaleSeal ? 1 : 0);split=\(model.finaleSealSplit ? 1 : 0);aha=\(model.aha ? 1 : 0);me=\(model.figureCell.c),\(model.figureCell.r);stuck=\(model.stuck ? 1 : 0);glued=\(model.gluePulls.count);face=\(model.shownFace);crease=\(Int(model.probeCreaseY.rounded()));creaseX=\(String(format: "%.1f", model.probeCreaseX));said=\(model.lastAnnouncement ?? "");toast=\(model.toast ?? "");flight=\(model.rollFlight?.rolls.count ?? 0);balls=\(model.loosePoses().count)")
             }
         }
         .environment(\.goalIsFigure, model.goalIsFigure)
@@ -179,7 +194,7 @@ struct BookView: View {
         .environment(\.envelopeBack, model.isDark)
         .environment(\.envelopeOpened, model.level.id == "twolamps")
         .onChange(of: orientation, initial: true) { _, o in model.orientation = o }
-        .onChange(of: hingeY != nil, initial: true) { _, d in model.duoLayout = d }
+        .onChange(of: hingeY != nil || hingeX != nil, initial: true) { _, d in model.duoLayout = d }
         .onChange(of: slipAnchor, initial: true) { _, a in model.slipAnchor = a }
         .onChange(of: model.index) { _, _ in scrollY = 0 }
         .accessibilityElement(children: .contain)
@@ -355,7 +370,7 @@ struct BookView: View {
         if proj > d { raw = -(proj - d) / d * 57.3 }
         else if proj < -d { raw = 180 + (-d - proj) / d * 57.3 }
         else { raw = acos(proj / d) * 180 / .pi }
-        model.dragChanged(raw)
+        model.dragChanged(raw + pan.off)   // lid-relative on the Duo (pan.off = 0 elsewhere)
     }
 
     private func panEnded(_ t: CGPoint, _ v: CGPoint, geo: BookGeometry) {
@@ -425,8 +440,13 @@ private struct BookBody: View {
     @ViewBuilder private var legacyBody: some View {
         let page = geo.pageSize
         let va = model.angle + model.rubber + model.tease
-        let a = max(0, min(180, va)) * .pi / 180
-        let showBack = va > 90
+        // design-duo.md §2, paper on glass: on the Duo's inner display the folding page is turned by the virtual angle
+        // less the right half's own (GameModel.drawnFold; past 90° drawn where it lands). `va` keeps every content and
+        // shading decision; `ra` only turns the sheet. Off the Duo ra == va.
+        let ra = model.drawnFold(va)
+        let a = max(0, min(180, ra)) * .pi / 180
+        // the sheet's side facing the player: on the Duo's glass the front, until the book is shut
+        let showBack = ra > 90
         let pressed = model.press * 2
         ZStack(alignment: .topLeading) {
             // ch. 12, the third page's crease in hand: the left page lies aside beyond the right one
@@ -457,7 +477,7 @@ private struct BookBody: View {
                 }
             }
             .frame(width: page.width, height: page.height)
-            .rotation3DEffect(.degrees(-va), axis: (x: 0, y: 1, z: 0), anchor: .leading, perspective: 0.32)
+            .rotation3DEffect(.degrees(-ra), axis: (x: 0, y: 1, z: 0), anchor: .leading, perspective: 0.32)
             .offset(x: page.width, y: showBack ? pressed : 0)
             .shadow(color: .black.opacity(hc ? 0 : 0.10 * sin(a) + (showBack ? 0.06 : 0)), radius: 8 * sin(a / 2) + 2, x: 0, y: 3)
             // the crease: a bright line and a dark line (design-spec §4), lit up when the pages touch
@@ -474,6 +494,13 @@ private struct BookBody: View {
                     .position(x: page.width, y: geo.center(x: 0, y: model.crossingSlotX ?? 0).y)
                     .transition(AppSettings.shared.motionReduced ? .opacity : .asymmetric(insertion: .scale(scale: 1.6).combined(with: .opacity), removal: .opacity))
                     .accessibilityHidden(true)
+            }
+            // UI tests: the book's crease (left | right) on screen; the Duo pins it on the vertical hinge
+            if model.duoLayout {
+                Color.clear.frame(width: 1, height: 1)
+                    .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { model.probeCreaseX = Double($0.midX) }
+                    .position(x: model.trifoldFace == 2 ? 0 : page.width, y: page.height / 2)
+                    .allowsHitTesting(false).accessibilityHidden(true)
             }
             // VoiceOver / Switch Control: the page itself is an adjustable control (frame a11y-c2)
             FoldControl(model: model)

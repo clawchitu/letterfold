@@ -18,7 +18,9 @@ struct LevelScreen: View {
     var body: some View {
         let big = typeSize.isAccessibilitySize || settings.largeGrid
         // design-duo.md §2: on the Duo's inner display the lid carries only paper; the top bar sits below the fixed page
-        let duo = model.duoLayout
+        // (the portrait-window case only: on the real, landscape inner display the hinge is the vertical book spine and
+        // both halves carry paper, so the top bar stays on top)
+        let duo = model.duoLayout && model.orientation == .horizontalCrease
         VStack(spacing: 0) {
             if !duo { TopBar(model: model, router: router, nameFaded: nameFaded && !big && !settings.contrastHigh, inline: !big) }
             if big {

@@ -26,8 +26,10 @@ struct LetterfoldApp: App {
 }
 
 #if DEBUG
-/// -duoShot <file.png> (debug only): the level drawn as the Duo's inner display — 669 × 951 pt, safe areas 59 / 34, the
-/// hinge line at 475.5 — through ImageRenderer, so the inner layout can be checked on a simulator that boots folded.
+/// -duoShot <file.png> (debug only): the level drawn as the Duo's inner display as the real device presents it — a
+/// landscape window 951 × 669 pt (panel 2007 × 2853 px, nativeOrientation 270), safe areas 24 top / 21 bottom, the
+/// vertical hinge line at x 475.5 (red) — through ImageRenderer, so the inner layout can be checked on a simulator that
+/// boots folded.
 /// Pair with -hinge fake -hingeSequence (a move, so the hinge takes the book over) for the lid's angle. Writes the PNG.
 private struct DuoShotHost: View {
     let model: GameModel
@@ -37,15 +39,15 @@ private struct DuoShotHost: View {
     var body: some View {
         Text(done ? "duoShot done" : "duoShot…").accessibilityIdentifier("duoShot")
             .task {
-                let size = CGSize(width: 669, height: 951)
+                let size = CGSize(width: 951, height: 669)
                 DuoScreen.forced = size
                 try? await Task.sleep(for: .seconds(2.5))   // a -hingeSequence takes over and rests
                 let content = LevelScreen(model: model, router: router)
                     .environment(\.locale, L10n.locale)
-                    .padding(.top, 59).padding(.bottom, 34)
+                    .padding(.top, 24).padding(.bottom, 21)
                     .frame(width: size.width, height: size.height)
                     .background(TableBackground())
-                    .overlay { Rectangle().fill(Color.red.opacity(0.5)).frame(height: 1).position(x: size.width / 2, y: size.height / 2) }
+                    .overlay { Rectangle().fill(Color.red.opacity(0.5)).frame(width: 1).position(x: size.width / 2, y: size.height / 2) }
                 let r = ImageRenderer(content: content)
                 r.scale = 2
                 for _ in 0..<4 { _ = r.uiImage; try? await Task.sleep(for: .milliseconds(400)) }   // geometry callbacks settle
