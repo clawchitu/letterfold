@@ -204,8 +204,9 @@ final class GameModel {
     func drawnFold(_ th: Double) -> Double {
         if let l = dragLid { return th - l }
         // the book-spine grip (the real inner display, vertical hinge): both halves face the player until the phone
-        // shuts, so the leaf stays on the right half's glass all the way; only the shut book is drawn as the stack
-        if duoLayout && orientation == .verticalCrease { return th >= 179.5 ? th : max(0, th - drawnOffset) }
+        // shuts, so the leaf stays on the right half's glass; once the rules call the book shut (≥ foldMin) it is drawn
+        // as the stack over the left half, with the stack's targets (Codex review: a restart at 40° seeds 165°)
+        if duoLayout && orientation == .verticalCrease { return rules.posture(th) == .closed ? th : max(0, th - drawnOffset) }
         return th > 90 ? th : max(0, th - drawnOffset)
     }
     var spread: Spread { Spread(orientation, columnsPerPage: config.columnsPerPage, rows: board.h) }
