@@ -124,7 +124,7 @@ struct BookView: View {
         // the book's crease (left | right) sits at book x = one page in every face (face 2 included: the left page
         // aside at 0, the crease in hand one page further), so it lands on the hinge line
         let x0 = hingeX.map { $0 - globalLeft - Double(geo.pageSize.width) } ?? (available.width - book.width) / 2
-        let slipAnchor = SlipAnchor.make(geo: geo, container: book, origin: CGPoint(x: x0, y: y0), tri: model.trifoldFace)
+        let slipAnchor = SlipAnchor.make(geo: geo, container: book, origin: CGPoint(x: x0, y: y0))
         ZStack(alignment: .topLeading) {
             BookBody(model: model, geo: geo, rotorSpace: rotorSpace)
                 // 「翻」 (ch. 6): the whole closed book turns over about the vertical axis; past 90° the content is
@@ -395,6 +395,7 @@ struct BookPan: UIGestureRecognizerRepresentable {
 
 /// The pages themselves, laid out in book coordinates.
 private struct BookBody: View {
+    static let standFront = 62.0, standBack = 118.0
     let model: GameModel
     let geo: BookGeometry
     let rotorSpace: Namespace.ID
@@ -412,7 +413,11 @@ private struct BookBody: View {
     @ViewBuilder private var legacyBody: some View {
         let page = geo.pageSize
         let va = model.angle + model.rubber + model.tease
-        let a = max(0, min(180, va)) * .pi / 180
+        // the side-on turn has no camera to look at the wall: a page standing at 90° would be edge-on (zero width, no
+        // targets), so through the standing window it is drawn leaning back to at most 62° (its front) or from 118°
+        // (its back), readable and tappable; the flip between the two happens as it passes 90° (Codex review P1)
+        let ra = va <= 90 ? min(va, Self.standFront) : max(va, Self.standBack)
+        let a = max(0, min(180, ra)) * .pi / 180
         let showBack = va > 90
         let pressed = model.press * 2
         ZStack(alignment: .topLeading) {
@@ -444,8 +449,9 @@ private struct BookBody: View {
                 }
             }
             .frame(width: page.width, height: page.height)
-            .rotation3DEffect(.degrees(-va), axis: (x: 0, y: 1, z: 0), anchor: .leading, perspective: 0.32)
+            .rotation3DEffect(.degrees(-ra), axis: (x: 0, y: 1, z: 0), anchor: .leading, perspective: 0.32)
             .offset(x: page.width, y: showBack ? pressed : 0)
+            .shadow(color: .black.opacity(hc ? 0 : 0.10 * sin(a) + (showBack ? 0.06 : 0)), radius: 8 * sin(a / 2) + 2, x: 0, y: 3)
             // design-duo.md §3: leaning past 90° the sheet is an awning over the fixed page with nothing to tap on it
             // (its back only shows the stones through the paper); it must not swallow the touches meant for the squares
             // under it — 4-4's shadow squares on the Duo's inner display (build 28). Shut, its stack targets take over.
@@ -453,7 +459,10 @@ private struct BookBody: View {
             // chapter 3 leaning, the side-on turn too (design-duo.md §3, review-ch3 §4 ②): what lies under the lit sheet is
             // redrawn over it, veiled, only where the sheet covers it (a mask turned exactly like the sheet) — the
             // squares and shadows, then the sheet's stones with their rim, then the thread and the figure
-            if model.paper.backlit && showBack && va < 160 { SideTurnVeil(model: model, geo: geo, rotorSpace: rotorSpace, va: va, pressed: pressed) }
+            if model.paper.backlit && showBack && va < 160 { SideTurnVeil(model: model, geo: geo, rotorSpace: rotorSpace, va: ra, pressed: pressed) }
+            // ch. 8: the leaning page is walked on (left lamp, gates): its squares take taps through the sheet, and where
+            // one lies over a fixed square the one the figure can reach wins (Codex review P1)
+            if showBack && va < 160 && model.liftedPageLive { SideLeanTargets(model: model, geo: geo, rotorSpace: rotorSpace, ra: ra, pressed: pressed) }
             // the crease: a bright line and a dark line (design-spec §4), lit up when the pages touch
             Crease(horizontal: false, length: page.height, glow: model.glow, white: model.paper.creaseWhite)
                 .offset(x: page.width - 1, y: 0)
@@ -481,6 +490,7 @@ private struct BookBody: View {
                 .frame(width: 24, height: page.height)
                 .offset(x: page.width - 12, y: 0)
         }
+        .coordinateSpace(.named(SideLeanTargets.space))
         .offset(x: model.trifoldFace == 2 ? page.width : 0)   // ch. 12: the sheet stays put, the crease in hand moves
         .frame(width: geo.bookSize.width, height: geo.bookSize.height, alignment: .topLeading)
     }
@@ -493,8 +503,10 @@ private struct SideTurnVeil: View {
     let model: GameModel
     let geo: BookGeometry
     let rotorSpace: Namespace.ID
+    /// The drawn turn (BookBody's standing pose applied); the game's own fold is the model's.
     let va: Double
     let pressed: Double
+    private var lit: Double { model.angle + model.rubber + model.tease }
 
     private func turned<V: View>(_ v: V) -> some View {
         v.frame(width: geo.pageSize.width, height: geo.pageSize.height)
@@ -506,15 +518,61 @@ private struct SideTurnVeil: View {
         let parts: [FixedPage.OverlayPart] = model.liftedPageLive ? [.walker] : [.squares, .walker]
         ZStack(alignment: .topLeading) {
             ForEach(parts, id: \.self) { part in
-                FixedPage(model: model, geo: geo, rotorSpace: rotorSpace, angle: va, targets: false, overlay: part)
+                FixedPage(model: model, geo: geo, rotorSpace: rotorSpace, angle: lit, targets: false, overlay: part)
                     .frame(width: geo.pageSize.width, height: geo.pageSize.height)
                     .mask(alignment: .topLeading) { turned(Rectangle()) }
-                if part == .squares && model.lamp(va) > 0 {
-                    turned(CanopyStones(model: model, geo: geo, lit: model.lamp(va), rim: true).scaleEffect(x: -1, y: 1))
+                if part == .squares && model.lamp(lit) > 0 {
+                    // the sheet's glue shows through the paper under the veil (BackFace leaves its canopy out here)
+                    turned(CanopyStones(model: model, geo: geo, lit: model.lamp(lit), glueOnly: true).scaleEffect(x: -1, y: 1))
+                    turned(CanopyStones(model: model, geo: geo, lit: model.lamp(lit), rim: true).scaleEffect(x: -1, y: 1))
                 }
             }
         }
         .allowsHitTesting(false).accessibilityHidden(true)
+    }
+}
+
+/// Ch. 8 on the side-on turn: the leaning page's squares as tap targets turned exactly like the sheet (BackFace's
+/// layout: fixed-page coordinates, mirrored). A touch on one of them goes to that square if the figure can reach it,
+/// else to the fixed square under the touch, if any (the two pages overlap on screen; ProjectedTargets.pick is the
+/// camera book's version).
+private struct SideLeanTargets: View {
+    static let space = "sideBook"
+    let model: GameModel
+    let geo: BookGeometry
+    let rotorSpace: Namespace.ID
+    let ra: Double
+    let pressed: Double
+
+    /// The fixed-page square under a point of the side book (its own coordinates: the fixed page at x 0…page width).
+    private func fixedCell(at p: CGPoint) -> Cell? {
+        let s = geo.spread, h = geo.tile / 2 + geo.gap / 2
+        for x in 0..<s.slotsAcross { for y in 0..<s.slotsDown {
+            let c = geo.center(x: x, y: y)
+            if abs(c.x - p.x) <= h && abs(c.y - p.y) <= h { return s.cell(page: .fixed, x: x, y: y) }
+        } }
+        return nil
+    }
+
+    var body: some View {
+        let n = model.config.columnsPerPage, rules = model.rules
+        let cells = (0..<model.board.h).flatMap { r in (n..<2 * n).map { Cell($0, r) } }
+        ZStack(alignment: .topLeading) {
+            ForEach(cells, id: \.self) { c in
+                Color.clear
+                    .frame(width: geo.tile, height: geo.tile)
+                    .contentShape(Rectangle())
+                    .gesture(SpatialTapGesture(coordinateSpace: .named(Self.space)).onEnded { v in
+                        model.tap(model.canReach(c) ? c : fixedCell(at: v.location) ?? c)
+                    })
+                    .modifier(TileAccessibility(model: model, cell: c, hidden: false, rotorSpace: rotorSpace))
+                    .position(geo.center(Cell(rules.mirror(c.c), c.r)))
+            }
+        }
+        .frame(width: geo.pageSize.width, height: geo.pageSize.height, alignment: .topLeading)
+        .scaleEffect(x: -1, y: 1)
+        .rotation3DEffect(.degrees(-ra), axis: (x: 0, y: 1, z: 0), anchor: .leading, perspective: 0.32)
+        .offset(x: geo.pageSize.width, y: pressed)
     }
 }
 
@@ -1041,10 +1099,12 @@ private struct CanopyStones: View {
     let geo: BookGeometry
     let lit: Double
     var rim = false
+    /// Only the glue marks (the side-on turn draws the stones with their rim above the veil separately).
+    var glueOnly = false
     @Environment(\.highContrast) private var hc
     var body: some View {
         let n = model.config.columnsPerPage, rules = model.rules
-        let stones = (0..<model.board.h).flatMap { r in (n..<2 * n).map { Cell($0, r) } }.filter { model.shownTile($0).isOpaque }
+        let stones = glueOnly ? [] : (0..<model.board.h).flatMap { r in (n..<2 * n).map { Cell($0, r) } }.filter { model.shownTile($0).isOpaque }
         let glue = rim ? [] : (0..<model.board.h).flatMap { r in (n..<2 * n).map { Cell($0, r) } }.filter { model.shownTile($0) == .glue }
         ZStack(alignment: .topLeading) {
             // top-page glue shows through the lit paper (frame v2c1-lend ①: 「透纸可见」), fainter than a stone

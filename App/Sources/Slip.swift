@@ -13,8 +13,7 @@ struct SlipAnchor: Equatable {
     var page: CGRect
     var crease: CGFloat { horizontal ? page.maxY : page.minX }
 
-    /// `tri`: the face (the camera book fits the same pose whatever it is).
-    static func make(geo: BookGeometry, container: CGSize, origin: CGPoint, tri: Int? = nil) -> SlipAnchor {
+    static func make(geo: BookGeometry, container: CGSize, origin: CGPoint) -> SlipAnchor {
         let W = Double(geo.pageSize.width), H = Double(geo.pageSize.height)
         guard geo.horizontal else {
             return SlipAnchor(horizontal: false, page: CGRect(x: origin.x + W, y: origin.y, width: W, height: H))
