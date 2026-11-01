@@ -430,7 +430,7 @@ private struct BookBody: View {
             // the folding page: front up to 90°, back beyond
             ZStack {
                 if showBack {
-                    BackFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: va).scaleEffect(x: -1, y: 1)
+                    BackFace(model: model, geo: geo, rotorSpace: rotorSpace, angle: va, stones: !(model.paper.backlit && va < 160)).scaleEffect(x: -1, y: 1)
                 } else {
                     // ch. 12, face 0: the third page lies flat beyond the right page and turns with it
                     if model.trifoldFace == 0 {
@@ -450,7 +450,10 @@ private struct BookBody: View {
             // (its back only shows the stones through the paper); it must not swallow the touches meant for the squares
             // under it — 4-4's shadow squares on the Duo's inner display (build 28). Shut, its stack targets take over.
             .allowsHitTesting(!showBack || va >= 160)
-            .shadow(color: .black.opacity(hc ? 0 : 0.10 * sin(a) + (showBack ? 0.06 : 0)), radius: 8 * sin(a / 2) + 2, x: 0, y: 3)
+            // chapter 3 leaning, the side-on turn too (design-duo.md §3, review-ch3 §4 ②): what lies under the lit sheet is
+            // redrawn over it, veiled, only where the sheet covers it (a mask turned exactly like the sheet) — the
+            // squares and shadows, then the sheet's stones with their rim, then the thread and the figure
+            if model.paper.backlit && showBack && va < 160 { SideTurnVeil(model: model, geo: geo, rotorSpace: rotorSpace, va: va, pressed: pressed) }
             // the crease: a bright line and a dark line (design-spec §4), lit up when the pages touch
             Crease(horizontal: false, length: page.height, glow: model.glow, white: model.paper.creaseWhite)
                 .offset(x: page.width - 1, y: 0)
@@ -480,6 +483,38 @@ private struct BookBody: View {
         }
         .offset(x: model.trifoldFace == 2 ? page.width : 0)   // ch. 12: the sheet stays put, the crease in hand moves
         .frame(width: geo.bookSize.width, height: geo.bookSize.height, alignment: .topLeading)
+    }
+}
+
+/// Chapter 3 leaning on the side-on turn (design-duo.md §3, review-ch3 §4 ②): what lies under the lit sheet is redrawn
+/// over it, veiled, only where the sheet covers it (a mask turned exactly like the sheet) — the squares and shadows,
+/// then the sheet's stones with their rim, then the thread and the figure. The camera book does the same in CameraBook.
+private struct SideTurnVeil: View {
+    let model: GameModel
+    let geo: BookGeometry
+    let rotorSpace: Namespace.ID
+    let va: Double
+    let pressed: Double
+
+    private func turned<V: View>(_ v: V) -> some View {
+        v.frame(width: geo.pageSize.width, height: geo.pageSize.height)
+            .rotation3DEffect(.degrees(-va), axis: (x: 0, y: 1, z: 0), anchor: .leading, perspective: 0.32)
+            .offset(x: geo.pageSize.width, y: pressed)
+    }
+
+    var body: some View {
+        let parts: [FixedPage.OverlayPart] = model.liftedPageLive ? [.walker] : [.squares, .walker]
+        ZStack(alignment: .topLeading) {
+            ForEach(parts, id: \.self) { part in
+                FixedPage(model: model, geo: geo, rotorSpace: rotorSpace, angle: va, targets: false, overlay: part)
+                    .frame(width: geo.pageSize.width, height: geo.pageSize.height)
+                    .mask(alignment: .topLeading) { turned(Rectangle()) }
+                if part == .squares && model.lamp(va) > 0 {
+                    turned(CanopyStones(model: model, geo: geo, lit: model.lamp(va), rim: true).scaleEffect(x: -1, y: 1))
+                }
+            }
+        }
+        .allowsHitTesting(false).accessibilityHidden(true)
     }
 }
 
