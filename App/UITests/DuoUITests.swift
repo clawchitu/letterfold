@@ -52,9 +52,14 @@ final class DuoUITests: XCTestCase {
 
     /// One level of the playthrough plan (PlaythroughPlan.swift: the proto solver's shortest solution as drags and
     /// taps) with this display's driver.
-    func play(_ id: String) {
+    /// `shots`: a screenshot and a probe line after every act (debugging a plan on a layout).
+    func play(_ id: String, shots: String? = nil) {
         guard let plan = playthroughPlan.first(where: { $0.id == id })?.acts else { return XCTFail("no plan for \(id)") }
         for (k, act) in plan.enumerated() {
+            defer { if let tag = shots {
+                shot("\(tag)-\(id)-act\(k)")
+                print("DUO-ACT \(tag) \(id) \(k) \(act): fold=\(f.phys()) me=\(f.probe("me")) lock=\(f.probe().lock) toast=\(f.probe("toast"))")
+            } }
             let last = k == plan.count - 1
             switch act {
             case let .walk(c, r, steps): f.walk(c, r, wait: 0.45 + 0.26 * Double(steps))
@@ -127,6 +132,17 @@ final class DuoUITests: XCTestCase {
             }
             print("DUO \(id): inner \(ends[0]) | outer \(ends[1])")
             XCTAssertEqual(ends[0], ends[1], "\(id): the inner and outer layouts end alike")
+        }
+    }
+
+    /// Debugging: 4-5 and 9-3 on the inner layout, act by act (screenshots duo-inner-<id>-act<k>.png).
+    func testInnerPlanStepByStep() {
+        for (n, id) in [(24, "shadeDoor"), (57, "jump")] {
+            launch(n, inner: true)
+            shot("inner-\(id)-start")
+            play(id, shots: "inner")
+            print("DUO-END inner \(id) won=\(app.buttons["win.next"].waitForExistence(timeout: 6))")
+            app.terminate()
         }
     }
 }

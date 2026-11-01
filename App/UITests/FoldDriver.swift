@@ -78,7 +78,9 @@ struct FoldDriver {
     func isHere(_ c: Int, _ r: Int) -> Bool { tile(c, r).label.contains("你在这里") }
     func walk(_ c: Int, _ r: Int, wait: TimeInterval = 1.6) {
         XCTAssertTrue(tile(c, r).waitForExistence(timeout: 3), "tile-\(c)-\(r)")
-        if vertical { tile(c, r).coordinate(withNormalizedOffset: CGVector(dx: c < 4 ? 0.3 : 0.7, dy: 0.5)).tap() }
+        // the -duoInnerSim window (466 pt, not the real 951 pt inner display) squeezes the book to its 30 pt minimum
+        // squares and clips the right page's outer column: tap a square's inner (crease-side) half on the right page
+        if vertical { tile(c, r).coordinate(withNormalizedOffset: CGVector(dx: c < 4 ? 0.3 : 0.35, dy: 0.5)).tap() }
         else { tile(c, r).tapVisible(c) }
         Thread.sleep(forTimeInterval: wait)
     }
