@@ -1,26 +1,23 @@
 import XCTest
 
-/// iPhone Duo (design-duo.md §6): the device hinge as a parallel input, driven by the fake hinge (-hinge fake) since the
-/// simulator's hinge only turns in Device Hub. 1-2 and 2-1 are played with the hinge for every close / stand and real
-/// taps for every walk; ch. 12 checks the face-2 rule (§4). On the Duo's inner display (window ≥ 600 pt wide) the crease
-/// must sit on the hinge line (screen height / 2, 475.5 pt); anywhere else (the outer display, other iPhones) it is the
-/// phone layout. Screenshots: attachments, and with TEST_RUNNER_LF_SHOTS=/dir also duo-<name>.png there.
+/// iPhone Duo (design-duo.md, 2026-10-31: the hinge is not an input). Both displays are plain iPhones: the page folds
+/// only with the finger, squares are tapped. The inner display (a landscape 951 × 669 window) is the book-spine grip —
+/// the vertical-crease spread with its crease pinned on the hinge line (window width / 2). The simulator boots folded,
+/// so -duoInnerSim YES plays that layout in the outer window. Screenshots: attachments, and with
+/// TEST_RUNNER_LF_SHOTS=/dir also duo-<name>.png there.
 final class DuoUITests: XCTestCase {
     var app: XCUIApplication!
     var f: FoldDriver!
 
     override func setUp() { continueAfterFailure = false }
 
-    /// `mode`: "outer" (-hingeOuter YES: the hinge mechanics, exercised in the outer window the folded simulator
-    /// gives us), "inner" (-duoInnerSim YES: the real inner display's book-spine layout, vertical hinge at mid-window),
-    /// "phone" (no flag: the outer display as it ships — the hinge is not an input there).
-    func launch(_ level: Int, hingeStart: Int = 180, mode: String = "outer") {
+    /// `inner`: the inner display's book-spine layout (-duoInnerSim YES); else the outer display as it ships.
+    func launch(_ level: Int, inner: Bool) {
         app = XCUIApplication()
         app.launchArguments = ["-resetProgress", "YES", "-noOpener", "YES", "-noSlips", "YES", "-probe", "YES", "-startLevel", "\(level)",
-                               "-hinge", "fake", "-hingeStart", "\(hingeStart)", "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
-            + (mode == "outer" ? ["-hingeOuter", "YES"] : mode == "inner" ? ["-duoInnerSim", "YES"] : [])
+                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"] + (inner ? ["-duoInnerSim", "YES"] : [])
         app.launch()
-        f = FoldDriver(app: app, vertical: mode == "inner")
+        f = FoldDriver(app: app, vertical: inner)
         XCTAssertTrue(app.descendants(matching: .any)["fold.page"].waitForExistence(timeout: 8))
         Thread.sleep(forTimeInterval: 1)
     }
@@ -33,125 +30,137 @@ final class DuoUITests: XCTestCase {
         }
     }
 
-    /// The crease pin (design-duo.md §2): on the inner display |crease − h/2| ≤ 1.
-    func checkCrease(_ what: String) {
-        let w = Double(app.frame.width), h = Double(app.frame.height)
-        guard w >= 600 else { print("DUO \(what): window \(Int(w)) pt wide, not the inner display: phone layout"); return }
-        let y = Double(f.probe("crease")) ?? -1
-        XCTAssertLessThanOrEqual(abs(y - h / 2), 1, "\(what): crease \(y) on the hinge line \(h / 2)")
-    }
-
-    /// 3-3 远近 on the outer display (the tester's report on build 27): the half-open phone's hinge no longer drives the
-    /// book there, and the level plays like any iPhone with the finger (the playthrough's plan).
-    func testOuterDisplayIsAPhone() {
-        launch(16, mode: "phone")
-        f.hinge(from: 180, to: 80)
-        XCTAssertEqual(f.phys(), 180, "3-3 outer: the hinge is not an input on the outer display")
-        shot("outer-3-3-hinge-ignored")
-        f.walk(3, 3, wait: 7)
-        f.lean(to: 76, tol: 7)
-        shot("outer-3-3-standing")
-        f.walk(3, 1, wait: 2)
-        f.lean(to: 33, tol: 8)
-        shot("outer-3-3-lock")
-        f.walk(2, 0, wait: 2)
-        f.drag(0.30, 0.86)
-        XCTAssertEqual(f.phys(), 0, "3-3 outer: closed")
-        shot("outer-3-3-closed")
-        f.walk(1, 0, wait: 1); f.walk(0, 0, wait: 1)
-        won("outer-3-3")
-    }
-
-    /// 3-3 远近 on the inner display as the real Duo presents it (a landscape window, a vertical hinge = the book's
-    /// spine): the crease sits on the hinge, the page lies on the glass (relative angle) and the whole level is played
-    /// with the hinge for every fold and real taps for every walk.
-    func testInnerBookSpinePlaysThreeThree() {
-        launch(16, mode: "inner")
-        let mid = Double(app.frame.width) / 2
-        XCTAssertEqual(Double(f.probe("creaseX")) ?? -1, mid, accuracy: 1, "3-3 inner: the crease on the vertical hinge")
-        shot("inner-3-3-flat")
-        f.walk(3, 3, wait: 7)
-        f.hinge(from: 180, to: 81)                 // fold 103.5 (the 30°–90° squeeze): the page past standing
-        XCTAssertEqual(Double(f.phys()), 77, accuracy: 4, "3-3 inner: the hinge leans the page")
-        shot("inner-3-3-90")
-        f.walk(3, 1, wait: 2)
-        XCTAssertTrue(f.isHere(3, 1), f.tile(3, 1).label)
-        f.hinge(from: 81, to: 52)                  // fold 147: the lock window (146.5–151)
-        shot("inner-3-3-lock")
-        f.walk(2, 0, wait: 2)
-        XCTAssertTrue(f.isHere(2, 0), "3-3 inner: the shadow square is tappable: \(f.tile(2, 0).label)")
-        f.hinge(from: 52, to: 0)
-        XCTAssertEqual(f.phys(), 0, "3-3 inner: the hinge shut the book")
-        shot("inner-3-3-closed")
-        f.walk(1, 0, wait: 1); f.walk(0, 0, wait: 1)
-        won("inner-3-3")
-    }
-
     func won(_ what: String) {
         XCTAssertTrue(app.buttons["win.next"].waitForExistence(timeout: 8), "\(what) is won")
         shot("\(what)-won")
     }
 
-    /// 1-2 「对面」: walk, close with the hinge (half way first: a screenshot), walk the stack, stand with the hinge, walk.
-    func testFacingWithTheHinge() {
-        launch(2)
-        checkCrease("1-2 flat")
-        shot("1-2-flat")
-        f.walk(4, 1, wait: 2.5)
-        f.hinge(from: 180, to: 120)
-        XCTAssertLessThan(f.phys(), 180, "1-2: the hinge leans the page (it rests on 130° or 90°: chapters 1–2 snap)")
-        checkCrease("1-2 at 120")
-        shot("1-2-partly")
-        f.hinge(from: 120, to: 0)
-        XCTAssertEqual(f.phys(), 0, "1-2: the hinge shut the book")
-        f.walk(3, 2, wait: 0.9); f.walk(2, 2, wait: 0.9); f.walk(2, 3, wait: 0.9)
-        f.hinge(from: 0, to: 90)
-        XCTAssertEqual(f.phys(), 90, "1-2: the hinge stands the page")
-        f.walk(4, 3, wait: 1.2)
-        won("1-2")
+    /// The inner layout's crease sits on the vertical hinge line (design-duo.md §1).
+    func checkSpine(_ what: String) {
+        XCTAssertEqual(Double(f.probe("creaseX")) ?? -1, Double(app.frame.width) / 2, accuracy: 1, "\(what): the crease on the vertical hinge")
     }
 
-    /// 2-1 「立」: walk to the crease, stand the page with the hinge, walk over it.
-    func testStandWithTheHinge() {
-        launch(6)
-        checkCrease("2-1 flat")
-        f.walk(3, 2, wait: 2.0)
-        f.hinge(from: 180, to: 90)
-        XCTAssertEqual(f.phys(), 90, "2-1: the hinge stands the page")
-        shot("2-1-standing")
-        f.walk(7, 0, wait: 4.0)
-        won("2-1")
+    /// Close / open with one finger drag, whichever way the crease runs.
+    func close() {
+        if f.vertical { f.dragX(0.74, 0.03) } else { f.drag(0.30, 0.88) }
+        XCTAssertEqual(f.phys(), 0, "shut")
+    }
+    func open() {
+        if f.vertical { f.dragX(0.26, 0.97) } else { f.drag(0.78, 0.22) }
+        XCTAssertEqual(f.phys(), 180, "open")
     }
 
-    /// 12-1 「家」, design-duo.md §4: on the third page's crease a hinge turn goes back to the book's when the third page
-    /// lies flat (and folds the book); with the third page half folded the hinge is ignored, with one quiet word.
-    func testTrifoldHingeIsTheBook() {
-        launch(73)
-        checkCrease("12-1 face 0")
-        shot("12-1-flat")
-        let crease = app.buttons["crease"]
-        XCTAssertTrue(crease.waitForExistence(timeout: 3))
-        crease.tap(); Thread.sleep(forTimeInterval: 1)
-        XCTAssertEqual(f.probe("face"), "2", "12-1: the third page's crease in hand")
-        shot("12-1-face2")
-        // to 90°: a 40° fold would rest back on 0° once the hinge idles (ch. 12 snaps < 45° flat), 90° rests standing
-        f.hinge(from: 180, to: 90)
-        XCTAssertEqual(f.probe("face"), "0", "12-1: the hinge took the book's crease back (the third page lay flat)")
-        XCTAssertEqual(Double(f.phys()), 90, accuracy: 3, "12-1: and folds the book")
-        shot("12-1-hinge-book")
-        f.hinge(from: 90, to: 180)
-        XCTAssertEqual(f.phys(), 180)
-        crease.tap(); Thread.sleep(forTimeInterval: 1)
-        XCTAssertEqual(f.probe("face"), "2")
-        f.lean(to: 110, tol: 25)   // the third page half folded (a gentle first pull: a long one throws it shut): its crease must stay in hand
-        let before = f.phys()
-        print("DUO 12-1 half: face \(f.probe("face")) phys \(before)")
-        shot("12-1-half")
-        XCTAssertEqual(f.probe("face"), "2", "12-1: the lean left the third page's crease in hand")
-        f.hinge(from: 180, to: 140)
-        XCTAssertEqual(f.probe("face"), "2", "12-1: half folded, the hinge does not take the book")
-        XCTAssertEqual(f.phys(), before, "12-1: nor moves the third page")
-        XCTAssertTrue(f.probe("toast").contains("铰链折的是书"), "12-1: the quiet word (tri.hingeIsBook): \(f.probe("toast"))")
-        shot("12-1-hinge-ignored")
+    /// One level of the playthrough plan (PlaythroughPlan.swift: the proto solver's shortest solution as drags and
+    /// taps) with this display's driver.
+    /// `shots`: a screenshot and a probe line after every act (debugging a plan on a layout).
+    func play(_ id: String, shots: String? = nil) {
+        guard let plan = playthroughPlan.first(where: { $0.id == id })?.acts else { return XCTFail("no plan for \(id)") }
+        for (k, act) in plan.enumerated() {
+            defer { if let tag = shots {
+                shot("\(tag)-\(id)-act\(k)")
+                print("DUO-ACT \(tag) \(id) \(k) \(act): fold=\(f.phys()) me=\(f.probe("me")) lock=\(f.probe().lock) toast=\(f.probe("toast"))")
+            } }
+            let last = k == plan.count - 1
+            switch act {
+            case let .walk(c, r, steps): f.walk(c, r, wait: 0.45 + 0.26 * Double(steps))
+            case .close:
+                if f.vertical { f.dragX(0.74, 0.03) } else { f.drag(0.30, 0.88) }
+                if !last { XCTAssertEqual(f.phys(), 0, "\(id): act \(k) closes") }
+            case .open: open()
+            case .stand: XCTAssertEqual(f.lean(to: 90, tol: 0), 90, "\(id): act \(k) stands")
+            case .flip: app.buttons["flip"].tap(); Thread.sleep(forTimeInterval: 0.9)
+            case let .lean(p, tol): XCTAssertLessThanOrEqual(abs(f.lean(to: p, tol: tol) - p), tol, "\(id): act \(k) leans to \(p)")
+            case let .creep(p, tol): XCTAssertLessThanOrEqual(abs(f.creep(to: p, tol: tol) - p), tol, "\(id): act \(k) rides to \(p)")
+            }
+        }
+    }
+
+    /// 4-4 石雨 on the inner layout (design-duo.md §3, the tester's build 28): leaning, the sheet is an awning over the
+    /// left page's column 3; the shadow square under it must take the tap and the figure walk onto it, then ride it.
+    func testInnerBookSpinePlaysFourFour() {
+        launch(23, inner: true)
+        checkSpine("4-4 inner")
+        f.walk(6, 3, wait: 5)
+        close()
+        f.walk(0, 3, wait: 1); f.walk(0, 4, wait: 1)
+        XCTAssertTrue(f.isHere(0, 4), f.tile(0, 4).label)
+        let a = f.lean(to: 49, tol: 8)                       // fold ~131: stone (6,4)'s shadow on (2,4)
+        XCTAssertTrue(f.tile(2, 4).label.contains("影子"), "4-4 inner at \(a)°: \(f.tile(2, 4).label)")
+        shot("inner-4-4-lean")
+        f.walk(2, 4, wait: 2)
+        XCTAssertTrue(f.isHere(2, 4), "4-4 inner: walked onto the shadow under the awning: \(f.tile(2, 4).label) \(f.probe("toast"))")
+        shot("inner-4-4-on-shadow")
+        f.creep(to: 70, tol: 6)                              // fold ~110: the shadow carries her to (3,4)
+        XCTAssertTrue(f.isHere(3, 4), "4-4 inner: rode the shadow: \(f.tile(3, 4).label)")
+        f.walk(2, 0, wait: 3)                                // up column 3, under the awning all the way
+        XCTAssertTrue(f.isHere(2, 0), "4-4 inner: \(f.tile(2, 0).label)")
+        close()
+        f.walk(1, 0, wait: 1)
+        won("inner-4-4")
+    }
+
+    /// 3-3 on the inner layout, every fold a finger drag (the hinge is not an input).
+    func testInnerBookSpinePlaysThreeThree() {
+        launch(16, inner: true)
+        checkSpine("3-3 inner")
+        shot("inner-3-3-flat")
+        play("lock")
+        won("inner-3-3")
+    }
+
+    /// The outer display is any iPhone: horizontal crease, the same plan.
+    func testOuterDisplayIsAPhone() {
+        launch(16, inner: false)
+        XCTAssertEqual(f.probe("creaseX"), "0.0", "outer: no spine pin")
+        play("lock")
+        won("outer-3-3")
+    }
+
+    /// One game, two renderers: the same plan played on the inner and the outer layout ends in the same state (where
+    /// the figure is drawn, the fold, won) — 4-4 石雨, 4-5 门下影 and 卷三's 9-3 「跳」 (loose stones that roll).
+    func testInnerAndOuterEndAlike() {
+        for (n, id) in [(23, "stoneRain"), (24, "shadeDoor"), (57, "jump")] {
+            var ends: [String] = []
+            for inner in [true, false] {
+                launch(n, inner: inner)
+                play(id)
+                let won = app.buttons["win.next"].waitForExistence(timeout: 8)
+                ends.append("me=\(f.probe("me")) fold=\(f.phys()) won=\(won)")
+                shot("\(inner ? "inner" : "outer")-\(id)-end")
+                XCTAssertTrue(won, "\(id) \(inner ? "inner" : "outer") is won")
+                app.terminate()
+            }
+            print("DUO \(id): inner \(ends[0]) | outer \(ends[1])")
+            XCTAssertEqual(ends[0], ends[1], "\(id): the inner and outer layouts end alike")
+        }
+    }
+
+    /// Debugging: 4-5 and 9-3 on the inner layout, act by act (screenshots duo-inner-<id>-act<k>.png).
+    func testInnerPlanStepByStep() {
+        for (n, id) in [(24, "shadeDoor"), (57, "jump")] {
+            launch(n, inner: true)
+            shot("inner-\(id)-start")
+            play(id, shots: "inner")
+            print("DUO-END inner \(id) won=\(app.buttons["win.next"].waitForExistence(timeout: 6))")
+            app.terminate()
+        }
+    }
+
+    /// 2-1 「立」 on the inner layout (Codex review P1): the page standing at 90° is drawn readable and its squares take
+    /// taps — (7,0) is on the standing page.
+    func testInnerStandingPageIsTappable() {
+        launch(6, inner: true)
+        play("stand")
+        shot("inner-2-1-standing")
+        won("inner-2-1")
+    }
+
+    /// 8-? 「左灯」 (leftLamp) on the inner layout (Codex review P1): leaning to 120°, the walk goes on along the leaning
+    /// page — its squares take taps through the sheet.
+    func testInnerLeaningPageIsTappable() {
+        launch(49, inner: true)
+        play("leftLamp")
+        shot("inner-leftLamp")
+        won("inner-leftLamp")
     }
 }

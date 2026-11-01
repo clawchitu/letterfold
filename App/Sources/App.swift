@@ -4,7 +4,6 @@ import FoldCore
 @main
 struct LetterfoldApp: App {
     @State private var model = GameModel.launch()
-    @Environment(\.scenePhase) private var scenePhase
     @State private var router = Router.launch()
     var body: some Scene {
         WindowGroup {
@@ -19,8 +18,6 @@ struct LetterfoldApp: App {
     private var root: some View {
         Group {
             RootView(model: model, router: router)
-                // design-duo.md §5: back in the foreground, the hinge's motion while away is forgotten
-                .onChange(of: scenePhase) { _, p in if p == .active { model.hingeForeground() } }
         }
     }
 }
@@ -30,7 +27,7 @@ struct LetterfoldApp: App {
 /// landscape window 951 × 669 pt (panel 2007 × 2853 px, nativeOrientation 270), safe areas 24 top / 21 bottom, the
 /// vertical hinge line at x 475.5 (red) — through ImageRenderer, so the inner layout can be checked on a simulator that
 /// boots folded.
-/// Pair with -hinge fake -hingeSequence (a move, so the hinge takes the book over) for the lid's angle. Writes the PNG.
+/// Pair with -startAngle for a leaning page. Writes the PNG.
 private struct DuoShotHost: View {
     let model: GameModel
     let router: Router
@@ -41,7 +38,7 @@ private struct DuoShotHost: View {
             .task {
                 let size = CGSize(width: 951, height: 669)
                 DuoScreen.forced = size
-                try? await Task.sleep(for: .seconds(2.5))   // a -hingeSequence takes over and rests
+                try? await Task.sleep(for: .seconds(2.5))   // the level settles (a -walkTo, the intro)
                 let content = LevelScreen(model: model, router: router)
                     .environment(\.locale, L10n.locale)
                     .padding(.top, 24).padding(.bottom, 21)
@@ -124,7 +121,6 @@ struct RootView: View {
         .onChange(of: reduceTransparency, initial: true) { _, v in settings.systemReduceTransparency = v }
         .onAppear { FontBook.shared.load() }
         .tint(Tok.ink900)
-        .background(HingeHost(provider: model.device))
         .preferredColorScheme(.light)
     }
 }

@@ -188,27 +188,9 @@ final class GameModel {
     static var letterDelay: Double { UserDefaults.standard.object(forKey: "finaleLetterDelay") != nil ? UserDefaults.standard.double(forKey: "finaleLetterDelay") : 1.5 }
 
     var orientation: Spread.Orientation = .horizontalCrease
-    /// design-duo.md §2: BookView pins the crease on the Duo's hinge (set by BookView).
+    /// design-duo.md §1: BookView pins the vertical crease on the Duo's inner-display hinge line (set by BookView).
+    /// Layout only: the phone's own opening is never read, the page is drawn at the game's fold on both displays.
     var duoLayout = false
-    /// The phone's own fold (FoldCore fold degrees, 0 flat), whatever drives the book: the paper lies on the glass, so
-    /// on the Duo the page is drawn relative to the lid (`drawnFold`).
-    private(set) var physicalFold: Double = 0
-    /// What BookView turns the folding page by: the virtual angle less the lid's own (design-duo.md §2).
-    /// Face 2 of ch. 12 turns the third page on its own anchor on the lid, never relative to it (design-duo.md §4).
-    var drawnOffset: Double { duoLayout && !onFlap ? physicalFold : 0 }
-    /// The lid offset a finger drag solves in (BookView's pan.off), frozen for the drag: CameraBook draws the page at
-    /// exactly `angle − dragLid` meanwhile, so the grabbed point follows the touch (Codex review 3). nil: no drag.
-    var dragLid: Double?
-    /// The angle the folding page is drawn at (design-duo.md §2): relative to the lid up to 90°, floored at the glass;
-    /// past 90° the lid has turned its back and the leaf is drawn where it lands. Off the Duo it is the fold itself.
-    func drawnFold(_ th: Double) -> Double {
-        if let l = dragLid { return th - l }
-        // the book-spine grip (the real inner display, vertical hinge): both halves face the player until the phone
-        // shuts, so the leaf stays on the right half's glass; once the rules call the book shut (≥ foldMin) it is drawn
-        // as the stack over the left half, with the stack's targets (Codex review: a restart at 40° seeds 165°)
-        if duoLayout && orientation == .verticalCrease { return rules.posture(th) == .closed ? th : max(0, th - drawnOffset) }
-        return th > 90 ? th : max(0, th - drawnOffset)
-    }
     var spread: Spread { Spread(orientation, columnsPerPage: config.columnsPerPage, rows: board.h) }
 
     private(set) var toast: String?
@@ -229,15 +211,12 @@ final class GameModel {
     static let layerRuleKey = "fold.layerRule", shadowPaperKey = "fold.shadowOnPaper"
     /// Ch. 12: the third page's refused fold was said; again only once it has been opened (main.js setAngle.blocked).
     @ObservationIgnored private var flapRefusedSaid = false
-    /// Ch. 12 on a Duo: 「第三页用手指折；铰链折的是书。」 said once per level (design-duo.md §4).
-    @ObservationIgnored private var hingeBookSaid = false
     @ObservationIgnored private var autoCreaseTask: Task<Void, Never>?
     private(set) var lastAnnouncement: String?
     private(set) var shake: [Cell: Int] = [:]
     private(set) var done: Set<Int>
     /// What is saved: level IDs, so inserting levels never moves progress (FoldCore.SavedProgress).
     @ObservationIgnored private var doneIDs: Set<String>
-    private(set) var hingeKind: HingeKind = .simulated
     private(set) var hintAvailable = false
     /// The 「?」 ladder (design-review-v2c1 §2): a level with a first hint (5-4's old line) shows it on the first press.
     @ObservationIgnored private var hintRung = 0
@@ -305,8 +284,6 @@ final class GameModel {
 
     let haptics = Haptics()
     let sound = SoundBoard()
-    let simulated = SimulatedHinge()
-    let device: HingeProvider?
 
     @ObservationIgnored private var motionTask: Task<Void, Never>?
     @ObservationIgnored private var walkTask: Task<Void, Never>?
@@ -320,9 +297,6 @@ final class GameModel {
     @ObservationIgnored private var motionDone: (() -> Void)?
     /// The player has folded the page at least once this session (the ghost hand stops offering).
     @ObservationIgnored private var hasFolded = false
-    /// Duo discovery (design-duo.md §3): one quiet line under the book on 1-2, once per install.
-    private(set) var hingeHint = false
-    @ObservationIgnored private var hingeHintTask: Task<Void, Never>?
 
     // the ghost hand on 1-1 (design-spec §5: not autoplayed with reduce motion)
     /// 0 hidden · 1 a fingertip resting on the top page · 2 the fingertip drawn down towards the crease.
@@ -351,11 +325,9 @@ final class GameModel {
     @ObservationIgnored private var nopes = 0
     @ObservationIgnored private let speech = AVSpeechSynthesizer()
     @ObservationIgnored private var dragFrom = 0.0
-    // 2-1's teaching moment (design-review-2 §2.4) and the parallel device hinge (plan.md §12.1)
+    // 2-1's teaching moment (design-review-2 §2.4)
     @ObservationIgnored private var teachTask: Task<Void, Never>?
     @ObservationIgnored private var teachCount = 0
-    /// The device hinge's gates (FoldCore.HingeTracker: takeover, follow, adaptive idle; design-duo.md §1, §5).
-    @ObservationIgnored private(set) var hinge = HingeTracker()
     /// Recent (time, fold) samples of every input that turns the page, for the closing speed (CloseFeel).
     @ObservationIgnored private var angleSamples: [(t: Double, a: Double)] = []
     /// The finger's speed when it let go (fold °/s) and when: a reduce-motion close lands in one jump.
@@ -365,14 +337,6 @@ final class GameModel {
     /// The closing speed measured the moment the page reached the other page (a spring can then rubber-band at 180°
     /// for a while before it settles and `contact()` runs).
     @ObservationIgnored private var landing: (t: Double, v: Double)?
-    @ObservationIgnored private var hingeActive = false
-    /// design-duo.md §2: the hinge drives the book only while the window is on the Duo's inner display — the glass it
-    /// folds. On the outer display the Duo is an ordinary iPhone, finger only (the tester's 3-3 on build 27: a half-open
-    /// phone used on the outer display stood the page edge-on and left its squares untappable). -hingeOuter YES (UI
-    /// tests: the simulator boots folded, so the fake hinge is exercised on the outer display) lifts the gate.
-    var hingeDrives: Bool { DuoScreen.inner || UserDefaults.standard.bool(forKey: "hingeOuter") }
-    @ObservationIgnored private var hingeTarget = 0.0
-    @ObservationIgnored private var hingeIdle: Task<Void, Never>?
 
     private struct Pending { var mode = false, connected = false, goal = false, lost = false, shade = false, hadShade = false, lit = false, dead = false; var stamps: [Rules.Stamp] = []
         /// Where a ridden shadow picked the figure up: the carry is said once, where it ends (playtest-ch6 §2 #6).
@@ -396,24 +360,6 @@ final class GameModel {
         // after load's migration: an old save is seeded once, a new player starts with none seen (§7.3)
         slipFirstLevels = Slips.firstLevels(pack.levels, order: Chapter.all.flatMap(\.levelIDs), columnsPerPage: pack.config.columnsPerPage)
         slipsSeen = SavedProgress.loadSlips(done: doneIDs, firstLevels: slipFirstLevels)
-        if UserDefaults.standard.string(forKey: "hinge") == "fake" { device = FakeHinge() }
-        else if #available(iOS 27.1, *) { device = UIHingeProvider() } else { device = nil }
-        simulated.onAngle = { [weak self] a in self?.setAngle(a) }
-        (device as? any PhysicalHinge)?.onHinge = { [weak self] p, s in
-            guard let self else { return }
-            let f = HingeMapping().fold(physical: p, status: s) ?? 0
-            if abs(f - self.physicalFold) > 0.05 { self.physicalFold = f }
-            guard self.hingeKind == .device else { return }
-            self.hingeMoved(physical: p, status: s)
-        }
-        device?.onAvailabilityChange = { [weak self] ok in
-            guard let self else { return }
-            AppSettings.shared.hingePresent = ok
-            // the hinge is a parallel input next to the finger (plan.md §12.1). The crease's direction follows the
-            // window only: in the Duo's portrait window the hinge is horizontal (design-duo.md §0)
-            if ok && self.hingeKind == .simulated { self.hingeKind = .device }
-            if !ok && self.hingeKind == .device { self.hingeKind = .simulated; self.hinge.reset(); self.hingeActive = false }
-        }
         haptics.prepare()
         sound.start()
         MusicDirector.shared.apply()
@@ -430,7 +376,7 @@ final class GameModel {
     }
 
     /// Launch arguments (screenshots and UI tests): -resetProgress YES, -startLevel <1-based>, -startAngle <deg>,
-    /// -walkTo c,r (walk there first, at 180° if needed), -autoplay YES, -hinge simulated|device, -aha YES,
+    /// -walkTo c,r (walk there first, at 180° if needed), -autoplay YES, -aha YES,
     /// -cameraPitch <deg> (screenshots), -probe YES (UI tests: the drag's edge probe).
     static func launch() -> GameModel {
         let d = UserDefaults.standard
@@ -478,8 +424,6 @@ final class GameModel {
             m.cameraPitch = m.looksAtWall(m.angle) ? wallPitch : handPitch
         }
         if d.object(forKey: "cameraPitch") != nil { m.cameraPitch = d.double(forKey: "cameraPitch") }   // screenshots: a mid-drag frame
-        if let h = d.string(forKey: "hinge").flatMap(HingeKind.init(rawValue:)) { m.selectHinge(h) }
-        (m.device as? FakeHinge)?.begin()
         if d.bool(forKey: "autoplay") { m.autoplay() }
         if d.bool(forKey: "aha") { m.won = true; m.startAha() }
         return m
@@ -579,12 +523,6 @@ final class GameModel {
         sync()
         sound.figureMotif = goalIsFigure
         MusicDirector.shared.setChapter(chapter.id)   // the chapter's timbre, crossfading over 2 s
-        // a trifold restarts laid flat on the book's crease (face 0, f 0: game.restart rebuilds the board), so the
-        // phone's angle goes on as the book's fold, which face 0 allows (design-duo.md §5)
-        if hingeKind == .device, settings.hingeFold, hingeDrives, let a = (device as? any PhysicalHinge)?.lastAngle {
-            setAngle(a); pending = Pending()
-            if looksAtWall(angle) { cameraPitch = Self.wallPitch }   // a hinge already standing: look at the wall
-        }
         announce(intro, delay: 0.6)
         stuckTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(45))
@@ -658,7 +596,7 @@ final class GameModel {
                 // VoiceOver never reports on it — the generous fallback
                 let overdue = self.introPostedAt.map { Date().timeIntervalSince($0) > Self.introFallback } ?? true
                 let introDone = !self.introPending || !self.settings.voiceOver || overdue
-                if introDone && !self.dragging && !self.hingeActive && self.motionTarget == nil && !self.walking && !self.flipping && self.posture != .closed {
+                if introDone && !self.dragging && self.motionTarget == nil && !self.walking && !self.flipping && self.posture != .closed {
                     self.riseSlip(self.slipDue, auto: true)
                     return
                 }
@@ -773,9 +711,6 @@ final class GameModel {
             sync()
         }
         forgetMotion()
-        if hingeKind == .device, settings.hingeFold, hingeDrives, let a = (device as? any PhysicalHinge)?.lastAngle {
-            setAngle(a); pending = Pending()
-        }
         aimCamera(at: angle)
         saidAngle = Int(angle.rounded())
         if !hintAvailable {
@@ -790,10 +725,9 @@ final class GameModel {
     /// The per-level transient state a new level and a restart both clear.
     private func clearTransient() {
         cancelFlip()
-        quiet = false; dragging = false; dragLid = nil; angleHint = false; walking = false
+        quiet = false; dragging = false; angleHint = false; walking = false
         threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]; inkBledAt = [:]; clearCraneFX()
-        pending = Pending(); nopes = 0; hingeBookSaid = false
-        hingeHintTask?.cancel(); hingeHint = false
+        pending = Pending(); nopes = 0
         rollFlight = nil; fillRings = [:]   // a roll belongs to the board it happened on (Codex review 21 #1)
         toastTask?.cancel(); toastTask = nil; toast = nil
         clearGlue()
@@ -1031,7 +965,7 @@ final class GameModel {
     func move(to target: Double, _ curve: Curve, then done: (() -> Void)? = nil) {
         stopMotion()
         let target = min(180, max(0, target))
-        if !dragging && !hingeActive && !ghostDriving { aimCamera(at: target) }
+        if !dragging && !ghostDriving { aimCamera(at: target) }
         if settings.motionReduced {
             // design-spec §5 reduce.motion: a 200 ms linear cross-fade, no turning, no bounce (BookView fades)
             jumping = true
@@ -1157,7 +1091,6 @@ final class GameModel {
         finishFlipNow()
         if Int(a.rounded()) == Int(angle.rounded()) { settle(); return }
         stopWalk(); stopGhost(); hasFolded = true
-        hingeIdle?.cancel(); hingeActive = false; hinge.reset()   // buttons / VoiceOver take the page from the hinge
         pushUndo()
         move(to: a, a >= 180 ? .closeSnap : .step)
     }
@@ -1171,7 +1104,7 @@ final class GameModel {
 
     // MARK: dragging the page (the only default input)
 
-    /// Finger dragging works on every device; on a Duo the hinge is a parallel second input (plan.md §12.1).
+    /// Finger dragging is the only way to fold, on every device (the Duo's hinge is not an input: design-duo.md §1).
     var canDrag: Bool { true }
 
     /// Angles on screen and in VoiceOver are physical (plan.md §12.1): 180° flat, 90° standing, 0° shut.
@@ -1216,112 +1149,12 @@ final class GameModel {
         }
     }
 
-    /// plan.md §12.1 / design-duo.md §1: the device hinge only counts while it moves. FoldCore's `HingeTracker` gates it
-    /// (status, ≥ 8° within 300 ms, never while a finger or the aha has the page); on takeover the book catches up in
-    /// 160 ms (one undo step), then follows 1:1; once no update came for max(300 ms, 2 × the update interval) the finger
-    /// has the page again and the virtual angle snaps to its rest (the paper on the glass does not move).
-    private func hingeMoved(physical: Double, status: HingeStatus) {
-        let blocked = !settings.hingeFold || dragging || aha || !hingeDrives
-        let action = hinge.update(physical: physical, status: status, at: CACurrentMediaTime(), blocked: blocked)
-        hingeTarget = hinge.target
-        // a blocked update resets the tracker (setting off, a finger, the aha): the model lets go of the page too
-        if blocked && hingeActive { releaseHinge() }
-        switch action {
-        case .ignore: return
-        case .takeOver(let f):
-            hingeFolded()
-            // ch. 12 (design-duo.md §4): the hinge is the book's crease, the third page is always the thumb's. On the
-            // third page's crease a hinge turn goes back to the book's (the autoCrease path, inside the same one undo
-            // step) when the third page lies flat or folded all the way; half folded, the hinge is ignored with one
-            // quiet word per level.
-            if onFlap {
-                if game.creaseBlock != nil {
-                    hinge.reset()
-                    if !hingeBookSaid { hingeBookSaid = true; show(L10n.t("tri.hingeIsBook")) }
-                    return
-                }
-                finishMotionNow(); stopWalk()
-                pushUndo()
-                switchCrease(auto: true, undo: false)
-                hingeActive = true
-                freezeCamera()
-                stopGhost(); hasFolded = true
-                move(to: f, .bezier(0.2, 0.7, 0.2, 1, duration: 0.16)) { [weak self] in self?.hingeCaughtUp() }
-                break
-            }
-            finishFlipNow()
-            tuckSlip()   // the book moved by the hinge: the slip goes back (§2.2 ④)
-            hingeActive = true
-            freezeCamera()
-            stopWalk(); stopGhost(); hasFolded = true
-            pushUndo()   // one undo step per hinge fold, on the same stack as the finger
-            move(to: f, .bezier(0.2, 0.7, 0.2, 1, duration: 0.16)) { [weak self] in self?.hingeCaughtUp() }
-        case .follow(let f):
-            guard motionTarget == nil else { break }
-            let was = angle
-            setAngle(f)
-            // the hinge is its own feel: only the 15° tick and the slap (design-duo.md §1)
-            if Int(was / Self.step) != Int(angle / Self.step) { haptics.tick() }
-            if was < 179.5 && angle >= 179.5 { contact() }
-        }
-        hingeIdle?.cancel()
-        let wait = hinge.idleDelay
-        hingeIdle = Task { [weak self] in
-            try? await Task.sleep(for: .milliseconds(Int(wait * 1000) + 10))
-            guard let self, !Task.isCancelled, self.hinge.idle(at: CACurrentMediaTime()) else { return }
-            // the setting went off (or the aha began) mid-move with no sample since: let go, move nothing
-            guard self.settings.hingeFold, !self.aha else { self.releaseHinge(); return }
-            if self.motionTarget == nil && abs(self.hingeTarget - self.angle) > 0.5 { self.setAngle(self.hingeTarget) }
-            self.hingeActive = false
-            let target = self.restTarget(self.angle)
-            if abs(target - self.angle) > 0.5 && !self.dragging { self.move(to: target, .release) }
-            else { if !self.dragging { self.aimCamera(at: target) }; self.settle() }
-        }
-    }
-
-    /// design-duo.md §3: on a Duo, on 1-2 (1-1 belongs to the ghost hand), the phone flat, the player has folded with the
-    /// thumb and never with the hinge: 「也可以把手机合一点。」 fades in under the book for 6 s (or until the hinge moves),
-    /// once per install; under VoiceOver it is one announcement instead.
-    private func offerHingeHint() {
-        guard settings.hingePresent, settings.hingeFold, hingeDrives, !settings.hingeHintSeen, hingeKind == .device, level.id == "facing",
-              hasFolded, angle < 0.5, !dragging, !hingeActive, !won,
-              ((device as? any PhysicalHinge)?.lastAngle ?? 1) < 0.5 else { return }
-        settings.hingeHintSeen = true
-        if settings.voiceOver { announce(L10n.t("duo.hint"), delay: 0.6); return }
-        withAnimation(.easeInOut(duration: 0.4)) { hingeHint = true }
-        hingeHintTask?.cancel()
-        hingeHintTask = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(6))
-            guard let self, !Task.isCancelled else { return }
-            withAnimation(.easeInOut(duration: 0.6)) { self.hingeHint = false }
-        }
-    }
-
-    /// The hinge folded the book: the discovery line has done its job (or is no longer needed).
-    private func hingeFolded() {
-        if !settings.hingeHintSeen { settings.hingeHintSeen = true }
-        if hingeHint { hingeHintTask?.cancel(); withAnimation(.easeInOut(duration: 0.3)) { hingeHint = false } }
-    }
-
-    /// Back in the foreground (design-duo.md §5): what the phone did meanwhile is not a fold.
-    /// The hinge kept turning during the 160 ms catch-up (follow updates wait for it): land on where it is now.
-    private func hingeCaughtUp() {
-        guard hingeActive, abs(hingeTarget - angle) > 0.1 else { return }
-        let was = angle
-        setAngle(hingeTarget)
-        if was < 179.5 && angle >= 179.5 { contact() }
-    }
-    func hingeForeground() { releaseHinge() }
-    /// The model lets go of the page: no idle hand-back pending, the tracker forgets the move (Codex review P2).
-    private func releaseHinge() { hingeIdle?.cancel(); hingeIdle = nil; hingeActive = false; hinge.reset() }
-
     func dragBegan() {
         tuckSlip()
         if aha { finishAhaNow() }
         finishFlipNow()   // the turn lands before the finger takes the page (its undo snapshot must be the turned book)
         stopMotion(); stopWalk(); stopGhost(); hasFolded = true
         freezeCamera(); probeAngle = 0
-        hingeIdle?.cancel(); hingeActive = false; hinge.reset()   // the finger has the page now
         pushUndo()
         dragging = true; dragFrom = angle
         hintFadeTask?.cancel()
@@ -1346,7 +1179,7 @@ final class GameModel {
     /// Release: snap to the nearest of 0 / 90 / 130 / 180 after projecting the throw a little (velocity in °/s).
     func dragEnded(velocity: Double) {
         guard dragging else { return }
-        dragging = false; dragLid = nil
+        dragging = false
         released = (CACurrentMediaTime(), velocity)
         // chapter 3 aims at 5° windows: a finger that came to rest (no angle change for 60 ms) throws nothing, whatever
         // speed the recogniser still reports from before the pause
@@ -1366,7 +1199,7 @@ final class GameModel {
     /// finger came down, including ink printed or a key used on the way (the undo snapshot from dragBegan).
     func dragCancelled() {
         guard dragging else { return }
-        dragging = false; dragLid = nil
+        dragging = false
         angleHint = false
         stopMotion()
         if game.undo() {
@@ -1381,16 +1214,6 @@ final class GameModel {
         clearCrush(); stopRideFeel()
         if paper.backlit { setLamp(posture == .closed ? 0 : 1, now: true) }
         aimCamera(at: angle)
-    }
-
-    func selectHinge(_ kind: HingeKind) {
-        switch kind {
-        case .simulated: hingeKind = .simulated
-        case .device:
-            if let d = device, d.isAvailable { hingeKind = .device; d.start() }
-            else { show(L10n.t("hinge.unavailable")); hingeKind = .simulated }
-        case .tilt: show(L10n.t("hinge.tiltSoon")); hingeKind = .simulated
-        }
     }
 
     // MARK: walking
@@ -1497,7 +1320,6 @@ final class GameModel {
         cancelFlip()   // undo / restart / a new level: the turn being undone is not landed or announced
         stopWalk(); stopMotion(); stopGhost(); freezeCamera(); settleTask?.cancel(); ahaTask?.cancel(); stuckTask?.cancel()
         clearCrush(); stopRideFeel()
-        hingeIdle?.cancel(); hingeIdle = nil; hingeActive = false; hinge.reset()
     }
 
     // MARK: 「翻」 (design-ch6.md §1–2)
@@ -1702,7 +1524,7 @@ final class GameModel {
             try? await Task.sleep(for: .milliseconds(450))
             guard let self, !Task.isCancelled else { return }
             self.autoCreaseTask = nil
-            guard self.onFlap, self.angle >= self.config.foldMin, !self.won, !self.aha, !self.dragging, !self.hingeActive,
+            guard self.onFlap, self.angle >= self.config.foldMin, !self.won, !self.aha, !self.dragging,
                   self.motionTarget == nil, !self.walking else { return }
             self.switchCrease(auto: true)
         }
@@ -1824,7 +1646,7 @@ final class GameModel {
                 let text = L10n.t(offBook ? "fellOff" : crushed ? (rules.isRight(here.c) && !isTrifold ? "crushedGlue" : "crushed") : "fell")
                 show(text, speak: false)
                 pending.fell = text; pending.connected = false; pending.goal = false
-                if motionTarget == nil && !dragging && !hingeActive { settleSoon() }
+                if motionTarget == nil && !dragging { settleSoon() }
             case .stepped(let to):
                 // glue underfoot: a soft give (design-review-v2c1 §3 触觉 / 声音)
                 if board[to] == .glue { haptics.soft(); sound.glueTick(pan: pan(of: to)) }
@@ -1866,7 +1688,7 @@ final class GameModel {
                 // and a finger still on the page no longer holds it
                 clearCrush(); haptics.crush()
                 stopMotion(); rubber = 0
-                if dragging { dragging = false; dragLid = nil; angleHint = false }
+                if dragging { dragging = false; angleHint = false }
                 rollFlight = nil; fillRings = [:]
                 angle = game.angle; sync()
                 aimCamera(at: angle)
@@ -1900,7 +1722,6 @@ final class GameModel {
     func startAha() {
         ahaTask?.cancel()
         aha = true; quiet = true
-        releaseHinge()   // an aha mid hinge move: the hinge no longer owns the page
         if isFinale { startFinale(); return }
         let rm = settings.motionReduced
         ahaTask = Task { [weak self] in
@@ -2028,7 +1849,6 @@ final class GameModel {
 
     func settle() {
         noteRest()
-        offerHingeHint()
         settleTask?.cancel(); settleTask = nil
         let a = Int(angle.rounded())
         let p = pending
@@ -2098,7 +1918,7 @@ final class GameModel {
         settleTask = Task { [weak self] in
             try? await Task.sleep(for: .milliseconds(350))
             // a new motion started meanwhile (Lean / a drag / the hinge): its own rest settles, with the reason last (Codex review 15)
-            guard !Task.isCancelled, let self, self.motionTarget == nil, !self.dragging, !self.hingeActive else { return }
+            guard !Task.isCancelled, let self, self.motionTarget == nil, !self.dragging else { return }
             self.settle()
         }
     }

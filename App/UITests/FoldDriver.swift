@@ -16,9 +16,21 @@ struct FoldDriver {
     /// One drag of `dy` (normalised screen height; > 0 pulls down = closes). Returns how many degrees it closed.
     @discardableResult func pull(_ dy: Double) -> Int {
         let before = phys()
+        if vertical {
+            // the vertical-crease spread (the Duo's inner display): the right page turns leftwards over the left one
+            let x0 = dy > 0 ? 0.74 : 0.26
+            dragX(x0, min(0.98, max(0.02, x0 - dy)))
+            return before - phys()
+        }
         let y0 = dy > 0 ? 0.30 : 0.88
         drag(y0, min(0.97, max(0.04, y0 + dy)))
         return before - phys()
+    }
+    /// A horizontal drag across the book's middle row (the vertical-crease spread).
+    func dragX(_ x0: Double, _ x1: Double, speed: CGFloat = 400, hold: TimeInterval = 0.35) {
+        let p = { (x: Double) in app.coordinate(withNormalizedOffset: CGVector(dx: x, dy: 0.5)) }
+        p(x0).press(forDuration: 0.08, thenDragTo: p(x1), withVelocity: XCUIGestureVelocity(speed), thenHoldForDuration: hold)
+        usleep(700_000)
     }
     /// Lean the page to a physical angle with real drags, correcting like a hand would: each drag teaches it how far
     /// the page goes per point here (the gain changes with the angle). Small corrections go the safe way first
@@ -62,23 +74,13 @@ struct FoldDriver {
         return phys()
     }
 
-    /// design-duo.md §6: turn the fake device hinge (-hinge fake) from `from` to `to` physical degrees (180 flat, 0 shut)
-    /// in ~10° steps 30 ms apart, like a hand, through Darwin notifications the app's FakeHinge listens for.
-    func hinge(from: Int, to: Int, step: Int = 10) {
-        let center = CFNotificationCenterGetDarwinNotifyCenter()
-        var d = from
-        while d != to {
-            d = to > d ? min(to, d + step) : max(to, d - step)
-            CFNotificationCenterPostNotification(center, CFNotificationName("com.haoqianglyu.letterfold.hinge.\(d)" as CFString), nil, nil, true)
-            usleep(30_000)
-        }
-        Thread.sleep(forTimeInterval: 1.0)   // the hinge at rest: idle hand-back + the rest snap
-    }
     func tile(_ c: Int, _ r: Int) -> XCUIElement { app.descendants(matching: .any)["tile-\(c)-\(r)"] }
     func isHere(_ c: Int, _ r: Int) -> Bool { tile(c, r).label.contains("你在这里") }
     func walk(_ c: Int, _ r: Int, wait: TimeInterval = 1.6) {
         XCTAssertTrue(tile(c, r).waitForExistence(timeout: 3), "tile-\(c)-\(r)")
-        if vertical { tile(c, r).coordinate(withNormalizedOffset: CGVector(dx: c < 4 ? 0.3 : 0.7, dy: 0.5)).tap() }
+        // the -duoInnerSim window (466 pt, not the real 951 pt inner display) squeezes the book to its 30 pt minimum
+        // squares and clips the right page's outer column: tap a square's inner (crease-side) half on the right page
+        if vertical { tile(c, r).coordinate(withNormalizedOffset: CGVector(dx: c < 4 ? 0.3 : 0.35, dy: 0.5)).tap() }
         else { tile(c, r).tapVisible(c) }
         Thread.sleep(forTimeInterval: wait)
     }

@@ -20,12 +20,6 @@ const NATIVE = {
   'slip.roll.lean': ['斜起', 'lean', '傾ける', '기울이기'],
   'slip.roll.flat': ['放平', 'flat', '平らに', '펴기'],
   walkHere: ['走到这里', 'Walk here', 'ここへ歩く', '여기로 걷기'],
-  hingeSource: ['折叠输入', 'Fold input', '折りの入力', '접기 입력'],
-  'hinge.simulated': ['滑块与拖动', 'Slider and drag', 'スライダーとドラッグ', '슬라이더와 드래그'],
-  'hinge.device': ['设备铰链', 'Device hinge', '本体のヒンジ', '기기 힌지'],
-  'hinge.tilt': ['体感（未完成）', 'Tilt (coming soon)', '傾き（準備中）', '기울기(준비 중)'],
-  'hinge.unavailable': ['这台设备没有铰链，继续用滑块', 'No hinge on this device; using the slider', 'この端末にはヒンジがありません。スライダーを使います', '이 기기에는 힌지가 없어요. 슬라이더를 사용해요'],
-  'hinge.tiltSoon': ['体感还没做好，继续用滑块', 'Tilt is not ready yet; using the slider', '傾きはまだ準備中です。スライダーを使います', '기울기는 아직 준비 중이에요. 슬라이더를 사용해요'],
   'pre.stand': ['立起', 'Stand', '立てる', '세우기'],
   'pre.leanLabel': ['斜起到 45°', 'Lean the page to 45°', '45°まで傾ける', '45°로 기울이기'],
   levelDoneMark: ['已完成', 'Solved', 'クリア', '완료'],
@@ -128,12 +122,10 @@ const NATIVE = {
   'hint.portrait.back': ['先往上一格，往右两格，回到折痕边，再沿折痕往右走到最右一格，合上。合着往下走到底，再往左一格，打开：你在上页最上面一行。再往左一格，合上——这一叠一直通到左下角的信。', 'One step up, two right, back down to the crease, then along it right to the last square, and close. Closed, walk down to the end, one step left, and open: you are on the top row of the top page. One more step left, close again — this stack runs all the way to the letter in the bottom-left corner.', '上へ一枡、右へ二枡、折り目へ戻り、折り目沿いに右端まで歩いて閉じる。閉じたまま下の端まで、左へ一枡、開く。きみは上の頁のいちばん上の行にいる。もう一枡左へ、また閉じる。この重なりは左下の手紙まで通じている。', '위로 한 칸, 오른쪽으로 두 칸, 다시 접는 선으로 내려와 선을 따라 오른쪽 끝까지 가서 닫아요. 닫은 채 아래 끝까지, 왼쪽으로 한 칸 가서 펼쳐요. 위 페이지 맨 윗줄이에요. 왼쪽으로 한 칸 더 가서 다시 닫아요. 이 겹은 왼쪽 아래의 편지까지 이어져요.'],
   'hint.portrait.key': ['只有下页那扇门有钥匙。先在上页往右走到底、再往上，到最上面一行的第 4 列，合上：门开了，这一叠下面是石头。合着往左两格，往上一格进到开着的门里，打开，再往上一格，合上：往左一格、再往上一格就是信。上页那扇门没有钥匙，它只是墙。', 'Only the door on the bottom page has a key. On the top page walk right to the end, then up, to column 4 of the top row, and close: the door opens, and this stack sits on a stone. Closed, two steps left and one up into the open door; open, one more step up, and close again: one step left and one up is the letter. The door on the top page has no key; it is only a wall.', '鍵があるのは下の頁の扉だけ。上の頁を右端まで、それから上へ、いちばん上の行の4列目で閉じる。扉が開き、この重なりの下は石。閉じたまま左へ二枡、上へ一枡で開いた扉の中へ。開いて、さらに上へ一枡、また閉じる。左へ一枡、上へ一枡で手紙。上の頁の扉に鍵はない、ただの壁。', '열쇠가 있는 문은 아래 페이지의 문뿐이에요. 위 페이지에서 오른쪽 끝까지, 그다음 위로 가서 맨 윗줄 4열에서 닫아요. 문이 열리고, 이 겹 아래는 돌이에요. 닫은 채 왼쪽으로 두 칸, 위로 한 칸 가서 열린 문 안으로. 펼치고 위로 한 칸 더, 다시 닫아요. 왼쪽으로 한 칸, 위로 한 칸이면 편지예요. 위 페이지의 문에는 열쇠가 없어요. 그냥 벽이에요.'],
   'hint.portrait.ink': ['一开始就合上：墨印到了上页。合着往左走到底，再往上走到折痕边，往右一格，打开；再往右一格（第 3 列），合上：这一叠经过印过去的墨往右，通到最右一列。往下一格，打开，往上一格就是信。', 'Close at once: the ink prints onto the top page. Closed, walk left to the end, then up to the crease, one step right, and open; one more step right (column 3), and close again: this stack runs right through the printed ink to the last column. One step down, open, and one step up is the letter.', 'すぐに閉じる。墨が上の頁に写る。閉じたまま左端まで、上へ折り目まで、右へ一枡、開く。もう一枡右（3列目）で、また閉じる。この重なりは写った墨を通って右端の列へ。下へ一枡、開けば、上へ一枡で手紙。', '바로 닫아요. 먹이 위 페이지에 찍혀요. 닫은 채 왼쪽 끝까지, 위로 접는 선까지, 오른쪽으로 한 칸 가서 펼쳐요. 오른쪽으로 한 칸 더(3열) 가서 다시 닫아요. 이 겹은 찍힌 먹을 지나 맨 오른쪽 열까지 이어져요. 아래로 한 칸, 펼치면 위로 한 칸이 편지예요.'],
-  // 0.1 (4): chapter 2 「立」, the hinge setting (design-review-2, plan.md §12)
+  // 0.1 (4): chapter 2 「立」 (design-review-2)
   'paper.ch2': ['米纸，纸片会站起来。', 'Rice paper; the tabs can stand.', '米色の紙。紙片は立ち上がる。', '쌀종이, 종이 조각이 일어설 수 있어요.'],
   'ch.2.line': ['纸也会站起来。', 'Paper can stand up too.', '紙だって、立ち上がる。', '종이도 일어설 수 있다.'],
   'teach.half': ['书可以只打开一半', 'The book can open just halfway', '本は半分だけ開くこともできる', '책은 반만 펼칠 수도 있어요'],
-  'set.hinge': ['铰链折页', 'Fold with the hinge', 'ヒンジで折る', '힌지로 접기'],
-  'set.hinge.d': ['合上手机时，书也跟着合上', 'Closing the phone folds the book too', 'スマホを閉じると本も折れる', '휴대폰을 접으면 책도 접혀요'],
   'letter.2.title': ['右岸来信', 'A Letter from the Right Bank', '右岸からの手紙', '오른쪽 강가에서 온 편지'],
   'letter.2.body': ['河没有变窄，\n纸却先站了起来，\n替我走到岸边。', 'The river is no narrower,\nbut the paper stood up first\nand walked to the bank for me.', '川は狭くならない。\nけれど紙が先に立ちあがり、\nわたしの代わりに岸まで歩いた。', '강은 좁아지지 않았다.\n그런데 종이가 먼저 일어서서\n나 대신 강가까지 걸어갔다.'],
   'letter.2.sign': ['——右岸', '— the Right Bank', '——右岸より', '— 오른쪽 강가에서'],
@@ -274,6 +266,11 @@ for (const key of Object.keys(src.strings.en)) {
   const where = A11Y.test(key) ? 'VoiceOver / announcement' : 'UI';
   ui[key] = { comment: `${where}. From fold-proto i18n.js.` + (params.length ? ` Placeholders: ${params.map((p) => '{' + p + '}').join(' ')}` : '') + (CHECKED.has(key) ? ' ja/ko: TODO-native-check.' : ''), values };
 }
+// design-duo.md (fold-proto cca40ca, 2026-10-31): the Duo's hinge is not an input — its two strings go, and the ending no
+// longer promises playing with the crease. Drop this block once fold-proto's i18n.js has the same change.
+delete ui['duo.hint']; delete ui['tri.hingeIsBook'];
+Object.assign(ui.allDone.values, { zh: '全部完成。等 Duo 到了，书脊会落在真的折痕上。', en: 'All done. When the Duo comes, the spine will lie on a real crease.',
+  ja: 'すべて届いた。Duoが来たら、本の背が本物の折り目に重なる。', ko: '모두 닿았어요. Duo가 오면, 책등이 진짜 접는 선 위에 놓여요.' });
 for (const [key, [zh, en, ja, ko]] of Object.entries(NATIVE)) {
   ui[key] = { comment: (A11Y.test(key) || /^restart(Label|Hint|ed)$/.test(key) ? 'VoiceOver' : 'UI') + '. Native app only.' + (CH6_NATIVE.includes(key) || key.endsWith('.ch6') ? ' ja/ko: TODO-native-check.' : ''), values: { zh, en, ja, ko } };
 }
