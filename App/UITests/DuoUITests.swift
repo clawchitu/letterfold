@@ -145,4 +145,22 @@ final class DuoUITests: XCTestCase {
             app.terminate()
         }
     }
+
+    /// 2-1 「立」 on the inner layout (Codex review P1): the page standing at 90° is drawn readable and its squares take
+    /// taps — (7,0) is on the standing page.
+    func testInnerStandingPageIsTappable() {
+        launch(6, inner: true)
+        play("stand")
+        shot("inner-2-1-standing")
+        won("inner-2-1")
+    }
+
+    /// 8-? 「左灯」 (leftLamp) on the inner layout (Codex review P1): leaning to 120°, the walk goes on along the leaning
+    /// page — its squares take taps through the sheet.
+    func testInnerLeaningPageIsTappable() {
+        launch(49, inner: true)
+        play("leftLamp")
+        shot("inner-leftLamp")
+        won("inner-leftLamp")
+    }
 }
