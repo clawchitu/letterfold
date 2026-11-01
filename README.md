@@ -25,11 +25,11 @@ xcodebuild test -project Letterfold.xcodeproj -scheme Letterfold -destination "i
 cd Packages/FoldCore && swift test
 ```
 
-启动参数（截图和调试用）：`-screen cover|map|level|letter|settings`、`-startLevel 5`（从 1 开始）、`-startAngle 130`、`-walkTo 6,2`（先走到某格，必要时先合上）、`-aha YES`（直接播「啊哈」）、`-autoplay YES`、`-resetProgress YES`、`-hinge simulated|device`、`-buttonControl YES`、`-highContrast YES`、`-largeGrid YES`、`-reduceMotion YES`、`-soundMode YES`、`-levelMap "行|行|…"`（UI 测试：把 -startLevel 那关换成别的棋盘，规则回归测试用 0.1 (13) 的旧图，见 `App/UITests/Boards13.swift`）、`-AppleLanguages "(ja)"`。
+启动参数（截图和调试用）：`-screen cover|map|level|letter|settings`、`-startLevel 5`（从 1 开始）、`-startAngle 130`、`-walkTo 6,2`（先走到某格，必要时先合上）、`-aha YES`（直接播「啊哈」）、`-autoplay YES`、`-resetProgress YES`、`-buttonControl YES`、`-highContrast YES`、`-largeGrid YES`、`-reduceMotion YES`、`-soundMode YES`、`-levelMap "行|行|…"`（UI 测试：把 -startLevel 那关换成别的棋盘，规则回归测试用 0.1 (13) 的旧图，见 `App/UITests/Boards13.swift`）、`-AppleLanguages "(ja)"`。
 
 图标：`swift tools/make-icon.swift App/Resources/Assets.xcassets/AppIcon.appiconset`（按 final-11 方案 A 用 CoreGraphics 画，生成全部旧尺寸 + 深色 / 着色 1024）。
 
-**部署版本**：SDK 是 iOS 27.1，部署目标设为 **iOS 27.0**。原因：本机 iOS 27.1 模拟器运行时只支持「iPhone Duo」机型，iPhone 18 Pro 只有 27.0。`UIHinge` 相关代码都在 `@available(iOS 27.1, *)` 后面，27.0 上自动退回滑块。
+**部署版本**：SDK 是 iOS 27.1，部署目标设为 **iOS 27.0**。原因：本机 iOS 27.1 模拟器运行时只支持「iPhone Duo」机型，iPhone 18 Pro 只有 27.0。Duo 的铰链不是输入（design-duo.md 2026-10-31），不读 `UIHinge`。
 
 ## 结构
 
@@ -51,7 +51,7 @@ App/Sources/
   Theme.swift               颜色 token、每章 4 个纸参数、字体（宋体按需下载）
   Settings.swift            设置项 + 系统辅助功能状态
   Haptics.swift / Sound.swift   Core Haptics 图案；AVAudioEngine 合成音（无音频文件）
-  Hinge.swift / L10n.swift  铰链（M0）；文案（可在设置里切语言）
+  Hinge.swift / L10n.swift  DuoScreen：Duo 内屏的书脊位置（只管布局）；文案（可在设置里切语言）
 App/Resources/              String Catalog（zh-Hans / en / ja / ko）、Assets.xcassets（App 图标）
 App/UITests/                XCUITest：书封 → 地图 → 关卡；真拖页合上 → 点格走 → 啊哈；拖到半开吸附；按钮步进与撤销；日文
 tools/                      sync-from-proto.sh、make-strings.js（原生专用文案在 NATIVE 表里）、make-icon.swift
@@ -61,8 +61,8 @@ tools/                      sync-from-proto.sh、make-strings.js（原生专用�
 
 ## M1 做了什么
 
-- **竖屏横折痕**：上页向下合到下页，格子 80pt（5 行地图 63pt），间隙 4，页边 10；FoldCore 规则不变，坐标映射放在 `Spread`（有测试）。横屏用竖折痕；Duo 竖握时铰链是横的，也用横折痕（design-duo.md §0）。
-- **输入只有拖页和点格**：整张书都是拖页热区，页的外缘 1:1 跟手（按抓点到折痕的距离算角度），越界橡皮筋；松手按速度投射后吸附到 0 / 90 / 130 / 180°（`hinge.release` 160ms 曲线，合上用 `close.snap` 弹簧）；经过吸附点 Impact .medium 0.6，其余每 15° 一下选择触感；合上「啪」= rigid 0.9 + 纸面下压 + 折痕发亮。拖动时折痕旁 11pt 角度，松手后 0.6s 淡出。点格走路，不可达的格子轻抖。两指左滑 = 撤销。默认界面没有滑块、读数和按钮。Duo 上铰链是和手指并行的第二输入（plan.md §12.1、design-duo.md §1）：动 ≥ 8° 才接管，停下按自适应空闲交还手指，游戏从不要求它；内屏折痕钉在铰链上（屏高 / 2），盖子上只放纸。调试：`-hinge fake -hingeStart <物理角，180 摊平>`、`-hingeSequence "170@300,150@330,…"`、运行中 Darwin 通知 `com.haoqianglyu.letterfold.hinge.<0…180>`（UI 测试用 `FoldDriver.hinge(from:to:)`）；`-duoShot <png>`（仅 Debug）用 ImageRenderer 按内屏 669 × 951 出图（模拟器开机是合着的，内屏只能在 Device Hub 里打开）。
+- **竖屏横折痕**：上页向下合到下页，格子 80pt（5 行地图 63pt），间隙 4，页边 10；FoldCore 规则不变，坐标映射放在 `Spread`（有测试）。横屏用竖折痕；Duo 内屏是 951 × 669 的横向窗口，也用竖折痕，折痕钉在窗口宽 / 2（物理铰链，design-duo.md §1）。
+- **输入只有拖页和点格**：整张书都是拖页热区，页的外缘 1:1 跟手（按抓点到折痕的距离算角度），越界橡皮筋；松手按速度投射后吸附到 0 / 90 / 130 / 180°（`hinge.release` 160ms 曲线，合上用 `close.snap` 弹簧）；经过吸附点 Impact .medium 0.6，其余每 15° 一下选择触感；合上「啪」= rigid 0.9 + 纸面下压 + 折痕发亮。拖动时折痕旁 11pt 角度，松手后 0.6s 淡出。点格走路，不可达的格子轻抖。两指左滑 = 撤销。默认界面没有滑块、读数和按钮。Duo 的两块屏都是普通 iPhone（design-duo.md 2026-10-31 决定）：只有拖页和点格，开合手机只是换屏，**不**折纸；内屏是左右翻的书，书脊钉在物理折痕上（窗口宽 / 2），输入和规则和外屏一样，画的角度就是游戏的折角（侧翻，和横屏同一套画法）。调试：`-duoShot <png>`（仅 Debug）用 ImageRenderer 按内屏 951 × 669 出图；`-duoInnerSim YES`（UI 测试）在外屏窗口里按内屏的书脊布局玩（模拟器开机是合着的，内屏只能在 Device Hub 里打开）。
 - **按钮控制**：VoiceOver / 切换控制 / 辅助触控在运行，或设置里打开「按钮控制」时，页脚出现 5 个按钮（折一点 · 展开一点 · 合上 · 打开 · 撤销，每个 ≥52pt 高），右侧「走」书签（30×150，热区 44×150）展开四向一步、听一行、我在哪。同样的动作也是每格和折页控件的 accessibilityCustomActions。0.1 (17) 加了「重新开始」（页脚最右；没有页脚时是顶栏「?」左边的图标；键盘 R）：回到这一关的开头（格子、书面、纸人、摊平），第一步之前不可点；不弹确认，可以撤销——一次撤销回到重新开始之前（FoldGame.restart 先 pushUndo）。不算提示。
 - **第一章材质**：新纸 #F7F4EE / 透光 0.05 / 墨饱和 82% / 无背光（`PaperState.chapter1`，其他章的 4 个参数也已写好）；程序生成的纸纤维；每页向折痕微微下陷（谷折），合上后书脊是山折高光；中缝亮线 1.1pt + 暗线 0.8pt；路格比纸深一档 + 顶边高光 + 底边 1pt 投影；纸石三个棱面；湿墨有沿纤维洇开的晕，印到对页的是镜像，洇开 600ms，原处变淡；朱线 3pt 虚线 8/5 + 投影，只画走过的路，跨页的一步在两页各止于格边、打结，书打开时从不跨中缝，合上时在书背上连成一条，到终点打结。
 - **「啊哈」**（final-10，1470ms）：过关时 ① 没合上就先弹簧合上（220ms）② 相触：压下、折痕发亮、rigid 0.9、「啪」，「信，送到了。」淡入 ③ 自动展开到摊平（300ms）、朱线重描（420ms）、「通」印落在朱线过河处（180 + 90ms 回弹）、soft 0.6 + success。任何触摸、按钮、读屏动作都会跳到最后一帧。减少动态效果：全部改成 200ms 线性淡入淡出，没有翻转和回弹。
@@ -95,8 +95,8 @@ tools/                      sync-from-proto.sh、make-strings.js（原生专用�
 
 - **TestFlight 切片（12/19）**：在 App Store Connect 建 App 记录（名字：折信 / Letterfold / 折り文 / 접은 편지）、上传、内部测试；真机上调手感（吸附、弹簧、触觉强度）、测 120 fps；幽灵手教学（1-1）；双指捏合合书；AXCustomContent；录音音色。
 - **RealityKit / Metal 试验**：第三章背光与软影（见上）。
-- **M2 Duo 周（11/28–12/5）**：真机 `UIHinge` 角度标定与刷新率、合上角度、影子章节的角度窗口。
-- 体感 `TiltHinge`（CoreMotion，可选项）、高对比、切换控制与语音控制别名。
+- **M2 Duo 周（11/28–12/5）**：真机上看内屏书脊布局和换屏（铰链不是输入，design-duo.md §2）。
+- 高对比、切换控制与语音控制别名。
 
 ## M1 验证（2026-10-16）
 
@@ -112,15 +112,15 @@ tools/                      sync-from-proto.sh、make-strings.js（原生专用�
 - **相机书**（`BookCamera` / `CameraBook`，竖屏）：相机姿势见下面 0.1 (5)（design-review-3 §3 取代了这里原来的 pitch = 16° + 24°·sin a）；每一页是 3-D 平面，用精确的透视单应（`ProjectionTransform`）绘制；90° 时上页是墙，两片纸片从 120° 起翻、在 90° 合成 45° 坡道（横纹 + 两侧 V 撑），纸人站在坡道上，朱线在书打开时跨过中缝。点击和读屏目标在屏幕空间按投影四边形生成（`ProjectedTargets`），跟着倾斜。横屏 / Duo 仍是原来的侧翻。
 - **第二章**：第一章送达后解锁；章首「二 · 立 / 纸也会站起来。」（米纸从左上擦入 600 ms，只放一次）；纸片扣成桥 = Impact .medium + 纸声 + 折痕亮 400 ms，桥上不落「通」；2-1 无文字教学（8 s 没折，或合上失败后 1.5 s，幽灵手把页拉到 90° 并停住；减少动态效果只出「?」，读屏播一句）；合上过程上页像描图纸透出下页（透光 0.15）；右岸来信；地图去掉「5 / 9」，二章送达落「通」。
 - **书封 7-1 拉线**：48×72 朱红纸签、竖排「开始」19pt、下拉 ≥ 64pt 或轻点、拉的时候「折」那页跟手往下折、1.5 s 轻晃一次、右上 44pt 设置图标、中文屏不显示 Letterfold；第一次打开直接进 1-1。
-- **铰链（plan §12.1）**：拖页在所有设备上都可用；铰链为并行输入（300 ms 内 ≥ 8° 才接管，160 ms 追上，物理 30°–90° 压到 0°–90°，停 300 ms 交回并吸附，进撤销栈；手指、按钮、读屏随时收回）；设置「铰链折页」默认开，只在有铰链时出现。未在真机上验证。
+- **铰链**：~~并行输入~~ 2026-10-31 撤掉（design-duo.md 决定：玩家把开合当换屏；影子窗口要手机半合着看内屏）。拖页是唯一的折法，所有设备一样；「铰链折页」设置删除。以后要回来只能是设置里显式打开的可选项。
 - **测试**：`PlaythroughUITests.testPlaythroughChapters1And2` 以中文从书封玩通第一、二章（真拖页、点格；第二章 2-1 用「合上失败 → 幽灵手」那条路），约 200 s。QA 记录见 `tmp/fold/qa-2.md`。
-- **留到以后**：坡道深度按 0.35 格（现在 1 格，真机看是否挡住墙页第 3 行）；铰链驱动时仍播吸附触觉；地图「通」落印动画（M4）；铰链版幽灵手（M2）；FoldCore 内部改物理角。
+- **留到以后**：坡道深度按 0.35 格（现在 1 格，真机看是否挡住墙页第 3 行）；地图「通」落印动画（M4）；FoldCore 内部改物理角。
 
 ## 0.1 (5)：上页朝观者折（2026-10-17，design-review-3）
 
 Shuai：第一章全程「折纸的时候是朝我反方向折」。旋转本来就朝观者（`fold = (0, −cos t, sin t)`，一个符号没改），是 0.1 (4) 的相机俯角跟着页角走（16° → 40°），两页同步变矮，读成整本书往后倒。
 
-- **一台相机、两个姿势**（`GameModel.cameraPitch`）：手里的相机 pitch **12°**——摊平、合上、50° 影子姿态、**所有拖动和铰链驱动**；看墙的相机 **40°**——松手吸附到 90° 后，从松手那一刻起 320 ms ease-in-out 俯下来（减少动态效果 200 ms 线性）；离开 90° 松手后 320 ms 回到 12°。手指或铰链一碰页，相机冻结在当前值。yaw 仍是 18°·sin a（减少动态效果 0）。`k` 按「摊平 @12°」和「立起 @40°」两个框拟合，折痕在屏幕上不动。
+- **一台相机、两个姿势**（`GameModel.cameraPitch`）：手里的相机 pitch **12°**——摊平、合上、50° 影子姿态、**所有拖动**；看墙的相机 **40°**——松手吸附到 90° 后，从松手那一刻起 320 ms ease-in-out 俯下来（减少动态效果 200 ms 线性）；离开 90° 松手后 320 ms 回到 12°。手指一碰页，相机冻结在当前值。yaw 仍是 18°·sin a（减少动态效果 0）。`k` 按「摊平 @12°」和「立起 @40°」两个框拟合，折痕在屏幕上不动。
 - **拖动映射**（`BookView.cameraRaw`）：t ≥ pitch 时抓点在屏幕上的 y 1:1 跟手（在 [pitch, 180°] 上二分 20 次求逆）；t < pitch 时沿用桌面投影（acos）；两段在接缝处重新取锚点、连续。接缝不是正好 t = pitch：有透视时抓点的屏幕 y 在 pitch 之后还会再升约 asin(k·d/f) ≈ 11°，所以接缝取这段「离桌」的真正顶点（黄金分割搜索），二分只在真正单调的那段上做（Codex 评审 P1）。2-1 幽灵手拖页期间相机同样冻结，松手才俯下。从摊平拖，只有一次 ≈ 20 pt 的「离桌」抬头，之后页边一路向下、78° 翻面、背面盖到下页上。
 - 删除 `BookBody.tilt` 和 `legacyBody` 的横折痕分支（0.1 (2) 的「先后仰 62° 再翻过来」）；`legacyBody` 只剩 Duo / 横屏的竖折痕侧翻。
 - 测试：`testDragFromFlatDoesNotLiftThePageAway`（`-probe YES`：从摊平往下拖 40 pt，上页外缘在屏幕上抬起 ≤ 24 pt）；其余拖页用例断言不变。截图参数新增 `-cameraPitch <deg>`（`-startAngle 90` 默认就是看墙的相机）。
@@ -132,7 +132,7 @@ Shuai：第一章全程「折纸的时候是朝我反方向折」。旋转本来
 Shuai（0.1 (5)）：动效对了，但合上后格子几乎看不见，只读得出纸人、朱线和小旗。
 
 - **合上的地图**（`BackFace` / `StackTile`）：下页的路格照旧浮雕，盖 15% 纸背色薄纱，**1pt 实线边** `edge.lower` #7D7163（纸背 4.04:1）；上页带过来的格子面色偏冷（`tile.mirror`）、浮雕反向，**1pt 虚线边 4 / 3** `edge.upper` #5F6873（4.81:1）；两页都有 = 实线格内缩 4pt 再套虚线框；缺口什么也不画；上页的石头 / 门也带虚线边。小旗、钥匙、门保持正立，墨照旧镜像印。书脊高光和压暗只画在纸上、放到格子下面。合上最后 12° 淡入。高对比：下页 3pt 黑实线框、上页 3pt 黑虚线框 7 / 4、叠格实线框内缩 7pt 套 2pt 虚线框，上页的终点也有双框。
-- **合书的力度**（FoldCore `CloseFeel`，有单元测试）：页碰到下页那一刻前 ≈ 80 ms 的角速度（拖、弹簧、铰链都经过 `setAngle` 取样，在第一次到 179.5° 时锁存，弹簧在 180° 回弹也不丢）；减少动态效果的一跳不算速度，用松手速度；撤销不带速度；按钮 / 读屏没有速度时取中等 240°/s（刻度正中））→ 对数刻度 + smoothstep，60°/s 以下最轻、900°/s 以上最重 → 音量 0.25–1、低通 900–4200 Hz（8 档缓存）、触感强度 0.35–1、锐度 0.15–0.85。轻合是一声闷闷的纸碰纸 + 一下钝触感，快合是又响又脆的「啪」+ 硬的双击。声音走 ambient 会话（静音键、系统音量照常起作用），触感乘设置里的「触觉强度」；减少动态效果只改画面，不改声音和触感。
+- **合书的力度**（FoldCore `CloseFeel`，有单元测试）：页碰到下页那一刻前 ≈ 80 ms 的角速度（拖、弹簧都经过 `setAngle` 取样，在第一次到 179.5° 时锁存，弹簧在 180° 回弹也不丢）；减少动态效果的一跳不算速度，用松手速度；撤销不带速度；按钮 / 读屏没有速度时取中等 240°/s（刻度正中））→ 对数刻度 + smoothstep，60°/s 以下最轻、900°/s 以上最重 → 音量 0.25–1、低通 900–4200 Hz（8 档缓存）、触感强度 0.35–1、锐度 0.15–0.85。轻合是一声闷闷的纸碰纸 + 一下钝触感，快合是又响又脆的「啪」+ 硬的双击。声音走 ambient 会话（静音键、系统音量照常起作用），触感乘设置里的「触觉强度」；减少动态效果只改画面，不改声音和触感。
 
 ## 0.1 (8)：第三章补完（2026-10-18，design-review-ch3 §6）
 
