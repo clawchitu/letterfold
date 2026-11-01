@@ -1307,10 +1307,6 @@ struct SettingsView: View {
                     row(L10n.t("set.big"), L10n.t("set.big.d"), $settings.largeGrid, id: "set.big")
                     Divider().padding(.leading, 16)
                     row(L10n.t("set.rm"), L10n.t("set.rm.d"), $settings.reduceMotion, id: "set.rm")
-                    if settings.hingePresent {
-                        Divider().padding(.leading, 16)
-                        row(L10n.t("set.hinge"), L10n.t("set.hinge.d"), $settings.hingeFold, id: "set.hinge")
-                    }
                 }
                 .background(RoundedRectangle(cornerRadius: 14).fill(Color(hex: 0xFCFBF8)))
                 Text(L10n.t("langGroup")).font(.footnote).foregroundStyle(Tok.ink600).padding(.leading, 18).padding(.top, 18)

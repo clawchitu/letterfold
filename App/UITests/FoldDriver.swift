@@ -16,9 +16,21 @@ struct FoldDriver {
     /// One drag of `dy` (normalised screen height; > 0 pulls down = closes). Returns how many degrees it closed.
     @discardableResult func pull(_ dy: Double) -> Int {
         let before = phys()
+        if vertical {
+            // the vertical-crease spread (the Duo's inner display): the right page turns leftwards over the left one
+            let x0 = dy > 0 ? 0.92 : 0.10
+            dragX(x0, min(0.98, max(0.02, x0 - dy)))
+            return before - phys()
+        }
         let y0 = dy > 0 ? 0.30 : 0.88
         drag(y0, min(0.97, max(0.04, y0 + dy)))
         return before - phys()
+    }
+    /// A horizontal drag across the book's middle row (the vertical-crease spread).
+    func dragX(_ x0: Double, _ x1: Double, speed: CGFloat = 400, hold: TimeInterval = 0.35) {
+        let p = { (x: Double) in app.coordinate(withNormalizedOffset: CGVector(dx: x, dy: 0.5)) }
+        p(x0).press(forDuration: 0.08, thenDragTo: p(x1), withVelocity: XCUIGestureVelocity(speed), thenHoldForDuration: hold)
+        usleep(700_000)
     }
     /// Lean the page to a physical angle with real drags, correcting like a hand would: each drag teaches it how far
     /// the page goes per point here (the gain changes with the angle). Small corrections go the safe way first

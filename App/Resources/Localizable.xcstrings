@@ -38,25 +38,25 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "全部完成。等 Duo 到了，用真的折痕再玩一次。"
+            "value": "全部完成。等 Duo 到了，书脊会落在真的折痕上。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "All done. When the Duo arrives, play it again on a real crease."
+            "value": "All done. When the Duo comes, the spine will lie on a real crease."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "すべて届いた。Duoが来たら、本物の折り目でもう一度。"
+            "value": "すべて届いた。Duoが来たら、本の背が本物の折り目に重なる。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "모두 닿았어요. Duo가 오면, 진짜 접는 선으로 다시 한번."
+            "value": "모두 닿았어요. Duo가 오면, 책등이 진짜 접는 선 위에 놓여요."
           }
         }
       }
@@ -3391,36 +3391,6 @@
         }
       }
     },
-    "duo.hint": {
-      "comment": "UI. From fold-proto i18n.js.",
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "也可以把手机合一点。"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You can also fold the phone a little."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "スマホを少し閉じても折れる。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "휴대폰을 조금 접어도 돼요."
-          }
-        }
-      }
-    },
     "elsewhere": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -4557,186 +4527,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "내가 있는 곳"
-          }
-        }
-      }
-    },
-    "hinge.device": {
-      "comment": "UI. Native app only.",
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "设备铰链"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Device hinge"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "本体のヒンジ"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "기기 힌지"
-          }
-        }
-      }
-    },
-    "hinge.simulated": {
-      "comment": "UI. Native app only.",
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "滑块与拖动"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Slider and drag"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "スライダーとドラッグ"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "슬라이더와 드래그"
-          }
-        }
-      }
-    },
-    "hinge.tilt": {
-      "comment": "UI. Native app only.",
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "体感（未完成）"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tilt (coming soon)"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "傾き（準備中）"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "기울기(준비 중)"
-          }
-        }
-      }
-    },
-    "hinge.tiltSoon": {
-      "comment": "UI. Native app only.",
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "体感还没做好，继续用滑块"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tilt is not ready yet; using the slider"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "傾きはまだ準備中です。スライダーを使います"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "기울기는 아직 준비 중이에요. 슬라이더를 사용해요"
-          }
-        }
-      }
-    },
-    "hinge.unavailable": {
-      "comment": "UI. Native app only.",
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "这台设备没有铰链，继续用滑块"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No hinge on this device; using the slider"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "この端末にはヒンジがありません。スライダーを使います"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "이 기기에는 힌지가 없어요. 슬라이더를 사용해요"
-          }
-        }
-      }
-    },
-    "hingeSource": {
-      "comment": "UI. Native app only.",
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "折叠输入"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fold input"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "折りの入力"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "접기 입력"
           }
         }
       }
@@ -12901,66 +12691,6 @@
         }
       }
     },
-    "set.hinge": {
-      "comment": "UI. Native app only.",
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "铰链折页"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fold with the hinge"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ヒンジで折る"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "힌지로 접기"
-          }
-        }
-      }
-    },
-    "set.hinge.d": {
-      "comment": "UI. Native app only.",
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "合上手机时，书也跟着合上"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Closing the phone folds the book too"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "スマホを閉じると本も折れる"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "휴대폰을 접으면 책도 접혀요"
-          }
-        }
-      }
-    },
     "set.music": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -16317,36 +16047,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "이 편지에는 셋째 페이지가 있어요. 오른쪽 페이지 바깥에 제 접는 선으로 이어져 있어요. P로 책의 접는 선과 셋째 페이지의 접는 선을 바꿔요."
-          }
-        }
-      }
-    },
-    "tri.hingeIsBook": {
-      "comment": "UI. From fold-proto i18n.js.",
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "第三页用手指折；铰链折的是书。"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fold the third page with your finger; the hinge folds the book."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "三枚目は指で折る。スマホの綴じ目が折るのは本。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "셋째 페이지는 손가락으로 접어요. 휴대폰의 접는 선은 책을 접어요."
           }
         }
       }

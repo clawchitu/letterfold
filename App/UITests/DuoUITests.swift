@@ -154,4 +154,52 @@ final class DuoUITests: XCTestCase {
         XCTAssertTrue(f.probe("toast").contains("铰链折的是书"), "12-1: the quiet word (tri.hingeIsBook): \(f.probe("toast"))")
         shot("12-1-hinge-ignored")
     }
+
+    /// DIAG (main, hinge-driven): 4-4 on the inner layout, the shadow tile (2,4) at fold ~130.
+    func testDiagInnerStoneRainHinge() {
+        launch(23, mode: "inner")
+        f.walk(6, 3, wait: 6)
+        print("DIAG at63: \(f.isHere(6, 3)) \(f.tile(6, 3).label)")
+        f.hinge(from: 180, to: 0)
+        print("DIAG closed phys \(f.phys())")
+        f.walk(0, 3, wait: 1.5); f.walk(0, 4, wait: 1.5)
+        print("DIAG at04: \(f.isHere(0, 4))")
+        f.hinge(from: 0, to: 63, step: 9)
+        print("DIAG lean phys \(f.phys()) lock \(f.probe().lock) t24 \(f.tile(2, 4).label)")
+        shot("diag-44-lean")
+        f.walk(1, 4, wait: 1.5)
+        print("DIAG at14: \(f.isHere(1, 4)) \(f.tile(1, 4).label)")
+        f.walk(2, 4, wait: 1.5)
+        print("DIAG at24: \(f.isHere(2, 4)) \(f.tile(2, 4).label) toast \(f.probe("toast"))")
+        shot("diag-44-shadow")
+    }
+
+    /// DIAG (main): 4-4 inner layout, the phone flat, the page leaned with the finger to ~130 (phys 50).
+    func testDiagInnerStoneRainDrag() {
+        launch(23, mode: "inner")
+        f.walk(6, 3, wait: 6)
+        f.dragX(0.92, 0.05); f.dragX(0.92, 0.05)
+        print("DIAG closed phys \(f.phys())")
+        f.walk(0, 3, wait: 1.5); f.walk(0, 4, wait: 1.5)
+        print("DIAG at04: \(f.isHere(0, 4))")
+        let a = f.lean(to: 50, tol: 4)
+        print("DIAG lean phys \(a) t24 \(f.tile(2, 4).label) frame \(f.tile(2, 4).frame)")
+        shot("diag-44-drag-lean")
+        f.walk(1, 4, wait: 1.5)
+        print("DIAG at14: \(f.isHere(1, 4))")
+        f.walk(2, 4, wait: 1.5)
+        print("DIAG at24: \(f.isHere(2, 4)) \(f.tile(2, 4).label) phys \(f.phys()) toast \(f.probe("toast"))")
+        shot("diag-44-drag-shadow")
+    }
+
+    func testDiagDragProbe() {
+        launch(23, mode: "inner")
+        print("DIAG book \(f.tile(0, 0).frame) \(f.tile(7, 4).frame) win \(app.frame)")
+        f.dragX(0.70, 0.55); print("DIAG a \(f.phys())")
+        f.dragX(0.75, 0.40, speed: 200); print("DIAG b \(f.phys())")
+        let t = f.tile(7, 2).coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        t.press(forDuration: 0.1, thenDragTo: t.withOffset(CGVector(dx: -60, dy: 0)), withVelocity: 300, thenHoldForDuration: 0.3)
+        Thread.sleep(forTimeInterval: 0.8); print("DIAG c \(f.phys())")
+        shot("diag-probe")
+    }
 }
