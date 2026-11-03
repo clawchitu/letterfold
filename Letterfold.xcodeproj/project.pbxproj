@@ -11,6 +11,7 @@
 		089C73E24BB02BF7002C67DC /* Chapter8Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAF188A41CB92A6FB2A0D7D /* Chapter8Marks.swift */; };
 		0ACF1846232647123A81BF6B /* Skins.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD058B4451F306D134BBAF38 /* Skins.swift */; };
 		11BE4B3530A847817165737B /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDBB77B419ABE4C00953E0 /* App.swift */; };
+		135064A07C05F6777FD36F3D /* Chapter13UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DCCA69FEC0B36EDAF184026 /* Chapter13UITests.swift */; };
 		16991211E73EA1ECC8352380 /* Chapter12Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9528175E86BD342A9AD5C46 /* Chapter12Marks.swift */; };
 		23541C263217811CE7EE57A7 /* BookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9649A387FE6D80E352CD3FC9 /* BookView.swift */; };
 		2440B5FB027790D0976AF907 /* Hinge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2991315D14E1D1169059EEE2 /* Hinge.swift */; };
@@ -77,6 +78,7 @@
 		0EBA74BD18A4CCAC6C76307B /* SlipUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlipUITests.swift; sourceTree = "<group>"; };
 		1A59202716B0AC3485A116A1 /* Chapter10Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter10Marks.swift; sourceTree = "<group>"; };
 		1CB4F047FF96EB1C56C27E68 /* MusicUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicUITests.swift; sourceTree = "<group>"; };
+		1DCCA69FEC0B36EDAF184026 /* Chapter13UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter13UITests.swift; sourceTree = "<group>"; };
 		23DC96729D3FCEAF07A7743F /* Paper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paper.swift; sourceTree = "<group>"; };
 		25B2C966B3DCE7BA4E158633 /* Chapter9UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter9UITests.swift; sourceTree = "<group>"; };
 		2991315D14E1D1169059EEE2 /* Hinge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hinge.swift; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 				6977AD3FCF19C5CAFDFFFA7E /* Chapter10UITests.swift */,
 				9CBFCF4DC6EB77948082A067 /* Chapter11UITests.swift */,
 				E36B0909E3FBA8D453FDC2A5 /* Chapter12UITests.swift */,
+				1DCCA69FEC0B36EDAF184026 /* Chapter13UITests.swift */,
 				86874352C30014FFF456BE3E /* ContentsUITests.swift */,
 				DFA230EEF3170E4CA7BC8708 /* DuoUITests.swift */,
 				76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */,
@@ -390,6 +393,7 @@
 				315A4F04504D631DA448B741 /* Chapter10UITests.swift in Sources */,
 				7C677CF2FF97368F1172CDA0 /* Chapter11UITests.swift in Sources */,
 				487D950A11A3AAA147002881 /* Chapter12UITests.swift in Sources */,
+				135064A07C05F6777FD36F3D /* Chapter13UITests.swift in Sources */,
 				940B2DA1796BB58F3B8FCFAD /* Chapter3UITests.swift in Sources */,
 				AAC6885CD98A69713F89E05E /* Chapter4UITests.swift in Sources */,
 				A14167539C197C23C60606DD /* Chapter5UITests.swift in Sources */,
