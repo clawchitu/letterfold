@@ -263,7 +263,7 @@ public struct Rules: Sendable {
     // MARK: pressing the pages together
 
     public struct Stamp: Sendable, Equatable {
-        public enum Kind: String, Sendable { case door, ink, glue, bleed, crane }
+        public enum Kind: String, Sendable { case door, ink, glue, bleed, crane, crack, freeze }
         public var kind: Kind
         /// door / ink: [source, target]. glue: [the stone's old cell, the glue cell it lands on]. bleed: every square the
         /// wet ink spread onto in this press (one ring).
@@ -272,6 +272,8 @@ public struct Rules: Sendable {
         public var wet: Bool = false
         /// bleed: what each of `cells` was before the ink covered it (`.empty` or `.glue`), logic.js `cells[].was`.
         public var was: [Tile] = []
+        /// crack (vol. 4 ch. 13): every ice / water square a stone came down on (a gap now, for good). freeze: every water
+        /// square that froze back at the end of the press.
         /// crane (vol. 3 ch. 10): `cells` = [the crane, its landing] — or [the crane] alone when it was soaked (`inked`).
         /// `glued`: it landed on glue — it carried over one last time and both squares are plain paper.
         public var inked: Bool = false
@@ -311,6 +313,8 @@ public struct Rules: Sendable {
         var events: [Stamp] = []
         let bled = bleed(&b)
         if !bled.cells.isEmpty { events.append(Stamp(kind: .bleed, cells: bled.cells, was: bled.was)) }
+        let cracked = crushIce(&b)   // vol. 4 ch. 13: the stones come down on the ice before anything is glued or printed
+        if !cracked.isEmpty { events.append(Stamp(kind: .crack, cells: cracked)) }
         for r in 0..<b.h {
             for q in 0..<n {
                 let m = mirror(q)
@@ -330,8 +334,67 @@ public struct Rules: Sendable {
             }
         }
         events += fly(&b)   // vol. 3 ch. 10: last of all, the cranes fly (after the roll of the sweep, the bleed, the keys, the ink, the glue)
+        let froze = freeze(&b)   // vol. 4 ch. 13: closed, the river is frozen (the lamp is shut out) — unless it is spring (thaw)
+        if !froze.isEmpty { events.append(Stamp(kind: .freeze, cells: froze)) }
         return events
     }
+
+    // MARK: ice (vol. 4 ch. 13 「冰」, fold-proto design-ch13.md §1, logic.js litCols / melt / freeze / crushIce / meltCause)
+
+    /// The lit page's visible columns: under the right-bank lamp the flat LEFT page (the lifted page's stones shade it);
+    /// under the left-bank lamp the LIFTED page; two lamps light both. The page that faces away from its lamp never melts.
+    public func litCols(_ b: Board) -> [Int] {
+        var out: [Int] = []
+        if b.lamp.contains("R") { out += Array(0..<n) }
+        if b.lamp.contains("L") { out += Array(n..<b.w) }
+        return out
+    }
+
+    /// The page came to REST at fold angle `a` (the finger let go and the page settled; the solver: a sampled angle was
+    /// reached). In the lamp window every ice square on the lit page that no shadow covers melts: `.ice` → `.water`. Moving
+    /// through the window melts nothing — only the rest does. `noShelter` is the player model in which shadows do not
+    /// protect the ice (check.js needsShelter). Returns the melted cells (row by row, lit columns in order). Mutates the board.
+    @discardableResult
+    public func melt(_ b: inout Board, _ a: Double, noShelter: Bool = false) -> [Cell] {
+        guard lit(a) else { return [] }
+        let sh = noShelter ? [:] : shadows(b, a)
+        var out: [Cell] = []
+        let cols = litCols(b)
+        for r in 0..<b.h { for c in cols where b[c, r] == .ice && sh[Cell(c, r)] == nil {
+            b[c, r] = .water; out.append(Cell(c, r))
+        } }
+        return out
+    }
+
+    /// The water that would melt if the page rested at `a` now (the UI's mist before the rest lands). Does not mutate.
+    public func wouldMelt(_ b: Board, _ a: Double) -> [Cell] { var w = b; return melt(&w, a) }
+
+    /// Laid flat (or pressed), the water freezes back into ice: `.water` → `.ice` on every page (raw grid). Spring
+    /// (`Board.thaw`) skips it. Returns the frozen cells (grid columns). Mutates the board.
+    @discardableResult
+    public func freeze(_ b: inout Board) -> [Cell] {
+        guard !b.thaw else { return [] }
+        var out: [Cell] = []
+        for r in 0..<b.h { for c in 0..<b.grid[r].count where b.grid[r][c] == .water { b.grid[r][c] = .ice; out.append(Cell(c, r)) } }
+        return out
+    }
+
+    /// The press: every stone (fixed or loose) facing ice or water crushes it — the square is a gap from then on (`.empty`).
+    /// Read through the visible columns, so after a turn it is the third page's stones that crush. Returns the crushed
+    /// cells. Mutates the board.
+    @discardableResult
+    public func crushIce(_ b: inout Board) -> [Cell] {
+        var out: [Cell] = []
+        for r in 0..<b.h { for q in 0..<n {
+            let m = mirror(q), L = b[q, r], R = b[m, r]
+            if R.isOpaque && (L == .ice || L == .water) { b[q, r] = .empty; out.append(Cell(q, r)) }
+            else if L.isOpaque && (R == .ice || R == .water) { b[m, r] = .empty; out.append(Cell(m, r)) }
+        } }
+        return out
+    }
+
+    /// After a melt: did the figure's own square turn to water? (logic.js `meltCause` — 'melt'.)
+    public func meltedUnder(_ b: Board, _ fig: Cell) -> Bool { b[fig] == .water }
 
     /// Paper crane (vol. 3 ch. 10 「鹤」, logic.js `fly`): at every press each crane flies to its mirror cell, all of them
     /// listed on the board as it is after the glue and judged one by one in reading order. Paper or a gap: it lands there
@@ -451,7 +514,7 @@ public struct Rules: Sendable {
     /// The shadows that lie on gaps (bare squares) at fold angle `a`, on either page: the right lamp shades the bottom
     /// page, the left lamp the lifted one (Codex review 20 #3). Shadows on paper, a stone or a gate do not count.
     public func gapShadows(_ b: Board, _ a: Double) -> [Cell] {
-        shadows(b, a).keys.filter { b[$0] == .empty }.sorted { ($0.r, $0.c) < ($1.r, $1.c) }
+        shadows(b, a).keys.filter { b[$0] == .empty || b[$0] == .water }.sorted { ($0.r, $0.c) < ($1.r, $1.c) }
     }
 
     /// Locked = at least one shadow lies on a gap, and every such shadow is connected to what the figure standing at
@@ -468,15 +531,18 @@ public struct Rules: Sendable {
     /// for a figure standing at `from`. Consecutive samples with the same gaps merge into one window.
     public func lockWindows(_ b: Board, from: Cell, step: Double = 0.25) -> [LockWindow] {
         var out: [LockWindow] = []
-        var a = config.shadeMin, lastSources: [Int?] = []
+        var a = config.shadeMin, lastSources: [Int?] = [], lastIce: [Cell] = []
         while a < config.foldMin {
             if let cells = lockCells(b, from: from, a) {
                 // the same gaps shaded by other stones are another lock: under two lamps a gap can change hands inside
                 // one stretch, and resting at the merged middle put 8-7's figure on the wrong stone's shadow
                 let sh = shadows(b, a), sources = cells.map { sh[$0] }
-                if let last = out.last, last.cells == cells, sources == lastSources, abs(last.hi - (a - step)) < 1e-6 { out[out.count - 1].hi = a }
+                // vol. 4 ch. 13: a lock is also split where the ice it shelters changes, so the page that rests at the
+                // window's middle melts what it would have melted where the finger let go
+                let iceKey = sh.keys.filter { b[$0] == .ice }.sorted { ($0.r, $0.c) < ($1.r, $1.c) }
+                if let last = out.last, last.cells == cells, sources == lastSources, iceKey == lastIce, abs(last.hi - (a - step)) < 1e-6 { out[out.count - 1].hi = a }
                 else { out.append(LockWindow(lo: a, hi: a, cells: cells)) }
-                lastSources = sources
+                lastSources = sources; lastIce = iceKey
             }
             a += step
         }

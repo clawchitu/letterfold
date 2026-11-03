@@ -4,6 +4,28 @@ import QuartzCore
 import AVFoundation
 import FoldCore
 
+/// A volume of the book: its chapters run from `firstChapter` to the next volume's. `release` (nil = none) is the day
+/// it opens: until then its first chapter stays sealed even with the volume before delivered (1.1: 卷四 ships with no
+/// date lock; set `release` to add one).
+struct Volume: Identifiable {
+    let id: Int
+    let firstChapter: Int
+    var release: DateComponents? = nil
+    static let all: [Volume] = [
+        Volume(id: 1, firstChapter: 1),    // 卷一《两岸》
+        Volume(id: 2, firstChapter: 5),    // 卷二《翻页》
+        Volume(id: 3, firstChapter: 9),    // 卷三《倾》
+        Volume(id: 4, firstChapter: 13),   // 卷四《冰》 (fold-proto design-vol4.md)
+    ]
+    static func of(chapter id: Int) -> Volume { all.last { $0.firstChapter <= id } ?? all[0] }
+    static var newest: Int { all.last!.id }
+    /// Open by the calendar (the chapter order still applies on top).
+    var released: Bool {
+        guard let release, let day = Calendar(identifier: .gregorian).date(from: release) else { return true }
+        return Date() >= day
+    }
+}
+
 /// A chapter of the book. Chapters are numbered through the book (5 = vol. 2's first, its levels are 5-1 … 5-7); on
 /// the map each volume counts its own (vol. 2: 一 胶, 二 翻页).
 struct Chapter: Identifiable {
@@ -17,18 +39,18 @@ struct Chapter: Identifiable {
     var darkIDs: [String] = []
     /// The dashed card after 卷二's finale: 「卷三 · 待续」, the next book, not yet written (0.1 (20); unused since 0.1 (21)).
     var nextBook = false
-    /// 卷一《两岸》 = chapters 1–4, 卷二《翻页》 = 5–8, 卷三《倾》 = 9 on (roadmap §1, fold-proto design-vol3.md).
-    var volume: Int { id <= 4 ? 1 : id <= 8 ? 2 : 3 }
+    /// 卷一《两岸》 = chapters 1–4, 卷二《翻页》 = 5–8, 卷三《倾》 = 9–12, 卷四《冰》 = 13 on (roadmap §1, fold-proto design-vol4.md).
+    var volume: Int { Volume.of(chapter: id).id }
     /// The chapter's number inside its volume (the map cards).
-    var inVolume: Int { volume == 1 ? id : volume == 2 ? id - 4 : id - 8 }
+    var inVolume: Int { id - Volume.of(chapter: id).firstChapter + 1 }
     static func numeral(_ n: Int) -> String {
-        L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("ja") ? ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"][n - 1] : "\(n)"
+        L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("ja") ? ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二", "十三", "十四", "十五", "十六"][n - 1] : "\(n)"
     }
     /// 一 … 五 through the book in Chinese and Japanese; the reader's own digits elsewhere (one language on screen at a time).
     var numeral: String { Self.numeral(id) }
     /// The number on the chapter's card: inside the volume for 卷一 / 卷二; 卷三's cards count on through the book
     /// (九 · 滚, 十 … 十二: design-review-vol3-art §3.9, V6).
-    var cardNumber: Int { volume == 3 ? id : inVolume }
+    var cardNumber: Int { volume >= 3 ? id : inVolume }
     /// 一, 二 … on the map's cards (卷三: 九 …).
     var volumeNumeral: String { Self.numeral(cardNumber) }
     var name: String { L10n.t("ch.\(id)") }
@@ -37,7 +59,8 @@ struct Chapter: Identifiable {
     /// Ch. 9: 「落」 (design-review-vol3-art §4, Fable: the stone settles, the letter lands on the far bank).
     /// Ch. 11: 「返」 (design-ch11.md names none: the page goes up and comes back, 来回; placeholder until an art review).
     /// Ch. 12: 「叠」 (design-ch12.md names none: the letter folded twice over, 三折; placeholder until an art review).
-    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "灯", "落", "载", "返", "叠"][min(11, id - 1)] }
+    /// Ch. 13: 「荫」 (design-vol4.md §3: the shadow as an umbrella).
+    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "灯", "落", "载", "返", "叠", "荫"][min(12, id - 1)] }
     static func volumeChapters(_ v: Int) -> [Chapter] { all.filter { $0.volume == v } }
 
     static let all: [Chapter] = [
@@ -73,6 +96,9 @@ struct Chapter: Identifiable {
         // 卷三 chapter 4 「三折」, 卷三's finale (fold-proto design-ch12.md): the third page on a crease of its own; opens once
         // chapter 11 is all delivered. Five levels: 12-5 was cut (§3.4)
         Chapter(id: 12, levelIDs: ["home", "hole", "return", "drop", "twofold"], unlocked: true, soon: false),
+        // 卷四《冰》 chapter 1 「冰」 (fold-proto design-ch13.md): ice melts at rest in the lamp window, freezes flat, the press
+        // crushes it; opens once chapter 12 is delivered (and the volume's `release`, none in 1.1)
+        Chapter(id: 13, levelIDs: ["ice", "thaw", "shade", "crack", "take"], unlocked: true, soon: false),
     ]
 }
 
@@ -317,6 +343,16 @@ final class GameModel {
     @ObservationIgnored var craneStuckToSay = false
     /// The landing the crane she stood on carried her to at the last press (said in its announcement).
     @ObservationIgnored var craneCarriedTo: Cell?
+    /// Ch. 13 「冰」 (Chapter13Marks.swift): the ice that would melt if the page came to rest at this angle (the mist), when
+    /// the rest began (the cracks grow over its 300 ms), and each square's last melt, freeze and crush (for their fades).
+    var iceMist: Set<Cell> = []
+    var iceRestStart: Date?
+    var meltedAt: [Cell: Date] = [:]
+    var frozeAt: [Cell: Date] = [:]
+    var crushedAt: [Cell: Date] = [:]
+    @ObservationIgnored var iceRestTask: Task<Void, Never>?
+    /// The fall being handled is the ice melting under her (`.drowned` comes just before its `.fell`).
+    @ObservationIgnored var drownedNow = false
     /// glue.pull (design-review-v2c1 §3): stones flying across the crease to the glue that took them, the faint mark
     /// each leaves where it was, and the glue square's flash. Times are CACurrentMediaTime().
     struct GluePull: Equatable { var from: Cell; var to: Cell; var start: Double }
@@ -391,7 +427,9 @@ final class GameModel {
         /// Crushed or fallen: the reason, said last in the fold announcement so 「路接通了」 cannot drown it (fold-proto e613f80).
         var fell = ""
         /// Ch. 8: the gates stood up / lay down with the lean (said once per rest: `gateOpen` / `gateDown`).
-        var gate: Bool? = nil }
+        var gate: Bool? = nil
+        /// Ch. 13: what the rest did to the river (「停住了：n 格冰化成了水」 / 「摊平了，河又冻上」), said after the angle.
+        var ice: String? = nil }
 
     static let step = 15.0
     static let snapPoints: [Double] = [0, 90, 130, 180]
@@ -429,7 +467,7 @@ final class GameModel {
     /// -cameraPitch <deg> (screenshots), -probe YES (UI tests: the drag's edge probe).
     static func launch() -> GameModel {
         let d = UserDefaults.standard
-        if d.bool(forKey: "resetProgress") { SavedProgress.resetAll(d); for k in [ruleBlockedKey, ruleUnderKey, layerRuleKey, shadowPaperKey] { d.removeObject(forKey: k) }; for k in 2...12 { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
+        if d.bool(forKey: "resetProgress") { SavedProgress.resetAll(d); for k in [ruleBlockedKey, ruleUnderKey, layerRuleKey, shadowPaperKey] { d.removeObject(forKey: k) }; for k in 2...Chapter.all.count { d.removeObject(forKey: "opener.\(k)"); d.removeObject(forKey: "letter.\(k).read") }; d.removeObject(forKey: "letter.1.read") }
         var pack = try! LevelPack.bundled()
         let start = d.integer(forKey: "startLevel")
         // -levelMap "row|row|…" (UI tests only; gaps written "_", as a value starting with "-" would read as a flag): play the -startLevel level on another board, so a rule's regression test
@@ -463,7 +501,7 @@ final class GameModel {
                     continue
                 }
                 if st.count > 4 && st[4] != m.game.face { _ = m.game.flip() }
-                else if Double(st[2]) != m.game.angle { m.setAngle(Double(st[2])) }
+                else if Double(st[2]) != m.game.angle { m.setAngle(Double(st[2])); _ = m.game.rest() }   // ch. 13: each move rests
                 else { _ = m.game.step(to: Cell(st[0], st[1])) }
             }
             m.sync(); m.clearGlue(); m.pending = Pending()
@@ -529,6 +567,7 @@ final class GameModel {
     }
     var paper: PaperState {
         guard chapter.id >= 4 else { return [PaperState.chapter1, .chapter2, .chapter3][min(2, max(0, chapter.id - 1))] }
+        if chapter.volume == 4 { return .vellum }
         if chapter.volume == 3 { return .card }
         if chapter.volume == 2 { return .letter }
         if isFinale { return .aged }
@@ -800,6 +839,7 @@ final class GameModel {
         cameraTask?.cancel(); cameraTask = nil
         setLamp(1, now: true)
         lockKey = nil; lockFlashTask?.cancel(); lockFlash = []; if !lockedCells.isEmpty { lockedCells = [] }
+        meltedAt = [:]; frozeAt = [:]; crushedAt = [:]; drownedNow = false
     }
 
     var intro: String {
@@ -1231,6 +1271,7 @@ final class GameModel {
     /// Animate the hinge to `target` along a design-spec curve. Springs that overshoot 0 or 180 rubber-band visually.
     func move(to target: Double, _ curve: Curve, then done: (() -> Void)? = nil) {
         stopMotion()
+        cancelIceRest()
         let target = min(180, max(0, target))
         if !dragging && !ghostDriving { aimCamera(at: target) }
         if settings.motionReduced {
@@ -1315,6 +1356,7 @@ final class GameModel {
         if target >= 180 && angle >= config.foldMin { contact() }   // ch. 12: a refused third page stopped short of the slap
         else if detents.contains(target) { haptics.snap() }
         if !aha { settle() }
+        scheduleIceRest()   // ch. 13: 300 ms at rest in the lamp window melts; flat freezes now
         autoCrease()
         if guideAt != nil { DispatchQueue.main.async { [weak self] in self?.refreshGuide() } }   // once the motion has let go
     }
@@ -1357,7 +1399,7 @@ final class GameModel {
         tuckSlip()
         if aha { finishAhaNow(); return }
         finishFlipNow()
-        if Int(a.rounded()) == Int(angle.rounded()) { settle(); return }
+        if Int(a.rounded()) == Int(angle.rounded()) { settle(); scheduleIceRest(); return }
         stopWalk(); stopGhost(); hasFolded = true
         pushUndo()
         move(to: a, a >= 180 ? .closeSnap : .step)
@@ -1423,6 +1465,7 @@ final class GameModel {
         finishFlipNow()   // the turn lands before the finger takes the page (its undo snapshot must be the turned book)
         stopMotion(); stopWalk(); stopGhost(); hasFolded = true
         freezeCamera(); probeAngle = 0
+        cancelIceRest()
         pushUndo()
         dragging = true; dragFrom = angle
         hintFadeTask?.cancel()
@@ -1588,6 +1631,7 @@ final class GameModel {
         cancelFlip()   // undo / restart / a new level: the turn being undone is not landed or announced
         stopWalk(); stopMotion(); stopGhost(); freezeCamera(); settleTask?.cancel(); ahaTask?.cancel(); stuckTask?.cancel()
         clearCrush(); stopRideFeel()
+        cancelIceRest()
     }
 
     // MARK: 「翻」 (design-ch6.md §1–2)
@@ -1845,6 +1889,7 @@ final class GameModel {
         // mid-turn the tiles stay on the face still showing; they swap at 90° (flipBook sets shownFace at the midpoint)
         if flipping { board.face = shownFace } else { shownFace = game.face }
         if stuck != game.stuck { stuck = game.stuck }
+        refreshIceMist()
         refreshLock()
         if guideAt != nil { refreshGuide() }
     }
@@ -1886,6 +1931,8 @@ final class GameModel {
                     sound.blot()
                 }
                 if s.kind == .glue, s.cells.count == 2 { pulled.append((s.cells[0], s.cells[1])) }
+                if s.kind == .crack { noteCrushedIce(s.cells) }   // ch. 13: the press broke the ice under the stones
+                if s.kind == .freeze { let now = Date.now; for c in s.cells { frozeAt[c] = now } }
                 if s.kind == .crane {
                     if !cranePress { beginCranePress(); cranePress = true }
                     if let to = s.to { landed.insert(to) }
@@ -1913,7 +1960,8 @@ final class GameModel {
                 // say why (fold-proto e613f80): the glue pulled the stone below onto you, a stone came down on you, or
                 // the shadow you stood on slid away. On screen now; spoken at the end of the fold's announcement.
                 // ch. 12 'off': the book closed with the third page open, and she went over the edge with it
-                let text = L10n.t(offBook ? "fellOff" : crushed ? (rules.isRight(here.c) && !isTrifold ? "crushedGlue" : "crushed") : "fell")
+                let text = L10n.t(drownedNow ? "melted" : offBook ? "fellOff" : crushed ? (rules.isRight(here.c) && !isTrifold ? "crushedGlue" : "crushed") : "fell")
+                drownedNow = false
                 show(text, speak: false)
                 pending.fell = text; pending.connected = false; pending.goal = false
                 if motionTarget == nil && !dragging { settleSoon() }
@@ -1953,6 +2001,12 @@ final class GameModel {
                 }
             case .offBook:
                 offBook = true
+            case .melted(let cells):   // ch. 13 (Chapter13Marks.swift)
+                noteMelted(cells)
+            case .drowned:
+                drownedNow = true
+            case .froze(let cells):
+                noteFroze(cells)
             case .laidFlat:
                 // ch. 12: a trifold starts again laid out flat (main.js fall): the hinge motion that killed her is over,
                 // and a finger still on the page no longer holds it
@@ -2138,7 +2192,7 @@ final class GameModel {
         let a = Int(angle.rounded())
         let p = pending
         pending = Pending(hadShade: !shade.isEmpty)
-        if a == saidAngle && !p.mode && !p.connected && !p.shade && !p.lit && !p.dead && p.stamps.isEmpty && p.fell.isEmpty && p.carryFrom == nil && p.gate == nil { return }
+        if a == saidAngle && !p.mode && !p.connected && !p.shade && !p.lit && !p.dead && p.stamps.isEmpty && p.fell.isEmpty && p.carryFrom == nil && p.gate == nil && p.ice == nil { return }
         saidAngle = a
         var parts: [String] = []
         switch posture {
@@ -2154,6 +2208,7 @@ final class GameModel {
         }
         if p.lit { parts.append(L10n.t("paper.lit")) }
         if let g = p.gate { parts.append(L10n.t(g ? "gateOpen" : "gateDown")) }
+        if let t = p.ice { parts.append(t) }
         if !p.fell.isEmpty {
             // crushed / fell: what the shut did, then the reason, last (nothing about paths: you are back at the start)
             if p.stamps.contains(where: { $0.kind == .glue }) { parts.append(L10n.t("glued")) }
@@ -2299,7 +2354,8 @@ final class GameModel {
             case .ink where s.wet: if !wetSaid { out.append(L10n.t("inkPrinted")); wetSaid = true }
             case .ink: out.append(L10n.t("inkPrinted"))
             case .crane: out.append(craneWords(s))   // ch. 10 (Chapter10Marks.swift)
-            case .glue, .bleed: break
+            case .crack: out.append(L10n.t("iceCrushed"))   // ch. 13
+            case .glue, .bleed, .freeze: break
             }
         }
         return out + craneStuckWords()
@@ -2366,6 +2422,9 @@ final class GameModel {
         var parts = [pos(at), f.shadow ? L10n.t("kindShadow") : f.tabUp ? L10n.t("kindTabUp") : kind(f.tile)]
         if posture != .closed, let layer = layerWord(c, r) { parts.append(layer) }   // ch. 12: the folded leaf's top layer
         if let open = f.gateOpen { parts.append(L10n.t(open ? "gate.state.open" : "gate.state.down")) }
+        // ch. 13: the ice that melts if the page rests here (the mist), and the gap a press crushed out of the river
+        if posture != .closed && iceMist.contains(Cell(c, r)) { parts.append(L10n.t("ice.wouldMelt")) }
+        if posture != .closed && isCrushedIce(Cell(c, r)) { parts.append(L10n.t("ice.shards")) }
         if f.goalInStack { parts.append(kind(.goal)) }
         if case .you(let onTop)? = f.here {
             parts.append(onTop.map { L10n.t("hereOnPage", ["page": L10n.t($0 ? "page.folding" : "page.fixed")]) } ?? L10n.t("hereYou"))
@@ -2385,6 +2444,7 @@ final class GameModel {
         case .covers(let n)?: extra = L10n.t("covers", ["col": col(n)])
         case .stackBlocked?: extra = L10n.t("stack.blocked")
         case .throughGap?: extra = L10n.t("stack.under")
+        case .iceCracks?: extra = L10n.t("ice.cracks")
         case nil: extra = ""
         }
         // ch. 12: Rules.facts predicts with the two-page mirror; off the two pages in view (the flat third page, the left

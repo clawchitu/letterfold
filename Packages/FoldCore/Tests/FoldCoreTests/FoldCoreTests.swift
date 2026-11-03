@@ -8,7 +8,7 @@ final class SolverTests: XCTestCase {
     override func setUpWithError() throws { pack = try LevelPack.bundled() }
 
     func testPackDecodes() throws {
-        XCTAssertEqual(pack.levels.count, 77)
+        XCTAssertEqual(pack.levels.count, 82)
         XCTAssertEqual(pack.levels.filter(\.isOptional).map(\.id), ["darkBack", "darkDoor", "darkInk"])
         XCTAssertEqual(pack.config, .standard)
         for lv in pack.levels { XCTAssertNoThrow(try Board(level: lv), lv.id) }
@@ -128,10 +128,11 @@ final class DifficultyTests: XCTestCase {
                         4, 7, 14, 13, 15, 19, 21,
                         5, 6, 16, 18, 19, 19,
                         6, 12, 17, 19, 20,
-                        4, 17, 13, 15, 21])
+                        4, 17, 13, 15, 21,
+                        5, 12, 13, 15, 15])
         let vol1 = pack.levels.prefix(25).compactMap(\.len)
         XCTAssertGreaterThanOrEqual(Double(vol1.reduce(0, +)) / Double(vol1.count), 15)
-        for range in [0..<5, 5..<13, 13..<19, 19..<25, 25..<32, 35..<42, 42..<48, 48..<54, 54..<61, 72..<77] {
+        for range in [0..<5, 5..<13, 13..<19, 19..<25, 25..<32, 35..<42, 42..<48, 48..<54, 54..<61, 72..<77, 77..<82] {
             let ch = Array(pack.levels[range])
             XCTAssertLessThanOrEqual(ch.compactMap { $0.expect?.changes }.reduce(0, +), 24, "chapter \(range): over the chapter budget")
             if range.lowerBound != 19 { XCTAssertEqual(ch.first?.tier, "teach", "chapter \(range) starts at teach") }
@@ -149,7 +150,7 @@ final class DifficultyTests: XCTestCase {
             XCTAssertEqual(Cell(sol[0][0], sol[0][1]), g.char, lv.id)
             for (i, s) in sol.enumerated().dropFirst() {
                 let cell = Cell(s[0], s[1]), a = Double(s[2])
-                if s.count > 4 && s[4] != g.face { XCTAssertNotEqual(g.flip(), [.blocked], "\(lv.id) flip \(i)") } else if a != g.angle { g.setAngle(a) } else { XCTAssertNotEqual(g.step(to: cell), [.blocked], "\(lv.id) step \(i) to \(cell)") }
+                if s.count > 4 && s[4] != g.face { XCTAssertNotEqual(g.flip(), [.blocked], "\(lv.id) flip \(i)") } else if a != g.angle { g.setAngle(a); g.rest() } else { XCTAssertNotEqual(g.step(to: cell), [.blocked], "\(lv.id) step \(i) to \(cell)") }
                 XCTAssertEqual(g.char, cell, "\(lv.id) state \(i)")
                 XCTAssertEqual(g.closedOnce, s[3] == 1, "\(lv.id) state \(i) stamped")
             }

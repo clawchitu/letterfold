@@ -183,6 +183,17 @@ const NATIVE = {
   'map.book3': ['卷三', 'Book Three', '第三巻', '제3권'],
   'map.toBook3': ['下一页：卷三《倾》', 'Next page: Book Three, Tilt', '次の頁：第三巻『傾く』', '다음 페이지: 제3권 《기울기》'],
   'map.vol3Back': ['卷三《倾》', 'Book Three: Tilt', '第三巻『傾く』', '제3권 《기울기》'],
+  // 1.1: 卷四《冰》 chapter 13 「冰」 (fold-proto design-ch13.md): the map's fourth page, the ice's VoiceOver words.
+  // 'vol.4' is the volume's NAME here (as 'vol.3' 倾); fold-proto's own 'vol.4' (卷四) is the book number, kept as map.book4
+  'ch.13': ['冰', 'Ice', '氷', '얼음'],
+  'vol.4': ['冰', 'Ice', '氷', '얼음'],
+  'map.book4': ['卷四', 'Book Four', '第四巻', '제4권'],
+  'map.toBook4': ['下一页：卷四《冰》', 'Next page: Book Four, Ice', '次の頁：第四巻『氷』', '다음 페이지: 제4권 《얼음》'],
+  'map.vol3BackLabel': ['回到卷三《倾》，已送达 {n} / {total}', 'Back to Book Three, Tilt: {n} of {total} delivered', '第三巻『傾く』へ戻る、{n} / {total} 通 届いた', '제3권 《기울기》로, {total}통 중 {n}통 도착'],
+  'ice.wouldMelt': ['停在这里，这块冰会化', 'rest here and this ice melts', 'ここで止めると、この氷は溶ける', '여기서 멈추면 이 얼음은 녹아요'],
+  'ice.cracks': ['合上时，对页的石头会压碎这块冰', 'when the book closes, the stone opposite crushes this ice', '閉じると、向かいの石がこの氷を砕く', '닫으면 맞은편 돌이 이 얼음을 부숴요'],
+  'ice.shards': ['碎冰，不会再冻上', 'crushed ice: it will not freeze again', '砕けた氷、もう凍らない', '부서진 얼음, 다시 얼지 않아요'],
+  'iceCrushed': ['石头压碎了冰', 'the stone crushed the ice', '石が氷を砕いた', '돌이 얼음을 부쉈어요'],
   'map.vol2BackLabel': ['回到卷二《翻页》，已送达 {n} / {total}', 'Back to Book Two, Turning the Page: {n} of {total} delivered', '第二巻『ページをめくる』へ戻る、{n} / {total} 通 届いた', '제2권 《책장 넘기기》으로, {total}통 중 {n}통 도착'],
   // 0.1 (20) M (dc73881): VoiceOver says whether a gate stands — kept here so a re-sync does not drop them
   'gate.state.open': ["现在立着，可以走", "standing now, walkable", "いま立っている、歩ける", "지금 서 있음, 걸을 수 있음"],

@@ -19,6 +19,7 @@ pack.levels.forEach((lv, i) => {
   if (nid) lv.id = nid;
   if (src.optional) lv.optional = true;
   if (src.lamp && src.lamp !== 'R') lv.lamp = src.lamp;   // vol. 2 ch. 8 「灯位」: export.js does not ship it
+  if (src.thaw) lv.thaw = true;   // vol. 4 ch. 16 「融」: spring, the water never freezes back (export.js does not ship it)
   if (src.trifold) lv.trifold = true;   // vol. 3 ch. 12 「三折」: the third page on the right page's outer edge (export.js does not ship it)
   const B = GEN.prep(src), g = GEN.explore(B), bp = GEN.bestPath(g);
   if (!bp) throw new Error(`${lv.id}: no solution`);

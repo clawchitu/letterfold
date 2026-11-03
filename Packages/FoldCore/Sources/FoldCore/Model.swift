@@ -27,9 +27,17 @@ public enum Tile: Character, Sendable, Codable, CaseIterable {
     /// Paper crane (vol. 3 ch. 10 「鹤」, design-ch10.md §1): a square of paper folded into a crane — floor, like any paper.
     /// At every press (a close, a turn) it flies to its mirror cell and carries whoever stands on it (`Rules.fly`).
     case crane = "h"
+    /// Ice (vol. 4 ch. 13 「冰」, fold-proto design-ch13.md §1, logic.js `~`): the frozen river — floor while it is ice, lets
+    /// the light through, blocks nothing. When the page comes to REST in the lamp window, every ice square on the lit page
+    /// that no shadow covers melts into `.water` (`Rules.melt`); laid flat (and at every press) the water freezes back
+    /// (`Rules.freeze`); a stone facing it at a press crushes it into a gap for good (`Rules.crushIce`).
+    case ice = "~"
+    /// Water (vol. 4 ch. 13, logic.js `u`, runtime only — never drawn in a level): melted ice. A gap in every rule (a shadow
+    /// over it carries you); the one difference from `.empty` is that it freezes back.
+    case water = "u"
 
     /// Something you can stand on.
-    public var isFloor: Bool { [.paper, .start, .goal, .key, .ink, .openDoor, .tab, .glue, .wetInk, .crane].contains(self) }
+    public var isFloor: Bool { [.paper, .start, .goal, .key, .ink, .openDoor, .tab, .glue, .wetInk, .crane, .ice].contains(self) }
     /// Something that blocks the stacked cell when the book is closed.
     public var isBlock: Bool { self == .stone || self == .loose || self == .door }
     /// Stones (fixed or loose) block the light; paper and ink let it through.
@@ -98,6 +106,11 @@ public struct Expectation: Sendable, Codable, Equatable {
     public var needsHover: Bool?
     /// Vol. 3 ch. 12 「三折」: unsolvable without turning the second crease (the third page on its own edge).
     public var needsTrifold: Bool?
+    /// Vol. 4 ch. 13 「冰」: the player who reads ice as paper (it never melts) finds no route, a dearer one, or one that
+    /// drowns on the real board (check.js `survives`).
+    public var needsIce: Bool?
+    /// Vol. 4 ch. 13: unsolvable, or dearer, when shadows do not protect the ice (check.js `noShelter`).
+    public var needsShelter: Bool?
     public var stepped15: Bool
     /// tools/check.js `analyse()` (design-difficulty.md §2); the Swift `Difficulty` port must agree.
     public var difficulty: Difficulty.Summary?
@@ -122,6 +135,8 @@ public struct Expectation: Sendable, Codable, Equatable {
         case "needsFro": return needsFro
         case "needsHover": return needsHover
         case "needsTrifold": return needsTrifold
+        case "needsIce": return needsIce
+        case "needsShelter": return needsShelter
         default: return nil
         }
     }
@@ -146,11 +161,15 @@ public struct Level: Sendable, Codable, Identifiable, Equatable {
     /// Vol. 3 ch. 12 「三折」 (levels.js `trifold`, fold-proto design-ch12.md §1): the 12-column map is left | right | third,
     /// the third page hanging off the right page's OUTER edge on a second crease (not ch. 6's back of the right leaf).
     public var trifold: Bool?
+    /// Vol. 4 ch. 16 「融」 (levels.js `thaw`, design-vol4.md §1): spring — melted water never freezes back.
+    public var thaw: Bool?
     public var isOptional: Bool { optional == true }
     public var isTrifold: Bool { trifold == true }
-    public init(id: String, map: [String], expect: Expectation? = nil, tier: String? = nil, needs: [String]? = nil, lamp: String? = nil, trifold: Bool? = nil) {
-        self.id = id; self.map = map; self.expect = expect; self.tier = tier; self.needs = needs; self.lamp = lamp; self.trifold = trifold
+    public init(id: String, map: [String], expect: Expectation? = nil, tier: String? = nil, needs: [String]? = nil, lamp: String? = nil, trifold: Bool? = nil, thaw: Bool? = nil) {
+        self.id = id; self.map = map; self.expect = expect; self.tier = tier; self.needs = needs; self.lamp = lamp; self.trifold = trifold; self.thaw = thaw
     }
+    /// Vol. 4 ch. 13: the level has a river (ice squares), so rests melt and flat freezes (check.js grids().ice).
+    public var hasIce: Bool { map.contains { $0.contains("~") } }
 }
 
 /// levels.json, exported from fold-proto by `node tools/export.js`.
@@ -228,6 +247,8 @@ public struct Board: Sendable, Equatable {
     /// Vol. 2 ch. 8: the lamp's bank — "R" (right-page stones shade the left page), "L" (left-page stones shade the
     /// lifted page), "LR" (both). logic.js `s.lamp` / `lampOf`.
     public let lamp: String
+    /// Vol. 4 (logic.js `s.thaw`): spring — `Rules.freeze` does nothing.
+    public let thaw: Bool
     let n: Int
 
     public init(level: Level, columnsPerPage n: Int = 4) throws {
@@ -247,6 +268,7 @@ public struct Board: Sendable, Equatable {
         self.start = start
         self.n = n
         lamp = level.lamp ?? "R"
+        thaw = level.thaw == true
         pages = width / n
         h = grid.count
     }

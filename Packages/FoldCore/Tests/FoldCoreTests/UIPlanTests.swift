@@ -88,6 +88,8 @@ final class UIPlanTests: XCTestCase {
                     let ev2 = turn(g, to: r)
                     if ev2.contains(where: { if case .fell = $0 { return true } else { return false } }) { return nil }
                 }
+                // ch. 13: the page has come to rest — the lamp window melts, flat freezes (GameModel's settle, 300 ms on)
+                if g.rest().contains(where: { if case .fell = $0 { return true } else { return false } }) { return nil }
             case .walk: break
             }
         }

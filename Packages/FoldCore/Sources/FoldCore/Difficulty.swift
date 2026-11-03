@@ -41,7 +41,7 @@ public struct Difficulty: Sendable {
     }
     public static func range(of tier: String) -> ClosedRange<Int>? { tiers.first { $0.name == tier }?.range }
     /// The mechanics `combo` counts (check.js MECHANICS).
-    static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue", "needsFlip", "needsWet", "needsLamp", "needsGate", "needsRoll", "needsCrane", "needsFro", "needsHover", "needsTrifold"]
+    static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue", "needsFlip", "needsWet", "needsLamp", "needsGate", "needsRoll", "needsCrane", "needsFro", "needsHover", "needsTrifold", "needsIce", "needsShelter"]
 
     /// What levels.json ships under `expect.difficulty`.
     public struct Summary: Sendable, Codable, Equatable {
@@ -102,7 +102,9 @@ public struct Difficulty: Sendable {
     }
 
     public func analyse(_ level: Level) -> Report? {
-        guard let best = solver.solve(level), let B = solver.chain(level) else { return nil }
+        // one grid chain for the solution and the exploration: the path's g indices must read the same grids (vol. 4 ch. 13:
+        // the melts make many grids, and a second chain numbers them in another order)
+        guard let B = solver.chain(level), let best = solver.solve(level, angles: Solver.angles, from: nil, chain: B) else { return nil }
         let base = B.base, goal = base.locate(.goal)
         let cfg = rules.config
         let angles = Solver.angles
@@ -251,6 +253,9 @@ public struct Difficulty: Sendable {
             // either page (fold-proto 15c073d: under the left lamp a glued stone shades the lifted page, ch. 8)
             guard s.g != 0, feel(s.a) == .lean, !board(s)[cell(s)].isFloor,
                   let src = rules.shadows(board(s), s.a)[cell(s)] else { return false }
+            // an open angle gate (src = gateSource, -1): check.js reads base.grid[r][-1] → undefined → "not opaque" → made.
+            // Kept for parity with the shipped metric (13-3 shade stands on its gate after a press); port upstream if fixed.
+            if src == Rules.gateSource { return true }
             return !base.grid[s.r][board(s).colOf(src, s.r)].isOpaque   // a rolled loose stone's shadow is made too
         }
         let structure = best.cost + (forks == 1 ? 1 : 0) + (walk >= 8 ? 1 : 0) + (trap ? 1 : 0) + (window <= 2 ? 1 : 0) + (combo >= 3 ? 1 : 0)

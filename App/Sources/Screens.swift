@@ -813,7 +813,7 @@ extension GameModel {
     }
     /// The map's page: the one turned to, else the current chapter's volume, else the newest open book's; never past it.
     func mapPage(_ turned: Int?) -> Int {
-        let newest = Chapter.all.first { $0.id == 9 }.map(isUnlocked) == true ? 3 : Chapter.all.first { $0.id == 5 }.map(isUnlocked) == true ? 2 : 1
+        let newest = Volume.all.last { v in Chapter.all.first { $0.id == v.firstChapter }.map(isUnlocked) == true }?.id ?? 1
         return min(max(1, turned ?? currentChapter?.volume ?? newest), newest)
     }
     func chapterIndices(_ ch: Chapter) -> [Int] { ch.levelIDs.compactMap { id in pack.levels.firstIndex { $0.id == id } } }
@@ -827,6 +827,8 @@ extension GameModel {
     func isUnlocked(_ ch: Chapter) -> Bool {
         guard ch.unlocked else { return false }
         if ch.id == 1 { return true }
+        // a volume with a release day stays sealed until then (Volume.release; none set in 1.1)
+        if !Volume.of(chapter: ch.id).released { return false }
         // strict: every level of the previous chapter delivered, nothing else (FoldCore.SavedProgress.chapterOpen)
         let prev = Chapter.all[ch.id - 2].levelIDs.filter { id in pack.levels.contains { $0.id == id } }
         return SavedProgress.chapterOpen(previous: prev, done: Set(done.map { pack.levels[$0].id }))
@@ -1223,6 +1225,11 @@ nonisolated struct LooseThread: Shape {
 // MARK: - settings (frame final-v2-settings)
 
 struct SettingsView: View {
+    /// 「1.1 (31)」: the marketing version and the build, from the bundle.
+    static var version: String {
+        let i = Bundle.main.infoDictionary
+        return "\(i?["CFBundleShortVersionString"] as? String ?? "") (\(i?["CFBundleVersion"] as? String ?? ""))"
+    }
     @Bindable var settings = AppSettings.shared
     let router: Router
     let fonts = FontBook.shared
@@ -1336,6 +1343,16 @@ struct SettingsView: View {
                 .buttonStyle(.plain)
                 .background(RoundedRectangle(cornerRadius: 14).fill(Color(hex: 0xFCFBF8)))
                 .accessibilityIdentifier("settings.objects")
+                // the colophon: the version and who made the book, small, ink-grey, at the very bottom (1.1)
+                VStack(spacing: 4) {
+                    Text(Self.version).font(.caption.monospacedDigit())
+                    Text(L10n.t("credit")).font(.caption).multilineTextAlignment(.center)
+                }
+                .foregroundStyle(Tok.ink600)
+                .frame(maxWidth: .infinity)
+                .padding(.top, 28)
+                .accessibilityElement(children: .combine)
+                .accessibilityIdentifier("settings.credit")
             }
             .padding(.horizontal, 16).padding(.bottom, 24)
         }

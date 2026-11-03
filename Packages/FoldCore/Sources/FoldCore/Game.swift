@@ -44,6 +44,13 @@ public enum GameEvent: Sendable, Equatable {
     /// Vol. 3 ch. 12: a trifold starts again laid out flat after a death (main.js fall: F.restart, angle 0) — grids as they
     /// began, face 0, the figure on the start, the book flat. Sent after `.fell`; the hinge motion that caused it is over.
     case laidFlat
+    /// Vol. 4 ch. 13 「冰」: the page came to rest in the lamp window and these ice squares (visible cells) melted into water.
+    case melted([Cell])
+    /// Vol. 4 ch. 13: the ice under the figure melted (logic.js meltCause 'melt'). Sent after `.melted`, just before its
+    /// `.fell(crushed: false)`; the book stays where it is.
+    case drowned
+    /// Vol. 4 ch. 13: the page came to rest flat and the water froze back into ice (grid cells).
+    case froze([Cell])
 }
 
 /// A level being played: the stateful half of main.js (angle, riding shadows, stamping, undo).
@@ -222,13 +229,58 @@ public final class FoldGame {
     /// grew over the road or spoiled the glue) can end the level. Wet ink and turns change the board press by press, so
     /// those levels are checked against the live board, not "the start board stamped once" (Codex review 19 #1).
     private func checkDeadEnd(_ events: inout [GameEvent]) {
-        let all = level.map.joined(), wet = all.contains("I") || all.contains("r") || all.contains("h")   // wet ink, loose stones, cranes: the live board
+        let all = level.map.joined(), wet = all.contains("I") || all.contains("r") || all.contains("h") || all.contains("~")   // wet ink, loose stones, cranes, ice (ch. 13): the live board
         guard !stuck, !won, all.contains("g") || board.pages > 2 || wet else { return }
         let solver = Solver(config)
         let ok = board.pages > 2 || wet
             ? solver.canStillWin(level, board: board, from: char, angle: posture == .closed ? 180 : angle)
             : solver.canStillWin(level, from: char, angle: posture == .closed ? 180 : angle, closedOnce: closedOnce)
         if !ok { stuck = true; events.append(.deadEnd) }
+    }
+
+    // MARK: ice (vol. 4 ch. 13 「冰」, main.js rest)
+
+    /// The level has a river: rests melt, flat freezes (the app calls `rest()` once the page has settled).
+    public var hasIce: Bool { level.hasIce }
+
+    /// The ice that would melt if the page came to rest here now (the app's mist while the rest is pending).
+    public var meltWouldTake: [Cell] {
+        guard !won, board.grid.contains(where: { $0.contains(.ice) }), !(board.trifold && board.face == 2) else { return [] }
+        return rules.wouldMelt(board, angle)
+    }
+
+    /// The page came to REST (main.js `rest`, on 'settle': the finger let go and the page settled, a button landed, a
+    /// VoiceOver adjustment arrived — every input the same beat; a folding phone's hinge is not an input). Leaning in the
+    /// lamp window, the lit page's unshadowed ice melts (under her feet: she falls, back to the start, the book where it
+    /// is); laid flat, the water freezes back. Moving melts nothing — only the rest does. Part of the move that brought the
+    /// page here: the app's undo snapshot for that move covers it.
+    @discardableResult
+    public func rest() -> [GameEvent] {
+        guard !won, !(board.trifold && board.face == 2) else { return [] }
+        var events: [GameEvent] = []
+        let before = reachable, goalBefore = goalInReach
+        if rules.lit(angle) {
+            let cells = rules.melt(&board, angle)
+            guard !cells.isEmpty else { return [] }
+            events.append(.melted(cells))
+            shade = rules.shadows(board, angle)
+            if rules.meltedUnder(board, char) {
+                events.append(.drowned)
+                events.append(.fell(crushed: false))
+                char = board.start; trail = [board.start]; lastCloseStep = 0; rideSrc = nil
+            }
+        } else if angle == 0 {
+            let cells = rules.freeze(&board)
+            guard !cells.isEmpty else { return [] }
+            events.append(.froze(cells))
+            shade = rules.shadows(board, angle)
+        } else { return [] }
+        let now = reachable
+        if !now.subtracting(before).isEmpty { events.append(.connected) }
+        if goalInReach && !goalBefore { events.append(.goalInReach) }
+        else if now.count < before.count { events.append(.lost) }
+        if !stuck { checkDeadEnd(&events) }
+        return events
     }
 
     // MARK: the second crease (vol. 3 ch. 12 「三折」, main.js switchCrease)

@@ -9,6 +9,8 @@ public struct CellFacts: Sendable, Equatable {
         // open book (a11y.js): what closing will do here
         case fallsHere(Tile), doorKey, glueTakes, stoneGlued(col: Int), crushedHere, inkPrints, tabBridge
         case stoneShadow(col: Int), keyOpens(col: Int), inkTo(col: Int), covers(col: Int)
+        /// Vol. 4 ch. 13: ice (or water) facing a stone — the next press crushes it into a gap for good.
+        case iceCracks
         // shut book
         /// Paper on one page, a stone (or a locked door) on the other: the stack cannot be entered.
         case stackBlocked
@@ -53,7 +55,8 @@ extension Rules {
         var nb = b
         if let a = angle, !standing(a) { roll(&nb, fig: figure) }
         let (T, M) = closeTiles(nb, cell, m)
-        if !isRight(c) {
+        if (T == .ice || T == .water) && M.isOpaque { f.note = .iceCracks }   // ch. 13, either page (crushIce)
+        else if !isRight(c) {
             if T == .empty && (M.isFloor || M.isOpaque) { f.note = .fallsHere(M) }
             else if T == .door && M == .key { f.note = .doorKey }
             else if T == .glue && M.isOpaque { f.note = .glueTakes }

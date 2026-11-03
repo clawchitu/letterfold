@@ -138,6 +138,34 @@ final class SoundBoard {
             return (0..<max(snap.count, knock.count)).map { i in (i < snap.count ? snap[i] : 0) + (i < knock.count ? 0.6 * knock[i] : 0) }
         }
     }
+    // MARK: vol. 4 ch. 13 「冰」 (design-vol4.md §3 声音): built from the same noise and tone as the rest, kept quiet
+
+    /// The ice giving way at the rest: three tiny high ticks (a soft crack), then a low wet sigh under them.
+    func iceCrack(pan: Double = 0) {
+        play("iceCrack", pan: pan, volume: 0.42) {
+            let n = Int(0.34 * Self.rate)
+            var out = [Float](repeating: 0, count: n)
+            for (k, at) in [0.0, 0.035, 0.08].enumerated() {
+                let tick = Self.noiseBurst(0.03, decay: 120, lowpass: 7000 - Double(k) * 900, gain: 0.55 - Double(k) * 0.12)
+                let o = Int(at * Self.rate)
+                for i in tick.indices where o + i < n { out[o + i] += tick[i] }
+            }
+            let sigh = Self.noiseBurst(0.3, decay: 11, lowpass: 600, gain: 0.32), o = Int(0.05 * Self.rate)
+            for i in sigh.indices where o + i < n { out[o + i] += sigh[i] * Float(min(1, Double(i) / 900)) }
+            return out
+        }
+    }
+    /// The press crushing ice under a stone: a short dry crunch, duller than the crack.
+    func iceCrush(pan: Double = 0) {
+        play("iceCrush", pan: pan, volume: 0.5) {
+            let a = Self.noiseBurst(0.08, decay: 45, lowpass: 3200, gain: 0.7), b = Self.noiseBurst(0.05, decay: 70, lowpass: 5200, gain: 0.4)
+            let o = Int(0.03 * Self.rate)
+            return (0..<(a.count + o)).map { i in (i < a.count ? a[i] : 0) + (i >= o && i - o < b.count ? b[i - o] : 0) }
+        }
+    }
+    /// Laid flat, the river freezes: the volume's one high note, a soft bell tine (design-vol4.md §3: 「叮」).
+    func iceFreeze() { play("iceFreeze", volume: 0.22) { Self.tone(1568, .bell, 0.5) } }
+
     func rub(volume: Double = 0.35) { play("rub", volume: volume) { Self.noiseBurst(0.12, decay: 18, lowpass: 5200, gain: 0.5) } }
     func hollow(pan: Double = 0) {
         play("hollow", pan: pan, volume: 0.7) {

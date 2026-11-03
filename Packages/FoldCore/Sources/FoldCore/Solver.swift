@@ -18,7 +18,10 @@ final class GridChain: @unchecked Sendable {
     let rules: Rules
     var base: Board { table[0] }
     var pages: Int { table[0].pages }
-    init(_ base: Board, _ rules: Rules) { var b = base; b.face = 0; table = [b]; self.rules = rules }
+    init(_ base: Board, _ rules: Rules) {
+        var b = base; b.face = 0; table = [b]; self.rules = rules
+        ice = b.grid.contains { $0.contains(.ice) || $0.contains(.water) }
+    }
     func press(_ g: Int, _ face: Int) -> Int {
         let k = g * 4 + face   // faces 0–1 (ch. 6), 2–3 (trifold, ch. 12)
         if let m = memo[k] { return m }
@@ -54,6 +57,35 @@ final class GridChain: @unchecked Sendable {
         let idx: Int
         if let i = sig[b.grid] { idx = i } else { idx = table.count; table.append(b); sig[b.grid] = idx }
         rollMemo[k] = idx
+        return idx
+    }
+    /// Vol. 4 ch. 13 (check.js grids().melt / freeze): the rest at fold angle `a` melts the lit page's unshadowed ice;
+    /// laid flat, the water freezes back. A frozen board identical to the drawn one is grid 0 again (the melt is
+    /// reversible, and the state space must not double). No change: g itself.
+    let ice: Bool
+    private struct MeltKey: Hashable { let g: Int, face: Int, a: Double, noShelter: Bool }
+    private var meltMemo: [MeltKey: Int] = [:], freezeMemo: [Int: Int] = [:]
+    func melt(_ g: Int, _ face: Int, _ a: Double, _ noShelter: Bool) -> Int {
+        let k = MeltKey(g: g, face: face, a: a, noShelter: noShelter)
+        if let m = meltMemo[k] { return m }
+        var b = table[g]; b.face = face
+        if rules.melt(&b, a, noShelter: noShelter).isEmpty { meltMemo[k] = g; return g }
+        b.face = 0
+        let idx = store(b)
+        meltMemo[k] = idx
+        return idx
+    }
+    func freeze(_ g: Int) -> Int {
+        if let m = freezeMemo[g] { return m }
+        var b = table[g]
+        if rules.freeze(&b).isEmpty { freezeMemo[g] = g; return g }
+        let idx = b.grid == table[0].grid ? 0 : store(b)
+        freezeMemo[g] = idx
+        return idx
+    }
+    private func store(_ b: Board) -> Int {
+        if let i = sig[b.grid] { return i }
+        let idx = table.count; table.append(b); sig[b.grid] = idx
         return idx
     }
     /// The board a state sees.
@@ -95,7 +127,9 @@ public struct Solver: Sendable {
         public var noFro = false, openPass = false
         /// Vol. 3 ch. 12: the second crease never moves (check.js `noFlap`, the needsTrifold model).
         public var noFlap = false
-        public init(noFro: Bool = false, openPass: Bool = false, noFlap: Bool = false) { self.noFro = noFro; self.openPass = openPass; self.noFlap = noFlap }
+        /// Vol. 4 ch. 13: shadows do not protect the ice (check.js `noShelter`, the needsShelter model).
+        public var noShelter = false
+        public init(noFro: Bool = false, openPass: Bool = false, noFlap: Bool = false, noShelter: Bool = false) { self.noFro = noFro; self.openPass = openPass; self.noFlap = noFlap; self.noShelter = noShelter }
     }
 
     /// The character cell after turning the hinge from a0 to a1, or nil if it falls (or is crushed): check.js `turn`.
@@ -196,6 +230,14 @@ public struct Solver: Sendable {
             a += step
         }
         if a1 >= rules.config.foldMin { cur = B.carry(g, s.face, cur); g = B.press(g, s.face) }   // vol. 3 ch. 10: the crane you stand on carries you across
+        // vol. 4 ch. 13 「冰」: the page came to REST. In the lamp window the lit page's unshadowed ice melts — under your feet,
+        // you fall; laid flat, the water freezes back. (A close froze it in the press.)
+        if B.ice {
+            if rules.lit(a1) {
+                g = B.melt(g, s.face, a1, opts.noShelter)
+                if B.world(FoldState(c: cur.c, r: cur.r, a: a1, face: s.face, g: g))[cur] == .water { return nil }
+            } else if a1 == 0 { g = B.freeze(g) }
+        }
         return FoldState(c: cur.c, r: cur.r, a: a1, face: s.face, g: g)
     }
 
@@ -329,6 +371,32 @@ public struct Solver: Sendable {
         return solve(level, angles: Solver.angles, from: FoldState(c: cell.c, r: cell.r, a: angle, face: face, g: 0), chain: B) != nil
     }
 
+    /// Does a route found under another player's model (its steps) survive on the real board (check.js `survives`)? Hinge
+    /// moves are replayed with move() / flipOf() / flapOf(), steps must still be neighbours, and the end must still win.
+    /// Vol. 4 ch. 13: the "ice is paper" route steps onto water, or the rest it ends on melts the ice under its feet.
+    public func survives(_ level: Level, _ path: [Step]) -> Bool {
+        guard let B = chain(level), !path.isEmpty else { return false }
+        var cur = startOf(B)
+        for i in 1..<path.count {
+            let p = path[i - 1], n = path[i]
+            if n.angle != p.angle || n.face != p.face {
+                var next: FoldState?
+                if n.face != p.face && n.angle == p.angle && (n.face == 1 || p.face == 1) {
+                    if case let .to(f) = flipOf(B, cur) { next = f }
+                } else if p.face == 2 || n.face == 2 || n.face != p.face {
+                    if case let .to(f) = flapOf(B, cur, n.face == 2 ? n.angle : n.face == 3 ? 180 : 0) { next = f }
+                } else { next = move(B, cur, n.angle) }
+                guard let next else { return false }
+                cur = next
+            } else {
+                let w = B.world(cur)
+                guard rules.neighbours(w, Cell(cur.c, cur.r), rules.posture(cur.a), rules.shadows(w, cur.a)).contains(n.cell) else { return false }
+                cur.c = n.cell.c; cur.r = n.cell.r
+            }
+        }
+        return rules.isWin(B.world(cur), Cell(cur.c, cur.r), rules.posture(cur.a))
+    }
+
     /// Everything check.js reports about a level, in the same shape as levels.json `expect`.
     public func report(_ level: Level, withDifficulty: Bool = true) -> Expectation {
         let cfg = rules.config
@@ -366,6 +434,12 @@ public struct Solver: Sendable {
         if all.contains("g") {
             e.needsGlue = without("g") == nil
             if var b = try? Board(level: level, columnsPerPage: rules.n) { e.glueFires = rules.stamp(&b).contains { $0.kind == .glue } }
+        }
+        if all.contains("~") {   // vol. 4 ch. 13 「冰」
+            let ni = without("~")   // the ice as paper that never melts (the player who has not read it)
+            e.needsIce = ni == nil || (full != nil && ni!.cost > full!.cost) || !survives(level, ni!.steps)
+            let ns = solve(level, options: Options(noShelter: true))   // shadows do not protect the ice
+            e.needsShelter = ns == nil || (full != nil && ns!.cost > full!.cost)
         }
         if level.isTrifold { e.needsTrifold = solve(level, options: Options(noFlap: true)) == nil }   // vol. 3 ch. 12: without the second crease
         else if (level.map.first?.count ?? 0) > 2 * rules.n { e.needsFlip = solve(level, angles: Solver.angles, from: nil, noFlip: true) == nil }

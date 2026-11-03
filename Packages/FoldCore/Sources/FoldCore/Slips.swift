@@ -17,11 +17,14 @@ public enum SlipID: String, CaseIterable, Sendable, Codable {
     /// Ch. 12 「三折」 (fold-proto design-ch12 §5, tools/slips.js 'trifold'): the second crease, a posture slip (first in
     /// 12-1). Slip sixteen.
     case trifold
+    /// Ch. 13 「冰」 (fold-proto design-ch13 §2, i18n slip.ice): ice melts where the page comes to rest in the lamp window,
+    /// outside the shadows; flat it freezes back (first in 13-1). Slip seventeen.
+    case ice
 }
 
 /// The slips' triggers and the save logic around them (design-onboarding §7.2–7.3), pure so they are tested here.
 public enum Slips {
-    static let floorChars: Set<Character> = [".", "S", "G", "k", "i", "o", "p", "g", "I", "h"]
+    static let floorChars: Set<Character> = [".", "S", "G", "k", "i", "o", "p", "g", "I", "h", "~"]
 
     /// 压: a right-page stone whose mirror square is paper the figure can stand on (check.js `crushable`).
     public static func crushable(_ level: Level, columnsPerPage n: Int = 4) -> Bool {
@@ -55,6 +58,7 @@ public enum Slips {
             // fro / past / park — not expect.needsFro, which check.js also finds on ch. 9/10 jump / late / ground
             case .fro: return needs.contains("needsFro")
             case .trifold: return level.isTrifold && pages == 3
+            case .ice: return s.contains("~")
             }
         }
     }
@@ -178,6 +182,8 @@ public struct SlipDemo: Sendable {
         case walk(Cell), walkStack(Cell), flip, at(Cell), win, pause(Int), still
         /// Ch. 12: take hold of the other crease (FoldGame.switchCrease; tools/slips.js `flap` beats).
         case crease
+        /// Ch. 13: the page comes to rest here — these ice squares melt (and she must not be on one).
+        case rest(melts: [Cell])
     }
     public enum Failure: Error, CustomStringConvertible {
         case rule(SlipID, String)
@@ -270,6 +276,12 @@ public struct SlipDemo: Sendable {
         SlipDemo(id: .trifold, level: "12-1", map: ["S---.--.-G--", "............"], beats: [
             .angle(180, ms: 420), .pause(250), .angle(0, ms: 300), .crease, .angle(180, ms: 420), .crease, .still, .pause(200),
             .angle(180, ms: 420), .walkStack(Cell(1, 0)), .win], trifold: true),
+        // 冰: walk out over the ice while the book lies flat (it is paper); lean to physical 70° and let it rest — the ice
+        // behind her has no shadow and melts; the stone's shadow bridges the gap; across, down to her. The still: at rest,
+        // the ice turned to water (i18n slip.ice.pic)
+        SlipDemo(id: .ice, level: "13-1", map: ["S~.--..x", "---Gx---"], beats: [
+            .walk(Cell(2, 0)), .pause(300), .angle(110, ms: 500, shadowAt: Cell(3, 0)), .rest(melts: [Cell(1, 0)]), .still, .pause(300),
+            .walk(Cell(3, 1)), .win]),
     ]
 
     public static func demo(_ id: SlipID) -> SlipDemo { all.first { $0.id == id }! }
@@ -331,6 +343,12 @@ public struct SlipDemo: Sendable {
                 add(.hold, ms)
             case .still:
                 still = frames.count - 1
+            case let .rest(melts):
+                let events = game.rest()
+                let melted = events.compactMap { e -> [Cell]? in if case let .melted(c) = e { return c }; return nil }.first ?? []
+                if melted != melts { throw fail("at rest expected \(melts) to melt, got \(melted)") }
+                if events.contains(.drowned) { throw fail("she stood on the ice that melted") }
+                add(.hold, 450)
             case .crease:
                 if let why = game.creaseBlock { throw fail("cannot take the other crease: \(why)") }
                 game.switchCrease()

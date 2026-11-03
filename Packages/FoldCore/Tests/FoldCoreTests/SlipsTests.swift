@@ -13,7 +13,8 @@ final class SlipsTests: XCTestCase {
         "roll", "twice", "jump", "hold", "late", "order", "settle",
         "crane", "land", "cross", "ground", "soak", "over",
         "fro", "still", "hover", "past", "park",
-        "home", "hole", "return", "drop", "twofold"]
+        "home", "hole", "return", "drop", "twofold",
+        "ice", "thaw", "shade", "crack", "take"]
 
     func defaults() -> UserDefaults {
         let name = "slips.test.\(UUID().uuidString)"
@@ -88,7 +89,7 @@ final class SlipsTests: XCTestCase {
         XCTAssertEqual(tri.frames[tri.still].board.face, 3, "the still: the third page folded onto the right page")
         XCTAssertEqual(tri.frames[tri.still].board.w, 8)
         XCTAssertTrue(tri.frames.last!.won)
-        XCTAssertEqual(SlipID.allCases.count, 16, "已集 n / 16")
+        XCTAssertEqual(SlipID.allCases.count, 17, "已集 n / 17")
         let turn = try SlipDemo.demo(.turn).film(config: pack.config)
         XCTAssertEqual(turn.frames.last!.board.face, 1)
         XCTAssertTrue(turn.frames.last!.won)
@@ -108,7 +109,7 @@ final class SlipsTests: XCTestCase {
         let first = Slips.firstLevels(pack.levels, order: Self.mainLine)
         XCTAssertEqual(first, [.stone: "facing", .door: "key", .ink: "ink", .tab: "stand", .shadow: "shadow", .press: "press",
                                .ride: "ride", .glue: "glue", .turn: "turn", .wet: "wet", .lamp: "leftLamp", .gate: "gate", .roll: "roll", .crane: "crane",
-                               .fro: "fro", .trifold: "home"])
+                               .fro: "fro", .trifold: "home", .ice: "ice"])
         let bridge = pack.levels.first { $0.id == "bridge" }!
         XCTAssertEqual(Slips.due(bridge, seen: []), [])
         let glue = pack.levels.first { $0.id == "glue" }!
@@ -130,6 +131,10 @@ final class SlipsTests: XCTestCase {
         let fro = pack.levels.filter { Slips.triggers($0).contains(.fro) }.map(\.id)
         XCTAssertEqual(Set(fro), ["fro", "past", "park"])
         XCTAssertEqual(Slips.due(pack.levels.first { $0.id == "fro" }!, seen: ["glue", "roll"]), [.fro])
+        // ch. 13: the ice slip melts the square behind her at the rest, and the still shows it as water
+        let ice = try SlipDemo.demo(.ice).film(config: pack.config)
+        XCTAssertEqual(ice.frames[ice.still].board[Cell(1, 0)], .water)
+        XCTAssertEqual(Slips.firstLevels(pack.levels, order: Self.mainLine)[.ice], "ice")
     }
 
     func testSeedOldSaveAndNewPlayer() throws {
@@ -195,7 +200,7 @@ final class FoldTallyTests: XCTestCase {
                 if face != prevFace {
                     _ = g.flip(); g.tally.turn()
                 } else if s[2] != prev[2] {
-                    _ = g.setAngle(Double(s[2])); g.tally.rest(at: g.angle)
+                    _ = g.setAngle(Double(s[2])); g.rest(); g.tally.rest(at: g.angle)   // ch. 13: the rest melts
                 } else {
                     XCTAssertNotEqual(g.step(to: Cell(s[0], s[1])), [.blocked], "\(lv.id) step to \(s)")
                 }
