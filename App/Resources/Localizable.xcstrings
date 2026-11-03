@@ -991,6 +991,36 @@
         }
       }
     },
+    "ch.14": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "滑"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slide"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "滑る"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "미끄러짐"
+          }
+        }
+      }
+    },
     "ch.14.line": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",

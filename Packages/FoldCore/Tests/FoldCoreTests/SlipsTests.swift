@@ -14,7 +14,8 @@ final class SlipsTests: XCTestCase {
         "crane", "land", "cross", "ground", "soak", "over",
         "fro", "still", "hover", "past", "park",
         "home", "hole", "return", "drop", "twofold",
-        "ice", "thaw", "shade", "crack", "take"]
+        "ice", "thaw", "shade", "crack", "take",
+        "slide", "aim", "brake", "pave"]
 
     func defaults() -> UserDefaults {
         let name = "slips.test.\(UUID().uuidString)"
@@ -33,7 +34,7 @@ final class SlipsTests: XCTestCase {
             XCTAssertTrue(film.frames.indices.contains(film.still), "\(demo.id)")
             XCTAssertLessThanOrEqual(film.totalMs, 4400, "\(demo.id): a loop is 3.6–4.4 s with its end pause")
             // the demo board shows the slip's own rule
-            XCTAssertTrue(Slips.triggers(Level(id: "x", map: demo.map, lamp: demo.lamp, trifold: demo.trifold ? true : nil)).contains(demo.id) || [.shadow, .ride, .fro].contains(demo.id), "\(demo.id)")
+            XCTAssertTrue(Slips.triggers(Level(id: "x", map: demo.map, lamp: demo.lamp, trifold: demo.trifold ? true : nil)).contains(demo.id) || [.shadow, .ride, .fro, .slide].contains(demo.id), "\(demo.id)")
         }
         // the beats that matter, frame by frame
         let glue = try SlipDemo.demo(.glue).film(config: pack.config)
@@ -89,7 +90,7 @@ final class SlipsTests: XCTestCase {
         XCTAssertEqual(tri.frames[tri.still].board.face, 3, "the still: the third page folded onto the right page")
         XCTAssertEqual(tri.frames[tri.still].board.w, 8)
         XCTAssertTrue(tri.frames.last!.won)
-        XCTAssertEqual(SlipID.allCases.count, 17, "已集 n / 17")
+        XCTAssertEqual(SlipID.allCases.count, 18, "已集 n / 18")
         let turn = try SlipDemo.demo(.turn).film(config: pack.config)
         XCTAssertEqual(turn.frames.last!.board.face, 1)
         XCTAssertTrue(turn.frames.last!.won)
@@ -109,7 +110,7 @@ final class SlipsTests: XCTestCase {
         let first = Slips.firstLevels(pack.levels, order: Self.mainLine)
         XCTAssertEqual(first, [.stone: "facing", .door: "key", .ink: "ink", .tab: "stand", .shadow: "shadow", .press: "press",
                                .ride: "ride", .glue: "glue", .turn: "turn", .wet: "wet", .lamp: "leftLamp", .gate: "gate", .roll: "roll", .crane: "crane",
-                               .fro: "fro", .trifold: "home", .ice: "ice"])
+                               .fro: "fro", .trifold: "home", .ice: "ice", .slide: "slide"])
         let bridge = pack.levels.first { $0.id == "bridge" }!
         XCTAssertEqual(Slips.due(bridge, seen: []), [])
         let glue = pack.levels.first { $0.id == "glue" }!
@@ -129,12 +130,19 @@ final class SlipsTests: XCTestCase {
             XCTAssertFalse(Slips.triggers(lv).contains(.fro), "\(id) must not trigger the fro slip")
         }
         let fro = pack.levels.filter { Slips.triggers($0).contains(.fro) }.map(\.id)
-        XCTAssertEqual(Set(fro), ["fro", "past", "park"])
+        XCTAssertEqual(Set(fro), ["fro", "past", "park", "aim", "pave"], "ch. 14 aim / pave declare the lean that comes back")
         XCTAssertEqual(Slips.due(pack.levels.first { $0.id == "fro" }!, seen: ["glue", "roll"]), [.fro])
         // ch. 13: the ice slip melts the square behind her at the rest, and the still shows it as water
         let ice = try SlipDemo.demo(.ice).film(config: pack.config)
         XCTAssertEqual(ice.frames[ice.still].board[Cell(1, 0)], .water)
         XCTAssertEqual(Slips.firstLevels(pack.levels, order: Self.mainLine)[.ice], "ice")
+        // ch. 14: the slide slip's stone slides over the ice and sinks in the water — the still shows it as paper
+        let slide = try SlipDemo.demo(.slide).film(config: pack.config)
+        XCTAssertEqual(slide.frames[slide.still].board[Cell(4, 0)], .paper, "the water it sank in")
+        XCTAssertEqual(slide.frames[slide.still].board[Cell(5, 0)], .ice, "the ice it slid over stays ice")
+        XCTAssertFalse(slide.frames[slide.still].board.grid[0].contains(.loose))
+        XCTAssertTrue(slide.frames.last!.won)
+        XCTAssertFalse(Slips.triggers(pack.levels.first { $0.id == "crack" }!).contains(.slide), "13-4's loose stone never meets the ice")
     }
 
     func testSeedOldSaveAndNewPlayer() throws {

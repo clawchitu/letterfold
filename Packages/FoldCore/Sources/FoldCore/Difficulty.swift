@@ -31,12 +31,17 @@ public struct Difficulty: Sendable {
     /// close) raises hard 4 -> 5 and final 5 -> 6. FoldCore has no chapters and ch. 11 shares its tiles with ch. 9/10, so no
     /// structural rule separates it (needsFro is also true on 9-3 / 9-5 / 10-4): it is recognised by its level ids.
     public static let chapter11: Set<String> = ["fro", "still", "hover", "past", "park"]
+    /// Ch. 14 「滑」's levels (check.js PAR_MAX_CH[14]).
+    public static let chapter14: Set<String> = ["slide", "aim", "brake", "pave"]
     public static func parMax(for level: Level) -> Int {
         if level.isOptional { return parMax["dark"]! }
         if chapter11.contains(level.id), let t = level.tier, let m = ["hard": 5, "final": 6][t] { return m }
         // check.js PAR_MAX_CH[12] (design-ch12.md §3.3): the second crease costs its own posture changes. Ch. 12 is the
         // trifold chapter, so its levels are the trifold ones.
         if level.isTrifold, let t = level.tier, let m = ["mid": 4, "hard": 5, "final": 6][t] { return m }
+        // check.js PAR_MAX_CH[14] (design-ch14.md §3): rest first, pass second — a lean that comes back before the close
+        // and the opening; mid 3 → 4 in this chapter only
+        if chapter14.contains(level.id), level.tier == "mid" { return 4 }
         return parMax[level.tier ?? ""] ?? 3
     }
     public static func range(of tier: String) -> ClosedRange<Int>? { tiers.first { $0.name == tier }?.range }

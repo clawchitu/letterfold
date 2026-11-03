@@ -20,6 +20,9 @@ public enum SlipID: String, CaseIterable, Sendable, Codable {
     /// Ch. 13 「冰」 (fold-proto design-ch13 §2, i18n slip.ice): ice melts where the page comes to rest in the lamp window,
     /// outside the shadows; flat it freezes back (first in 13-1). Slip seventeen.
     case ice
+    /// Ch. 14 「滑」 (fold-proto design-ch14 §2, i18n slip.slide): a loose stone on ice slides to the first square that is not
+    /// ice — paper stops it, a gap it fills, water it sinks in (paper for good) (first in 14-1). Slip eighteen.
+    case slide
 }
 
 /// The slips' triggers and the save logic around them (design-onboarding §7.2–7.3), pure so they are tested here.
@@ -59,6 +62,8 @@ public enum Slips {
             case .fro: return needs.contains("needsFro")
             case .trifold: return level.isTrifold && pages == 3
             case .ice: return s.contains("~")
+            // the declared needs (levels.js): 13-4 crack has a loose stone and ice that never meet
+            case .slide: return needs.contains("needsSlide")
             }
         }
     }
@@ -282,6 +287,12 @@ public struct SlipDemo: Sendable {
         SlipDemo(id: .ice, level: "13-1", map: ["S~.--..x", "---Gx---"], beats: [
             .walk(Cell(2, 0)), .pause(300), .angle(110, ms: 500, shadowAt: Cell(3, 0)), .rest(melts: [Cell(1, 0)]), .still, .pause(300),
             .walk(Cell(3, 1)), .win]),
+        // 滑: lean past upright — the loose stone rolls onto the ice, slides the length of it and sinks in the water at the
+        // crease: that square is paper now; back flat, step up onto it and walk the frozen river round to her. The still:
+        // flat again, the water turned to paper (i18n slip.slide.pic)
+        SlipDemo(id: .slide, level: "14-1", map: ["----u~~r", "----S--G"], beats: [
+            .bump(0, -1, .gap), .pause(300), .angle(100, ms: 600, rolled: [Cell(7, 0), Cell(4, 0)]), .pause(300), .angle(0, ms: 400),
+            .still, .pause(200), .walk(Cell(7, 1)), .win]),
     ]
 
     public static func demo(_ id: SlipID) -> SlipDemo { all.first { $0.id == id }! }

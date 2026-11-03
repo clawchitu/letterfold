@@ -186,6 +186,7 @@ const NATIVE = {
   // 1.1: 卷四《冰》 chapter 13 「冰」 (fold-proto design-ch13.md): the map's fourth page, the ice's VoiceOver words.
   // 'vol.4' is the volume's NAME here (as 'vol.3' 倾); fold-proto's own 'vol.4' (卷四) is the book number, kept as map.book4
   'ch.13': ['冰', 'Ice', '氷', '얼음'],
+  'ch.14': ['滑', 'Slide', '滑る', '미끄러짐'],   // 1.1 (32): chapter 14 「滑」 (fold-proto design-ch14.md)
   'vol.4': ['冰', 'Ice', '氷', '얼음'],
   'map.book4': ['卷四', 'Book Four', '第四巻', '제4권'],
   'map.vol4Back': ['卷四《冰》', 'Book Four: Ice', '第四巻『氷』', '제4권 《얼음》'],

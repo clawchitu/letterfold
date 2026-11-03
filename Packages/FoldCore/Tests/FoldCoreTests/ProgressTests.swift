@@ -153,7 +153,9 @@ final class ProgressTests: XCTestCase {
         // vol. 3 chapter 12 「三折」 (fold-proto design-ch12.md)
         XCTAssertEqual(Array(ids[72..<77]), ["home", "hole", "return", "drop", "twofold"])
         // vol. 4 chapter 13 「冰」 (fold-proto design-ch13.md)
-        XCTAssertEqual(Array(ids.suffix(5)), ["ice", "thaw", "shade", "crack", "take"])
+        XCTAssertEqual(Array(ids[77..<82]), ["ice", "thaw", "shade", "crack", "take"])
+        // vol. 4 chapter 14 「滑」 (fold-proto design-ch14.md)
+        XCTAssertEqual(Array(ids.suffix(4)), ["slide", "aim", "brake", "pave"])
         XCTAssertEqual(Set(ids).count, ids.count)
     }
 
@@ -186,7 +188,8 @@ final class ProgressTests: XCTestCase {
                         "crane", "land", "cross", "ground", "soak", "over",
                         "fro", "still", "hover", "past", "park",
                         "home", "hole", "return", "drop", "twofold",
-                        "ice", "thaw", "shade", "crack", "take"]
+                        "ice", "thaw", "shade", "crack", "take",
+                        "slide", "aim", "brake", "pave"]
         for lv in pack.levels where !lv.isOptional && !ch6.contains(lv.id) { XCTAssertTrue(done.contains(lv.id), "\(lv.id) stays solved") }
         for id in ch6 { XCTAssertFalse(done.contains(id), id) }
         XCTAssertTrue(SavedProgress.chapterOpen(previous: ["glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps"], done: done), "chapter 6 opens after all of chapter 5")
