@@ -237,6 +237,8 @@ final class GameModel {
     private(set) var guideFold: Double?
     @ObservationIgnored private var guideStartAngle: Double = 0
     @ObservationIgnored private var guideTask: Task<Void, Never>?
+    /// The guide's fingertip rides the moving page's free edge (1-1's ghost hand slides towards the crease instead).
+    private(set) var ghostAtEdge = false
     /// The walk step's squares, in order (the dotted route).
     var guideRoute: [Cell] {
         guard let k = guideAt, k < guideSteps.count, case let .walk(c) = guideSteps[k].kind else { return [] }
@@ -710,6 +712,7 @@ final class GameModel {
 
     /// The ghost hand (README "下一步", design-spec §5): loops until the player folds, never with reduce motion.
     func startGhost(after delay: Double) {
+        ghostAtEdge = false
         guard index == 0, !won, canDrag, !hasFolded, !settings.motionReduced, ghostTask == nil else { return }
         ghostTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(delay))
@@ -861,7 +864,8 @@ final class GameModel {
         if guideOff { show(L10n.t("guide.off")); return }
         let st = guideSteps[k]
         switch st.kind {
-        case let .walk(cells): show(L10n.t("guide.walk", ["pos": pos(cells.last!)]))
+        // on screen the ring says where (the map's row / column read wrong on the portrait book); VoiceOver hears the square
+        case let .walk(cells): show(L10n.t("guide.walk"), speak: false); announce(L10n.t("guide.walkTo", ["pos": pos(cells.last!)]))
         case let .fold(t):
             let shown = guideFold ?? t
             show(t >= config.foldMin ? L10n.t("guide.close") : shown == 0 ? L10n.t("guide.open")
@@ -913,16 +917,17 @@ final class GameModel {
         }
     }
 
-    /// The fingertip shows a fold step: it takes the page part of the way towards the angle and lets go, three
+    /// The fingertip shows a fold step: from the page's free edge it takes the page right into the ghost and lets go, three
     /// times (as 1-1's ghost hand). Reduce motion: only the still ghost page and the caption.
     private func guideGhost() {
         guideTask?.cancel(); guideTask = nil
         guard let t = guideFold, !settings.motionReduced else { return }
+        ghostAtEdge = true
         guideTask = Task { [weak self] in
             for _ in 0..<3 {
                 try? await Task.sleep(for: .seconds(0.5))
                 guard let self, !Task.isCancelled, !self.dragging, self.motionTarget == nil, self.guideFold == t else { return }
-                let reach = max(-50, min(50, t - self.angle))
+                let reach = t - self.angle   // all the way: the page itself lands in the ghost, then springs back
                 withAnimation(.easeOut(duration: 0.3)) { self.ghost = 1 }
                 try? await Task.sleep(for: .milliseconds(400))
                 if Task.isCancelled { return }

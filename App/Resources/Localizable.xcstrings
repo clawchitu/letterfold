@@ -4502,6 +4502,36 @@
       }
     },
     "guide.walk": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沿虚线走到圈里"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Walk the dotted line to the ring"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点線にそって丸まで歩く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "동그라미까지 점선을 따라 걸어요"
+          }
+        }
+      }
+    },
+    "guide.walkTo": {
       "comment": "UI. From fold-proto i18n.js. Placeholders: {pos}",
       "extractionState": "manual",
       "localizations": {

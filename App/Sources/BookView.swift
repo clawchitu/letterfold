@@ -1636,14 +1636,14 @@ private struct CameraBook: View {
                     Path { p in p.addLines(pts); p.closeSubpath() }.fill(Tok.ink900.opacity(hc ? 0.08 : 0.04))
                     Path { p in p.addLines(pts); p.closeSubpath() }
                         .stroke(hc ? Color.black : Tok.ink900.opacity(0.45), style: StrokeStyle(lineWidth: hc ? 2.5 : 1.4, dash: [6, 4]))
-                    // the angle to reach, only for a lean or a stand (shut / flat say it in the caption: "0°" read wrong)
+                    // the angle to reach (lean / stand only: shut and flat say it in the caption)
                     if t > 0 && t < model.config.foldMin {
                         Text("\(Int((180 - t).rounded()))°").font(.system(size: 16, weight: .semibold).monospacedDigit())
                             .foregroundStyle(hc ? Color.black : Tok.ink900)
                             .padding(.horizontal, 7).padding(.vertical, 2)
-                            .background(Capsule().fill(hc ? Color.white : model.paper.color.opacity(0.92)))
+                            .background(Capsule().fill(hc ? Color.white : model.paper.color.opacity(0.95)))
                             .overlay(Capsule().stroke(hc ? Color.black : Tok.ink900.opacity(0.35), lineWidth: hc ? 2 : 0.8))
-                            .position(cam.project(edge0 + W / 2 * ex + (H + 16) * ft))
+                            .position(cam.project(edge0 + (W - 30) * ex))   // on the crease, at the hinge: where an angle is read
                     }
                 }
                 .opacity(model.guideOff ? 0.3 : 1)
@@ -1663,7 +1663,7 @@ private struct CameraBook: View {
             }
             if model.ghost > 0 {
                 GhostFinger()
-                    .position(cam.project((model.ghost >= 2 ? 0.2 : 0.68) * H * fold))
+                    .position(cam.project(model.ghostAtEdge ? edge0 + W / 2 * ex + 0.94 * H * fold : (model.ghost >= 2 ? 0.2 : 0.68) * H * fold))
                     .transition(.opacity).allowsHitTesting(false).accessibilityHidden(true)
             }
             // the squares' extent on screen, both pages (the toast stays out of it)

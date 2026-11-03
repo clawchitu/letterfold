@@ -179,7 +179,7 @@ final class HintSkipUITests: XCTestCase {
         XCTAssertTrue(hint.waitForExistence(timeout: 8)); XCTAssertTrue(waitEnabled(hint, 6))
         hint.tap(); sleep(1); hint.tap()
         XCTAssertTrue(toast(app).waitForExistence(timeout: 4))
-        XCTAssertTrue(toast(app).label.contains("Walk the dotted line to row 4"), toast(app).label)
+        XCTAssertTrue(toast(app).label.contains("Walk the dotted line to the ring"), toast(app).label)
         keep(app, "guide-walk")
         app.terminate()
 
