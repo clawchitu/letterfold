@@ -463,6 +463,29 @@ private struct BookBody: View {
             // ch. 8: the leaning page is walked on (left lamp, gates): its squares take taps through the sheet, and where
             // one lies over a fixed square the one the figure can reach wins (Codex review P1)
             if showBack && va < 160 && model.liftedPageLive { SideLeanTargets(model: model, geo: geo, rotorSpace: rotorSpace, ra: ra, pressed: pressed) }
+            // hint-skip ②, the side-on turn (landscape / Duo): a fold step's ghost page — the folding page's outline turned
+            // to the angle to reach (drawn as the sheet is, clamped through the standing window), and that angle at the
+            // crease. Still under Reduce Motion: the cue that does not move.
+            if let t = model.guideFold, abs(t - model.angle) > 2 {
+                let gra = t <= 90 ? min(t, Self.standFront) : max(t, Self.standBack)
+                Rectangle()
+                    .fill(Tok.ink900.opacity(hc ? 0.08 : 0.04))
+                    .overlay(Rectangle().stroke(hc ? Color.black : Tok.ink900.opacity(0.45), style: StrokeStyle(lineWidth: hc ? 2.5 : 1.4, dash: [6, 4])))
+                    .frame(width: page.width, height: page.height)
+                    .rotation3DEffect(.degrees(-gra), axis: (x: 0, y: 1, z: 0), anchor: .leading, perspective: 0.32)
+                    .offset(x: page.width)
+                    .opacity(model.guideOff ? 0.3 : 1)
+                    .allowsHitTesting(false).accessibilityHidden(true)
+                if t > 0 && t < model.config.foldMin {
+                    Text("\(Int((180 - t).rounded()))°").font(.system(size: 16, weight: .semibold).monospacedDigit())
+                        .foregroundStyle(hc ? Color.black : Tok.ink900)
+                        .padding(.horizontal, 7).padding(.vertical, 2)
+                        .background(Capsule().fill(hc ? Color.white : model.paper.color.opacity(0.95)))
+                        .overlay(Capsule().stroke(hc ? Color.black : Tok.ink900.opacity(0.35), lineWidth: hc ? 2 : 0.8))
+                        .position(x: page.width, y: -12)
+                        .allowsHitTesting(false).accessibilityHidden(true)
+                }
+            }
             // the crease: a bright line and a dark line (design-spec §4), lit up when the pages touch
             Crease(horizontal: false, length: page.height, glow: model.glow, white: model.paper.creaseWhite)
                 .offset(x: page.width - 1, y: 0)
@@ -851,11 +874,12 @@ private struct PuppetLayer: View {
     }
 }
 
-private func threadPieces(_ model: GameModel, _ geo: BookGeometry, page: Spread.Page) -> [ThreadPiece] {
+private func threadPieces(_ model: GameModel, _ geo: BookGeometry, page: Spread.Page, cells: [Cell]? = nil) -> [ThreadPiece] {
     let s = geo.spread, rules = model.rules
     var out: [ThreadPiece] = []
     func mid(_ p: CGPoint, _ q: CGPoint) -> CGPoint { CGPoint(x: (p.x + q.x) / 2, y: (p.y + q.y) / 2) }
-    for (i, (a, b)) in zip(model.trail, model.trail.dropFirst()).enumerated() {
+    let path = cells ?? model.trail
+    for (i, (a, b)) in zip(path, path.dropFirst()).enumerated() {
         let pa = s.page(of: a.c), pb = s.page(of: b.c)
         if pa == page && pb == page {
             out.append(ThreadPiece(from: geo.center(a), to: geo.center(b), step: i, half: 0))
@@ -870,9 +894,28 @@ private func threadPieces(_ model: GameModel, _ geo: BookGeometry, page: Spread.
     return out
 }
 
-private func stackPieces(_ model: GameModel, _ geo: BookGeometry) -> [ThreadPiece] {
-    zip(model.trail, model.trail.dropFirst()).enumerated().map { i, ab in
+private func stackPieces(_ model: GameModel, _ geo: BookGeometry, cells: [Cell]? = nil) -> [ThreadPiece] {
+    let path = cells ?? model.trail
+    return zip(path, path.dropFirst()).enumerated().map { i, ab in
         ThreadPiece(from: geo.stackCenter(ab.0), to: geo.stackCenter(ab.1), step: i, half: 0)
+    }
+}
+
+/// hint-skip ②: the guide's walk step as a dotted ink route (not the vermilion thread: nothing walked yet) with a
+/// small ring on the square to reach. Faded while she is off the route. High contrast: solid black dots.
+private struct GuideRoute: View {
+    let model: GameModel
+    let pieces: [ThreadPiece]
+    let end: CGPoint?
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        let ink = hc ? Color.black : Tok.ink900.opacity(0.6)
+        ZStack {
+            ThreadShape(pieces: pieces, drawn: 1e6).stroke(ink, style: StrokeStyle(lineWidth: hc ? 3.5 : 2.6, lineCap: .round, dash: [0.1, 7]))
+            if let end { Circle().stroke(ink, lineWidth: hc ? 2.5 : 1.6).frame(width: 20, height: 20).position(end) }
+        }
+        .opacity(model.guideOff ? 0.3 : 1)
+        .allowsHitTesting(false).accessibilityHidden(true)
     }
 }
 
@@ -929,6 +972,10 @@ private struct FixedPage: View {
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: !covered && targets)
             // kept in the tree while the book is closed (hidden, not removed): re-inserting it mid-aha lost the
             // thread's redraw and left this page without its thread after the book reopened
+            if targets && !covered && !model.guideRoute.isEmpty {
+                GuideRoute(model: model, pieces: threadPieces(model, geo, page: .fixed, cells: model.guideRoute),
+                           end: model.guideRoute.last.flatMap { s.page(of: $0.c) == .fixed ? geo.center($0) : nil })
+            }
             ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .fixed),
                         end: model.trail.last.flatMap { s.page(of: $0.c) == .fixed ? geo.center($0) : nil })
                 .opacity(covered ? 0 : 1)
@@ -973,6 +1020,10 @@ private struct FrontFace: View {
             if let f = model.trifoldFace, f != 0 { ThirdPageTint() }
             // the top page stays tappable (and in VoiceOver) while it lies flat or stands: 2-1's goal is up there
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: targets && (angle < 20 || model.posture == .standing || (model.liftedPageLive && model.rules.lit(model.angle))))
+            if targets && !model.guideRoute.isEmpty && model.posture != .closed {
+                GuideRoute(model: model, pieces: threadPieces(model, geo, page: .folding, cells: model.guideRoute),
+                           end: model.guideRoute.last.flatMap { s.page(of: $0.c) == .folding ? geo.center($0) : nil })
+            }
             ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .folding),
                         end: model.trail.last.flatMap { s.page(of: $0.c) == .folding ? geo.center($0) : nil })
             // ch. 9: she is drawn over the upright balls instead (CameraBook, design-review-vol3-art §3.4: balls, then her)
@@ -1080,6 +1131,9 @@ private struct BackFace: View {
                 .opacity(fade)
                 .allowsHitTesting(false).accessibilityHidden(true)
                 if targets { StackTargets(model: model, geo: geo, rotorSpace: rotorSpace, cells: under) }
+                if !model.guideRoute.isEmpty && model.posture == .closed {
+                    GuideRoute(model: model, pieces: stackPieces(model, geo, cells: model.guideRoute), end: model.guideRoute.last.map(geo.stackCenter))
+                }
                 ThreadLayer(model: model, pieces: stackPieces(model, geo), end: model.trail.last.map(geo.stackCenter))
                 PuppetLayer(model: model, geo: geo, at: geo.stackCenter(model.figureCell))
                 if model.finaleSeal && model.finaleGlyph != "成", let g = model.goal {
@@ -1596,9 +1650,43 @@ private struct CameraBook: View {
                     .transition(AppSettings.shared.motionReduced ? .opacity : .asymmetric(insertion: .scale(scale: 1.6).combined(with: .opacity), removal: .opacity))
                     .accessibilityHidden(true)
             }
+            // hint-skip ②: a fold step's ghost page — the folding page's outline at the angle to reach, dashed ink,
+            // with that angle at its outer edge (physical degrees, as the drag readout)
+            if let t = model.guideFold, abs(t - model.angle) > 2 {
+                let rt = t * .pi / 180, ft = SIMD3<Double>(0, -cos(rt), sin(rt))
+                let pts = [edge0, edge0 + W * ex, edge0 + W * ex + H * ft, edge0 + H * ft].map(cam.project)
+                ZStack {
+                    Path { p in p.addLines(pts); p.closeSubpath() }.fill(Tok.ink900.opacity(hc ? 0.08 : 0.04))
+                    Path { p in p.addLines(pts); p.closeSubpath() }
+                        .stroke(hc ? Color.black : Tok.ink900.opacity(0.45), style: StrokeStyle(lineWidth: hc ? 2.5 : 1.4, dash: [6, 4]))
+                    // the angle to reach (lean / stand only: shut and flat say it in the caption)
+                    if t > 0 && t < model.config.foldMin {
+                        Text("\(Int((180 - t).rounded()))°").font(.system(size: 16, weight: .semibold).monospacedDigit())
+                            .foregroundStyle(hc ? Color.black : Tok.ink900)
+                            .padding(.horizontal, 7).padding(.vertical, 2)
+                            .background(Capsule().fill(hc ? Color.white : model.paper.color.opacity(0.95)))
+                            .overlay(Capsule().stroke(hc ? Color.black : Tok.ink900.opacity(0.35), lineWidth: hc ? 2 : 0.8))
+                            .position(cam.project(edge0 + (W - 30) * ex))   // on the crease, at the hinge: where an angle is read
+                    }
+                }
+                .opacity(model.guideOff ? 0.3 : 1)
+                .allowsHitTesting(false).accessibilityHidden(true)
+            }
+            // hint-skip ②: the walk step's dotted route, projected (a page past upright shows its back, where the pages'
+            // own routes cannot be seen); the shut book draws its route on the stack (BackFace)
+            if model.posture != .closed && !model.guideRoute.isEmpty {
+                let pts = model.guideRoute.map { cam.project(center3D($0, fold: fold, W: W, H: H)) }
+                let ink = hc ? Color.black : Tok.ink900.opacity(0.6)
+                ZStack {
+                    Path { p in p.addLines(pts) }.stroke(ink, style: StrokeStyle(lineWidth: hc ? 3.5 : 2.6, lineCap: .round, lineJoin: .round, dash: [0.1, 7]))
+                    Circle().stroke(ink, lineWidth: hc ? 2.5 : 1.6).frame(width: 20, height: 20).position(pts.last!)
+                }
+                .opacity(model.guideOff ? 0.3 : 1)
+                .allowsHitTesting(false).accessibilityHidden(true)
+            }
             if model.ghost > 0 {
                 GhostFinger()
-                    .position(cam.project((model.ghost >= 2 ? 0.2 : 0.68) * H * fold))
+                    .position(cam.project(model.ghostAtEdge ? edge0 + W / 2 * ex + 0.94 * H * fold : (model.ghost >= 2 ? 0.2 : 0.68) * H * fold))
                     .transition(.opacity).allowsHitTesting(false).accessibilityHidden(true)
             }
             // the squares' extent on screen, both pages (the toast stays out of it)

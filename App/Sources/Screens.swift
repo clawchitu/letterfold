@@ -648,7 +648,7 @@ struct ChapterMapView: View {
             .transition(.opacity)
         }
         .overlay(alignment: .bottom) {
-            let next = playable.first { !model.done.contains($0) } ?? playable.first ?? 0
+            let next = model.nextToPlay(playable) ?? playable.first ?? 0
             VStack(spacing: 12) {
                 Button { model.go(next); router.go(.level) } label: {
                     Text(L10n.t("map.continue", ["n": model.code(for: next)]))
@@ -808,7 +808,8 @@ struct ChapterMapView: View {
 extension GameModel {
     /// The chapter of the 「继续」 level: the first open chapter with a letter not yet delivered (nil once all are).
     var currentChapter: Chapter? {
-        Chapter.all.first { ch in isUnlocked(ch) && chapterIndices(ch).contains { !done.contains($0) } }
+        Chapter.all.first { ch in isUnlocked(ch) && chapterIndices(ch).contains { !done.contains($0) && !skipped.contains($0) } }
+            ?? Chapter.all.first { ch in isUnlocked(ch) && chapterIndices(ch).contains { !done.contains($0) } }
     }
     /// The map's page: the one turned to, else the current chapter's volume, else the newest open book's; never past it.
     func mapPage(_ turned: Int?) -> Int {
@@ -837,7 +838,8 @@ extension GameModel {
         let id = pack.levels[i].id
         guard let ch = Chapter.all.first(where: { $0.levelIDs.contains(id) }) else { return true }
         let ids = ch.levelIDs.filter { id in pack.levels.contains { $0.id == id } }
-        return isUnlocked(ch) && SavedProgress.levelOpen(id, in: ids, done: Set(done.map { pack.levels[$0].id }))
+        return isUnlocked(ch) && SavedProgress.levelOpen(id, in: ids, done: Set(done.map { pack.levels[$0].id }),
+                                                         skipped: Set(skipped.map { pack.levels[$0].id }))
     }
     /// 「2-3」 for a level index.
     func code(for i: Int) -> String {

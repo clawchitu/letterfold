@@ -81,11 +81,21 @@ struct LevelScreen: View {
                 // the win's 下一封 knot floats too, so it never lifts the board (b19: a footer kept at its height cost
                 // every board 26 pt instead)
                 if model.showNext {
-                    NextKnot(title: model.isLastInChapter ? L10n.t("letter.read") : model.isDark && model.nextDark == nil ? L10n.t("dark.back") : L10n.t("next")) {
-                        if model.isLastInChapter { router.go(.letter) }
+                    NextKnot(title: model.letterDue ? L10n.t("letter.read") : model.letterWaits ? L10n.t("nav.bookLabel") : model.isDark && model.nextDark == nil ? L10n.t("dark.back") : L10n.t("next")) {
+                        // the letter only for a whole chapter (hint-skip): with letters skipped, back to the chapter
+                        if model.letterDue { router.go(.letter) }
+                        else if model.letterWaits { router.leaveLevel(chapter: model.chapter.id) }
                         else if model.isDark { if let n = model.nextDark { model.go(n); fadeName() } else { router.leaveLevel(chapter: model.chapter.id) } }
                         // the next level, or (an older save with a gap) the first one not yet delivered: never past it
-                        else { model.go(model.isLevelOpen(model.index + 1) ? model.index + 1 : model.chapterLevelIndices.first { !model.done.contains($0) } ?? model.index + 1); fadeName() }
+                        else { model.go(model.isLevelOpen(model.index + 1) ? model.index + 1 : model.nextToPlay(model.chapterLevelIndices) ?? model.index + 1); fadeName() }
+                    }
+                    .padding(.bottom, 8)
+                    .transition(.opacity)
+                }
+                // 「跳过这一封」 (hint-skip): only after the whole solution was shown and still no win; quiet ink, no colour
+                if model.skipOffered && !model.won && !model.showNext {
+                    SkipLink {
+                        if let n = model.skip() { model.go(n); fadeName() } else { router.leaveLevel(chapter: model.chapter.id) }
                     }
                     .padding(.bottom, 8)
                     .transition(.opacity)
@@ -200,14 +210,35 @@ private struct TopBar: View {
                 Image(systemName: "questionmark.circle").font(.system(size: 22, weight: .regular)).foregroundStyle(Tok.ink900)
                     .frame(width: 44, height: 44).contentShape(Rectangle())
             }
-            .opacity(model.hintAvailable ? 1 : 0)
+            // hint-skip: faint (30 %) and disabled from the start, so it is known to be there; full ink once the
+            // player has had time to try (stuckDelay). VoiceOver hears it as a dimmed 「提示」 that comes soon.
+            .opacity(model.hintAvailable ? 1 : 0.3)
+            .animation(AppSettings.shared.motionReduced ? .linear(duration: 0.2) : .easeInOut(duration: 0.8), value: model.hintAvailable)
             .disabled(!model.hintAvailable)
-            .accessibilityHidden(!model.hintAvailable)
             .accessibilityLabel(L10n.t("hint"))
+            .accessibilityValue(model.hintAvailable ? "" : L10n.t("hint.soon"))
             .accessibilityIdentifier("hint")
         }
         .padding(.horizontal, 8)
         .frame(height: 48)
+    }
+}
+
+/// 「跳过这一封 ›」: Songti 15, ink.700, a dotted underline (as the map's 物件笺 link), 44 pt to touch.
+private struct SkipLink: View {
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            Text(L10n.t("skip.offer") + " ›").font(FontBook.shared.songti(.regular, 15, relativeTo: .subheadline)).foregroundStyle(Tok.ink700)
+                .padding(.bottom, 3)
+                .overlay(alignment: .bottom) { HLine().stroke(Tok.ink700, style: StrokeStyle(lineWidth: 1, dash: [1.5, 2.5])).frame(height: 1) }
+                .padding(.horizontal, 12)
+                .frame(minHeight: 44).contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(L10n.t("skip.offer"))
+        .accessibilityHint(L10n.t("skip.hint"))
+        .accessibilityIdentifier("skip")
     }
 }
 
