@@ -70,6 +70,8 @@ struct PaperState: Equatable {
     var margin: [MarginMark] = []
     /// 卷三's hard card (Chapter9Marks.swift, design-review-vol3-art §3.2): the squares are pressed in, stones lie flat.
     var card = false
+    /// 卷四's 皮纸 + 冰纹 (design-vol4.md §3): faint ice-grain hairlines in the vellum (Chapter13Marks.swift `IceGrain`).
+    var iceGrain = false
 
     static let chapter1 = PaperState(color: Tok.paperNew, translucency: 0.05, inkSaturation: 0.82, backlit: false, thread: Tok.thread)
     static let chapter2 = PaperState(color: Color(hex: 0xF3EDE2), translucency: 0.15, inkSaturation: 0.78, backlit: false, thread: Tok.thread, skin: .stand, margin: [.railing])

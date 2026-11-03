@@ -4,7 +4,8 @@ import FoldCore
 // 卷四《冰》 chapter 13 「冰」 (fold-proto design-ch13.md, design-vol4.md §3): the frozen river. What the ice does comes from
 // the engine (`FoldGame.rest`, `Rules.melt` / `freeze` / `crushIce`); this file times the rest and draws it.
 //   ice    a pale blue-grey glaze over the path square, a few fine cracks (high contrast: one black diagonal crack)
-//   mist   while the page leans in the lamp window, the ice no shadow covers fogs over: if the page stops here, it melts
+//   mist   while the page leans in the lamp window, the ice no shadow covers fogs over (milk-white, no edge, a cool
+//          shimmer runs across it now and then; reduce motion: still): if the page stops here, it melts
 //   rest   300 ms after the page settles the cracks spread across the square and it sinks into water (reduce motion: a fade)
 //   water  a darker ink wash pooled in the gap, two pale ripples — a gap you can see is wet (high contrast: three waves)
 //   freeze laid flat, the water whitens and is ice again (the volume's one high note)
@@ -12,8 +13,12 @@ import FoldCore
 
 extension PaperState {
     /// 皮纸 (design-ch13.md §2, design-vol4.md §3): vellum, cool and pale, the lamp comes through it (0.35).
-    static let vellum = PaperState(color: Tok.paperVellum, translucency: 0.35, inkSaturation: 0.86, backlit: true, thread: Tok.threadAged,
-                                   backlight: 0.5, skin: .letter)
+    static let vellum: PaperState = {
+        var p = PaperState(color: Tok.paperVellum, translucency: 0.35, inkSaturation: 0.86, backlit: true, thread: Tok.threadAged,
+                           backlight: 0.5, skin: .letter)
+        p.iceGrain = true     // 冰纹: the grain of the frozen river in the paper itself (decoration, off in high contrast)
+        return p
+    }()
 }
 
 extension Tok {
@@ -26,6 +31,45 @@ extension Tok {
     /// water: an ink wash with a cold cast, darker than any paper and than a stone's shadow's brown
     static let water = Color(hex: 0x3F5866)
     static let ripple = Color(hex: 0xE6EEF1)
+}
+
+/// 冰纹 (design-vol4.md §3 皮纸 + 冰纹): long faint hairlines through the vellum, like the grain of thin river ice —
+/// a few kinked runs with short branches, the same every time (seeded by the page). Decoration: ≈ 1.1:1, never a cue.
+struct IceGrain: View {
+    var seed = 0
+    var body: some View {
+        Canvas { ctx, sz in
+            var rng = IceRNG(seed: UInt64(4242 + seed * 101))
+            var p = Path()
+            let n = 9
+            for i in 0..<n {
+                // each run enters from an edge band and wanders across at a shallow slant
+                var at = CGPoint(x: sz.width * (Double(i) + rng.next()) / Double(n), y: sz.height * rng.next())
+                var ang = (rng.next() < 0.5 ? 0.35 : -0.35) * .pi + (rng.next() - 0.5) * 0.5
+                p.move(to: at)
+                for _ in 0..<5 {
+                    let len = min(sz.width, sz.height) * (0.06 + 0.10 * rng.next())
+                    ang += (rng.next() - 0.5) * 0.9
+                    let nx = CGPoint(x: at.x + cos(ang) * len, y: at.y + sin(ang) * len)
+                    p.addLine(to: nx)
+                    if rng.next() < 0.45 {
+                        let b = ang + (rng.next() < 0.5 ? 1 : -1) * (0.6 + 0.6 * rng.next()), bl = len * (0.3 + 0.4 * rng.next())
+                        p.move(to: nx); p.addLine(to: CGPoint(x: nx.x + cos(b) * bl, y: nx.y + sin(b) * bl)); p.move(to: nx)
+                    }
+                    at = nx
+                }
+            }
+            ctx.stroke(p, with: .color(Tok.iceEdge.opacity(0.16)), style: StrokeStyle(lineWidth: 0.6, lineCap: .round, lineJoin: .round))
+            // a faint cold bloom here and there under the grain
+            for _ in 0..<4 {
+                let c = CGPoint(x: sz.width * rng.next(), y: sz.height * rng.next()), rad = min(sz.width, sz.height) * (0.12 + 0.12 * rng.next())
+                ctx.fill(Path(ellipseIn: CGRect(x: c.x - rad, y: c.y - rad * 0.6, width: rad * 2, height: rad * 1.2)),
+                         with: .radialGradient(Gradient(colors: [Tok.iceFace.opacity(0.22), Tok.iceFace.opacity(0)]), center: c, startRadius: 0, endRadius: rad))
+            }
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
 }
 
 // MARK: - the rest (main.js rest on 'settle')
@@ -173,6 +217,58 @@ struct IceGlaze: View {
     }
 }
 
+/// The mist over ice that would melt here (design-vol4.md §3 章首「冰面起雾」): unlike the glaze (a crisp pale-blue
+/// square with an edge), a milk-white fog that spills softly past the square's edge, veils the cracks, breathes, and
+/// now and then a cool light runs across it. `shimmer` 0…1 is that pass (nil: none; reduce motion never passes one).
+struct IceMist: View {
+    let size: Double
+    var phase = 0.0
+    var shimmer: Double? = nil
+
+    var body: some View {
+        ZStack {
+            // the fog: near-opaque white at the heart, gone a little outside the square — no edge
+            Circle()
+                .fill(RadialGradient(stops: [.init(color: .white.opacity(0.93), location: 0), .init(color: .white.opacity(0.86 + 0.05 * phase), location: 0.45),
+                                             .init(color: .white.opacity(0.45), location: 0.75), .init(color: .white.opacity(0), location: 1)],
+                                     center: UnitPoint(x: 0.5 + 0.04 * phase, y: 0.5), startRadius: 0, endRadius: size * 0.78))
+                .frame(width: size * 1.56, height: size * 1.56)
+                .blur(radius: size * 0.06)
+            // two drifting wisps, a touch brighter
+            Capsule().fill(.white.opacity(0.75)).frame(width: size * 0.7, height: size * 0.16).blur(radius: size * 0.05)
+                .offset(x: size * 0.08 * phase, y: -size * 0.16)
+            Capsule().fill(.white.opacity(0.65)).frame(width: size * 0.55, height: size * 0.13).blur(radius: size * 0.05)
+                .offset(x: -size * 0.1 * phase, y: size * 0.2)
+            if let u = shimmer {
+                // a cool glint sweeping corner to corner, fading in and out over the pass
+                let fade = sin(u * .pi)
+                Rectangle()
+                    .fill(LinearGradient(colors: [.clear, Color(hex: 0xB4DCF0).opacity(0.55 * fade), Color(hex: 0xE4F4FC).opacity(0.7 * fade), Color(hex: 0xB4DCF0).opacity(0.55 * fade), .clear],
+                                         startPoint: .leading, endPoint: .trailing))
+                    .frame(width: size * 0.42, height: size * 1.8)
+                    .rotationEffect(.degrees(28))
+                    .offset(x: size * (-0.95 + 1.9 * u))
+                    .mask(Circle().fill(RadialGradient(colors: [.white, .white.opacity(0)], center: .center, startRadius: size * 0.3, endRadius: size * 0.72)).frame(width: size * 1.4, height: size * 1.4))
+            }
+        }
+        .frame(width: size, height: size)
+        .compositingGroup()
+    }
+}
+
+/// The mist's soft edge, drawn over the veiled page's square edges (BookView TileEdges): a white haze that blurs the
+/// square's outline and drifts a little past it, so a misted square has no hard edge where the glaze has one.
+struct IceMistHalo: View {
+    let size: Double
+    var body: some View {
+        RoundedRectangle(cornerRadius: 4, style: .continuous)
+            .stroke(.white.opacity(0.85), lineWidth: size * 0.12)
+            .blur(radius: size * 0.06)
+            .frame(width: size, height: size)
+            .allowsHitTesting(false)
+    }
+}
+
 private nonisolated struct IceSheen: Shape {
     func path(in r: CGRect) -> Path {
         var p = Path()
@@ -296,6 +392,13 @@ struct IceOverlay: View {
         }
     }
 
+    /// The cool shimmer that runs over the mist: one pass of 0.7 s every 2.2 s (staggered per square); nil between passes.
+    private func shimmer(_ now: Date, seed: Int) -> Double? {
+        let cycle = 2.2, pass = 0.7
+        let u = (now.timeIntervalSinceReferenceDate + Double(seed % 7) * 0.31).truncatingRemainder(dividingBy: cycle)
+        return u < pass ? u / pass : nil
+    }
+
     @ViewBuilder private func frame(_ now: Date, t: Tile, misty: Bool, crushed: Bool, rm: Bool) -> some View {
         let r = RoundedRectangle(cornerRadius: 3, style: .continuous), seed = model.iceSeed(cell)
         ZStack {
@@ -305,8 +408,7 @@ struct IceOverlay: View {
                 if hc {
                     Dots(spacing: 7, radius: 1.1).fill(.black.opacity(0.6)).clipShape(r).padding(4)
                 } else {
-                    r.fill(RadialGradient(colors: [.white.opacity(0.70 + 0.08 * phase), .white.opacity(0.30)], center: UnitPoint(x: 0.5 + 0.06 * phase, y: 0.45), startRadius: 0, endRadius: size * 0.62))
-                        .blur(radius: size * 0.04)
+                    IceMist(size: size, phase: phase, shimmer: rm ? nil : shimmer(now, seed: seed))
                 }
                 // at rest the cracks spread over the 300 ms before it melts
                 if let start = model.iceRestStart {

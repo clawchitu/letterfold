@@ -756,9 +756,12 @@ private struct TileEdges: View {
             let c = item.cell, t = model.board[c]
             let shaded = model.shade[c] != nil && !t.isFloor && t != .gate
             ZStack {
+                // ch. 13: mist over ice that would melt here softens its edge (the glaze keeps a crisp one)
+                let misty = !hc && t == .ice && model.iceMist.contains(c)
                 if !hc && (t.isFloor || shaded) {
-                    RoundedRectangle(cornerRadius: 3, style: .continuous).strokeBorder(Tok.edgeLower, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 3, style: .continuous).strokeBorder(Tok.edgeLower.opacity(misty ? 0.35 : 1), lineWidth: 1)
                 }
+                if misty { IceMistHalo(size: geo.tile) }
                 if model.lockFlash.contains(c) { LockFlash(size: geo.tile) }
             }
             .frame(width: geo.tile, height: geo.tile)
@@ -969,6 +972,7 @@ private struct FixedPage: View {
             } else {
             PageSheet(horizontal: geo.horizontal, isFixed: true, color: model.paper.color)
             if model.paper.ruled && !hc { RuledGrid(tile: geo.tile, gap: geo.gap, pad: geo.pad, across: s.slotsAcross, down: s.slotsDown) }
+            if model.paper.iceGrain && !hc { IceGrain(seed: 1) }
             MarginLayer(model: model, geo: geo, page: .fixed)
             if model.board.lamp.contains("L") { LampCorner(geo: geo, fixed: true, lamp: model.board.lamp) }
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: !covered && targets)
@@ -1015,6 +1019,7 @@ private struct FrontFace: View {
         ZStack(alignment: .topLeading) {
             PageSheet(horizontal: geo.horizontal, isFixed: false, color: model.paper.color)
             if model.paper.ruled && !hc { RuledGrid(tile: geo.tile, gap: geo.gap, pad: geo.pad, across: s.slotsAcross, down: s.slotsDown) }
+            if model.paper.iceGrain && !hc { IceGrain(seed: 2) }
             MarginLayer(model: model, geo: geo, page: .folding)
             if model.board.lamp.contains("L") { LampCorner(geo: geo, fixed: false, lamp: model.board.lamp) }
             if model.shownFace == 1 { TurnedFace(model: model, geo: geo, bleed: true) }

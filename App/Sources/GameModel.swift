@@ -479,8 +479,9 @@ final class GameModel {
         if start > 0 { m.go(start - 1) }
         // -closeFirst YES (screenshots): shut the book once and open it, so keys, ink and glue have acted
         if d.bool(forKey: "closeFirst") { m.setAngle(180); m.setAngle(0); m.clearGlue(); m.pending = Pending() }
-        // a leaning start angle comes first, so -walkTo can step onto its shadows
-        if d.object(forKey: "startAngle") != nil && d.double(forKey: "startAngle") > 90 && d.double(forKey: "startAngle") < 155 {
+        // a leaning start angle comes first, so -walkTo can step onto its shadows (not with -replayTo: the solution
+        // replays from the flat start, and the angle is set after it)
+        if d.object(forKey: "startAngle") != nil && d.double(forKey: "startAngle") > 90 && d.double(forKey: "startAngle") < 155 && d.integer(forKey: "replayTo") == 0 {
             m.setAngle(d.double(forKey: "startAngle")); m.pending = Pending()
         }
         if let w = d.string(forKey: "walkTo") {
