@@ -169,4 +169,29 @@ final class HintSkipUITests: XCTestCase {
         sleep(3)
         XCTAssertFalse(app.buttons["skip"].exists, "the chapter's letter is only ever earned")
     }
+
+    /// ②: after the nudge the 「?」 shows the route from where she stands (here: the book shut after 1-2's first walk,
+    /// so the second walk), and a fold step moves on by itself once she has made it.
+    func testVisualGuideFollowsHer() {
+        func toast(_ app: XCUIApplication) -> XCUIElement { app.descendants(matching: .any)["toast.bubble"] }
+        var app = launch(["-screen", "level", "-startLevel", "2", "-fold.doneIDs", "(bridge)", "-hintAfter", "1", "-probe", "YES", "-replayTo", "8"])
+        let hint = app.buttons["hint"]
+        XCTAssertTrue(hint.waitForExistence(timeout: 8)); XCTAssertTrue(waitEnabled(hint, 6))
+        hint.tap(); sleep(1); hint.tap()
+        XCTAssertTrue(toast(app).waitForExistence(timeout: 4))
+        XCTAssertTrue(toast(app).label.contains("Walk the dotted line to row 4"), toast(app).label)
+        keep(app, "guide-walk")
+        app.terminate()
+
+        app = launch(["-screen", "level", "-startLevel", "2", "-fold.doneIDs", "(bridge)", "-hintAfter", "1", "-probe", "YES", "-replayTo", "7", "-buttonControl", "YES"])
+        let h2 = app.buttons["hint"]
+        XCTAssertTrue(h2.waitForExistence(timeout: 8)); XCTAssertTrue(waitEnabled(h2, 6))
+        h2.tap(); sleep(1); h2.tap()
+        XCTAssertTrue(toast(app).waitForExistence(timeout: 4))
+        XCTAssertTrue(toast(app).label.contains("Close the book"), toast(app).label)
+        keep(app, "guide-fold")
+        app.buttons["fold.close"].tap()
+        let next = NSPredicate(format: "label CONTAINS 'Walk the dotted line'")
+        XCTAssertEqual(XCTWaiter().wait(for: [expectation(for: next, evaluatedWith: toast(app))], timeout: 6), .completed, toast(app).label)
+    }
 }

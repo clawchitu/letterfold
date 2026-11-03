@@ -851,11 +851,12 @@ private struct PuppetLayer: View {
     }
 }
 
-private func threadPieces(_ model: GameModel, _ geo: BookGeometry, page: Spread.Page) -> [ThreadPiece] {
+private func threadPieces(_ model: GameModel, _ geo: BookGeometry, page: Spread.Page, cells: [Cell]? = nil) -> [ThreadPiece] {
     let s = geo.spread, rules = model.rules
     var out: [ThreadPiece] = []
     func mid(_ p: CGPoint, _ q: CGPoint) -> CGPoint { CGPoint(x: (p.x + q.x) / 2, y: (p.y + q.y) / 2) }
-    for (i, (a, b)) in zip(model.trail, model.trail.dropFirst()).enumerated() {
+    let path = cells ?? model.trail
+    for (i, (a, b)) in zip(path, path.dropFirst()).enumerated() {
         let pa = s.page(of: a.c), pb = s.page(of: b.c)
         if pa == page && pb == page {
             out.append(ThreadPiece(from: geo.center(a), to: geo.center(b), step: i, half: 0))
@@ -870,9 +871,28 @@ private func threadPieces(_ model: GameModel, _ geo: BookGeometry, page: Spread.
     return out
 }
 
-private func stackPieces(_ model: GameModel, _ geo: BookGeometry) -> [ThreadPiece] {
-    zip(model.trail, model.trail.dropFirst()).enumerated().map { i, ab in
+private func stackPieces(_ model: GameModel, _ geo: BookGeometry, cells: [Cell]? = nil) -> [ThreadPiece] {
+    let path = cells ?? model.trail
+    return zip(path, path.dropFirst()).enumerated().map { i, ab in
         ThreadPiece(from: geo.stackCenter(ab.0), to: geo.stackCenter(ab.1), step: i, half: 0)
+    }
+}
+
+/// hint-skip ②: the guide's walk step as a dotted ink route (not the vermilion thread: nothing walked yet) with a
+/// small ring on the square to reach. Faded while she is off the route. High contrast: solid black dots.
+private struct GuideRoute: View {
+    let model: GameModel
+    let pieces: [ThreadPiece]
+    let end: CGPoint?
+    @Environment(\.highContrast) private var hc
+    var body: some View {
+        let ink = hc ? Color.black : Tok.ink900.opacity(0.6)
+        ZStack {
+            ThreadShape(pieces: pieces, drawn: 1e6).stroke(ink, style: StrokeStyle(lineWidth: hc ? 3.5 : 2.6, lineCap: .round, dash: [0.1, 7]))
+            if let end { Circle().stroke(ink, lineWidth: hc ? 2.5 : 1.6).frame(width: 20, height: 20).position(end) }
+        }
+        .opacity(model.guideOff ? 0.3 : 1)
+        .allowsHitTesting(false).accessibilityHidden(true)
     }
 }
 
@@ -929,6 +949,10 @@ private struct FixedPage: View {
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: !covered && targets)
             // kept in the tree while the book is closed (hidden, not removed): re-inserting it mid-aha lost the
             // thread's redraw and left this page without its thread after the book reopened
+            if !covered && !model.guideRoute.isEmpty {
+                GuideRoute(model: model, pieces: threadPieces(model, geo, page: .fixed, cells: model.guideRoute),
+                           end: model.guideRoute.last.flatMap { s.page(of: $0.c) == .fixed ? geo.center($0) : nil })
+            }
             ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .fixed),
                         end: model.trail.last.flatMap { s.page(of: $0.c) == .fixed ? geo.center($0) : nil })
                 .opacity(covered ? 0 : 1)
@@ -973,6 +997,10 @@ private struct FrontFace: View {
             if let f = model.trifoldFace, f != 0 { ThirdPageTint() }
             // the top page stays tappable (and in VoiceOver) while it lies flat or stands: 2-1's goal is up there
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: targets && (angle < 20 || model.posture == .standing || (model.liftedPageLive && model.rules.lit(model.angle))))
+            if !model.guideRoute.isEmpty && model.posture != .closed {
+                GuideRoute(model: model, pieces: threadPieces(model, geo, page: .folding, cells: model.guideRoute),
+                           end: model.guideRoute.last.flatMap { s.page(of: $0.c) == .folding ? geo.center($0) : nil })
+            }
             ThreadLayer(model: model, pieces: threadPieces(model, geo, page: .folding),
                         end: model.trail.last.flatMap { s.page(of: $0.c) == .folding ? geo.center($0) : nil })
             // ch. 9: she is drawn over the upright balls instead (CameraBook, design-review-vol3-art §3.4: balls, then her)
@@ -1080,6 +1108,9 @@ private struct BackFace: View {
                 .opacity(fade)
                 .allowsHitTesting(false).accessibilityHidden(true)
                 if targets { StackTargets(model: model, geo: geo, rotorSpace: rotorSpace, cells: under) }
+                if !model.guideRoute.isEmpty && model.posture == .closed {
+                    GuideRoute(model: model, pieces: stackPieces(model, geo, cells: model.guideRoute), end: model.guideRoute.last.map(geo.stackCenter))
+                }
                 ThreadLayer(model: model, pieces: stackPieces(model, geo), end: model.trail.last.map(geo.stackCenter))
                 PuppetLayer(model: model, geo: geo, at: geo.stackCenter(model.figureCell))
                 if model.finaleSeal && model.finaleGlyph != "成", let g = model.goal {
@@ -1595,6 +1626,22 @@ private struct CameraBook: View {
                     .position(cam.project(SIMD3(x - W / 2, 0, 0)))
                     .transition(AppSettings.shared.motionReduced ? .opacity : .asymmetric(insertion: .scale(scale: 1.6).combined(with: .opacity), removal: .opacity))
                     .accessibilityHidden(true)
+            }
+            // hint-skip ②: a fold step's ghost page — the folding page's outline at the angle to reach, dashed ink,
+            // with that angle at its outer edge (physical degrees, as the drag readout)
+            if let t = model.guideFold, abs(t - model.angle) > 2 {
+                let rt = t * .pi / 180, ft = SIMD3<Double>(0, -cos(rt), sin(rt))
+                let pts = [edge0, edge0 + W * ex, edge0 + W * ex + H * ft, edge0 + H * ft].map(cam.project)
+                ZStack {
+                    Path { p in p.addLines(pts); p.closeSubpath() }.fill(Tok.ink900.opacity(hc ? 0.08 : 0.04))
+                    Path { p in p.addLines(pts); p.closeSubpath() }
+                        .stroke(hc ? Color.black : Tok.ink900.opacity(0.45), style: StrokeStyle(lineWidth: hc ? 2.5 : 1.4, dash: [6, 4]))
+                    Text("\(Int((180 - t).rounded()))°").font(.system(size: 13, weight: .medium).monospacedDigit())
+                        .foregroundStyle(hc ? Color.black : Tok.ink700)
+                        .position(cam.project(edge0 + W / 2 * ex + (H + 14) * ft))
+                }
+                .opacity(model.guideOff ? 0.3 : 1)
+                .allowsHitTesting(false).accessibilityHidden(true)
             }
             if model.ghost > 0 {
                 GhostFinger()

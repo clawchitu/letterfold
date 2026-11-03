@@ -225,6 +225,23 @@ final class GameModel {
     /// -skipAfter <s> for UI tests) — or a restart after it, whichever comes first — offer to set the letter aside.
     static var skipDelay: Double { UserDefaults.standard.object(forKey: "skipAfter") != nil ? UserDefaults.standard.double(forKey: "skipAfter") : 60 }
     private(set) var skipOffered = false
+    // The visual solution (hint-skip ②): FoldCore.Guide's steps from the shipped solution. The step shown follows her:
+    // it moves on by itself when she has done it (auto-advance — the owner could not follow a script of presses), and
+    // a press of 「?」 shows it again (caption, fingertip). Off the route, the route fades and the caption says how back.
+    @ObservationIgnored private var guideSteps: [Guide.Step] = []
+    /// The step shown (nil: no guide on this entry yet, or it is done).
+    private(set) var guideAt: Int?
+    private(set) var guideOff = false
+    /// A fold step's angle as shown (the ghost page and the caption): the solver's, or in ch. 1–2 the detent that does
+    /// the same (their pages only rest at 0 / 90 / 130 / 180).
+    private(set) var guideFold: Double?
+    @ObservationIgnored private var guideStartAngle: Double = 0
+    @ObservationIgnored private var guideTask: Task<Void, Never>?
+    /// The walk step's squares, in order (the dotted route).
+    var guideRoute: [Cell] {
+        guard let k = guideAt, k < guideSteps.count, case let .walk(c) = guideSteps[k].kind else { return [] }
+        return c
+    }
     /// The whole solution was shown on this entry (the 「?」 ladder's last rung).
     @ObservationIgnored private(set) var solutionSeen = false
     @ObservationIgnored private var skipTask: Task<Void, Never>?
@@ -534,6 +551,7 @@ final class GameModel {
         clearTransient()
         saidAngle = 0; hintAvailable = false; hintRung = 0
         skipTask?.cancel(); skipTask = nil; skipOffered = false; solutionSeen = false
+        clearGuide()
         angle = 0
         cameraPitch = Self.handPitch
         sync()
@@ -701,6 +719,7 @@ final class GameModel {
     func stopGhost() {
         ghostTask?.cancel(); ghostTask = nil
         teachTask?.cancel(); teachTask = nil
+        guideTask?.cancel(); guideTask = nil
         if ghost != 0 || tease != 0 { withAnimation(.easeOut(duration: 0.15)) { ghost = 0; tease = 0 } }
     }
     func reset() { go(index) }
@@ -770,9 +789,124 @@ final class GameModel {
         tuckSlip()
         defer { hintRung += 1 }
         if hintRung == 0, let first = L10n.levelHint1(level.id) { show(first); return }
+        if guideAt != nil { showGuideStep(); return }   // the step again: caption and fingertip
+        if startGuide() { return }
         let key = "hint.portrait.\(level.id)", portrait = L10n.t(key)
         show(orientation == .horizontalCrease && portrait != key ? portrait : levelText.hint)
         noteSolutionSeen()
+    }
+
+    // MARK: the visual solution (hint-skip ②)
+
+    private var guideNow: Guide.State { Guide.State(cell: char, angle: angle, face: game.face) }
+
+    /// The ladder's last rung: the route from where she is (or, off it, its first step and how to get back on).
+    private func startGuide() -> Bool {
+        guard let sol = level.solution, !won else { return false }
+        guideSteps = Guide.steps(sol, trifold: level.isTrifold)
+        guard !guideSteps.isEmpty else { return false }
+        let j = Guide.match(sol, from: 0, now: guideNow, config: config)
+        setGuide(j.map { Guide.stepIndex(guideSteps, at: $0) } ?? 0, off: j == nil)
+        noteSolutionSeen()
+        return true
+    }
+
+    private func clearGuide() {
+        guideTask?.cancel(); guideTask = nil
+        guideSteps = []; guideAt = nil; guideOff = false; guideFold = nil
+    }
+
+    private func setGuide(_ k: Int, off: Bool) {
+        guard k < guideSteps.count else { guideTask?.cancel(); guideAt = nil; guideFold = nil; return }
+        let rm = settings.motionReduced
+        withAnimation(rm ? .linear(duration: 0.2) : .easeInOut(duration: 0.35)) {
+            guideAt = k; guideOff = off
+            guideFold = foldShown(k)
+        }
+        guideStartAngle = angle
+        showGuideStep()
+        if skipTask != nil && !skipOffered { skipTask?.cancel(); skipTask = nil; noteSolutionSeen() }   // progress: the skip waits again
+    }
+
+    /// The step's caption (spoken under VoiceOver, with the square), and the fingertip for a fold.
+    private func showGuideStep() {
+        guard let k = guideAt, k < guideSteps.count else { return }
+        if guideOff { show(L10n.t("guide.off")); return }
+        let st = guideSteps[k]
+        switch st.kind {
+        case let .walk(cells): show(L10n.t("guide.walk", ["pos": pos(cells.last!)]))
+        case let .fold(t):
+            let shown = guideFold ?? t
+            show(t >= config.foldMin ? L10n.t("guide.close") : shown == 0 ? L10n.t("guide.open")
+                 : shown == 90 ? L10n.t("guide.stand") : L10n.t("guide.lean", ["a": Int((180 - shown).rounded())]))
+            guideGhost()
+        case .turn: show(L10n.t("guide.turn"))
+        case .face: show(L10n.t("guide.third"))
+        }
+    }
+
+    /// Ch. 1–2 rest only at the detents: the nearest one from which the next walk goes (else the nearest); later
+    /// chapters lean freely, so the solver's own angle. Trifolds: no ghost page (the angle is the third page's).
+    private func foldShown(_ k: Int) -> Double? {
+        guard case let .fold(t) = guideSteps[k].kind, !level.isTrifold else { return nil }
+        if t >= config.foldMin { return 180 }
+        guard chapter.id < 3 else { return t }
+        let ds = [0.0, 90, 130].sorted { abs($0 - t) < abs($1 - t) }
+        if k + 1 < guideSteps.count, case let .walk(cells) = guideSteps[k + 1].kind {
+            if let d = ds.first(where: { rules.findPath(board, from: char, to: cells[1], rules.posture($0), rules.shadows(board, $0)) != nil }) { return d }
+        }
+        return ds.first
+    }
+
+    /// Follow her (called after every change at rest): a step done moves the guide on; off the route it fades, and
+    /// finding her place again (undo, restart) brings it back at the right step.
+    func refreshGuide() {
+        guard let k = guideAt, k < guideSteps.count, let sol = level.solution, !won, !aha, !dragging, motionTarget == nil else { return }
+        let st = guideSteps[k], start = Guide.State(sol[st.from]), end = Guide.State(sol[st.to])
+        var done = false, on = true
+        switch st.kind {
+        case let .walk(cells):
+            if char == cells.last! && game.face == end.face { done = true } else { on = cells.contains(char) && game.face == end.face }
+        case .fold:
+            let shown = guideFold ?? end.angle
+            if char != start.cell { on = false }
+            else if Guide.sameRegime(angle, shown, config: config) { done = true }
+            else if abs(angle - guideStartAngle) > 4, k + 1 < guideSteps.count, case let .walk(cells) = guideSteps[k + 1].kind,
+                    game.path(to: cells[1]) != nil { done = true }   // any rest from which the next walk goes
+        case .turn, .face:
+            if game.face == end.face { done = true } else { on = char == start.cell }
+        }
+        if done { setGuide(k + 1, off: false); return }
+        if on { if guideOff { setGuide(k, off: false) }; return }
+        if let j = Guide.match(sol, from: 0, now: guideNow, config: config) {
+            let i = Guide.stepIndex(guideSteps, at: j)
+            if i != k || guideOff { setGuide(i, off: false) }
+        } else if !guideOff {
+            withAnimation(.easeOut(duration: 0.3)) { guideOff = true }
+        }
+    }
+
+    /// The fingertip shows a fold step: it takes the page part of the way towards the angle and lets go, three
+    /// times (as 1-1's ghost hand). Reduce motion: only the still ghost page and the caption.
+    private func guideGhost() {
+        guideTask?.cancel(); guideTask = nil
+        guard let t = guideFold, !settings.motionReduced else { return }
+        guideTask = Task { [weak self] in
+            for _ in 0..<3 {
+                try? await Task.sleep(for: .seconds(0.5))
+                guard let self, !Task.isCancelled, !self.dragging, self.motionTarget == nil, self.guideFold == t else { return }
+                let reach = max(-50, min(50, t - self.angle))
+                withAnimation(.easeOut(duration: 0.3)) { self.ghost = 1 }
+                try? await Task.sleep(for: .milliseconds(400))
+                if Task.isCancelled { return }
+                withAnimation(.timingCurve(0.4, 0, 0.3, 1, duration: 1.0)) { self.ghost = 2; self.tease = reach }
+                try? await Task.sleep(for: .milliseconds(1150))
+                if Task.isCancelled { return }
+                withAnimation(.easeIn(duration: 0.3)) { self.ghost = 0 }
+                withAnimation(.spring(response: 0.45, dampingFraction: 0.55)) { self.tease = 0 }
+                try? await Task.sleep(for: .seconds(1.6))
+            }
+        }
     }
 
     // MARK: 「跳过这一封」 (hint-skip)
@@ -1106,6 +1240,7 @@ final class GameModel {
         else if detents.contains(target) { haptics.snap() }
         if !aha { settle() }
         autoCrease()
+        if guideAt != nil { DispatchQueue.main.async { [weak self] in self?.refreshGuide() } }   // once the motion has let go
     }
 
     /// How fast the page came down, fold °/s: the last ~80 ms of motion (finger, spring or hinge) when it reached the
@@ -1634,6 +1769,7 @@ final class GameModel {
         if flipping { board.face = shownFace } else { shownFace = game.face }
         if stuck != game.stuck { stuck = game.stuck }
         refreshLock()
+        if guideAt != nil { refreshGuide() }
     }
 
     /// `at`: where the figure stood before these events (a crush is drawn there; FoldCore has already moved it home).
@@ -1766,6 +1902,7 @@ final class GameModel {
         doneIDs.insert(level.id); SavedProgress.save(doneIDs)
         if skippedIDs.remove(level.id) != nil { skipped.remove(index); SavedProgress.saveSkipped(skippedIDs) }
         skipTask?.cancel(); skipTask = nil; skipOffered = false
+        clearGuide()
         noteRest()
         bestFolds[level.id] = SavedProgress.recordFolds(game.tally.count, for: level.id)
         if isFinale { finaleBank = trail.last { !rules.isRight($0.c) } ?? trail.first }
