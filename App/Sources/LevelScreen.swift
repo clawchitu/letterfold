@@ -548,7 +548,9 @@ private struct ChapterOpener: View {
                 if chapter.id == 4 { WornBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
                 // 十一 · 来回: the book stands up and lies back down (design-ch11 §8.4), not the still standing book
                 // 十三 · 冰: a page leaning over the ice; outside the shadow it fogs, one square melts (Chapter13Marks.swift)
-                if chapter.id == 13 { IceBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
+                // 十四 · 滑: the stone slides the length of the ice and sinks in the water, which is paper (Chapter14Marks.swift)
+                if chapter.id == 14 { SlideBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
+                else if chapter.id == 13 { IceBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
                 else if chapter.id == 11 { FroBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
                 // 十二 · 三折: the third leaf folds in, then the book shuts (Chapter12Marks.swift)
                 else if chapter.id == 12 { TrifoldBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }

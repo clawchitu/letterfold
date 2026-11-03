@@ -58,7 +58,7 @@ struct MiniBook: View {
         case .ink: [.ink]
         case .tab: [.tab]
         case .glue: [.glue, .stone]
-        case .roll: [.loose]
+        case .roll, .slide: [.loose]
         case .crane: [.crane]
         case .fro: [.loose, .glue]   // ch. 11: the stone that rolls and the glue it never meets
         case .trifold: [.goal]   // ch. 12: her on the folded third page

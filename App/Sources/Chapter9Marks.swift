@@ -220,9 +220,14 @@ extension GameModel {
     /// The engine rolled stones at the crossing (§3.5): keep them flying through the rest of the window, announce, feel.
     func noteRolled(_ rolls: [Rules.Roll]) {
         rollFlight = RollFlight(rolls: rolls, fromBelow: rules.standing(angle))
-        // spoken / shown once: the stone nearest the crease (main.js rollStones)
+        // ch. 14: a stone that slid on the ice (or sank) is timed and splashed by Chapter14Marks.swift
+        let iced = noteSlides(rolls)
+        // spoken / shown once: the stone nearest the crease (main.js rollStones; ch. 14 rolledSank / rolledSlid)
         guard let near = rolls.min(by: { $0.to.c < $1.to.c }) else { return }
-        show(near.filled ? L10n.t("rolledIn") : L10n.t("rolled", ["col": L10n.t("col", ["c": mapCol(near.to.c, near.to.r) + 1])]))
+        let col = L10n.t("col", ["c": mapCol(near.to.c, near.to.r) + 1])
+        show(near.sank != nil ? L10n.t("rolledSank", ["col": col]) : near.slid > 0 ? L10n.t("rolledSlid", ["col": col])
+             : near.filled ? L10n.t("rolledIn") : L10n.t("rolled", ["col": col]))
+        if iced { return }   // its own scrape, splash and touch, when the stone gets there
         if rolls.contains(where: \.filled) { haptics.rollDrop(); sound.blot() } else { haptics.rollLand() }
         sound.rub(volume: 0.35)
     }
@@ -237,7 +242,8 @@ extension GameModel {
     /// Called on every angle change: the flight ends when the hinge leaves the window; a filled gap gets its ring then.
     func settleRollFlight() {
         guard let f = rollFlight, angle <= RollCurve.lo || angle >= RollCurve.hi else { return }
-        for r in f.rolls where r.filled { fillRings[r.to] = Date() }
+        for r in f.rolls where r.filled && r.slid == 0 && r.sank == nil { fillRings[r.to] = Date() }
+        landSinks(f.rolls)   // ch. 14: a stone that rolled straight into water goes down now
         rollFlight = nil
     }
 
@@ -251,16 +257,22 @@ extension GameModel {
         var out: [BallPose] = [], flying: Set<Cell> = []
         if inWin, let f = rollFlight {
             let u = RollCurve.u(a, fromBelow: f.fromBelow), s = RollCurve.s(u)
-            for r in f.rolls {
+            for r in f.rolls where r.slid == 0 {   // ch. 14: a slide runs on its own clock (slidePoses)
                 flying.insert(r.to)
                 out.append(BallPose(cell: r.from, toward: r.to, k: s, sink: r.filled ? max(0, (u - 0.85) / 0.15) : 0,
                                     squeeze: !r.filled && u > 0.9 ? sin(.pi * (u - 0.9) / 0.1) : 0))
             }
         }
+        // ch. 14: stones sliding over the ice now (time-driven, ease-out), and the square each is still on its way to
+        let sliding = slidePoses(Date.now)
+        out += sliding.poses
+        flying.formUnion(sliding.busy)
         var next: [Cell: Cell] = [:]
         if inWin && rollFlight == nil {
+            // the lean before the crossing: one square's worth towards the crease, even when the engine's answer is a
+            // slide all the way down the ice (its end is marked by SlideEndMarks)
             var b = board
-            for r in rules.roll(&b, fig: char) { next[r.from] = r.to }
+            for r in rules.roll(&b, fig: char) { next[r.from] = r.slid > 0 ? Cell(r.from.c - 1, r.from.r) : r.to }
         }
         let u = RollCurve.u(a, fromBelow: !rules.standing(a))
         for r in 0..<board.h {
@@ -287,6 +299,13 @@ struct LooseBallsLayer: View {
     let point: (Cell) -> CGPoint
     @Environment(\.highContrast) private var hc
     var body: some View {
+        // ch. 14: while a stone slides on its own clock, redraw every frame
+        TimelineView(.animation(paused: !model.slidesActive(Date.now))) { _ in layer }
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+    }
+
+    @ViewBuilder private var layer: some View {
         let poses = model.loosePoses()
         let size = tile * scale
         ZStack(alignment: .topLeading) {
@@ -303,10 +322,12 @@ struct LooseBallsLayer: View {
             ForEach(Array(model.fillRings.keys), id: \.self) { c in
                 if !hc, let at = model.fillRings[c], Date().timeIntervalSince(at) < 0.6 { FillRing(size: size, at: at).position(point(c)) }
             }
+            // ch. 14: before the crossing, where the engine says the stone will slide to
+            ForEach(model.slideEnds(), id: \.cell) { e in
+                SlideEndMark(size: size, sinks: e.sinks, k: e.k, hc: hc).position(point(e.cell))
+            }
         }
         .animation(AppSettings.shared.motionReduced ? .easeInOut(duration: 0.2) : nil, value: poses)
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
     }
 }
 

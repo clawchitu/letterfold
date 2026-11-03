@@ -166,6 +166,49 @@ final class SoundBoard {
     /// Laid flat, the river freezes: the volume's one high note, a soft bell tine (design-vol4.md §3: 「叮」).
     func iceFreeze() { play("iceFreeze", volume: 0.22) { Self.tone(1568, .bell, 0.5) } }
 
+    // MARK: vol. 4 ch. 14 「滑」 (design-ch14.md §2): the stone sliding on the ice, and where it goes down
+
+    /// A soft scrape as long as the slide (`dur` s): band-limited noise with a grainy flutter, easing out with the stone.
+    func iceScrape(_ dur: Double, pan: Double = 0) {
+        let ms = Int((dur * 1000).rounded())
+        play("iceScrape\(ms)", pan: pan, volume: 0.32) {
+            let n = Int((dur + 0.06) * Self.rate)
+            var out = [Float](repeating: 0, count: n)
+            var seed: UInt32 = 424_242, lo = 0.0, lo2 = 0.0
+            let a = exp(-2 * .pi * 3400 / Self.rate), a2 = exp(-2 * .pi * 900 / Self.rate)
+            for i in 0..<n {
+                seed = seed &* 1_103_515_245 &+ 12345
+                let x = Double(Int32(bitPattern: seed)) / Double(Int32.max)
+                lo = (1 - a) * x + a * lo; lo2 = (1 - a2) * x + a2 * lo2
+                let t = Double(i) / Self.rate, u = min(1, t / dur)
+                // ease-out like the stone: loud at the push, fading as it slows; 18 ms attack, a short tail
+                let env = min(1, t / 0.018) * (1 - u) * (1 - u) + (t > dur ? 0 : 0.04) * (1 - u)
+                let grain = 0.75 + 0.25 * sin(2 * .pi * (38 - 22 * u) * t)
+                out[i] = Float((lo - lo2) * 0.9 * env * grain)
+            }
+            return out
+        }
+    }
+    /// Where the slide ends: into water a low wet plop and a sigh; through the last ice a tiny crack before it; a gap
+    /// filled the card's blot. `delay`: the slide's travel.
+    func iceSink(water: Bool, ice: Bool, pan: Double = 0, delay: Double = 0) {
+        let key = water ? "iceSinkWater" : ice ? "iceSinkIce" : "iceSinkGap"
+        play(key, pan: pan, volume: 0.45, delay: delay) {
+            let n = Int(0.4 * Self.rate)
+            var out = [Float](repeating: 0, count: n)
+            if ice {
+                let tick = Self.noiseBurst(0.03, decay: 120, lowpass: 6500, gain: 0.45)
+                for i in tick.indices { out[i] += tick[i] }
+            }
+            let o = ice ? Int(0.03 * Self.rate) : 0
+            let plop = Self.tone(water || ice ? 180 : 240, .wood, 0.22)
+            for i in plop.indices where o + i < n { out[o + i] += plop[i] * 0.5 }
+            let sigh = Self.noiseBurst(0.32, decay: water ? 9 : 22, lowpass: water ? 700 : 900, gain: water ? 0.3 : 0.4)
+            for i in sigh.indices where o + i < n { out[o + i] += sigh[i] * Float(min(1, Double(i) / 600)) }
+            return out
+        }
+    }
+
     func rub(volume: Double = 0.35) { play("rub", volume: volume) { Self.noiseBurst(0.12, decay: 18, lowpass: 5200, gain: 0.5) } }
     func hollow(pan: Double = 0) {
         play("hollow", pan: pan, volume: 0.7) {

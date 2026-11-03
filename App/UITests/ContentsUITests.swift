@@ -254,6 +254,25 @@ final class HintSkipUITests: XCTestCase {
         XCTAssertTrue(app.buttons["win.next"].waitForExistence(timeout: 20), "following the guide through the melt wins")
     }
 
+    /// Ch. 14 「滑」 14-2 `aim`: the guide's lean is a rest (the ice melts), then flat — the stone rolls into that water
+    /// and sinks — then the close and the lean through the gate. Followed step by step it never says 「Off the route」
+    /// (the sunk square is paper, as the solution expects) and wins.
+    func testSlideGuideStaysOnRouteThroughTheSink() {
+        let app = launch(["-screen", "level", "-startLevel", "84", "-hintAfter", "1", "-probe", "YES", "-guideDemo", "YES"])
+        let toast = app.descendants(matching: .any)["toast.bubble"]
+        let next = app.buttons["win.next"]
+        var seen: [String] = []
+        let end = Date().addingTimeInterval(90)
+        while Date() < end && !next.exists {
+            if toast.exists, let l = Optional(toast.label), !l.isEmpty, seen.last != l { seen.append(l) }
+            Thread.sleep(forTimeInterval: 0.25)
+        }
+        keep(app, "guide-aim")
+        XCTAssertTrue(next.exists, "following the guide through the sink wins: \(seen)")
+        XCTAssertFalse(seen.contains { $0.contains("Off the route") }, "\(seen)")
+        XCTAssertTrue(seen.contains { $0.contains("Lean the page to about") }, "the rest step is captioned: \(seen)")
+    }
+
     /// Codex re-review: 11-1 `fro` — lean, walk one square, undo the walk: the guide comes back to the walk (the lean is
     /// still made), not to the lean. The steps are made by -guideDemo (the guide's own 130°; the footer's lean is 135°,
     /// where that walk does not go), the undo by the footer.

@@ -515,6 +515,8 @@ struct SlipIcon: View {
             case .fro: FroGlyph(size: size, hc: hc)
             case .trifold: TrifoldGlyph(size: size, hc: hc)
             case .ice: ZStack { PathTile(size: size * 0.92); IceGlaze(size: size * 0.92, seed: 3) }   // ch. 13
+            case .slide:   // ch. 14: the ball on a square of ice
+                ZStack { PathTile(size: size * 0.92); IceGlaze(size: size * 0.92, seed: 3); LooseBall(size: size * 0.92, hc: hc) }
             }
         }
         .frame(width: size, height: size)
@@ -572,6 +574,10 @@ nonisolated struct SlipGlyph: Shape {
         case .crane: p.addPath(CraneOutline().path(in: r))
         case .fro: p.addPath(FroOutline().path(in: r))
         case .trifold: p.addPath(TrifoldOutline().path(in: r))
+        case .slide:   // ch. 14: a ball on a square, three speed lines behind it
+            p.addRect(r.insetBy(dx: r.width * 0.1, dy: r.height * 0.1))
+            p.addEllipse(in: CGRect(x: r.minX + r.width * 0.2, y: r.minY + r.height * 0.3, width: r.width * 0.4, height: r.height * 0.4))
+            for k in 0..<3 { let y = r.minY + r.height * (0.38 + 0.12 * Double(k)); p.move(to: CGPoint(x: r.minX + r.width * 0.64, y: y)); p.addLine(to: CGPoint(x: r.minX + r.width * 0.84, y: y)) }
         case .ice:   // ch. 13: a square with the ice's slanting crack
             p.addRect(r.insetBy(dx: r.width * 0.1, dy: r.height * 0.1))
             p.addPath(IceCracks(seed: 3).path(in: r.insetBy(dx: r.width * 0.16, dy: r.height * 0.16)))

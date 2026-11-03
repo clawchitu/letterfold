@@ -718,6 +718,8 @@ private struct TileItem: View {
             if shaded { ShadeMark(size: geo.tile) }
             // ch. 13: mist, the rest's cracks, melt / freeze / crush (Chapter13Marks.swift)
             if model.game.hasIce { IceOverlay(model: model, cell: c, size: geo.tile) }
+            // ch. 14: where a slide went down — the water / ice until the stone gets there, then the splash (Chapter14Marks.swift)
+            if model.sinks[c] != nil { SinkOverlay(model: model, cell: c, size: geo.tile) }
             // ch. 12, the folded leaf: a square of the right page seen through a hole of the third page over it
             if model.seenThroughHole(c) { ThroughHoleMark(size: geo.tile) }
             // the shadows lock onto this gap: its outline lights up for 400 ms (design-review-ch3 §3)

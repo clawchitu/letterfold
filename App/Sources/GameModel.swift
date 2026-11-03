@@ -60,7 +60,8 @@ struct Chapter: Identifiable {
     /// Ch. 11: 「返」 (design-ch11.md names none: the page goes up and comes back, 来回; placeholder until an art review).
     /// Ch. 12: 「叠」 (design-ch12.md names none: the letter folded twice over, 三折; placeholder until an art review).
     /// Ch. 13: 「荫」 (design-vol4.md §3: the shadow as an umbrella).
-    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "灯", "落", "载", "返", "叠", "荫"][min(12, id - 1)] }
+    /// Ch. 14: 「沉」 (design-vol4.md §3, design-ch14.md §2: what sinks is paper).
+    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "灯", "落", "载", "返", "叠", "荫", "沉"][min(13, id - 1)] }
     static func volumeChapters(_ v: Int) -> [Chapter] { all.filter { $0.volume == v } }
 
     static let all: [Chapter] = [
@@ -99,6 +100,9 @@ struct Chapter: Identifiable {
         // 卷四《冰》 chapter 1 「冰」 (fold-proto design-ch13.md): ice melts at rest in the lamp window, freezes flat, the press
         // crushes it; opens once chapter 12 is delivered (and the volume's `release`, none in 1.1)
         Chapter(id: 13, levelIDs: ["ice", "thaw", "shade", "crack", "take"], unlocked: true, soon: false),
+        // 卷四 chapter 2 「滑」 (fold-proto design-ch14.md): a loose stone on ice slides to the first square that is not ice;
+        // opens once chapter 13 is delivered. Four levels (14-5 was cut, §3.2)
+        Chapter(id: 14, levelIDs: ["slide", "aim", "brake", "pave"], unlocked: true, soon: false),
     ]
 }
 
@@ -350,6 +354,10 @@ final class GameModel {
     var meltedAt: [Cell: Date] = [:]
     var frozeAt: [Cell: Date] = [:]
     var crushedAt: [Cell: Date] = [:]
+    /// Ch. 14 「滑」 (Chapter14Marks.swift): stones sliding over the ice on their own clock (keyed by the square they left),
+    /// and where a slide ended in water / through the ice / in a gap (keyed by that square) for the splash.
+    var slides: [Cell: SlideFX] = [:]
+    var sinks: [Cell: SinkFX] = [:]
     @ObservationIgnored var iceRestTask: Task<Void, Never>?
     /// The fall being handled is the ice melting under her (`.drowned` comes just before its `.fell`).
     @ObservationIgnored var drownedNow = false
@@ -834,7 +842,7 @@ final class GameModel {
         quiet = false; dragging = false; angleHint = false; walking = false
         threadProgress = 1; press = 0; glow = 0; rubber = 0; shake = [:]; inkPrintedAt = [:]; inkBledAt = [:]; clearCraneFX()
         pending = Pending(); nopes = 0
-        rollFlight = nil; fillRings = [:]   // a roll belongs to the board it happened on (Codex review 21 #1)
+        rollFlight = nil; fillRings = [:]; slides = [:]; sinks = [:]   // a roll belongs to the board it happened on (Codex review 21 #1)
         toastTask?.cancel(); toastTask = nil; toast = nil
         clearGlue()
         cameraTask?.cancel(); cameraTask = nil
@@ -1516,7 +1524,7 @@ final class GameModel {
         stopMotion()
         if game.undo() {
             clearGlue()
-            rollFlight = nil   // the board the roll fell on is gone (Codex review 21 #1)
+            rollFlight = nil; slides = [:]; sinks = [:]   // the board the roll fell on is gone (Codex review 21 #1)
             withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .easeOut(duration: 0.16)) {
                 angle = game.angle; rubber = 0; sync()
             }
@@ -1814,7 +1822,7 @@ final class GameModel {
         }
         if undo { pushUndo() }
         let events = game.switchCrease()
-        clearCrush(); rollFlight = nil; fillRings = [:]; shake = [:]; flapRefusedSaid = false
+        clearCrush(); rollFlight = nil; fillRings = [:]; slides = [:]; sinks = [:]; shake = [:]; flapRefusedSaid = false
         withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .easeInOut(duration: 0.25)) {
             angle = game.angle; rubber = 0
             sync()
@@ -1867,7 +1875,7 @@ final class GameModel {
         stopAll()
         guard game.undo() else { announce(L10n.t("nothingToUndo")); haptics.nope(); return }
         clearGlue()
-        rollFlight = nil   // the board the roll fell on is gone (Codex review 21 #1)
+        rollFlight = nil; slides = [:]; sinks = [:]   // the board the roll fell on is gone (Codex review 21 #1)
         haptics.undo()
         sound.rub(volume: 0.3)
         withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .easeInOut(duration: 0.25)) {
@@ -2014,7 +2022,7 @@ final class GameModel {
                 clearCrush(); haptics.crush()
                 stopMotion(); rubber = 0
                 if dragging { dragging = false; angleHint = false }
-                rollFlight = nil; fillRings = [:]
+                rollFlight = nil; fillRings = [:]; slides = [:]; sinks = [:]
                 angle = game.angle; sync()
                 aimCamera(at: angle)
                 settleSoon()
