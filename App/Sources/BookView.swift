@@ -463,6 +463,29 @@ private struct BookBody: View {
             // ch. 8: the leaning page is walked on (left lamp, gates): its squares take taps through the sheet, and where
             // one lies over a fixed square the one the figure can reach wins (Codex review P1)
             if showBack && va < 160 && model.liftedPageLive { SideLeanTargets(model: model, geo: geo, rotorSpace: rotorSpace, ra: ra, pressed: pressed) }
+            // hint-skip ②, the side-on turn (landscape / Duo): a fold step's ghost page — the folding page's outline turned
+            // to the angle to reach (drawn as the sheet is, clamped through the standing window), and that angle at the
+            // crease. Still under Reduce Motion: the cue that does not move.
+            if let t = model.guideFold, abs(t - model.angle) > 2 {
+                let gra = t <= 90 ? min(t, Self.standFront) : max(t, Self.standBack)
+                Rectangle()
+                    .fill(Tok.ink900.opacity(hc ? 0.08 : 0.04))
+                    .overlay(Rectangle().stroke(hc ? Color.black : Tok.ink900.opacity(0.45), style: StrokeStyle(lineWidth: hc ? 2.5 : 1.4, dash: [6, 4])))
+                    .frame(width: page.width, height: page.height)
+                    .rotation3DEffect(.degrees(-gra), axis: (x: 0, y: 1, z: 0), anchor: .leading, perspective: 0.32)
+                    .offset(x: page.width)
+                    .opacity(model.guideOff ? 0.3 : 1)
+                    .allowsHitTesting(false).accessibilityHidden(true)
+                if t > 0 && t < model.config.foldMin {
+                    Text("\(Int((180 - t).rounded()))°").font(.system(size: 16, weight: .semibold).monospacedDigit())
+                        .foregroundStyle(hc ? Color.black : Tok.ink900)
+                        .padding(.horizontal, 7).padding(.vertical, 2)
+                        .background(Capsule().fill(hc ? Color.white : model.paper.color.opacity(0.95)))
+                        .overlay(Capsule().stroke(hc ? Color.black : Tok.ink900.opacity(0.35), lineWidth: hc ? 2 : 0.8))
+                        .position(x: page.width, y: -12)
+                        .allowsHitTesting(false).accessibilityHidden(true)
+                }
+            }
             // the crease: a bright line and a dark line (design-spec §4), lit up when the pages touch
             Crease(horizontal: false, length: page.height, glow: model.glow, white: model.paper.creaseWhite)
                 .offset(x: page.width - 1, y: 0)

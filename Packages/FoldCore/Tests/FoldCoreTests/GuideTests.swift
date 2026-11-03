@@ -37,4 +37,11 @@ final class GuideTests: XCTestCase {
         XCTAssertFalse(Guide.sameRegime(110, 130, config: c), "standing and leaning vs leaning only")
         XCTAssertNil(Guide.match(l.solution!, from: 0, now: .init(cell: Cell(0, 0), angle: 0, face: 0), config: c), "off the route")
     }
+
+    /// Codex review: a trifold face change that also changes the angle keeps the angle (12-4 `drop`: face 2 at 125°).
+    func testTrifoldFaceChangeKeepsItsAngle() throws {
+        let l = try XCTUnwrap(try LevelPack.bundled().levels.first { $0.id == "drop" })
+        let steps = Guide.steps(l.solution!, trifold: true)
+        XCTAssertTrue(steps.contains { if case .face(2, .some(125)) = $0.kind { return true }; return false }, "\(steps.map(\.kind))")
+    }
 }

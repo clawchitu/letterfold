@@ -220,10 +220,20 @@ final class GameModel {
     private(set) var hintAvailable = false
     /// How long a player is left to try before the 「?」 wakes (45 s; -hintAfter <s> for UI tests). Until then it is
     /// drawn faintly and disabled, so it is known to exist (hint-skip).
-    static var stuckDelay: Double { UserDefaults.standard.object(forKey: "hintAfter") != nil ? UserDefaults.standard.double(forKey: "hintAfter") : 45 }
+    static var stuckDelay: Double {
+        #if DEBUG
+        if UserDefaults.standard.object(forKey: "hintAfter") != nil { return UserDefaults.standard.double(forKey: "hintAfter") }
+        #endif
+        return 45
+    }
     /// 「跳过这一封」 (hint-skip): after the whole solution has been shown, `skipDelay` more seconds without a win (60 s;
     /// -skipAfter <s> for UI tests) — or a restart after it, whichever comes first — offer to set the letter aside.
-    static var skipDelay: Double { UserDefaults.standard.object(forKey: "skipAfter") != nil ? UserDefaults.standard.double(forKey: "skipAfter") : 60 }
+    static var skipDelay: Double {
+        #if DEBUG
+        if UserDefaults.standard.object(forKey: "skipAfter") != nil { return UserDefaults.standard.double(forKey: "skipAfter") }
+        #endif
+        return 60
+    }
     private(set) var skipOffered = false
     // The visual solution (hint-skip ②): FoldCore.Guide's steps from the shipped solution. The step shown follows her:
     // it moves on by itself when she has done it (auto-advance — the owner could not follow a script of presses), and
@@ -236,6 +246,11 @@ final class GameModel {
     /// the same (their pages only rest at 0 / 90 / 130 / 180).
     private(set) var guideFold: Double?
     @ObservationIgnored private var guideStartAngle: Double = 0
+    /// 「?」 was pressed once on this step already (it was shown again): the next press shows the step after it, so a
+    /// player who cannot make a step can still page through the whole route (and reach the skip).
+    @ObservationIgnored private var guideReplayed = false
+    /// This win made the chapter whole (its last skipped letter delivered after its last one): the letter is due now.
+    @ObservationIgnored private var completedChapterNow = false
     @ObservationIgnored private var guideTask: Task<Void, Never>?
     /// The guide's fingertip rides the moving page's free edge (1-1's ghost hand slides towards the crease instead).
     private(set) var ghostAtEdge = false
@@ -563,7 +578,7 @@ final class GameModel {
         letterTask?.cancel(); letterTask = nil
         clearTransient()
         saidAngle = 0; hintAvailable = false; hintRung = 0
-        skipTask?.cancel(); skipTask = nil; skipOffered = false; solutionSeen = false
+        skipTask?.cancel(); skipTask = nil; skipOffered = false; solutionSeen = false; completedChapterNow = false
         clearGuide()
         angle = 0
         cameraPitch = Self.handPitch
@@ -769,6 +784,7 @@ final class GameModel {
             }
         }
         announce(L10n.t("restarted", ["pos": pos(game.char)]))
+        resyncGuide(auto: true)
         if solutionSeen { offerSkip() }   // seen the whole way and starting over: the skip need not wait
     }
 
@@ -803,7 +819,11 @@ final class GameModel {
         tuckSlip()
         defer { hintRung += 1 }
         if hintRung == 0, let first = L10n.levelHint1(level.id) { show(first); return }
-        if guideAt != nil { showGuideStep(); return }   // the step again: caption and fingertip
+        if let k = guideAt {
+            // the step again (caption, fingertip); pressed again on it, the next step
+            if guideReplayed && k + 1 < guideSteps.count { setGuide(k + 1, off: false) } else { guideReplayed = true; showGuideStep() }
+            return
+        }
         if startGuide() { return }
         let key = "hint.portrait.\(level.id)", portrait = L10n.t(key)
         show(orientation == .horizontalCrease && portrait != key ? portrait : levelText.hint)
@@ -821,7 +841,6 @@ final class GameModel {
         guard !guideSteps.isEmpty else { return false }
         let j = Guide.match(sol, from: 0, now: guideNow, config: config)
         setGuide(j.map { Guide.stepIndex(guideSteps, at: $0) } ?? 0, off: j == nil)
-        noteSolutionSeen()
         return true
     }
 
@@ -830,7 +849,8 @@ final class GameModel {
         guideSteps = []; guideAt = nil; guideOff = false; guideFold = nil
     }
 
-    private func setGuide(_ k: Int, off: Bool) {
+    /// `auto`: moved on by her own move — the caption is spoken a little later, after that move's own announcement.
+    private func setGuide(_ k: Int, off: Bool, auto: Bool = false) {
         guard k < guideSteps.count else { guideTask?.cancel(); guideAt = nil; guideFold = nil; return }
         let rm = settings.motionReduced
         withAnimation(rm ? .linear(duration: 0.2) : .easeInOut(duration: 0.35)) {
@@ -838,7 +858,9 @@ final class GameModel {
             guideFold = foldShown(k)
         }
         guideStartAngle = angle
-        showGuideStep()
+        guideReplayed = false
+        showGuideStep(delay: auto ? 1.6 : 0.05)
+        if k == guideSteps.count - 1 { noteSolutionSeen() }   // the whole route has been shown: the skip may come
         #if DEBUG
         // -guideDemo YES (screen recordings): do each step 3.5 s after it is shown, as a player following the guide
         if UserDefaults.standard.bool(forKey: "guideDemo"), !off {
@@ -850,29 +872,30 @@ final class GameModel {
                 case let .walk(cells): self.tap(cells.last!)
                 case let .fold(t): self.foldTo(self.guideFold ?? t)
                 case .turn: self.flipBook()
-                case .face: break
+                case .face: break   // ch. 12: the recording does not drive trifolds
                 }
             }
         }
         #endif
-        if skipTask != nil && !skipOffered { skipTask?.cancel(); skipTask = nil; noteSolutionSeen() }   // progress: the skip waits again
     }
 
     /// The step's caption (spoken under VoiceOver, with the square), and the fingertip for a fold.
-    private func showGuideStep() {
+    private func showGuideStep(delay: Double = 0.05) {
         guard let k = guideAt, k < guideSteps.count else { return }
-        if guideOff { show(L10n.t("guide.off")); return }
+        func say(_ text: String, spoken: String? = nil) { show(text, speak: false); announce(spoken ?? text, delay: delay) }
+        if guideOff { say(L10n.t("guide.off")); return }
         let st = guideSteps[k]
         switch st.kind {
         // on screen the ring says where (the map's row / column read wrong on the portrait book); VoiceOver hears the square
-        case let .walk(cells): show(L10n.t("guide.walk"), speak: false); announce(L10n.t("guide.walkTo", ["pos": pos(cells.last!)]))
+        case let .walk(cells): say(L10n.t("guide.walk"), spoken: L10n.t("guide.walkTo", ["pos": pos(cells.last!)]))
         case let .fold(t):
             let shown = guideFold ?? t
-            show(t >= config.foldMin ? L10n.t("guide.close") : shown == 0 ? L10n.t("guide.open")
+            say(t >= config.foldMin ? L10n.t("guide.close") : shown == 0 ? L10n.t("guide.open")
                  : shown == 90 ? L10n.t("guide.stand") : L10n.t("guide.lean", ["a": Int((180 - shown).rounded())]))
             guideGhost()
-        case .turn: show(L10n.t("guide.turn"))
-        case .face: show(L10n.t("guide.third"))
+        case .turn: say(L10n.t("guide.turn"))
+        case let .face(_, a):
+            say(a.map { L10n.t("guide.third") + L10n.t("sep") + L10n.t("guide.lean", ["a": Int((180 - $0).rounded())]) } ?? L10n.t("guide.third"))
         }
     }
 
@@ -894,24 +917,42 @@ final class GameModel {
     func refreshGuide() {
         guard let k = guideAt, k < guideSteps.count, let sol = level.solution, !won, !aha, !dragging, motionTarget == nil else { return }
         let st = guideSteps[k], start = Guide.State(sol[st.from]), end = Guide.State(sol[st.to])
+        let shutNow = angle >= config.foldMin
         var done = false, on = true
         switch st.kind {
         case let .walk(cells):
-            if char == cells.last! && game.face == end.face { done = true } else { on = cells.contains(char) && game.face == end.face }
+            // a walk belongs to its book: shut or open as the solution has it (an undone close takes her off it)
+            let sameBook = game.face == end.face && shutNow == (end.angle >= config.foldMin)
+            if char == cells.last! && sameBook { done = true } else { on = cells.contains(char) && sameBook }
         case .fold:
             let shown = guideFold ?? end.angle
-            if char != start.cell { on = false }
-            else if Guide.sameRegime(angle, shown, config: config) { done = true }
-            else if abs(angle - guideStartAngle) > 4, k + 1 < guideSteps.count, case let .walk(cells) = guideSteps[k + 1].kind,
-                    game.path(to: cells[1]) != nil { done = true }   // any rest from which the next walk goes
-        case .turn, .face:
+            if char != start.cell && char != end.cell { on = false }
+            else {
+                // done when the next walk really goes from here (the shade or bridge the solver meant is there), else
+                // when she rests in the shown angle's regime — within 12° where the exact lean matters (ch. 3 on)
+                let exact = chapter.id >= 3 && config.isLeaning(shown)
+                let regime = Guide.sameRegime(angle, shown, config: config) && (!exact || abs(angle - shown) <= 12)
+                if k + 1 < guideSteps.count, case let .walk(cells) = guideSteps[k + 1].kind {
+                    let moved = abs(angle - guideStartAngle) > 4 || regime
+                    done = moved && char == cells[0] && game.path(to: cells.last!) != nil
+                } else { done = regime && char == end.cell }
+            }
+        case let .face(_, a):
+            if game.face == end.face && (a == nil || Guide.sameRegime(angle, a!, config: config)) { done = true } else { on = char == start.cell }
+        case .turn:
             if game.face == end.face { done = true } else { on = char == start.cell }
         }
-        if done { setGuide(k + 1, off: false); return }
-        if on { if guideOff { setGuide(k, off: false) }; return }
+        if done { setGuide(k + 1, off: false, auto: true); return }
+        if on { if guideOff { setGuide(k, off: false, auto: true) }; return }
+        resyncGuide(auto: true)
+    }
+
+    /// Find her place on the route again from the whole state (undo, restart, a detour), or fade it off.
+    func resyncGuide(auto: Bool) {
+        guard let k = guideAt, let sol = level.solution, !won else { return }
         if let j = Guide.match(sol, from: 0, now: guideNow, config: config) {
             let i = Guide.stepIndex(guideSteps, at: j)
-            if i != k || guideOff { setGuide(i, off: false) }
+            if i != k || guideOff { setGuide(i, off: false, auto: auto) }
         } else if !guideOff {
             withAnimation(.easeOut(duration: 0.3)) { guideOff = true }
         }
@@ -1791,6 +1832,7 @@ final class GameModel {
         hintAvailable = true
         saidAngle = Int(angle.rounded()); pending = Pending()
         announce(L10n.t("undone", ["pos": pos(game.char), "a": shownAngle]))
+        resyncGuide(auto: true)
     }
 
     // MARK: events -> haptics, sound, VoiceOver
@@ -1930,14 +1972,16 @@ final class GameModel {
         won = true
         MusicDirector.shared.win()   // a short rising phrase
         stopWalk()
+        let wasComplete = chapterComplete
         done.insert(index)
         doneIDs.insert(level.id); SavedProgress.save(doneIDs)
+        completedChapterNow = !wasComplete && chapterComplete && !isLastInChapter
         if skippedIDs.remove(level.id) != nil { skipped.remove(index); SavedProgress.saveSkipped(skippedIDs) }
         skipTask?.cancel(); skipTask = nil; skipOffered = false
         clearGuide()
         noteRest()
         bestFolds[level.id] = SavedProgress.recordFolds(game.tally.count, for: level.id)
-        if isFinale { finaleBank = trail.last { !rules.isRight($0.c) } ?? trail.first }
+        if finaleNow { finaleBank = trail.last { !rules.isRight($0.c) } ?? trail.first }
         startAha()
     }
 
@@ -1950,7 +1994,7 @@ final class GameModel {
     func startAha() {
         ahaTask?.cancel()
         aha = true; quiet = true
-        if isFinale { startFinale(); return }
+        if finaleNow { startFinale(); return }
         let rm = settings.motionReduced
         ahaTask = Task { [weak self] in
             guard let self else { return }
@@ -2041,18 +2085,28 @@ final class GameModel {
         pending = Pending(); saidAngle = Int(angle.rounded())
         withAnimation(.easeOut(duration: 0.3)) { showNext = true }
         UIAccessibility.post(notification: .screenChanged, argument: L10n.t(captionKey) + " " + L10n.t("levelDone", ["name": levelText.name]))
+        if letterWaits { show(L10n.t("skip.letterWaits"), speak: false); announce(L10n.t("skip.letterWaits"), delay: 1.5) }
         lastAnnouncement = L10n.t(captionKey)
     }
 
     /// 「信，送到了。」, or at the finale 「信，到了。」 (design-ch4 §4).
-    var captionKey: String { isFinale ? "closed.arrived" : "closed.caption" }
+    var captionKey: String { finaleNow ? "closed.arrived" : "closed.caption" }
+
+    /// Every main letter of the chapter delivered — won, not skipped (hint-skip, Codex review: a skip never earns the letter).
+    var chapterComplete: Bool { chapterLevelIndices.allSatisfy(done.contains) }
+    /// The finale plays only for a whole chapter; with letters still skipped its last level wins like any other.
+    var finaleNow: Bool { isFinale && chapterComplete }
+    /// The chapter's letter opens from this win's knot: its last level, or the skipped one that made it whole.
+    var letterDue: Bool { !isDark && chapterComplete && (isLastInChapter || completedChapterNow) }
+    /// The chapter's last level won with letters still skipped: the knot goes back to the chapter, with a note.
+    var letterWaits: Bool { !isDark && isLastInChapter && !chapterComplete }
 
     /// A finger during the aha: jump to its last frame.
     func finishAhaNow() {
         guard aha else { return }
         ahaTask?.cancel(); stopMotion()
         quiet = true
-        if isFinale {
+        if finaleNow {
             // the finale's last frame is the shut book with its seal and caption; the knot then opens the letter
             if angle < 180 { setAngle(180) }
             rubber = 0; press = 0; glow = 0

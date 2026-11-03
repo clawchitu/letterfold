@@ -13531,6 +13531,36 @@
         }
       }
     },
+    "skip.letterWaits": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这一章的信，要等跳过的那几封都送到了才拆。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This chapter’s letter waits until the letters you skipped are delivered."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この章の手紙は、とばした手紙をすべて届けてから開く。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 장의 편지는 건너뛴 편지를 모두 전한 뒤에 열려요."
+          }
+        }
+      }
+    },
     "skip.offer": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",

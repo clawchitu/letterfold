@@ -119,8 +119,14 @@ final class HintSkipUITests: XCTestCase {
         hint.tap()                                   // 1-2's first rung: the nudge, not the solution
         sleep(4)
         XCTAssertFalse(skip.exists, "no skip after only the nudge")
-        hint.tap()                                   // the whole solution
-        XCTAssertTrue(skip.waitForExistence(timeout: 6), "the skip comes after the full solution and the wait")
+        hint.tap()                                   // the guide's first step: not yet the whole route
+        sleep(4)
+        XCTAssertFalse(skip.exists, "no skip after only the first step of the route")
+        // pressing again shows the step again, then the next: page through to the last step
+        var presses = 0
+        while !skip.exists && presses < 14 { hint.tap(); presses += 1; sleep(1) }
+        XCTAssertTrue(skip.waitForExistence(timeout: 6), "the skip comes after the last step and the wait")
+        XCTAssertGreaterThanOrEqual(presses, 6, "1-2's route has five steps")
         keep(app, "skip-offered")
         skip.tap()
         let name = app.descendants(matching: .any)["level.name"]
@@ -193,5 +199,22 @@ final class HintSkipUITests: XCTestCase {
         app.buttons["fold.close"].tap()
         let next = NSPredicate(format: "label CONTAINS 'Walk the dotted line'")
         XCTAssertEqual(XCTWaiter().wait(for: [expectation(for: next, evaluatedWith: toast(app))], timeout: 6), .completed, toast(app).label)
+    }
+
+    /// Codex review P1: the chapter's last letter won with an earlier one skipped does not open the chapter's letter —
+    /// the knot goes back to the chapter with a note; with every letter won it reads the letter.
+    func testLastLetterWithASkipDoesNotOpenTheChapterLetter() {
+        var app = launch(["-screen", "level", "-startLevel", "5", "-fold.doneIDs", "(bridge,facing,key,ink)", "-fold.skippedIDs", "(back)", "-aha", "YES", "-probe", "YES"])
+        let knot = app.buttons["win.next"]
+        XCTAssertTrue(knot.waitForExistence(timeout: 8))
+        XCTAssertFalse(knot.label.contains("Read"), knot.label)
+        XCTAssertTrue(app.descendants(matching: .any)["toast.bubble"].waitForExistence(timeout: 4))
+        keep(app, "letter-waits")
+        knot.tap()
+        XCTAssertTrue(app.buttons["map.continue"].waitForExistence(timeout: 5), "back to the chapters, no letter")
+        app.terminate()
+        app = launch(["-screen", "level", "-startLevel", "5", "-fold.doneIDs", "(bridge,facing,back,key,ink)", "-aha", "YES"])
+        XCTAssertTrue(app.buttons["win.next"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.buttons["win.next"].label.contains("Read"), app.buttons["win.next"].label)
     }
 }

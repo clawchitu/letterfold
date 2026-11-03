@@ -81,8 +81,10 @@ struct LevelScreen: View {
                 // the win's 下一封 knot floats too, so it never lifts the board (b19: a footer kept at its height cost
                 // every board 26 pt instead)
                 if model.showNext {
-                    NextKnot(title: model.isLastInChapter ? L10n.t("letter.read") : model.isDark && model.nextDark == nil ? L10n.t("dark.back") : L10n.t("next")) {
-                        if model.isLastInChapter { router.go(.letter) }
+                    NextKnot(title: model.letterDue ? L10n.t("letter.read") : model.letterWaits ? L10n.t("nav.bookLabel") : model.isDark && model.nextDark == nil ? L10n.t("dark.back") : L10n.t("next")) {
+                        // the letter only for a whole chapter (hint-skip): with letters skipped, back to the chapter
+                        if model.letterDue { router.go(.letter) }
+                        else if model.letterWaits { router.leaveLevel(chapter: model.chapter.id) }
                         else if model.isDark { if let n = model.nextDark { model.go(n); fadeName() } else { router.leaveLevel(chapter: model.chapter.id) } }
                         // the next level, or (an older save with a gap) the first one not yet delivered: never past it
                         else { model.go(model.isLevelOpen(model.index + 1) ? model.index + 1 : model.nextToPlay(model.chapterLevelIndices) ?? model.index + 1); fadeName() }

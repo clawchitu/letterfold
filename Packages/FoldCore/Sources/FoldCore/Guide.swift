@@ -12,8 +12,9 @@ public enum Guide {
         case fold(Double)
         /// 「翻」: turn the shut book over (ch. 6).
         case turn
-        /// Ch. 12: another face of the trifold (2 = the third page on its own crease, 3 = the book with it folded, 0 = back).
-        case face(Int)
+        /// Ch. 12: another face of the trifold (2 = the third page on its own crease, 3 = the book with it folded, 0 = back),
+        /// and the angle it comes to rest at when that changes too (`drop`: face 2 at 125°).
+        case face(Int, Double?)
     }
 
     public struct Step: Equatable, Sendable {
@@ -39,7 +40,7 @@ public enum Guide {
         while i < s.count {
             let a = s[i - 1], b = s[i]
             if a.face != b.face {
-                out.append(Step(kind: trifold ? .face(b.face) : .turn, from: i - 1, to: i)); i += 1; continue
+                out.append(Step(kind: trifold ? .face(b.face, a.angle != b.angle ? b.angle : nil) : .turn, from: i - 1, to: i)); i += 1; continue
             }
             if a.angle != b.angle {
                 out.append(Step(kind: .fold(b.angle), from: i - 1, to: i)); i += 1; continue
