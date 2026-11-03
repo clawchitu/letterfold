@@ -246,10 +246,13 @@ final class HintSkipUITests: XCTestCase {
         XCTAssertEqual(XCTWaiter().wait(for: [expectation(for: lean, evaluatedWith: toast)], timeout: 20), .completed,
                        "the lean step: \(toast.exists ? toast.label : "-")")
         keep(app, "guide-ice-lean")
-        let walk = NSPredicate(format: "label CONTAINS 'Walk the dotted line'")
+        // the walk's caption comes as the lean arrives and is soon followed by the melt's note (the rest), then the guide
+        // walks her home: either toast shows the guide went on (an XCUI snapshot can miss the ~2 s walk caption while
+        // the ghost hand animates); never 「Off the route」
+        let walk = NSPredicate(format: "label CONTAINS 'Walk the dotted line' OR label CONTAINS 'melted'")
         XCTAssertEqual(XCTWaiter().wait(for: [expectation(for: walk, evaluatedWith: toast)], timeout: 12), .completed,
-                       "after the rest melts, the walk: \(toast.exists ? toast.label : "-")")
-        XCTAssertFalse(toast.label.contains("Off the route"), toast.label)
+                       "after the lean, the walk / the melt: \(toast.exists ? toast.label : "-")")
+        XCTAssertFalse(toast.exists && toast.label.contains("Off the route"), toast.label)
         keep(app, "guide-ice-walk")
         XCTAssertTrue(app.buttons["win.next"].waitForExistence(timeout: 20), "following the guide through the melt wins")
     }

@@ -225,11 +225,12 @@ public struct Rules: Sendable {
     }
 
     /// BFS from `from` to `target`. Closed, the target matches by stack (proj(c), r). [] = already there, nil = unreachable.
-    public func findPath(_ b: Board, from: Cell, to target: Cell, _ p: Posture, _ sh: [Cell: Int]) -> [Cell]? {
+    public func findPath(_ b: Board, from: Cell, to target: Cell, _ p: Posture, _ sh: [Cell: Int], exact: Bool = false) -> [Cell]? {
         // The search runs over real cells — closed, the page you stand on decides where the next step lands (`land`),
         // so reaching a stack on one page is not the same as reaching it on the other (playtest 10/20: tap-to-walk
-        // refused routes single steps allowed). Only the target matches by stack.
-        func key(_ x: Cell) -> Cell { p == .closed ? Cell(proj(x.c), x.r) : x }
+        // refused routes single steps allowed). Only the target matches by stack — unless `exact`: that very page's
+        // square (the guide's ring, ch. 14 14-4 pave: the shut stack (2,0)/(5,0) must be reached on the right page).
+        func key(_ x: Cell) -> Cell { p == .closed && !exact ? Cell(proj(x.c), x.r) : x }
         let goal = key(target)
         if key(from) == goal { return [] }
         var prev: [Cell: Cell] = [:]

@@ -142,6 +142,15 @@ final class Chapter14Tests: XCTestCase {
         XCTAssertEqual(h.board[5, 0], .paper); XCTAssertFalse(hv.contains(.deadEnd))
     }
 
+    /// 14-4 pave, shut after the lean and back: the stack (2,0)/(5,0) is nearer on the left page; the guide's ring is the
+    /// right page's (5,0), from which the 40° lean goes on — `exact` finds that page's square.
+    func testPaveShutWalkReachesTheRightPage() throws {
+        let g = try FoldGame(level: level("pave"))
+        g.walk(to: Cell(1, 1)); g.setAngle(150); g.rest(); g.setAngle(0); g.rest(); g.setAngle(180); g.rest()
+        XCTAssertEqual(g.path(to: Cell(5, 0))?.last, Cell(2, 0), "by stack: the nearer page")
+        XCTAssertEqual(g.path(to: Cell(5, 0), exact: true)?.last, Cell(5, 0), "exact: the right page's square")
+    }
+
     /// 14-4 pave: close at once and the press crushes the ice, the glue takes the stone — dead.
     func testPaveWrongMove() throws {
         let g = try FoldGame(level: level("pave"))

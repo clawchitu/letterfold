@@ -1549,7 +1549,12 @@ final class GameModel {
         finishMotionNow()
         playTile(cell)
         if let key = flapWalkBlock { haptics.nope(); show(L10n.t(key)); return }
-        guard let path = game.path(to: cell) else {
+        // the guide's walk ends on one page of this shut stack: go there, on that page (the shortest route may end on
+        // the other page's square, off the route — 14-4 pave's shut walk to (5,0) would stop on (2,0))
+        var exact: Cell?
+        if posture == .closed, let k = guideAt, k < guideSteps.count, case let .walk(cells) = guideSteps[k].kind,
+           let end = cells.last, end.r == cell.r, rules.proj(end.c) == rules.proj(cell.c), game.path(to: end, exact: true) != nil { exact = end }
+        guard let path = exact.flatMap({ game.path(to: $0, exact: true) }) ?? game.path(to: cell) else {
             haptics.nope()
             if settings.soundMode { sound.hollow(pan: pan(of: cell)) }
             shake[cell, default: 0] += 1

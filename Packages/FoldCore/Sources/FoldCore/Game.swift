@@ -111,7 +111,7 @@ public final class FoldGame {
     public var face: Int { board.face }
     /// Why 「翻」 is refused right now, or nil when the book can be turned over.
     public var flipBlock: Rules.FlipBlock? { rules.flipBlock(board, char, angle) }
-    public func path(to target: Cell) -> [Cell]? { rules.findPath(board, from: char, to: target, posture, shade) }
+    public func path(to target: Cell, exact: Bool = false) -> [Cell]? { rules.findPath(board, from: char, to: target, posture, shade, exact: exact) }
     /// The goal can be walked to from here, now (without moving the hinge).
     public var goalInReach: Bool { goal.map { path(to: $0) != nil } ?? false }
 
