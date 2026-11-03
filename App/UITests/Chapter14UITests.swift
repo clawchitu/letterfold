@@ -38,20 +38,27 @@ final class Chapter14UITests: PlaythroughUITests {
         }
     }
 
-    /// QA stills (design-ch14.md §2), with every slide and splash 10× slower so a shot lands inside them: 14-1's close
-    /// mid-slide (the ball on the ice, the gap still open ahead of it) and 14-2's second pass (the stone gone down in
+    /// QA stills (design-ch14.md §2), with every slide and splash 10× slower so a shot lands inside them: 14-4's second
+    /// pass mid-slide (the ball on the ice, breaking through at the crease) and 14-2's second pass (the stone gone down in
     /// the water the rest melted, the ripples spreading, the square clearing to paper). Still wins both.
     func testSlideAndSinkStills() {
-        launch(83, ["-slideSlow", "10"])
-        let slide = level("slide")
-        play("slide", [slide[0]], keepShut: true)
-        play("slide", [slide[1]], keepShut: true)   // the close: the stone rolls onto the ice and slides on into the gap
-        shot("slide-closed-midslide")
-        Thread.sleep(forTimeInterval: 0.9)
-        shot("slide-closed-midslide2")
-        Thread.sleep(forTimeInterval: 4)
-        play("slide", Array(slide.dropFirst(2)), keepShut: true)
-        XCTAssertTrue(app.buttons["win.next"].waitForExistence(timeout: 8), "slide is won")
+        // 14-4 pave: the lean is the first pass (the stone rolls to (6,0)); opening flat is the second — it rolls onto the
+        // ice, slides over (5,0) and breaks through at the crease (4,0), which is paper
+        launch(86, ["-slideSlow", "10"])
+        let pave = level("pave")
+        play("pave", Array(pave.prefix(2)), keepShut: true)
+        Thread.sleep(forTimeInterval: 0.6)
+        shot("pave-leaning")
+        play("pave", [pave[2]], keepShut: true)
+        shot("pave-midslide")
+        Thread.sleep(forTimeInterval: 1.2)
+        shot("pave-midslide2")
+        Thread.sleep(forTimeInterval: 2.0)
+        shot("pave-sink-ice")
+        Thread.sleep(forTimeInterval: 8)
+        shot("pave-sunk-paper")
+        play("pave", Array(pave.dropFirst(3)), keepShut: true)
+        XCTAssertTrue(app.buttons["win.next"].waitForExistence(timeout: 8), "pave is won")
         app.terminate()
 
         launch(84, ["-slideSlow", "10"])

@@ -16,6 +16,7 @@ extension PaperState {
     static let vellum: PaperState = {
         var p = PaperState(color: Tok.paperVellum, translucency: 0.35, inkSaturation: 0.86, backlit: true, thread: Tok.threadAged,
                            backlight: 0.5, skin: .letter)
+        p.balls = true        // ch. 14: the loose stone rolls and slides as on 卷三's card (LooseBallsLayer)
         p.iceGrain = true     // 冰纹: the grain of the frozen river in the paper itself (decoration, off in high contrast)
         return p
     }()

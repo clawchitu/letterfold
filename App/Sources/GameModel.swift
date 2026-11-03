@@ -1090,7 +1090,7 @@ final class GameModel {
         if angle < config.foldMin - 10 { flapRefusedSaid = false }
         // a hold is noted before this update's roll is handled; the flight is settled after handle() installs any new flight, so an
         // update that skips the whole window never leaves a stale flight to come back on re-entry (Codex review 21 #2)
-        if paper.card && rules.passes(before, angle) && rollFlight == nil { noteHeldIfAny() }
+        if paper.ballsUpright && rules.passes(before, angle) && rollFlight == nil { noteHeldIfAny() }
         sync()
         if posture == .closed { tuckSlip() }   // the book shut (a hand on the hinge): the slip goes back (§2.2 ④)
         if paper.backlit { setLamp(posture == .closed ? 0 : 1, now: false) }   // reduce motion keeps the timed fade too
@@ -1102,7 +1102,7 @@ final class GameModel {
             gateCheck(from: before)
             lockCheck(from: before)
         }
-        if paper.card { settleRollFlight() }
+        if paper.ballsUpright { settleRollFlight() }
     }
 
     /// Ch. 8 angle gates stand while the page leans (`rules.lit`), lie down outside it (design-review-ch8-art §3.2):

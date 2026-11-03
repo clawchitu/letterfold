@@ -1566,7 +1566,7 @@ private struct CameraBook: View {
                     } else {
                         TrifoldPage(model: model, geo: geo, rotorSpace: rotorSpace, part: .third, angle: th)
                             .frame(width: page.width, height: page.height)
-                            .environment(\.looseUpright, model.paper.card)
+                            .environment(\.looseUpright, model.paper.ballsUpright)
                             .projectionEffect(cam.transform(o: edge0 + 2 * H * fold, eu: ex, ev: -fold))
                     }
                 }
@@ -1580,14 +1580,14 @@ private struct CameraBook: View {
                         .overlay { if model.finaleSealSplit, let g = model.goalStackSlot {
                             FinaleSealHalf(edge: .top, at: CGPoint(x: geo.center(x: g.x, y: 0).x, y: page.height))
                         } }
-                        .environment(\.looseUpright, model.paper.card)
+                        .environment(\.looseUpright, model.paper.ballsUpright)
                         .projectionEffect(cam.transform(o: edge0 + H * fold, eu: ex, ev: -fold))
                 }
             }
             .offset(y: showBack ? model.press * 2 : 0)
             .shadow(color: .black.opacity(hc ? 0 : 0.12 * max(0, sin(t))), radius: 6, x: 0, y: 3)
             // ch. 9: the lifted page's loose stones, upright over the projected page (they roll; the page squashes, they do not)
-            if model.paper.card && !showBack {
+            if model.paper.ballsUpright && !showBack {
                 LooseBallsLayer(model: model, tile: geo.tile, scale: cam.k) { c in cam.project(center3D(c, fold: fold, W: W, H: H)) }
                     .frame(width: geo.bookSize.width, height: geo.bookSize.height, alignment: .topLeading)
                 // §3.4: the figure over the balls (FrontFace leaves her out under looseUpright), on the page's projection

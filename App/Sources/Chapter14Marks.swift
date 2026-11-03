@@ -69,7 +69,9 @@ extension GameModel {
     /// The hinge's flight settled: a stone that rolled straight into water (no ice) goes down now.
     func landSinks(_ rolls: [Rules.Roll]) {
         let now = Date.now
-        for r in rolls where r.slid == 0 && r.sank != nil { sinks[r.to]?.at = sinks[r.to]?.at ?? now }
+        for r in rolls where r.slid == 0 && r.sank != nil {
+            if var fx = sinks[r.to], fx.at == nil { fx.at = now; sinks[r.to] = fx }   // read, then write: no overlapping access
+        }
     }
 
     /// Some stone is still sliding or going down at `now` (the balls layer redraws every frame meanwhile).

@@ -72,6 +72,9 @@ struct PaperState: Equatable {
     var card = false
     /// 卷四's 皮纸 + 冰纹 (design-vol4.md §3): faint ice-grain hairlines in the vellum (Chapter13Marks.swift `IceGrain`).
     var iceGrain = false
+    /// Loose stones are balls drawn upright over the lifted page and roll on the angle (卷三 card; 卷四 vellum, where they slide).
+    var balls = false
+    var ballsUpright: Bool { card || balls }
 
     static let chapter1 = PaperState(color: Tok.paperNew, translucency: 0.05, inkSaturation: 0.82, backlit: false, thread: Tok.thread)
     static let chapter2 = PaperState(color: Color(hex: 0xF3EDE2), translucency: 0.15, inkSaturation: 0.78, backlit: false, thread: Tok.thread, skin: .stand, margin: [.railing])
