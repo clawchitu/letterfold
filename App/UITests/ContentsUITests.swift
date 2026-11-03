@@ -236,6 +236,24 @@ final class HintSkipUITests: XCTestCase {
         XCTAssertTrue(toast.label.contains("Fold the third page"), toast.label)
     }
 
+    /// Ch. 13 「冰」 13-1 `ice`, walked onto the paper at (2,0): the guide's toast captions the lean (a rest in the lamp
+    /// window that melts the ice at (1,0) behind her), and after the guide's own lean has rested and melted, it stays on
+    /// route and captions the walk to her — then following it wins. The lean is made by -guideDemo.
+    func testIceGuideCaptionsTheLeanAndStaysOnRouteThroughTheMelt() {
+        let app = launch(["-screen", "level", "-startLevel", "78", "-hintAfter", "1", "-probe", "YES", "-replayTo", "2", "-guideDemo", "YES"])
+        let toast = app.descendants(matching: .any)["toast.bubble"]
+        let lean = NSPredicate(format: "label CONTAINS 'Lean the page to about'")
+        XCTAssertEqual(XCTWaiter().wait(for: [expectation(for: lean, evaluatedWith: toast)], timeout: 20), .completed,
+                       "the lean step: \(toast.exists ? toast.label : "-")")
+        keep(app, "guide-ice-lean")
+        let walk = NSPredicate(format: "label CONTAINS 'Walk the dotted line'")
+        XCTAssertEqual(XCTWaiter().wait(for: [expectation(for: walk, evaluatedWith: toast)], timeout: 12), .completed,
+                       "after the rest melts, the walk: \(toast.exists ? toast.label : "-")")
+        XCTAssertFalse(toast.label.contains("Off the route"), toast.label)
+        keep(app, "guide-ice-walk")
+        XCTAssertTrue(app.buttons["win.next"].waitForExistence(timeout: 20), "following the guide through the melt wins")
+    }
+
     /// Codex re-review: 11-1 `fro` — lean, walk one square, undo the walk: the guide comes back to the walk (the lean is
     /// still made), not to the lean. The steps are made by -guideDemo (the guide's own 130°; the footer's lean is 135°,
     /// where that walk does not go), the undo by the footer.

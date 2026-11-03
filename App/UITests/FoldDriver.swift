@@ -61,6 +61,18 @@ struct FoldDriver {
     /// For a figure riding a shadow: move towards a physical angle without ever passing it, either way (past the
     /// shadow's reach it would drop). Each drag covers about half of what is left.
     @discardableResult func creep(to target: Int, tol: Int = 3) -> Int {
+        // past upright (91°–134°) a let-go page drops back to 90°: no drag can rest there, so a target in reach of 90°
+        // means "ride up to standing". Do it in one sweep, through 90° and let go short of the lean window (≤ 134°) —
+        // creeping up in small drags would stop in the lamp window again and again, and in ch. 13 every stop is a rest
+        // that melts (13-5 take: the rides' stops at 60° / 70° / 82° melted the ice it must land on). The gain is
+        // about 0.0035 / ° below 60°, 0.0057 / ° from 60° to 90° (the creep logs); aim ~10° past upright.
+        let p0 = phys()
+        if target > 90 && target - tol <= 90 && p0 > 0 && p0 < 90 {
+            let below = Double(max(0, 60 - p0)), mid = Double(min(30, 90 - max(60, p0)))
+            pull(-(below * 0.0035 + mid * 0.0057 + 0.05))
+            print("CREEP to \(target) (one sweep to upright): now \(phys())")
+            if abs(phys() - target) <= tol { return phys() }
+        }
         var k = 0.0022
         for _ in 0..<20 {
             let delta = Double(phys() - target)
