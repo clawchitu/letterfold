@@ -85,5 +85,5 @@ let playthroughPlan: [(id: String, acts: [PlanAct])] = [
     ("thaw", [.walk(3, 2, 4), .lean(50, tol: 8), .walk(3, 1, 1), .creep(71, tol: 3), .walk(3, 0, 1), .close, .walk(2, 0, 1), .walk(3, 0, 1), .walk(3, 1, 1)]),
     ("shade", [.walk(1, 0, 3), .lean(39, tol: 8), .walk(3, 0, 2), .open, .walk(3, 1, 1), .close, .walk(3, 2, 1), .walk(3, 3, 1), .walk(2, 3, 1), .walk(1, 3, 1)]),
     ("crack", [.walk(3, 2, 5), .stand, .open, .close, .open, .walk(0, 1, 6)]),
-    ("take", [.walk(0, 0, 5), .lean(74, tol: 8), .lean(46, tol: 5), .walk(1, 0, 1), .creep(100, tol: 6), .close, .walk(3, 1, 1), .walk(2, 1, 1), .walk(2, 2, 1), .walk(2, 3, 1), .walk(3, 3, 1)]),
+    ("take", [.walk(0, 0, 5), .lean(74, tol: 8), .lean(46, tol: 5), .walk(1, 0, 1), .creep(96, tol: 6), .close, .walk(3, 1, 1), .walk(2, 1, 1), .walk(2, 2, 1), .walk(2, 3, 1), .walk(3, 3, 1)]),
 ]

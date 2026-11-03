@@ -153,6 +153,10 @@ final class UIPlanTests: XCTestCase {
                 // prefer a resting point (a lock's middle rests where it is) and then the solver's own angle
                 if t > best.tol || (t == best.tol && abs(Double(c) - (180 - a)) < abs(Double(best.center) - (180 - a))) { best = (c, t) }
             }
+            // aim where the page will actually rest: between upright and the lean window (phys 91…134) a let-go page
+            // drops back to 90°, so a target there (13-5 take's creep to 100) is one no drag can hold — aim at 90°
+            let restPhys = 180 - Int(rest(180 - Double(best.center), g, detents: false).rounded())
+            if restPhys != best.center && (restPhys == 90 || restPhys == 180) && ok(restPhys) { best = (restPhys, best.tol) }
             if best.center == 90 && !riding { acts.append(.stand) }
             else if best.center == 180 && !riding { acts.append(.open) }
             else { acts.append(riding ? .creep(phys: best.center, tol: min(best.tol, 6)) : .lean(phys: best.center, tol: min(best.tol, 8))) }
