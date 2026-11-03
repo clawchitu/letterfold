@@ -514,6 +514,7 @@ struct SlipIcon: View {
             case .crane: CraneGlyph(size: size, hc: hc)
             case .fro: FroGlyph(size: size, hc: hc)
             case .trifold: TrifoldGlyph(size: size, hc: hc)
+            case .ice: ZStack { PathTile(size: size * 0.92); IceGlaze(size: size * 0.92, seed: 3) }   // ch. 13
             }
         }
         .frame(width: size, height: size)
@@ -571,6 +572,9 @@ nonisolated struct SlipGlyph: Shape {
         case .crane: p.addPath(CraneOutline().path(in: r))
         case .fro: p.addPath(FroOutline().path(in: r))
         case .trifold: p.addPath(TrifoldOutline().path(in: r))
+        case .ice:   // ch. 13: a square with the ice's slanting crack
+            p.addRect(r.insetBy(dx: r.width * 0.1, dy: r.height * 0.1))
+            p.addPath(IceCracks(seed: 3).path(in: r.insetBy(dx: r.width * 0.16, dy: r.height * 0.16)))
         case .turn:
             p.addRect(CGRect(x: r.minX + r.width * 0.3, y: r.minY + r.height * 0.04, width: r.width * 0.6, height: r.height * 0.74))
             p.move(to: pt(0.3, 0.2)); p.addLine(to: pt(0.12, 0.2)); p.addLine(to: pt(0.12, 0.94)); p.addLine(to: pt(0.72, 0.94)); p.addLine(to: pt(0.72, 0.78))

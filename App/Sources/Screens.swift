@@ -498,7 +498,12 @@ struct ChapterMapView: View {
     }
 
     private var volumeTwoOpen: Bool { Chapter.all.first { $0.id == 5 }.map(model.isUnlocked) ?? false }
-    private var volumeThreeOpen: Bool { Chapter.all.first { $0.id == 9 }.map(model.isUnlocked) ?? false }
+    private var volumeThreeOpen: Bool { volumeOpen(3) }
+    /// A volume's page can be turned to once its first chapter is open (卷四: chapter 12 delivered, and its release day).
+    private func volumeOpen(_ v: Int) -> Bool {
+        guard let first = Volume.all.first(where: { $0.id == v })?.firstChapter else { return false }
+        return Chapter.all.first { $0.id == first }.map(model.isUnlocked) ?? false
+    }
     /// The page shown: the one turned to, else the page of the chapter being played (the 「继续」 level's).
     private var shown: Int { model.mapPage(page) }
     /// Set once the map has landed on the chapter being played: the first landing jumps, a later page turn back glides.
@@ -573,20 +578,22 @@ struct ChapterMapView: View {
                     Text("\(vol1Done) / \(vol1.count)").font(.subheadline.monospacedDigit()).foregroundStyle(Tok.ink700)
                         .accessibilityLabel(L10n.t("ch.count", ["n": vol1Done, "total": vol1.count]))
                         .accessibilityIdentifier("map.count")
-                } else if shown == 3 {
-                    // 「‹ 卷二《翻页》25 / 25」: book two folded away the same way (design-review-vol3-art §3.9)
-                    let vol2 = Chapter.volumeChapters(2).flatMap { model.chapterIndices($0) }
-                    let vol2Done = vol2.filter { model.done.contains($0) }.count
-                    Button { turn(to: 2) } label: {
+                } else if shown >= 3 {
+                    // 「‹ 卷二《翻页》25 / 25」: the book before folded away the same way (design-review-vol3-art §3.9);
+                    // 卷四's page goes back to 卷三《倾》
+                    let back = shown - 1
+                    let prev = Chapter.volumeChapters(back).flatMap { model.chapterIndices($0) }
+                    let prevDone = prev.filter { model.done.contains($0) }.count
+                    Button { turn(to: back) } label: {
                         HStack(spacing: 4) {
                             Image(systemName: "chevron.left")
-                            Text(L10n.t("map.vol2Back")).lineLimit(1).minimumScaleFactor(0.7)
-                            Text("\(vol2Done) / \(vol2.count)").monospacedDigit().foregroundStyle(Tok.ink700)
+                            Text(L10n.t("map.vol\(back)Back")).lineLimit(1).minimumScaleFactor(0.7)
+                            Text("\(prevDone) / \(prev.count)").monospacedDigit().foregroundStyle(Tok.ink700)
                         }
                         .font(.subheadline).foregroundStyle(Tok.ink900).frame(minHeight: 44)
                     }
-                    .accessibilityLabel(L10n.t("map.vol2BackLabel", ["n": vol2Done, "total": vol2.count]))
-                    .accessibilityIdentifier("map.vol2")
+                    .accessibilityLabel(L10n.t("map.vol\(back)BackLabel", ["n": prevDone, "total": prev.count]))
+                    .accessibilityIdentifier("map.vol\(back)")
                     Spacer()
                 } else {
                     // 「‹ 卷一《两岸》25 / 25」: book one, folded away into the way back (frame v2c1-map)
@@ -614,7 +621,7 @@ struct ChapterMapView: View {
             GeometryReader { g in
                 ScrollViewReader { proxy in
                 ScrollView {
-                    if shown == 1 { volumeOne(g.size.width) } else if shown == 2 { volumeTwo(g.size.width) } else { volumeThree(g.size.width) }
+                    if shown == 1 { volumeOne(g.size.width) } else if shown == 2 { volumeTwo(g.size.width) } else { laterVolume(shown, g.size.width) }
                 }
                 .clipped()
                 // 「开始」 lands on the chapter being played, a third of the way down (above 「继续」), not on page one's top;
@@ -638,7 +645,9 @@ struct ChapterMapView: View {
                     case 1 where up && volumeTwoOpen: turn(to: 2)
                     case 2 where up && volumeThreeOpen: turn(to: 3)
                     case 2 where down: turn(to: 1)
+                    case 3 where up && volumeOpen(4): turn(to: 4)
                     case 3 where down: turn(to: 2)
+                    case 4 where down: turn(to: 3)
                     default: break
                     }
                 })
@@ -733,15 +742,22 @@ struct ChapterMapView: View {
         }
     }
 
-    /// 卷三《倾》 (frame V6, design-review-vol3-art §3.9): 「九 滚」 on card paper with the thread knotted at it, then the
-    /// dashed 「未写」 cards of chapters 10–12.
-    private func volumeThree(_ width: Double) -> some View {
+    /// 卷三《倾》 (frame V6, design-review-vol3-art §3.9): its chapters on card paper with the thread knotted at the
+    /// first, then the next page, 卷四《冰》 (1.1); 卷四's page the same, on vellum, with no page after it yet.
+    private func laterVolume(_ v: Int, _ width: Double) -> some View {
         ZStack(alignment: .top) {
             Rectangle().fill(Tok.ink900.opacity(0.12)).frame(width: 1).frame(maxHeight: .infinity)
             ThreadDrop(from: 0, to: 46, color: hc ? Tok.hcLine : Tok.threadAged).frame(height: 48)
             Knot(color: hc ? Tok.hcLine : Tok.threadAged, small: true).offset(x: -6, y: 46 - 7)
             VStack(spacing: 18) {
-                ForEach(Chapter.volumeChapters(3)) { ch in card(ch, width) }
+                ForEach(Chapter.volumeChapters(v)) { ch in card(ch, width) }
+                if v < Volume.newest {
+                    // after a volume's finale, the next page (as 卷一 hands over to 卷二)
+                    HStack {
+                        Spacer()
+                        NextPageCard(book: v + 1, open: volumeOpen(v + 1)) { turn(to: v + 1) }.frame(width: (width - 64) / 2)
+                    }
+                }
                 objectsLink.padding(.top, 10)
             }
             .padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 100)
@@ -864,7 +880,7 @@ private struct ChapterCard: View {
         let idx = model.chapterIndices(chapter)
         let n = idx.filter { model.done.contains($0) }.count
         let delivered = model.isUnlocked(chapter) && n == idx.count && !idx.isEmpty
-        let paper: Color = chapter.volume == 3 ? Tok.paperCard : [PaperState.chapter1.color, PaperState.chapter2.color, PaperState.chapter3.color, PaperState.chapter4.color,
+        let paper: Color = chapter.volume == 4 ? Tok.paperVellum : chapter.volume == 3 ? Tok.paperCard : [PaperState.chapter1.color, PaperState.chapter2.color, PaperState.chapter3.color, PaperState.chapter4.color,
                             Tok.paperLetter, Tok.paperLetter, Tok.paperLetter, Tok.paperLetter][min(7, chapter.id - 1)]
         let status = chapter.soon ? L10n.t(chapter.volume >= 2 ? "ch.unwritten" : "ch.soon") : !model.isUnlocked(chapter) ? L10n.t("ch.sealed") : delivered ? L10n.t("ch.delivered") : L10n.t("ch.inProgress")
         let sealed = !chapter.soon && !model.isUnlocked(chapter)

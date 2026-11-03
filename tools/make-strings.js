@@ -188,6 +188,8 @@ const NATIVE = {
   'ch.13': ['冰', 'Ice', '氷', '얼음'],
   'vol.4': ['冰', 'Ice', '氷', '얼음'],
   'map.book4': ['卷四', 'Book Four', '第四巻', '제4권'],
+  'map.vol4Back': ['卷四《冰》', 'Book Four: Ice', '第四巻『氷』', '제4권 《얼음》'],
+  'map.vol4BackLabel': ['回到卷四《冰》，已送达 {n} / {total}', 'Back to Book Four, Ice: {n} of {total} delivered', '第四巻『氷』へ戻る、{n} / {total} 通 届いた', '제4권 《얼음》으로, {total}통 중 {n}통 도착'],
   'map.toBook4': ['下一页：卷四《冰》', 'Next page: Book Four, Ice', '次の頁：第四巻『氷』', '다음 페이지: 제4권 《얼음》'],
   'map.vol3BackLabel': ['回到卷三《倾》，已送达 {n} / {total}', 'Back to Book Three, Tilt: {n} of {total} delivered', '第三巻『傾く』へ戻る、{n} / {total} 通 届いた', '제3권 《기울기》로, {total}통 중 {n}통 도착'],
   'ice.wouldMelt': ['停在这里，这块冰会化', 'rest here and this ice melts', 'ここで止めると、この氷は溶ける', '여기서 멈추면 이 얼음은 녹아요'],

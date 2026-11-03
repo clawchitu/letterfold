@@ -116,6 +116,8 @@ struct TileFace: View {
     var craneFX: CraneFX? = nil
     /// The gate's crease-side edge is the top of this drawing (the lifted page seen from behind)
     var gateCreaseAtTop = false
+    /// Ch. 13: which crack pattern this square's ice has (GameModel.iceSeed).
+    var iceSeed = 0
     @Environment(\.highContrast) private var hc
     @Environment(\.goalIsFigure) private var goalIsFigure
     @Environment(\.skin) private var skin
@@ -193,6 +195,13 @@ struct TileFace: View {
                 if !bare { PathTile(size: size, paper: paper) }
                 GlueMark(size: size)
             }
+        // ch. 13 「冰」 (Chapter13Marks.swift): ice glazes a path square; water is a gap with an ink wash in it
+        case .ice:
+            ZStack {
+                if !bare { PathTile(size: size, paper: paper) }
+                IceGlaze(size: size, seed: iceSeed, bare: bare)
+            }
+        case .water: if !bare { WaterWash(size: size, seed: iceSeed) }
         }
     }
 }

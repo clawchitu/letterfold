@@ -136,7 +136,7 @@ final class GameModel {
     let settings = AppSettings.shared
 
     private(set) var index = 0
-    private var game: FoldGame
+    private(set) var game: FoldGame
 
     // mirrored from FoldGame after every change
     private(set) var board: Board
@@ -2024,6 +2024,15 @@ final class GameModel {
             noteCranesStuck(landed: landed, inkFirst: inkFirst)
         }
     }
+
+    /// Ch. 13: the rest's events (FoldGame.rest, Chapter13Marks.swift) — handled like a move's, then said at once: the page
+    /// is already still.
+    func handleRest(_ events: [GameEvent], from: Posture, at figure: Cell) {
+        handle(events, from: from, at: figure)
+        settle()
+        if guideAt != nil { refreshGuide() }
+    }
+    func pendingIce(_ text: String) { pending.ice = text }
 
     private func win() {
         won = true

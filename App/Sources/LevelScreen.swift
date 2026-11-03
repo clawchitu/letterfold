@@ -518,11 +518,12 @@ private struct ChapterOpener: View {
     var body: some View {
         let rm = AppSettings.shared.motionReduced
         let cjk = L10n.lang.hasPrefix("zh") || L10n.lang.hasPrefix("ja")
-        let book2 = chapter.volume >= 2, book3 = chapter.volume == 3
-        // a new book's paper: 卷二 old paper → letter paper; 卷三 letter paper → card (design-review-vol3-art §3.6)
-        let newPaper = book3 ? Tok.paperCard : Tok.paperLetter
+        let book2 = chapter.volume >= 2, book3 = chapter.volume == 3, book4 = chapter.volume == 4
+        // a new book's paper: 卷二 old paper → letter paper; 卷三 letter paper → card (design-review-vol3-art §3.6);
+        // 卷四 card → vellum (design-vol4.md §3)
+        let newPaper = book4 ? Tok.paperVellum : book3 ? Tok.paperCard : Tok.paperLetter
         ZStack {
-            PaperSurface(color: book3 ? Tok.paperLetter : book2 ? PaperState.aged.color : Tok.paperNew).ignoresSafeArea()
+            PaperSurface(color: book4 ? Tok.paperCard : book3 ? Tok.paperLetter : book2 ? PaperState.aged.color : Tok.paperNew).ignoresSafeArea()
             if book2 && rm {
                 PaperSurface(color: newPaper).ignoresSafeArea().opacity(wipe)
             } else {
@@ -533,7 +534,7 @@ private struct ChapterOpener: View {
                 if book2 {
                     HStack(spacing: 10) {
                         Rectangle().fill(Tok.ink600.opacity(0.6)).frame(width: 22, height: 1)
-                        Text(book3 ? L10n.t("map.book3") + " · " + L10n.t("vol.3") : L10n.t("vol.2")).font(FontBook.shared.songti(.regular, 15, relativeTo: .subheadline)).foregroundStyle(Tok.ink700).tracking(cjk ? 4 : 0.5)
+                        Text(book4 ? L10n.t("map.book4") + " · " + L10n.t("vol.4") : book3 ? L10n.t("map.book3") + " · " + L10n.t("vol.3") : L10n.t("vol.2")).font(FontBook.shared.songti(.regular, 15, relativeTo: .subheadline)).foregroundStyle(Tok.ink700).tracking(cjk ? 4 : 0.5)
                         Rectangle().fill(Tok.ink600.opacity(0.6)).frame(width: 22, height: 1)
                     }
                 }
@@ -546,7 +547,9 @@ private struct ChapterOpener: View {
                 if chapter.id == 3 { LampBook().frame(width: 150, height: 120).padding(.top, 22).accessibilityHidden(true) }
                 if chapter.id == 4 { WornBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
                 // 十一 · 来回: the book stands up and lies back down (design-ch11 §8.4), not the still standing book
-                if chapter.id == 11 { FroBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
+                // 十三 · 冰: a page leaning over the ice; outside the shadow it fogs, one square melts (Chapter13Marks.swift)
+                if chapter.id == 13 { IceBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
+                else if chapter.id == 11 { FroBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
                 // 十二 · 三折: the third leaf folds in, then the book shuts (Chapter12Marks.swift)
                 else if chapter.id == 12 { TrifoldBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }
                 else if book3 { StandBook().frame(width: 150, height: 150).padding(.top, 22).accessibilityHidden(true) }

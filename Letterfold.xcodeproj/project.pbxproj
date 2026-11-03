@@ -54,6 +54,7 @@
 		E6F6C5E335E9922EBEEF96E7 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5597D142A9CB8FB0E573B6 /* Theme.swift */; };
 		E814CEA6AE8D68A972F67039 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578B23505A90DB23ECB3C2A4 /* Haptics.swift */; };
 		EC45A98D94C4BC1BBB07EF81 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E9E382EAE32A5BCA3D71BC9 /* L10n.swift */; };
+		EE86E03FC90CFA76C4AEF499 /* Chapter13Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F822755DBEBCE1CCD84DD5 /* Chapter13Marks.swift */; };
 		F2F1AE66279EFC5F18207868 /* Chapter6UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442751BD211723A6FF2D59D6 /* Chapter6UITests.swift */; };
 		F6517ABF6F79233473DE2C2F /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EBF8A2E746E16AE1153A20 /* GameModel.swift */; };
 		F82CD4AB1512484854127089 /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9AA4B7A8AA01181783D9B58 /* Sound.swift */; };
@@ -122,6 +123,7 @@
 		D8FF8C2C6BDE8074179A5B56 /* Chapter7UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter7UITests.swift; sourceTree = "<group>"; };
 		DFA230EEF3170E4CA7BC8708 /* DuoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuoUITests.swift; sourceTree = "<group>"; };
 		E36B0909E3FBA8D453FDC2A5 /* Chapter12UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter12UITests.swift; sourceTree = "<group>"; };
+		E9F822755DBEBCE1CCD84DD5 /* Chapter13Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter13Marks.swift; sourceTree = "<group>"; };
 		EABD85E9AF4932093EFF07E7 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		EF748F41958AB1E89B0C34D9 /* Petals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Petals.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -177,6 +179,7 @@
 				1A59202716B0AC3485A116A1 /* Chapter10Marks.swift */,
 				BB9E90E2E937D22C60176674 /* Chapter11Marks.swift */,
 				B9528175E86BD342A9AD5C46 /* Chapter12Marks.swift */,
+				E9F822755DBEBCE1CCD84DD5 /* Chapter13Marks.swift */,
 				31779719E8C773D36D2CFC1B /* Contents.swift */,
 				45EBF8A2E746E16AE1153A20 /* GameModel.swift */,
 				578B23505A90DB23ECB3C2A4 /* Haptics.swift */,
@@ -357,6 +360,7 @@
 				FEF3E51D6AE2D0172801FBE4 /* Chapter10Marks.swift in Sources */,
 				DCD8669646E4544F20D36916 /* Chapter11Marks.swift in Sources */,
 				16991211E73EA1ECC8352380 /* Chapter12Marks.swift in Sources */,
+				EE86E03FC90CFA76C4AEF499 /* Chapter13Marks.swift in Sources */,
 				089C73E24BB02BF7002C67DC /* Chapter8Marks.swift in Sources */,
 				E19FF7E22BAF0B7F47038916 /* Chapter9Marks.swift in Sources */,
 				47335045E1361AE66BF22A79 /* Contents.swift in Sources */,
@@ -509,14 +513,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 30;
+				CURRENT_PROJECT_VERSION = 31;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.haoqianglyu.letterfold;
 				SDKROOT = iphoneos;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -609,14 +613,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 30;
+				CURRENT_PROJECT_VERSION = 31;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.haoqianglyu.letterfold;
 				SDKROOT = iphoneos;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;

@@ -711,11 +711,13 @@ private struct TileItem: View {
         let face = TileFace(tile: t, size: geo.tile, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
                             mirrorAxisVertical: geo.horizontal, printedAt: model.inkPrintedAt[c], figureShift: model.meetShift(c, geo.tile),
                             inkVariant: model.inkVariant(c), bledAt: model.bledAt(c), gateStanding: Rules.gateStands(model.shade, c),
-                            craneFX: model.craneFX[c])
+                            craneFX: model.craneFX[c], iceSeed: model.iceSeed(c))
         let r = RoundedRectangle(cornerRadius: 3, style: .continuous)
         ZStack {
             face
             if shaded { ShadeMark(size: geo.tile) }
+            // ch. 13: mist, the rest's cracks, melt / freeze / crush (Chapter13Marks.swift)
+            if model.game.hasIce { IceOverlay(model: model, cell: c, size: geo.tile) }
             // ch. 12, the folded leaf: a square of the right page seen through a hole of the third page over it
             if model.seenThroughHole(c) { ThroughHoleMark(size: geo.tile) }
             // the shadows lock onto this gap: its outline lights up for 400 ms (design-review-ch3 §3)
