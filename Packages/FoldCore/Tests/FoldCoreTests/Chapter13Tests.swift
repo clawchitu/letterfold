@@ -114,7 +114,7 @@ final class Chapter13Tests: XCTestCase {
 
     func testChapter13LevelsAgreeWithTheProto() throws {
         let pack = try LevelPack.bundled(), solver = Solver(pack.config)
-        XCTAssertEqual(pack.levels.suffix(5).map(\.id), Self.ch13)
+        XCTAssertEqual(Array(pack.levels[77..<82].map(\.id)), Self.ch13)
         for id in Self.ch13 {
             let lv = try XCTUnwrap(pack.levels.first { $0.id == id }, id)
             var mine = solver.report(lv), theirs = try XCTUnwrap(lv.expect, id)

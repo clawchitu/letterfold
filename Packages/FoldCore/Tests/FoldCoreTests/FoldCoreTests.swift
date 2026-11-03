@@ -8,7 +8,7 @@ final class SolverTests: XCTestCase {
     override func setUpWithError() throws { pack = try LevelPack.bundled() }
 
     func testPackDecodes() throws {
-        XCTAssertEqual(pack.levels.count, 82)
+        XCTAssertEqual(pack.levels.count, 86)
         XCTAssertEqual(pack.levels.filter(\.isOptional).map(\.id), ["darkBack", "darkDoor", "darkInk"])
         XCTAssertEqual(pack.config, .standard)
         for lv in pack.levels { XCTAssertNoThrow(try Board(level: lv), lv.id) }
@@ -132,7 +132,7 @@ final class DifficultyTests: XCTestCase {
                         5, 12, 13, 15, 15])
         let vol1 = pack.levels.prefix(25).compactMap(\.len)
         XCTAssertGreaterThanOrEqual(Double(vol1.reduce(0, +)) / Double(vol1.count), 15)
-        for range in [0..<5, 5..<13, 13..<19, 19..<25, 25..<32, 35..<42, 42..<48, 48..<54, 54..<61, 72..<77, 77..<82] {
+        for range in [0..<5, 5..<13, 13..<19, 19..<25, 25..<32, 35..<42, 42..<48, 48..<54, 54..<61, 72..<77, 77..<82, 82..<86] {
             let ch = Array(pack.levels[range])
             XCTAssertLessThanOrEqual(ch.compactMap { $0.expect?.changes }.reduce(0, +), 24, "chapter \(range): over the chapter budget")
             if range.lowerBound != 19 { XCTAssertEqual(ch.first?.tier, "teach", "chapter \(range) starts at teach") }

@@ -44,14 +44,14 @@ final class GridChain: @unchecked Sendable {
     /// The lifted page passed upright (vol. 3 ch. 9, check.js grids().roll): grid g with the loose stones on the page of
     /// `face` rolled, unless the figure holds one. Keyed on the figure's cell only when it stands on the facing page —
     /// on the left page it is in nobody's way. No roll: g itself.
-    private struct RollKey: Hashable { let g: Int, face: Int, held: Cell? }
+    private struct RollKey: Hashable { let g: Int, face: Int, held: Cell?, noSlide: Bool }
     private var rollMemo: [RollKey: Int] = [:]
-    func roll(_ g: Int, _ face: Int, _ fig: Cell) -> Int {
+    func roll(_ g: Int, _ face: Int, _ fig: Cell, noSlide: Bool = false) -> Int {
         let held: Cell? = rules.isRight(fig.c) ? fig : nil
-        let k = RollKey(g: g, face: face, held: held)
+        let k = RollKey(g: g, face: face, held: held, noSlide: noSlide)
         if let m = rollMemo[k] { return m }
         var b = table[g]; b.face = face
-        let ev = rules.roll(&b, fig: held)
+        let ev = rules.roll(&b, fig: held, noSlide: noSlide)
         if ev.isEmpty { rollMemo[k] = g; return g }
         b.face = 0
         let idx: Int
@@ -129,7 +129,9 @@ public struct Solver: Sendable {
         public var noFlap = false
         /// Vol. 4 ch. 13: shadows do not protect the ice (check.js `noShelter`, the needsShelter model).
         public var noShelter = false
-        public init(noFro: Bool = false, openPass: Bool = false, noFlap: Bool = false, noShelter: Bool = false) { self.noFro = noFro; self.openPass = openPass; self.noFlap = noFlap; self.noShelter = noShelter }
+        /// Vol. 4 ch. 14: on ice a loose stone rolls one square and stops (check.js `noSlide`, the needsSlide model).
+        public var noSlide = false
+        public init(noFro: Bool = false, openPass: Bool = false, noFlap: Bool = false, noShelter: Bool = false, noSlide: Bool = false) { self.noFro = noFro; self.openPass = openPass; self.noFlap = noFlap; self.noShelter = noShelter; self.noSlide = noSlide }
     }
 
     /// The character cell after turning the hinge from a0 to a1, or nil if it falls (or is crushed): check.js `turn`.
@@ -218,7 +220,7 @@ public struct Solver: Sendable {
         var a = s.a + step
         while step > 0 ? a <= a1 : a >= a1 {
             if (rolls && rules.passes(a - step, a)) || (forced && a == s.a + step) {
-                let ng = B.roll(g, s.face, cur)
+                let ng = B.roll(g, s.face, cur, noSlide: opts.noSlide)
                 if ng != g { g = ng; b = B.world(FoldState(c: cur.c, r: cur.r, a: a, face: s.face, g: g)) }
                 src = nil
             }
@@ -440,6 +442,10 @@ public struct Solver: Sendable {
             e.needsIce = ni == nil || (full != nil && ni!.cost > full!.cost) || !survives(level, ni!.steps)
             let ns = solve(level, options: Options(noShelter: true))   // shadows do not protect the ice
             e.needsShelter = ns == nil || (full != nil && ns!.cost > full!.cost)
+            if all.contains("r") {   // vol. 4 ch. 14 「滑」: the ch. 9 reader (a stone on ice rolls one square and stops)
+                let nsl = solve(level, options: Options(noSlide: true))
+                e.needsSlide = nsl == nil || (full != nil && nsl!.cost > full!.cost) || !survives(level, nsl!.steps)
+            }
         }
         if level.isTrifold { e.needsTrifold = solve(level, options: Options(noFlap: true)) == nil }   // vol. 3 ch. 12: without the second crease
         else if (level.map.first?.count ?? 0) > 2 * rules.n { e.needsFlip = solve(level, angles: Solver.angles, from: nil, noFlip: true) == nil }

@@ -111,6 +111,8 @@ public struct Expectation: Sendable, Codable, Equatable {
     public var needsIce: Bool?
     /// Vol. 4 ch. 13: unsolvable, or dearer, when shadows do not protect the ice (check.js `noShelter`).
     public var needsShelter: Bool?
+    /// Vol. 4 ch. 14: unsolvable, dearer, or failing on the real board when a stone on ice rolls one square (check.js `noSlide`).
+    public var needsSlide: Bool?
     public var stepped15: Bool
     /// tools/check.js `analyse()` (design-difficulty.md §2); the Swift `Difficulty` port must agree.
     public var difficulty: Difficulty.Summary?
@@ -137,6 +139,7 @@ public struct Expectation: Sendable, Codable, Equatable {
         case "needsTrifold": return needsTrifold
         case "needsIce": return needsIce
         case "needsShelter": return needsShelter
+        case "needsSlide": return needsSlide
         default: return nil
         }
     }

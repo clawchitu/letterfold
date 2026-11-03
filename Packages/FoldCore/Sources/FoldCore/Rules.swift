@@ -435,9 +435,17 @@ public struct Rules: Sendable {
 
     /// One loose stone's roll: `from` -> `to` (one cell towards the crease); `filled` = it dropped into a gap, which is
     /// paper from then on (the stone is gone).
+    ///
+    /// Vol. 4 ch. 14 「滑」 (logic.js roll, design-ch14.md §1): `slid` = the ice squares it slid across; `sank` = it sank in
+    /// water, or broke through the last ice square (`filled` too: the stone is gone and `to` is paper for good).
     public struct Roll: Sendable, Equatable {
+        public enum Sank: String, Sendable { case water, ice }
         public let from: Cell, to: Cell, filled: Bool
-        public init(from: Cell, to: Cell, filled: Bool) { self.from = from; self.to = to; self.filled = filled }
+        public var slid: Int = 0
+        public var sank: Sank? = nil
+        public init(from: Cell, to: Cell, filled: Bool, slid: Int = 0, sank: Sank? = nil) {
+            self.from = from; self.to = to; self.filled = filled; self.slid = slid; self.sank = sank
+        }
     }
 
     /// The lifted page passed upright: every loose stone on the facing page (read through columns N..<2N, so after a turn
@@ -445,16 +453,34 @@ public struct Rules: Sendable {
     /// anything else, or the figure standing crease-side of it (`fig`), it stays. The stone nearest the crease rolls
     /// first, so a line of them rolls together. Left-page stones never roll. Returns the rolls, nearest the crease first.
     /// Mutates the board.
+    ///
+    /// Vol. 4 ch. 14 「滑」: a stone that rolls onto ICE does not stop. It slides along the continuous ice to the first
+    /// square that is not ice: paper stops it (it rests there), a gap it drops into and fills, WATER it sinks in (paper
+    /// from then on). Anything else ahead of the ice — a stone, a door, ink, glue, a key, her square, the start, the
+    /// figure, the crease — and it breaks through the LAST ice square and sinks (paper too). It never rests on ice; rolling
+    /// straight into water sinks it the same way. `noSlide` is the ch. 9 player's model (Solver needsSlide): ice is paper,
+    /// water a gap — one square and stop.
     @discardableResult
-    public func roll(_ b: inout Board, fig: Cell?) -> [Roll] {
+    public func roll(_ b: inout Board, fig: Cell?, noSlide: Bool = false) -> [Roll] {
         var out: [Roll] = []
+        func held(_ c: Int, _ r: Int) -> Bool { if let f = fig { return f.c == c && f.r == r }; return false }
+        func moves(_ t: Tile) -> Bool { t == .paper || t == .empty || t == .ice || t == .water }
         for r in 0..<b.h {
             for c in (n + 1)..<b.w where b[c, r] == .loose {   // trifold face 0: the third page rolls with the right page
-                if let f = fig, f.c == c - 1, f.r == r { continue }
-                let ahead = b[c - 1, r]
-                guard ahead == .paper || ahead == .empty else { continue }
-                b[c - 1, r] = ahead == .empty ? .paper : .loose; b[c, r] = .paper
-                out.append(Roll(from: Cell(c, r), to: Cell(c - 1, r), filled: ahead == .empty))
+                if held(c - 1, r) { continue }
+                var ahead = b[c - 1, r]
+                if noSlide { if ahead == .ice { ahead = .paper } else if ahead == .water { ahead = .empty } }
+                guard moves(ahead) else { continue }
+                b[c, r] = .paper
+                var d = c - 1, slid = 0
+                var sank: Roll.Sank?
+                while ahead == .ice {   // sliding: the next square is ice too, or something stops the stone on this ice
+                    let next: Tile? = d - 1 >= n && !held(d - 1, r) ? b[d - 1, r] : nil
+                    if let t = next, moves(t) { d -= 1; slid += 1; ahead = t } else { sank = .ice; break }
+                }
+                if ahead == .water { sank = .water }
+                b[d, r] = ahead == .paper ? .loose : .paper
+                out.append(Roll(from: Cell(c, r), to: Cell(d, r), filled: ahead != .paper, slid: slid, sank: sank))
             }
         }
         return out
