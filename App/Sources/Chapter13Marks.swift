@@ -40,11 +40,12 @@ extension GameModel {
         iceRestTask?.cancel(); iceRestTask = nil
         guard game.hasIce, !won, !aha, !dragging else { iceRestStart = nil; return }
         if angle == 0 { restIce(); return }
-        guard rules.lit(angle), !iceMist.isEmpty else { iceRestStart = nil; return }
+        guard rules.lit(angle), !iceMist.isEmpty || board[char] == .water else { iceRestStart = nil; return }
         let at = angle
         iceRestStart = .now
         iceRestTask = Task { @MainActor [weak self] in
-            try? await Task.sleep(for: .milliseconds(Int(Self.iceRestDelay * 1000)))
+            // reduce motion: the 200 ms cross-fade lands first, then the full rest (Codex P2)
+            try? await Task.sleep(for: .milliseconds(Int(Self.iceRestDelay * 1000) + (AppSettings.shared.motionReduced ? 200 : 0)))
             guard let self, !Task.isCancelled, !self.dragging, self.motionTarget == nil, self.angle == at, !self.won else { return }
             self.iceRestTask = nil
             self.restIce()
@@ -286,7 +287,7 @@ struct IceOverlay: View {
         let crushing = crushed && (model.crushedAt[cell].map { now.timeIntervalSince($0) < 0.5 } ?? false)
         let rm = AppSettings.shared.motionReduced
         if misty || melting || freezing || crushed {
-            TimelineView(.animation(minimumInterval: 1 / 30, paused: rm || !(misty || melting || freezing || crushing))) { ctx in
+            TimelineView(.animation(minimumInterval: 1 / 30, paused: !((misty && !rm) || melting || freezing || crushing))) { ctx in
                 frame(ctx.date, t: t, misty: misty, crushed: crushed, rm: rm)
             }
             .frame(width: size, height: size)

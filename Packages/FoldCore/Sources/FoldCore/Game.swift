@@ -261,8 +261,9 @@ public final class FoldGame {
         let before = reachable, goalBefore = goalInReach
         if rules.lit(angle) {
             let cells = rules.melt(&board, angle)
-            guard !cells.isEmpty else { return [] }
-            events.append(.melted(cells))
+            // main.js rest / check.js sweep: standing on water at a lamp-window rest drowns, new melt or not (Codex P2)
+            guard !cells.isEmpty || rules.meltedUnder(board, char) else { return [] }
+            if !cells.isEmpty { events.append(.melted(cells)) }
             shade = rules.shadows(board, angle)
             if rules.meltedUnder(board, char) {
                 events.append(.drowned)

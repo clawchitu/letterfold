@@ -182,7 +182,7 @@ struct BookView: View {
             ForEach(rotorCells { $0.isFloor }, id: \.self) { c in AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace) }
         }
         .accessibilityRotor(Text(L10n.t("rotor.gap"))) {
-            ForEach(rotorCells { $0 == .empty }, id: \.self) { c in AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace) }
+            ForEach(rotorCells { $0 == .empty || $0 == .water }, id: \.self) { c in AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace) }
         }
         .accessibilityRotor(Text(L10n.t("rotor.object"))) {
             ForEach(rotorCells { [.stone, .loose, .key, .door, .openDoor, .ink, .wetInk, .goal, .tab, .glue, .gate].contains($0) }, id: \.self) { c in

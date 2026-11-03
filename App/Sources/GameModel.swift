@@ -1111,7 +1111,7 @@ final class GameModel {
     /// A gap: an empty square next to paper on the same page, where a shadow would make a path — on the bottom page
     /// (right lamp) or the lifted one (left lamp; Codex review 20 #3).
     static func isGap(_ b: Board, _ rules: Rules, _ c: Cell) -> Bool {
-        guard b[c] == .empty else { return false }
+        guard b[c] == .empty || b[c] == .water else { return false }   // ch. 13: water is a gap
         let lo = rules.isRight(c.c) ? rules.n : 0, hi = lo + rules.n
         return [(1, 0), (-1, 0), (0, 1), (0, -1)].contains { d in
             let n = Cell(c.c + d.0, c.r + d.1)
