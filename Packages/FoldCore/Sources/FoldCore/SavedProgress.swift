@@ -7,6 +7,10 @@ public enum SavedProgress {
     /// UserDefaults keys: the ID list (0.1 (9) on) and the old positional list (0.1 (8) and earlier).
     public static let idsKey = "fold.doneIDs"
     public static let legacyKey = "fold.done"
+    /// 「跳过这一封」 (hint-skip): the levels set aside without a win. Not delivered: they only open the next level
+    /// inside their chapter (`levelOpen`); chapters, 暗信, letters and endings still count `done` alone. A save
+    /// without the key (every save before this build) reads as no skips.
+    public static let skippedKey = "fold.skippedIDs"
 
     /// The level order of 0.1 (1)–(8): chapters 1–3, 17 levels (earlier builds were prefixes of it).
     public static let legacyLayout: [String] = [
@@ -51,13 +55,25 @@ public enum SavedProgress {
     }
 
     /// The level rule inside an open chapter (owner, 0.1 (17)): a delivered level replays, and the first level not yet
-    /// delivered is the one to play next; every later level stays shut until it is reached, so no level is skipped.
-    public static func levelOpen(_ id: String, in chapter: [String], done: Set<String>) -> Bool {
+    /// delivered is the one to play next; every later level stays shut until it is reached. hint-skip: a level the
+    /// player skipped (after seeing the whole solution) counts as reached — it replays, and the one after it opens —
+    /// but never as delivered, so it does not count towards `chapterOpen`.
+    public static func levelOpen(_ id: String, in chapter: [String], done: Set<String>, skipped: Set<String> = []) -> Bool {
         guard chapter.contains(id) else { return false }
-        return done.contains(id) || chapter.first { !done.contains($0) } == id
+        let reached = done.union(skipped)
+        return reached.contains(id) || chapter.first { !reached.contains($0) } == id
+    }
+
+    /// The skipped level IDs (empty for every older save). A delivered level is never also skipped.
+    public static func loadSkipped(_ d: UserDefaults = .standard, done: Set<String>) -> Set<String> {
+        Set(d.stringArray(forKey: skippedKey) ?? []).subtracting(done)
+    }
+
+    public static func saveSkipped(_ set: Set<String>, _ d: UserDefaults = .standard) {
+        if set.isEmpty { d.removeObject(forKey: skippedKey) } else { d.set(set.sorted(), forKey: skippedKey) }
     }
 
     public static func reset(_ d: UserDefaults = .standard) {
-        d.removeObject(forKey: idsKey); d.removeObject(forKey: legacyKey)
+        d.removeObject(forKey: idsKey); d.removeObject(forKey: legacyKey); d.removeObject(forKey: skippedKey)
     }
 }

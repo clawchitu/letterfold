@@ -218,6 +218,19 @@ final class GameModel {
     /// What is saved: level IDs, so inserting levels never moves progress (FoldCore.SavedProgress).
     @ObservationIgnored private var doneIDs: Set<String>
     private(set) var hintAvailable = false
+    /// How long a player is left to try before the 「?」 wakes (45 s; -hintAfter <s> for UI tests). Until then it is
+    /// drawn faintly and disabled, so it is known to exist (hint-skip).
+    static var stuckDelay: Double { UserDefaults.standard.object(forKey: "hintAfter") != nil ? UserDefaults.standard.double(forKey: "hintAfter") : 45 }
+    /// 「跳过这一封」 (hint-skip): after the whole solution has been shown, `skipDelay` more seconds without a win (60 s;
+    /// -skipAfter <s> for UI tests) — or a restart after it, whichever comes first — offer to set the letter aside.
+    static var skipDelay: Double { UserDefaults.standard.object(forKey: "skipAfter") != nil ? UserDefaults.standard.double(forKey: "skipAfter") : 60 }
+    private(set) var skipOffered = false
+    /// The whole solution was shown on this entry (the 「?」 ladder's last rung).
+    @ObservationIgnored private(set) var solutionSeen = false
+    @ObservationIgnored private var skipTask: Task<Void, Never>?
+    /// Levels set aside with 「跳过这一封」: reached (the next level opens) but not delivered (SavedProgress.skippedKey).
+    private(set) var skipped: Set<Int> = []
+    @ObservationIgnored private var skippedIDs: Set<String> = []
     /// The 「?」 ladder (design-review-v2c1 §2): a level with a first hint (5-4's old line) shows it on the first press.
     @ObservationIgnored private var hintRung = 0
     /// 折数 (design-review-onboarding §4 ②) lives in `game.tally` (FoldCore.FoldTally): counted as the solver counts
@@ -357,6 +370,8 @@ final class GameModel {
         board = first.board; original = first.board; char = first.char; trail = first.trail; lastCloseStep = first.lastCloseStep
         doneIDs = SavedProgress.load()
         done = Set(doneIDs.compactMap { id in pack.levels.firstIndex { $0.id == id } })
+        skippedIDs = SavedProgress.loadSkipped(done: doneIDs)
+        skipped = Set(skippedIDs.compactMap { id in pack.levels.firstIndex { $0.id == id } })
         // after load's migration: an old save is seeded once, a new player starts with none seen (§7.3)
         slipFirstLevels = Slips.firstLevels(pack.levels, order: Chapter.all.flatMap(\.levelIDs), columnsPerPage: pack.config.columnsPerPage)
         slipsSeen = SavedProgress.loadSlips(done: doneIDs, firstLevels: slipFirstLevels)
@@ -518,6 +533,7 @@ final class GameModel {
         letterTask?.cancel(); letterTask = nil
         clearTransient()
         saidAngle = 0; hintAvailable = false; hintRung = 0
+        skipTask?.cancel(); skipTask = nil; skipOffered = false; solutionSeen = false
         angle = 0
         cameraPitch = Self.handPitch
         sync()
@@ -525,7 +541,7 @@ final class GameModel {
         MusicDirector.shared.setChapter(chapter.id)   // the chapter's timbre, crossfading over 2 s
         announce(intro, delay: 0.6)
         stuckTask = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(45))
+            try? await Task.sleep(for: .seconds(Self.stuckDelay))
             if !Task.isCancelled, let self, !self.won { self.hintAvailable = true }
         }
         // a first-timer on 1-1 who has not touched the page yet is shown how: a fingertip draws the top page down
@@ -648,7 +664,7 @@ final class GameModel {
         slipPaused = (false, false, false)
         if p.stuck && !won && !hintAvailable {
             stuckTask = Task { [weak self] in
-                try? await Task.sleep(for: .seconds(45))
+                try? await Task.sleep(for: .seconds(Self.stuckDelay))
                 if !Task.isCancelled, let self, !self.won { self.hintAvailable = true }
             }
         }
@@ -715,11 +731,12 @@ final class GameModel {
         saidAngle = Int(angle.rounded())
         if !hintAvailable {
             stuckTask = Task { [weak self] in
-                try? await Task.sleep(for: .seconds(45))
+                try? await Task.sleep(for: .seconds(Self.stuckDelay))
                 if !Task.isCancelled, let self, !self.won { self.hintAvailable = true }
             }
         }
         announce(L10n.t("restarted", ["pos": pos(game.char)]))
+        if solutionSeen { offerSkip() }   // seen the whole way and starting over: the skip need not wait
     }
 
     /// The per-level transient state a new level and a restart both clear.
@@ -755,6 +772,46 @@ final class GameModel {
         if hintRung == 0, let first = L10n.levelHint1(level.id) { show(first); return }
         let key = "hint.portrait.\(level.id)", portrait = L10n.t(key)
         show(orientation == .horizontalCrease && portrait != key ? portrait : levelText.hint)
+        noteSolutionSeen()
+    }
+
+    // MARK: 「跳过这一封」 (hint-skip)
+
+    /// A skip is offered on main-line levels except a chapter's last: the chapter's letter (and the next chapter, by the
+    /// strict rule) is only ever earned. 暗信 are optional already — leaving one is the skip.
+    var canSkip: Bool { !isDark && !isLastInChapter && chapter.levelIDs.contains(level.id) }
+
+    /// The ladder's last rung was shown: the skip comes after `skipDelay` more seconds without a win.
+    func noteSolutionSeen() {
+        guard canSkip, !won, !skipOffered else { return }
+        solutionSeen = true
+        guard skipTask == nil else { return }
+        skipTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(Self.skipDelay))
+            if !Task.isCancelled, let self { self.skipTask = nil; self.offerSkip() }
+        }
+    }
+
+    private func offerSkip() {
+        guard canSkip, !won, !aha, !skipOffered else { return }
+        skipTask?.cancel(); skipTask = nil
+        withAnimation(settings.motionReduced ? .linear(duration: 0.2) : .easeInOut(duration: 0.6)) { skipOffered = true }
+    }
+
+    /// Set this letter aside: saved as skipped (not delivered), and the level after it is returned to play next.
+    func skip() -> Int? {
+        guard skipOffered, canSkip, !won else { return nil }
+        stopAll(); skipTask?.cancel(); skipTask = nil
+        if !done.contains(index) {
+            skipped.insert(index); skippedIDs.insert(level.id); SavedProgress.saveSkipped(skippedIDs)
+        }
+        let next = index + 1
+        return isLevelOpen(next) ? next : nil
+    }
+
+    /// The level 「继续」 and the 下一封 fallback go to: the first neither delivered nor skipped, else the first skipped.
+    func nextToPlay(_ idx: [Int]) -> Int? {
+        idx.first { !done.contains($0) && !skipped.contains($0) } ?? idx.first { !done.contains($0) }
     }
 
     // MARK: the hinge
@@ -1707,6 +1764,8 @@ final class GameModel {
         stopWalk()
         done.insert(index)
         doneIDs.insert(level.id); SavedProgress.save(doneIDs)
+        if skippedIDs.remove(level.id) != nil { skipped.remove(index); SavedProgress.saveSkipped(skippedIDs) }
+        skipTask?.cancel(); skipTask = nil; skipOffered = false
         noteRest()
         bestFolds[level.id] = SavedProgress.recordFolds(game.tally.count, for: level.id)
         if isFinale { finaleBank = trail.last { !rules.isRight($0.c) } ?? trail.first }

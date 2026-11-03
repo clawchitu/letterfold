@@ -4951,6 +4951,36 @@
         }
       }
     },
+    "hint.soon": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "稍后可用"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "available soon"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "もうすぐ使える"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "곧 사용 가능"
+          }
+        }
+      }
+    },
     "inkBled": {
       "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
@@ -8637,6 +8667,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "접기 {n}, 기준 {par}"
+          }
+        }
+      }
+    },
+    "lv.skipped": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跳过了"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skipped"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "とばした"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "건너뜀"
+          }
+        }
+      }
+    },
+    "lv.skippedValue": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跳过了，还没送到，随时可以回来"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skipped, not delivered yet; come back any time"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "とばした。まだ届いていない、いつでも戻れる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "건너뜀, 아직 전하지 않음, 언제든 돌아올 수 있어요"
           }
         }
       }
@@ -13137,6 +13227,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "종이 위의 그림자는 그냥 종이예요. 나를 데려가는 건 틈 위의 그림자뿐이에요"
+          }
+        }
+      }
+    },
+    "skip.hint": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先去下一封，这一封随时可以回来送"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Go on to the next letter; you can come back to deliver this one any time"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次の手紙へ。この手紙はいつでも戻って届けられる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음 편지로 가요. 이 편지는 언제든 돌아와 전할 수 있어요"
+          }
+        }
+      }
+    },
+    "skip.offer": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跳过这一封"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip this letter"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この手紙をとばす"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 편지 건너뛰기"
           }
         }
       }

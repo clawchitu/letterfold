@@ -80,9 +80,10 @@ private struct FlyingPaper: View {
     }
 }
 
-/// A row's state: delivered (replays), the next letter, or tied shut with the reason a tap gives.
+/// A row's state: delivered (replays), skipped (set aside, replays; not delivered), the next letter, or tied shut
+/// with the reason a tap gives.
 private enum RowState {
-    case done, next
+    case done, skipped, next
     case locked(toast: String, value: String)
     var locked: Bool { if case .locked = self { return true }; return false }
 }
@@ -185,11 +186,12 @@ struct ContentsPage: View {
 
     @ViewBuilder private func mainRows(_ idx: [Int]) -> some View {
         let states: [RowState] = idx.map { i in
-            model.done.contains(i) ? .done : model.isLevelOpen(i) ? .next
+            model.done.contains(i) ? .done : model.skipped.contains(i) ? .skipped : model.isLevelOpen(i) ? .next
                 : .locked(toast: L10n.t("lv.lockedToast"), value: L10n.t("lv.lockedValue"))
         }
         // the thread runs down to the next letter and is knotted there; all delivered: knotted on the last row
-        let knot = states.firstIndex { if case .next = $0 { return true }; return false } ?? (states.allSatisfy { if case .done = $0 { return true }; return false } ? states.count - 1 : -1)
+        // (a skipped row is passed through like a delivered one; it is not the knot)
+        let knot = states.firstIndex { if case .next = $0 { return true }; return false } ?? (states.allSatisfy { switch $0 { case .done, .skipped: true; default: false } } ? states.count - 1 : -1)
         ForEach(Array(idx.enumerated()), id: \.element) { k, i in
             let id = model.pack.levels[i].id
             let code = "\(chapter.id)-\(k + 1)"
@@ -292,6 +294,7 @@ private struct ContentsRow: View {
             var v = L10n.t("lv.done")
             if let folds, let par { v += L10n.t("sep") + L10n.t("lv.parSpoken", ["n": folds, "par": par]) }
             return v
+        case .skipped: return L10n.t("lv.skippedValue")
         case .next: return L10n.t("lv.next")
         case let .locked(_, value): return value
         }
@@ -325,6 +328,13 @@ private struct ContentsRow: View {
                 // at par: a 3 pt dot beside the knot (review §4 ②)
                 Circle().fill(red).frame(width: 3, height: 3).opacity(folds != nil && par != nil && folds! <= par! ? 1 : 0)
             }
+        case .skipped:
+            // set aside, not delivered: an open envelope and the word, in quiet ink; no 折 count, no check, no red
+            HStack(spacing: 6) {
+                Text(L10n.t("lv.skipped")).font(fonts.songti(.regular, 15, relativeTo: .subheadline))
+                Image(systemName: "envelope.open").font(.system(size: 14, weight: .light))
+            }
+            .foregroundStyle(hc ? Tok.ink900 : Tok.ink600)
         case .next:
             Text(L10n.t("lv.next")).font(fonts.songti(.regular, 15, relativeTo: .subheadline)).foregroundStyle(Tok.ink900)
         case .locked:

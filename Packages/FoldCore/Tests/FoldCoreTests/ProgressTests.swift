@@ -84,6 +84,28 @@ final class ProgressTests: XCTestCase {
         XCTAssertFalse(SavedProgress.levelOpen("stand", in: ch1, done: Set(ch1)), "not a level of this chapter")
     }
 
+    /// hint-skip: a skipped level opens the next one inside its chapter and replays, but is not delivered — the next
+    /// chapter stays shut until it is won. Old saves (no key) load with no skips and unchanged progress.
+    func testSkippedLevelOpensTheNextButNotTheChapter() {
+        let ch1 = ["bridge", "facing", "back", "key", "ink"]
+        let done: Set<String> = ["bridge"]
+        XCTAssertTrue(SavedProgress.levelOpen("back", in: ch1, done: done, skipped: ["facing"]), "the level after a skip opens")
+        XCTAssertTrue(SavedProgress.levelOpen("facing", in: ch1, done: done, skipped: ["facing"]), "a skipped level replays")
+        XCTAssertFalse(SavedProgress.levelOpen("key", in: ch1, done: done, skipped: ["facing"]))
+        XCTAssertFalse(SavedProgress.chapterOpen(previous: ch1, done: Set(ch1).subtracting(["facing"])), "a skip never delivers")
+        // persistence: absent key = no skips; delivered wins over skipped; empty set removes the key
+        d.set(["bridge"], forKey: SavedProgress.idsKey)
+        XCTAssertEqual(SavedProgress.load(d), ["bridge"])
+        XCTAssertEqual(SavedProgress.loadSkipped(d, done: ["bridge"]), [])
+        SavedProgress.saveSkipped(["facing", "bridge"], d)
+        XCTAssertEqual(SavedProgress.loadSkipped(d, done: ["bridge"]), ["facing"])
+        XCTAssertEqual(SavedProgress.load(d), ["bridge"], "skips never touch the delivered list")
+        SavedProgress.saveSkipped([], d)
+        XCTAssertNil(d.object(forKey: SavedProgress.skippedKey))
+        SavedProgress.saveSkipped(["facing"], d); SavedProgress.reset(d)
+        XCTAssertNil(d.object(forKey: SavedProgress.skippedKey), "reset clears skips")
+    }
+
     /// Vol. 2 (design-review-v2c1 §3 存档): the seven new levels save under their IDs, so nothing earlier moves, and the
     /// strict rule holds across the volume boundary: chapter 5 opens only once all of chapter 4 is delivered.
     func testVolumeTwoOpensOnlyAfterAllOfChapterFour() throws {
