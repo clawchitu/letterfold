@@ -44,12 +44,12 @@ extension GameModel {
         var iced = false, delay = 0.0
         for r in rolls where r.slid > 0 || r.sank != nil {
             iced = true
-            let travel = r.slid > 0 && !rm ? Self.slideTravel(r.slid) : 0
+            let travel = !rm ? Self.slideTravel(r.slid) : 0   // a sink is timed even with no ice slid over (Codex P2)
             if travel > 0 { slides[r.from] = SlideFX(roll: r, start: now, travel: travel) }
             let kind: SinkFX.Kind? = r.sank == .water ? .water : r.sank == .ice ? .ice : r.filled ? .gap : nil
             // a slide (or anything under reduce motion) lands on its own clock; a roll straight into water lands with the
             // hinge's flight (settleRollFlight → landSinks)
-            if let kind { sinks[r.to] = SinkFX(kind: kind, at: r.slid > 0 || rm ? now.addingTimeInterval(travel) : nil) }
+            if let kind { sinks[r.to] = SinkFX(kind: kind, at: now.addingTimeInterval(travel)) }
             delay = max(delay, travel)
         }
         guard iced else { return false }
@@ -57,10 +57,10 @@ extension GameModel {
         let p = far.map { pan(of: $0.to) }.reduce(0, +) / Double(max(1, far.count))
         if delay > 0 { sound.iceScrape(delay, pan: p) }
         let water = far.contains { $0.sank == .water }, ice = far.contains { $0.sank == .ice }, down = far.contains(where: \.filled)
-        if down { sound.iceSink(water: water, ice: ice, pan: p, delay: delay) }
+        // the landing is dropped if undo / restart / a cancelled drag took the move back meanwhile (Codex P3)
         let touch = { [weak self] in
-            guard let self else { return }
-            if down { self.haptics.rollDrop() } else { self.haptics.rollLand() }
+            guard let self, delay == 0 || !self.slides.isEmpty || !self.sinks.isEmpty else { return }
+            if down { self.haptics.rollDrop(); self.sound.iceSink(water: water, ice: ice, pan: p) } else { self.haptics.rollLand() }
         }
         if delay > 0 { DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: touch) } else { touch() }
         return true

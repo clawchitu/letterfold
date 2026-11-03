@@ -257,7 +257,7 @@ extension GameModel {
         var out: [BallPose] = [], flying: Set<Cell> = []
         if inWin, let f = rollFlight {
             let u = RollCurve.u(a, fromBelow: f.fromBelow), s = RollCurve.s(u)
-            for r in f.rolls where r.slid == 0 {   // ch. 14: a slide runs on its own clock (slidePoses)
+            for r in f.rolls where r.slid == 0 && r.sank == nil {   // ch. 14: a slide or a sink runs on its own clock (slidePoses)
                 flying.insert(r.to)
                 out.append(BallPose(cell: r.from, toward: r.to, k: s, sink: r.filled ? max(0, (u - 0.85) / 0.15) : 0,
                                     squeeze: !r.filled && u > 0.9 ? sin(.pi * (u - 0.9) / 0.1) : 0))
