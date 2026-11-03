@@ -457,6 +457,17 @@ final class GameModel {
         }
         if d.object(forKey: "cameraPitch") != nil { m.cameraPitch = d.double(forKey: "cameraPitch") }   // screenshots: a mid-drag frame
         if d.bool(forKey: "autoplay") { m.autoplay() }
+        #if DEBUG
+        // -autoHint YES (screen recordings): press 「?」 as soon as it wakes, until the visual guide is up
+        if d.bool(forKey: "autoHint") || d.bool(forKey: "guideDemo") {
+            Task { @MainActor [weak m] in
+                while let m, m.guideAt == nil, !m.won {
+                    try? await Task.sleep(for: .seconds(1.5))
+                    if m.hintAvailable && m.guideAt == nil { m.hint() }
+                }
+            }
+        }
+        #endif
         if d.bool(forKey: "aha") { m.won = true; m.startAha() }
         return m
     }
@@ -825,6 +836,22 @@ final class GameModel {
         }
         guideStartAngle = angle
         showGuideStep()
+        #if DEBUG
+        // -guideDemo YES (screen recordings): do each step 3.5 s after it is shown, as a player following the guide
+        if UserDefaults.standard.bool(forKey: "guideDemo"), !off {
+            let st = guideSteps[k]
+            Task { @MainActor [weak self] in
+                try? await Task.sleep(for: .seconds(3.5))
+                guard let self, self.guideAt == k, !self.won else { return }
+                switch st.kind {
+                case let .walk(cells): self.tap(cells.last!)
+                case let .fold(t): self.foldTo(self.guideFold ?? t)
+                case .turn: self.flipBook()
+                case .face: break
+                }
+            }
+        }
+        #endif
         if skipTask != nil && !skipOffered { skipTask?.cancel(); skipTask = nil; noteSolutionSeen() }   // progress: the skip waits again
     }
 

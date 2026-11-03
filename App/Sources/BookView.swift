@@ -949,7 +949,7 @@ private struct FixedPage: View {
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: !covered && targets)
             // kept in the tree while the book is closed (hidden, not removed): re-inserting it mid-aha lost the
             // thread's redraw and left this page without its thread after the book reopened
-            if !covered && !model.guideRoute.isEmpty {
+            if targets && !covered && !model.guideRoute.isEmpty {
                 GuideRoute(model: model, pieces: threadPieces(model, geo, page: .fixed, cells: model.guideRoute),
                            end: model.guideRoute.last.flatMap { s.page(of: $0.c) == .fixed ? geo.center($0) : nil })
             }
@@ -997,7 +997,7 @@ private struct FrontFace: View {
             if let f = model.trifoldFace, f != 0 { ThirdPageTint() }
             // the top page stays tappable (and in VoiceOver) while it lies flat or stands: 2-1's goal is up there
             TileLayer(model: model, geo: geo, rotorSpace: rotorSpace, cells: cells, interactive: targets && (angle < 20 || model.posture == .standing || (model.liftedPageLive && model.rules.lit(model.angle))))
-            if !model.guideRoute.isEmpty && model.posture != .closed {
+            if targets && !model.guideRoute.isEmpty && model.posture != .closed {
                 GuideRoute(model: model, pieces: threadPieces(model, geo, page: .folding, cells: model.guideRoute),
                            end: model.guideRoute.last.flatMap { s.page(of: $0.c) == .folding ? geo.center($0) : nil })
             }
@@ -1636,9 +1636,27 @@ private struct CameraBook: View {
                     Path { p in p.addLines(pts); p.closeSubpath() }.fill(Tok.ink900.opacity(hc ? 0.08 : 0.04))
                     Path { p in p.addLines(pts); p.closeSubpath() }
                         .stroke(hc ? Color.black : Tok.ink900.opacity(0.45), style: StrokeStyle(lineWidth: hc ? 2.5 : 1.4, dash: [6, 4]))
-                    Text("\(Int((180 - t).rounded()))°").font(.system(size: 13, weight: .medium).monospacedDigit())
-                        .foregroundStyle(hc ? Color.black : Tok.ink700)
-                        .position(cam.project(edge0 + W / 2 * ex + (H + 14) * ft))
+                    // the angle to reach, only for a lean or a stand (shut / flat say it in the caption: "0°" read wrong)
+                    if t > 0 && t < model.config.foldMin {
+                        Text("\(Int((180 - t).rounded()))°").font(.system(size: 16, weight: .semibold).monospacedDigit())
+                            .foregroundStyle(hc ? Color.black : Tok.ink900)
+                            .padding(.horizontal, 7).padding(.vertical, 2)
+                            .background(Capsule().fill(hc ? Color.white : model.paper.color.opacity(0.92)))
+                            .overlay(Capsule().stroke(hc ? Color.black : Tok.ink900.opacity(0.35), lineWidth: hc ? 2 : 0.8))
+                            .position(cam.project(edge0 + W / 2 * ex + (H + 16) * ft))
+                    }
+                }
+                .opacity(model.guideOff ? 0.3 : 1)
+                .allowsHitTesting(false).accessibilityHidden(true)
+            }
+            // hint-skip ②: the walk step's dotted route, projected (a page past upright shows its back, where the pages'
+            // own routes cannot be seen); the shut book draws its route on the stack (BackFace)
+            if model.posture != .closed && !model.guideRoute.isEmpty {
+                let pts = model.guideRoute.map { cam.project(center3D($0, fold: fold, W: W, H: H)) }
+                let ink = hc ? Color.black : Tok.ink900.opacity(0.6)
+                ZStack {
+                    Path { p in p.addLines(pts) }.stroke(ink, style: StrokeStyle(lineWidth: hc ? 3.5 : 2.6, lineCap: .round, lineJoin: .round, dash: [0.1, 7]))
+                    Circle().stroke(ink, lineWidth: hc ? 2.5 : 1.6).frame(width: 20, height: 20).position(pts.last!)
                 }
                 .opacity(model.guideOff ? 0.3 : 1)
                 .allowsHitTesting(false).accessibilityHidden(true)
