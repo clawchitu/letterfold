@@ -938,7 +938,10 @@ final class GameModel {
                 } else { done = regime && char == end.cell }
             }
         case let .face(_, a):
-            if game.face == end.face && (a == nil || Guide.sameRegime(angle, a!, config: config)) { done = true } else { on = char == start.cell }
+            // taking the other crease remaps her square into the new face (12-4 `drop`: (7, 4) -> (3, 4) at 180°, then 55°):
+            // that halfway state is on the route
+            if game.face == end.face && (a == nil || Guide.sameRegime(angle, a!, config: config)) { done = true }
+            else { on = char == start.cell || (game.face == end.face && char == end.cell) }
         case .turn:
             if game.face == end.face { done = true } else { on = char == start.cell }
         }

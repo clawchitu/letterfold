@@ -217,4 +217,36 @@ final class HintSkipUITests: XCTestCase {
         XCTAssertTrue(app.buttons["win.next"].waitForExistence(timeout: 8))
         XCTAssertTrue(app.buttons["win.next"].label.contains("Read"), app.buttons["win.next"].label)
     }
+
+    /// Codex re-review: 12-4 `drop` — taking the third page's crease (her square remapped into face 2, shut) stays on the
+    /// route; the guide still asks for the 55° fold, never 「off the route」.
+    func testGuideStaysOnRouteThroughTheCreaseSwitch() {
+        let app = launch(["-screen", "level", "-startLevel", "76", "-fold.doneIDs", "(home,hole,return)", "-hintAfter", "1", "-probe", "YES",
+                          "-replayTo", "13", "-buttonControl", "YES"])
+        let hint = app.buttons["hint"], toast = app.descendants(matching: .any)["toast.bubble"]
+        XCTAssertTrue(hint.waitForExistence(timeout: 8)); XCTAssertTrue(waitEnabled(hint, 6))
+        hint.tap(); sleep(1); hint.tap()
+        XCTAssertTrue(toast.waitForExistence(timeout: 4))
+        XCTAssertTrue(toast.label.contains("Fold the third page") && toast.label.contains("55"), toast.label)
+        app.buttons["crease"].firstMatch.tap()
+        sleep(2)
+        XCTAssertFalse(toast.exists && toast.label.contains("Off the route"), toast.label)
+        hint.tap()                                    // the step again
+        XCTAssertTrue(toast.waitForExistence(timeout: 4))
+        XCTAssertTrue(toast.label.contains("Fold the third page"), toast.label)
+    }
+
+    /// Codex re-review: 11-1 `fro` — lean, walk one square, undo the walk: the guide comes back to the walk (the lean is
+    /// still made), not to the lean. The steps are made by -guideDemo (the guide's own 130°; the footer's lean is 135°,
+    /// where that walk does not go), the undo by the footer.
+    func testUndoAfterAWalkResyncsToTheWalk() {
+        let app = launch(["-screen", "level", "-startLevel", "68", "-hintAfter", "1", "-probe", "YES", "-buttonControl", "YES", "-guideDemo", "YES"])
+        let toast = app.descendants(matching: .any)["toast.bubble"]
+        let open = NSPredicate(format: "label CONTAINS 'Open the book flat'")
+        XCTAssertEqual(XCTWaiter().wait(for: [expectation(for: open, evaluatedWith: toast)], timeout: 25), .completed, "lean, then the walk, made")
+        app.buttons["undo"].tap()
+        let walk = NSPredicate(format: "label CONTAINS 'Walk the dotted line'")
+        XCTAssertEqual(XCTWaiter().wait(for: [expectation(for: walk, evaluatedWith: toast)], timeout: 2.5), .completed,
+                       "back to the walk, not the lean: \(toast.exists ? toast.label : "-")")
+    }
 }

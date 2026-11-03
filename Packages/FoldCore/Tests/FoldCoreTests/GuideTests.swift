@@ -44,4 +44,14 @@ final class GuideTests: XCTestCase {
         let steps = Guide.steps(l.solution!, trifold: true)
         XCTAssertTrue(steps.contains { if case .face(2, .some(125)) = $0.kind { return true }; return false }, "\(steps.map(\.kind))")
     }
+
+    /// Codex re-review: resyncing after an undo prefers the state with her angle regime (11-1 `fro`: (7, 0) at 130°).
+    func testResyncPrefersTheSameRegime() throws {
+        let l = try XCTUnwrap(try LevelPack.bundled().levels.first { $0.id == "fro" })
+        let sol = l.solution!, steps = Guide.steps(sol)
+        let j = Guide.match(sol, from: 0, now: .init(cell: Cell(7, 0), angle: 130, face: 0), config: .standard)
+        XCTAssertEqual(j, 1)
+        XCTAssertEqual(steps[Guide.stepIndex(steps, at: j!)].kind, .walk([Cell(7, 0), Cell(6, 0)]), "the walk, not the done fold")
+        XCTAssertEqual(Guide.match(sol, from: 0, now: .init(cell: Cell(7, 0), angle: 0, face: 0), config: .standard), 0)
+    }
 }

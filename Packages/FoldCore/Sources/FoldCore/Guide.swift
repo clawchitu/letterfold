@@ -63,15 +63,16 @@ public enum Guide {
     }
 
     /// Finding the player's place on the route again (after an undo, a restart, a detour): the first solution index at
-    /// or after `from` with her square and face and the book shut or not as she has it. nil: off the route.
+    /// or after `from` with her square, face and angle regime (11-1 `fro`: back on (7, 0) at 130° is state 1, not the
+    /// flat start); failing that, the first with her square and face and the book shut or not as she has it (ch. 1–2
+    /// rest at detents the solver's angle only resembles). nil: off the route.
     public static func match(_ solution: [[Int]], from: Int, now: State, config: FoldConfig) -> Int? {
         guard from < solution.count else { return nil }
+        let states = solution[from...].map(State.init)
+        let here = states.indices.filter { states[$0].cell == now.cell && states[$0].face == now.face }
+        if let j = here.first(where: { sameRegime(states[$0].angle, now.angle, config: config) }) { return from + j }
         let shut = now.angle >= config.foldMin
-        for j in from..<solution.count {
-            let s = State(solution[j])
-            if s.cell == now.cell && s.face == now.face && (s.angle >= config.foldMin) == shut { return j }
-        }
-        return nil
+        return here.first { (states[$0].angle >= config.foldMin) == shut }.map { from + $0 }
     }
 
     /// The step to show when the player stands on solution state `j`: the one that starts there or contains it;
