@@ -931,6 +931,36 @@
         }
       }
     },
+    "ch.13.line": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "河结冰了。灯一亮，没有影子的地方就化。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The river froze. Lift the lamp, and whatever has no shadow melts."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "川が凍った。灯りを上げると、影のないところから溶ける。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "강이 얼었다. 등불을 들면, 그림자 없는 곳부터 녹는다."
+          }
+        }
+      }
+    },
     "ch.2": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -1801,6 +1831,36 @@
         }
       }
     },
+    "chHead.13": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "十三 · 冰"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "13 · Ice"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "十三 · 氷"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "13장 · 얼음"
+          }
+        }
+      }
+    },
     "chHead.2": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -2577,6 +2637,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "내려앉을 자리가 막혀 학이 날지 못해요"
+          }
+        }
+      }
+    },
+    "credit": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haoqiang Lyu 作品 · 合作 Chitu、Shuai Yuan"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "By Haoqiang Lyu · with Chitu and Shuai Yuan"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haoqiang Lyu 作品 · 協力 Chitu、Shuai Yuan"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haoqiang Lyu 작품 · 함께 Chitu, Shuai Yuan"
           }
         }
       }
@@ -3867,6 +3957,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "겹친 4열로 읽어요"
+          }
+        }
+      }
+    },
+    "froze": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "摊平了，河又冻上"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laid flat: the river froze again"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "寝かせた。川がまた凍った"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "눕혔어요. 강이 다시 얼었어요"
           }
         }
       }
@@ -6511,6 +6631,36 @@
         }
       }
     },
+    "kind.u": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "水"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "water"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "水"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "물"
+          }
+        }
+      }
+    },
     "kind.x": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -6627,6 +6777,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "문진돌(돌)"
+          }
+        }
+      }
+    },
+    "kind.~": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "冰"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ice"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "氷"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "얼음"
           }
         }
       }
@@ -7377,6 +7557,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "오른쪽 강가에서 온 편지"
+          }
+        }
+      }
+    },
+    "letter.13.body": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "河结冰了，一眼全是路。\n可你一举灯，没有影子的地方就化——\n躲到石头底下去。\n它挡了你一卷，现在它是伞。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The river froze: one look, and it is all road.\nBut raise the lamp and whatever has no shadow melts —\nget under the stone.\nIt stood in your way for a whole book. Now it is your umbrella."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "川が凍った。ひと目で、ぜんぶ道。\nでもきみが灯りを上げると、影のないところは溶ける——\n石の下に隠れて。\n一巻のあいだ、きみをふさいだ石。いまは傘。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "강이 얼었어. 한눈에, 전부 길이야.\n그런데 네가 등불을 들면, 그림자 없는 곳은 녹아—\n돌 밑으로 숨어.\n한 권 내내 너를 막던 돌이, 이제는 우산이야."
+          }
+        }
+      }
+    },
+    "letter.13.end": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷四《冰》第一章完。\n下一章，石头停不下来。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of Book Four, chapter one.\nNext, the stone will not stop."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第四巻『氷』第一章、完。\n次の章、石は止まらない。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제4권 《얼음》 1장 끝.\n다음 장, 돌이 멈추지 않아."
+          }
+        }
+      }
+    },
+    "letter.13.sign": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——左岸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— the Left Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——左岸より"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— 왼쪽 강가에서"
+          }
+        }
+      }
+    },
+    "letter.13.title": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左岸来信"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A Letter from the Left Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左岸からの手紙"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "왼쪽 강가에서 온 편지"
           }
         }
       }
@@ -9511,6 +9811,66 @@
         }
       }
     },
+    "melted": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "脚下的冰化了，纸人落进了水里，回到起点"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The ice under your feet melted; the paper figure fell into the river. Back to the start."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "足もとの氷が溶けて、紙の人形は川に落ちた。最初から"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "발밑의 얼음이 녹아, 종이 인형이 강에 빠졌어요. 처음부터"
+          }
+        }
+      }
+    },
+    "melted.n": {
+      "comment": "UI. From fold-proto i18n.js. Placeholders: {n}",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "停住了：{n} 格冰化成了水"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "At rest: {n} squares of ice melted"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "止まった：氷が{n}マス、水になった"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "멈췄어요: 얼음 {n}칸이 물이 됐어요"
+          }
+        }
+      }
+    },
     "mode.fold": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -10471,6 +10831,36 @@
         }
       }
     },
+    "noun.u": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "水"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "water"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "水"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "물"
+          }
+        }
+      }
+    },
     "noun.x": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -10497,6 +10887,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "돌"
+          }
+        }
+      }
+    },
+    "noun.~": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "冰"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ice"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "氷"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "얼음"
           }
         }
       }
@@ -11187,6 +11607,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "두꺼운 종이. 오른쪽 페이지 바깥에 셋째 페이지가 이어진다. 제 접는 선을 가졌다."
+          }
+        }
+      }
+    },
+    "paper.ch13": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "皮纸，透光。河面结了一层冰。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vellum; the light comes through. A skin of ice on the river."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "薄い皮紙。光が透ける。川に氷が張っている。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "얇은 가죽 종이. 빛이 비친다. 강에 얼음이 얼었다."
           }
         }
       }
@@ -14221,6 +14671,96 @@
         }
       }
     },
+    "slip.ice.body": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "结了冰的河，摊平时是纸，能走。书停在灯窗里，受光那页上没有影子罩着的冰就化成水——站在上面就落水。摊平，水又冻回去。合上时石头正对的冰会被压碎，碎了就不再冻。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The frozen river is paper while the book lies flat: you can walk it. When the hinge comes to rest in the lamp window, every ice square on the lit page that no shadow covers melts into water — stand on it and you fall. Lay the book flat and the water freezes back. Ice that a stone comes down on when the book closes is crushed, and never freezes again."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "凍った川。本が平らなあいだは紙で、歩ける。灯りの窓で本が止まると、光の当たるページの、影に覆われていない氷は水になる——上に立っていれば落ちる。寝かせれば、水はまた凍る。閉じたとき石の向かいにある氷は砕けて、二度と凍らない。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "얼어붙은 강. 책이 평평할 때는 종이라서 걸을 수 있어요. 등불 창에서 책이 멈추면, 빛을 받는 페이지에서 그림자에 덮이지 않은 얼음은 물이 돼요—그 위에 서 있으면 빠져요. 눕히면 물은 다시 얼어요. 닫힐 때 돌과 마주 보는 얼음은 부서지고, 다시는 얼지 않아요."
+          }
+        }
+      }
+    },
+    "slip.ice.pic": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：摊平走上冰；斜起停住，影子外的冰化了；放平又冻上。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: walk out on the ice; lean and stop — the ice outside the shadow melts; lay it flat and it freezes."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：平らなまま氷の上へ。傾けて止めると、影の外の氷が溶ける。寝かせると、また凍る。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 평평한 채로 얼음 위로. 기울여 멈추면, 그림자 밖의 얼음이 녹아요. 눕히면 다시 얼어요."
+          }
+        }
+      }
+    },
+    "slip.ice.title": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "冰"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ice"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "氷"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "얼음"
+          }
+        }
+      }
+    },
     "slip.ink.body": {
       "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
       "extractionState": "manual",
@@ -16947,6 +17487,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "기울기"
+          }
+        }
+      }
+    },
+    "vol.4": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷四"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Book Four"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第四巻"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제4권"
           }
         }
       }
