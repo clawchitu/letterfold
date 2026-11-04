@@ -513,7 +513,8 @@ private struct MiniPage: View {
             } else {
                 if !hc { frame.fill(dashed ? paper.tileFace.opacity(0.35) : paper.tileFace.opacity(0.85)) } else if !dashed { frame.fill(.white) }
                 frame.stroke(edge, style: StrokeStyle(lineWidth: lw, dash: dashed ? [3, 2] : []))
-                glyph(t, c).rotationEffect(.degrees(sideways ? -90 : 0))
+                // a mirror's face is page geometry (it turns with the page), the other glyphs stay upright
+                glyph(t, c).rotationEffect(.degrees(sideways && t != .mirror ? -90 : 0))
             }
             ForEach(Array(state.marks.enumerated()), id: \.offset) { _, m in
                 if m.0 == c && t != m.1 {
@@ -531,6 +532,8 @@ private struct MiniPage: View {
             Circle().stroke(hc ? Tok.hcLine : paper.thread, lineWidth: hc ? 2 : 1.3).frame(width: 9, height: 9)
         case .ink:
             WetInk(size: MiniBook.tile, paper: paper, mirrored: c.c >= 4, variant: 0)
+        case .mirror:   // ch. 15: its ╱ / ╲ as the mini spread lies (Codex P3: not always ╱)
+            TileFace(tile: t, size: MiniBook.tile, paper: paper, bare: true, mirrorRising: MirrorTurn(c, spread: MiniBook.spread).rising)
         default:
             TileFace(tile: t, size: MiniBook.tile, paper: paper, bare: true)
         }
