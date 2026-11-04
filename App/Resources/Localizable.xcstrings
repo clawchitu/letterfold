@@ -1051,6 +1051,66 @@
         }
       }
     },
+    "ch.15.line": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影子只有一格宽。放一面镜子，它就顺着河流下去。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A shadow is one square wide. Set a mirror in it and it runs down the river."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影は一マスの幅しかない。鏡を一枚置けば、影は川に沿って流れていく。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자는 한 칸 너비뿐이다. 거울 하나를 놓으면, 그림자는 강을 따라 흘러내린다."
+          }
+        }
+      }
+    },
+    "ch.16.line": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "春天了。化了的，不再冻。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spring. What has melted does not freeze again."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "春が来た。溶けたものは、もう凍らない。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "봄이다. 녹은 것은 다시 얼지 않는다."
+          }
+        }
+      }
+    },
     "ch.2": {
       "comment": "UI. Native app only.",
       "extractionState": "manual",
@@ -1977,6 +2037,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "14장 · 미끄러짐"
+          }
+        }
+      }
+    },
+    "chHead.15": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "十五 · 镜"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "15 · Mirror"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "十五 · 鏡"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "15장 · 거울"
+          }
+        }
+      }
+    },
+    "chHead.16": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "十六 · 融"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "16 · Thaw"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "十六 · 融ける"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "16장 · 해빙"
           }
         }
       }
@@ -6571,6 +6691,36 @@
         }
       }
     },
+    "kind.m": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "镜"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mirror"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鏡"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "거울"
+          }
+        }
+      }
+    },
     "kind.o": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -8012,6 +8162,246 @@
       }
     },
     "letter.14.title": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右岸来信"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A Letter from the Right Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右岸からの手紙"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오른쪽 강가에서 온 편지"
+          }
+        }
+      }
+    },
+    "letter.15.body": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影子只有一格，河有三格。\n我放了一面镜子，影子就顺着河流下去——\n整条河都在荫里。\n别让胶把镜子拿走。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A shadow is one square; the river is three.\nI set a mirror in it, and the shadow ran down the river —\nthe whole river in the shade.\nDo not let the glue take the mirror."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "影は一マス、川は三マス。\n鏡を一枚置いたら、影が川に沿って流れていった——\n川ぜんぶが陰のなか。\n糊に鏡を持っていかせないで。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림자는 한 칸, 강은 세 칸.\n거울 하나를 놓았더니, 그림자가 강을 따라 흘러내렸어—\n강 전체가 그늘 속이야.\n풀이 거울을 가져가게 두지 마."
+          }
+        }
+      }
+    },
+    "letter.15.end": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷四《冰》第三章完。\n下一章，春天。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of Book Four, chapter three.\nNext, spring."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第四巻『氷』第三章、完。\n次の章、春。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제4권 《얼음》 3장 끝.\n다음 장, 봄."
+          }
+        }
+      }
+    },
+    "letter.15.sign": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——左岸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— the Left Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——左岸より"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— 왼쪽 강가에서"
+          }
+        }
+      }
+    },
+    "letter.15.title": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左岸来信"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A Letter from the Left Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左岸からの手紙"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "왼쪽 강가에서 온 편지"
+          }
+        }
+      }
+    },
+    "letter.16.body": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "春天了。化了的，不再冻。\n你护了一卷的河——\n最后一次，让它化完吧。\n冰化了，河又是河。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It is spring. What has melted does not freeze again.\nYou kept this river for a whole book —\none last time, let it melt through.\nThe ice is gone; the river is a river again."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "春が来た。溶けたものは、もう凍らない。\n一巻のあいだ、きみが守ってきた川——\n最後にもう一度、ぜんぶ溶かしてしまおう。\n氷は溶けて、川はまた川。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "봄이 왔어. 녹은 것은 다시 얼지 않아.\n한 권 내내 네가 지켜 온 강—\n마지막으로 한 번, 다 녹게 두자.\n얼음이 녹으니, 강은 다시 강이야."
+          }
+        }
+      }
+    },
+    "letter.16.end": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卷四《冰》完。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of Book Four, Ice."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第四巻『氷』、完。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제4권 《얼음》 끝."
+          }
+        }
+      }
+    },
+    "letter.16.sign": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——右岸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— the Right Bank"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "——右岸より"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "— 오른쪽 강가에서"
+          }
+        }
+      }
+    },
+    "letter.16.title": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
       "localizations": {
@@ -11251,6 +11641,36 @@
         }
       }
     },
+    "noun.m": {
+      "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "镜"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mirror"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鏡"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "거울"
+          }
+        }
+      }
+    },
     "noun.o": {
       "comment": "VoiceOver / announcement. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -12177,6 +12597,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "얇은 가죽 종이. 빛이 비친다. 얼음은 거울처럼 빛나고, 돌은 닿기만 해도 미끄러진다."
+          }
+        }
+      }
+    },
+    "paper.ch15": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "皮纸，透光。河里立着一面镜子，影子一落上去就折成一列。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vellum; the light comes through. A mirror stands in the river, and a shadow that lands on it folds into a column."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "薄い皮紙。光が透ける。川に鏡が立ち、影は落ちたとたん一列に折れる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "얇은 가죽 종이. 빛이 비친다. 강에 거울이 서 있고, 그림자는 닿는 순간 한 줄로 꺾인다."
+          }
+        }
+      }
+    },
+    "paper.ch16": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "皮纸，透光。冰纹褪了，河面在化。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vellum; the light comes through. The frost has faded from it; the river is going."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "薄い皮紙。光が透ける。氷の紋は薄れ、川が溶けていく。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "얇은 가죽 종이. 빛이 비친다. 얼음 무늬는 옅어지고, 강이 녹아 간다."
           }
         }
       }
@@ -15541,6 +16021,96 @@
         }
       }
     },
+    "slip.mirror.body": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "镜子是一块石头：挡路、投影、压冰，都和石头一样。可影子落到镜子上就不停：顺着镜子那一列往下折，一直罩到第一个挡住它的东西或页边——荫里的冰不化，荫里的缺口能走。折影不随角度滑：影子打在镜子上它就在，一离开镜子它就没了。胶粘走镜子，它到对页还是镜子。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A mirror is a stone: it blocks, it shades, it crushes ice like any stone. But a shadow that lands on a mirror does not stop there: it is bent down the mirror's column, to the first thing that blocks it or the page edge — ice in its shade stays ice, a gap in its shade is floor. A bent shadow does not slide with the angle: while the shadow is on the mirror it is there; the moment it leaves, it is gone. Glue that takes a mirror keeps it a mirror on the other page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鏡は石：道をふさぎ、影を落とし、氷を砕く——石と同じ。でも鏡に落ちた影はそこで止まらない：鏡の列に沿って下へ折れ、最初にさえぎるものか、ページの端まで届く——陰の氷は溶けず、陰のすき間は歩ける。折れた影は角度で滑らない：影が鏡に当たっているあいだはあり、離れたとたんに消える。糊が鏡を持っていっても、向こうのページで鏡のまま。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "거울은 돌이에요: 길을 막고, 그림자를 드리우고, 얼음을 부수는 것도 돌과 같아요. 하지만 거울에 닿은 그림자는 거기서 멈추지 않아요: 거울의 세로줄을 따라 아래로 꺾여, 처음 막는 것이나 페이지 끝까지 닿아요—그늘 속 얼음은 녹지 않고, 그늘 속 틈은 걸을 수 있어요. 꺾인 그림자는 각도를 따라 미끄러지지 않아요: 그림자가 거울에 닿아 있는 동안은 있고, 떠나는 순간 사라져요. 풀이 거울을 가져가도, 건너편 페이지에서 그대로 거울이에요."
+          }
+        }
+      }
+    },
+    "slip.mirror.pic": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：斜起，影子落到镜子上，整列冰都在荫里；再斜一点，影子离开镜子，整列一起没了。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: lean — the shadow lands on the mirror and the whole column of ice is in the shade; lean a little more, the shadow leaves the mirror, and the column goes with it."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：傾けると、影が鏡に落ち、氷の列ぜんぶが陰に入る。もう少し傾けると影は鏡を離れ、列ごと消える。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 기울이면 그림자가 거울에 닿고, 얼음 세로줄 전체가 그늘에 들어요. 조금 더 기울이면 그림자가 거울을 떠나고, 세로줄도 함께 사라져요."
+          }
+        }
+      }
+    },
+    "slip.mirror.title": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "镜"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mirror"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鏡"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "거울"
+          }
+        }
+      }
+    },
     "slip.next": {
       "comment": "UI. Native app only. 物件笺 (fold-proto design-onboarding §2.4–2.5). ja/ko: TODO-native-check.",
       "extractionState": "manual",
@@ -16471,6 +17041,96 @@
         }
       }
     },
+    "slip.thaw.body": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "春天：停在灯窗里化掉的水，摊平不冻，合上也不冻。每停一次，河就少一截，停过的角都算数。化开的地方是缺口：影子罩住它就能走、能载你；松石滑进去就沉成纸；合上时，脚下那叠若是水，你就掉到对页去。石头正对的冰照旧压碎。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spring: the water a rest in the lamp window makes does not freeze back — not when the book lies flat, not at a press. Every rest spends a length of the river, and every angle you stopped at counts. What has melted is a gap: a shadow over it is floor and carries you; a loose stone that slides into it sinks and is paper; and when the book closes, a stack whose square under you is water drops you onto the facing page. A stone still crushes the ice it comes down on."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "春：灯の窓で止まって溶けた水は、寝かせても閉じても凍らない。止まるたびに川は一節ずつ減り、止めた角度はぜんぶ数に入る。溶けたところはすき間：影がかかれば歩けて、運んでくれる。転がる石が滑り込めば沈んで紙になる。閉じたとき足もとの重なりが水なら、向こうのページへ落ちる。石の真下の氷は、やはり砕ける。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "봄: 등불 창에서 멈춰 녹은 물은 눕혀도, 닫아도 다시 얼지 않아요. 멈출 때마다 강이 한 토막씩 줄고, 멈춘 각도는 전부 셈에 들어가요. 녹은 자리는 틈이에요: 그림자가 덮으면 걸을 수 있고, 나를 실어 가요. 구르는 돌이 미끄러져 들어가면 가라앉아 종이가 돼요. 닫았을 때 발밑 겹이 물이면, 건너편 페이지로 떨어져요. 돌 바로 밑의 얼음은 여전히 부서져요."
+          }
+        }
+      }
+    },
+    "slip.thaw.pic": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图：停一次，没罩住的冰化了；摊平，水还是水；合上，从水那叠掉到对面。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture: one rest, and the ice outside the shadow melts; lay the book flat, the water stays; close it, and you fall through that stack to the other page."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "図：一度止めると、影の外の氷が溶ける。寝かせても水のまま。閉じると、水の重なりから向こうのページへ落ちる。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그림: 한 번 멈추면 그림자 밖의 얼음이 녹아요. 눕혀도 물 그대로. 닫으면 물인 겹에서 건너편 페이지로 떨어져요."
+          }
+        }
+      }
+    },
+    "slip.thaw.title": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "融"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thaw"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "融ける"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "해빙"
+          }
+        }
+      }
+    },
     "slip.trifold.body": {
       "comment": "UI. From fold-proto i18n.js. ja/ko: TODO-native-check.",
       "extractionState": "manual",
@@ -17307,6 +17967,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "책은 세운 자리와 닫힌 자리 사이 어디에서든 멈출 수 있어요"
+          }
+        }
+      }
+    },
+    "thawed": {
+      "comment": "UI. From fold-proto i18n.js.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "春天：摊平了，水还是水"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spring: laid flat, the water stays water"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "春：寝かせても、水は水のまま"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "봄: 눕혀도, 물은 물 그대로"
           }
         }
       }
