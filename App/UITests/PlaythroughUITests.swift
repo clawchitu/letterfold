@@ -11,6 +11,8 @@ class PlaythroughUITests: XCTestCase {
     var shotIndex = 0
     /// The book is shut right now (the next stand starts from shut).
     var shut = false
+    /// The app's -restDelay (s): after a hinge move, wait for the rest to land before the next act.
+    var restWait: TimeInterval = 0
 
     override func setUp() { continueAfterFailure = false }
 
@@ -73,6 +75,7 @@ class PlaythroughUITests: XCTestCase {
                 shut = false
             case .stand:
                 stand(fromClosed: shut); shut = false
+                if restWait > 0 { Thread.sleep(forTimeInterval: restWait) }
             case .flip:
                 // 「翻」 (vol. 2 ch. 6): the button shows only while the book is shut and a third page exists
                 let b = app.buttons["flip"]
@@ -82,12 +85,15 @@ class PlaythroughUITests: XCTestCase {
             case let .lean(p, tol):
                 let got = f.lean(to: p, tol: tol)
                 XCTAssertLessThanOrEqual(abs(got - p), tol, "\(id): act \(k) leans to \(p)±\(tol), got \(got)")
+                if restWait > 0 { Thread.sleep(forTimeInterval: restWait) }
                 shut = false
             case let .creep(p, tol):
                 let got = f.creep(to: p, tol: tol)
                 XCTAssertLessThanOrEqual(abs(got - p), tol, "\(id): act \(k) rides to \(p)±\(tol), got \(got)")
+                if restWait > 0 { Thread.sleep(forTimeInterval: restWait) }
                 shut = false
             }
+            print("ACT \(id) \(k) \(act): fold=\(fold.value as? String ?? "?") \(app.descendants(matching: .any)["probe.state"].value as? String ?? "")")
         }
     }
 

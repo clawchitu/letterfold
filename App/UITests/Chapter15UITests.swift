@@ -13,9 +13,10 @@ final class Chapter15UITests: PlaythroughUITests {
     func launch(_ n: Int, _ extra: [String] = [], opener: Bool = false) {
         app = XCUIApplication()
         app.launchArguments = ["-resetProgress", "YES", "-noSlips", "YES", "-probe", "YES", "-startLevel", "\(n)",
-                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"] + (opener ? [] : ["-noOpener", "YES"]) + extra
+                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"] + (opener ? ["-openerHold", "YES"] : ["-noOpener", "YES", "-restDelay", "2.5"]) + extra
         app.launch()
         f = FoldDriver(app: app)
+        restWait = opener ? 0 : 2.7   // -restDelay: a lean that takes several drags rests once, where it lands
         if !opener {
             XCTAssertTrue(fold.waitForExistence(timeout: 8), "\(n)")
             Thread.sleep(forTimeInterval: 1)
@@ -63,7 +64,7 @@ final class Chapter15UITests: PlaythroughUITests {
         launch(87, opener: true)
         let opener = app.descendants(matching: .any)["chapter.opener"]
         XCTAssertTrue(opener.waitForExistence(timeout: 8), "「十五 · 镜」 opens the chapter")
-        Thread.sleep(forTimeInterval: 2.8)
+        Thread.sleep(forTimeInterval: 1.6)
         shot("opener-15")
         app.terminate()
     }
@@ -76,7 +77,7 @@ final class Chapter15GuideUITests: XCTestCase {
         for (id, n) in Chapter15UITests.levels {
             let app = XCUIApplication()
             app.launchArguments = ["-resetProgress", "YES", "-noOpener", "YES", "-noSlips", "YES", "-fold.slipsIntroduced", "YES",
-                                   "-screen", "level", "-startLevel", "\(n)", "-hintAfter", "1", "-guideDemo", "YES",
+                                   "-screen", "level", "-startLevel", "\(n)", "-hintAfter", "1", "-guideDemo", "YES", "-noOpener", "YES",
                                    "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
             app.launch()
             XCTAssertTrue(app.buttons["win.next"].waitForExistence(timeout: 120), "\(id): following the guide wins")

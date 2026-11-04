@@ -77,7 +77,8 @@ struct IceGrain: View {
 
 extension GameModel {
     /// How long the page must stay put before the ice melts (design-vol4.md §1: the 停 beat, ≥ 300 ms after the snap).
-    static let iceRestDelay = 0.3
+    /// -restDelay S (UI tests): a longer wait, so a lean that takes several drags to land rests once, where it ends.
+    static let iceRestDelay: Double = { let v = UserDefaults.standard.double(forKey: "restDelay"); return v > 0 ? v : 0.3 }()
 
     /// The page has come to rest (GameModel.arrived, or a button / VoiceOver move that landed where it was): leaning in the
     /// lamp window, the unshadowed ice melts after 300 ms if nothing moves the page meanwhile; flat, the water freezes now.

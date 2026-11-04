@@ -7,6 +7,21 @@ import XCTest
 final class Chapter15Tests: XCTestCase {
     static let ids = ["mirror", "bend", "glued", "slide15", "take15"]
     let rules = Rules(.standard)
+
+    /// 15-2 bend: she closes from (5,3), whose ice the facing stone crushes at the press. A hand's wobble on the shut
+    /// book (back a degree, still past foldMin, then on) must not drop her — only an opening below foldMin re-reads her.
+    func testBendShutWobbleKeepsHerOnTheStack() throws {
+        let pack = try LevelPack.bundled()
+        for stop in [156.0, 160, 170, 179] {
+            let g = try FoldGame(level: try XCTUnwrap(pack.levels.first { $0.id == "bend" }), config: pack.config)
+            for s in try XCTUnwrap(g.path(to: Cell(5, 3))) { g.step(to: s) }
+            var a = 0.0
+            while a < stop { a = min(stop, a + 2); g.setAngle(a) }
+            g.setAngle(stop - 0.8); g.setAngle(180)
+            XCTAssertEqual(g.char, Cell(5, 3), "wobble at \(stop)")
+        }
+    }
+
     /// A test board; a map without a start gets one on the first paper square of its last row (off the tested columns).
     func board(_ map: [String], lamp: String? = nil) throws -> Board {
         var m = map

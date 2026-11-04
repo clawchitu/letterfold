@@ -85,7 +85,7 @@ final class Chapter14GuideUITests: XCTestCase {
         for (id, n) in Chapter14UITests.levels {
             let app = XCUIApplication()
             app.launchArguments = ["-resetProgress", "YES", "-noOpener", "YES", "-noSlips", "YES", "-fold.slipsIntroduced", "YES",
-                                   "-screen", "level", "-startLevel", "\(n)", "-hintAfter", "1", "-guideDemo", "YES",
+                                   "-screen", "level", "-startLevel", "\(n)", "-hintAfter", "1", "-guideDemo", "YES", "-noOpener", "YES",
                                    "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
             app.launch()
             XCTAssertTrue(app.buttons["win.next"].waitForExistence(timeout: 90), "\(id): following the guide wins")
