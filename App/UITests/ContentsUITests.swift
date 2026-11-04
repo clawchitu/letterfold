@@ -260,6 +260,27 @@ final class HintSkipUITests: XCTestCase {
     /// Ch. 14 「滑」 14-2 `aim`: the guide's lean is a rest (the ice melts), then flat — the stone rolls into that water
     /// and sinks — then the close and the lean through the gate. Followed step by step it never says 「Off the route」
     /// (the sunk square is paper, as the solution expects) and wins.
+    /// Ch. 15 「镜」 15-2 `bend` and ch. 16 「融」 16-2 `hole16`: the guide's leans must land where the shadow hits the mirror
+    /// (bend: the ladder up the bent column) and where the spring rest melts the hole (hole16: a rest is for good).
+    /// Followed step by step it never says 「Off the route」 and wins.
+    func testMirrorAndSpringGuidesStayOnRoute() {
+        for (id, n) in [("bend", 88), ("hole16", 93)] {
+            let app = launch(["-screen", "level", "-startLevel", "\(n)", "-hintAfter", "1", "-probe", "YES", "-guideDemo", "YES"])
+            let toast = app.descendants(matching: .any)["toast.bubble"]
+            let next = app.buttons["win.next"]
+            var seen: [String] = []
+            let end = Date().addingTimeInterval(120)
+            while Date() < end && !next.exists {
+                if toast.exists, let l = Optional(toast.label), !l.isEmpty, seen.last != l { seen.append(l) }
+                Thread.sleep(forTimeInterval: 0.25)
+            }
+            keep(app, "guide-\(id)")
+            XCTAssertTrue(next.exists, "\(id): following the guide wins: \(seen)")
+            XCTAssertFalse(seen.contains { $0.contains("Off the route") }, "\(id): \(seen)")
+            app.terminate()
+        }
+    }
+
     func testSlideGuideStaysOnRouteThroughTheSink() {
         let app = launch(["-screen", "level", "-startLevel", "84", "-hintAfter", "1", "-probe", "YES", "-guideDemo", "YES"])
         let toast = app.descendants(matching: .any)["toast.bubble"]

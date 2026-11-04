@@ -61,6 +61,8 @@
 		F2F1AE66279EFC5F18207868 /* Chapter6UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442751BD211723A6FF2D59D6 /* Chapter6UITests.swift */; };
 		F6517ABF6F79233473DE2C2F /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EBF8A2E746E16AE1153A20 /* GameModel.swift */; };
 		F7881D8482F568766282A896 /* Chapter14UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627F28738115E3DC874240A6 /* Chapter14UITests.swift */; };
+		ADCD55FDE42C60A68A8FFA5B /* Chapter16UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBF642751369644A7219FE8 /* Chapter16UITests.swift */; };
+		6CB1DB80B8FAC5859BA100D0 /* Chapter15UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D0AD66FEC3F21DE621D973 /* Chapter15UITests.swift */; };
 		F82CD4AB1512484854127089 /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9AA4B7A8AA01181783D9B58 /* Sound.swift */; };
 		FEF3E51D6AE2D0172801FBE4 /* Chapter10Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A59202716B0AC3485A116A1 /* Chapter10Marks.swift */; };
 /* End PBXBuildFile section */
@@ -99,6 +101,8 @@
 		59688079C7688C54335A73BD /* Chapter5UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter5UITests.swift; sourceTree = "<group>"; };
 		5DCB74D3A0DCC9D491D54DCD /* FoldCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FoldCore; path = Packages/FoldCore; sourceTree = SOURCE_ROOT; };
 		627F28738115E3DC874240A6 /* Chapter14UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter14UITests.swift; sourceTree = "<group>"; };
+		2CBF642751369644A7219FE8 /* Chapter16UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter16UITests.swift; sourceTree = "<group>"; };
+		05D0AD66FEC3F21DE621D973 /* Chapter15UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter15UITests.swift; sourceTree = "<group>"; };
 		661C1BE741FF0CB5D1E9EE51 /* PlaythroughUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaythroughUITests.swift; sourceTree = "<group>"; };
 		6977AD3FCF19C5CAFDFFFA7E /* Chapter10UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter10UITests.swift; sourceTree = "<group>"; };
 		6DAF188A41CB92A6FB2A0D7D /* Chapter8Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter8Marks.swift; sourceTree = "<group>"; };
@@ -164,6 +168,8 @@
 				E36B0909E3FBA8D453FDC2A5 /* Chapter12UITests.swift */,
 				1DCCA69FEC0B36EDAF184026 /* Chapter13UITests.swift */,
 				627F28738115E3DC874240A6 /* Chapter14UITests.swift */,
+				2CBF642751369644A7219FE8 /* Chapter16UITests.swift */,
+				05D0AD66FEC3F21DE621D973 /* Chapter15UITests.swift */,
 				86874352C30014FFF456BE3E /* ContentsUITests.swift */,
 				DFA230EEF3170E4CA7BC8708 /* DuoUITests.swift */,
 				76E9A0EA14C15C6DF237AF47 /* FoldDriver.swift */,
@@ -406,6 +412,8 @@
 				487D950A11A3AAA147002881 /* Chapter12UITests.swift in Sources */,
 				135064A07C05F6777FD36F3D /* Chapter13UITests.swift in Sources */,
 				F7881D8482F568766282A896 /* Chapter14UITests.swift in Sources */,
+				ADCD55FDE42C60A68A8FFA5B /* Chapter16UITests.swift in Sources */,
+				6CB1DB80B8FAC5859BA100D0 /* Chapter15UITests.swift in Sources */,
 				940B2DA1796BB58F3B8FCFAD /* Chapter3UITests.swift in Sources */,
 				AAC6885CD98A69713F89E05E /* Chapter4UITests.swift in Sources */,
 				A14167539C197C23C60606DD /* Chapter5UITests.swift in Sources */,
