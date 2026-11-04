@@ -1198,7 +1198,7 @@ final class GameModel {
     /// Called on every angle change: on a shadow, and the shadow moving → hum; 90 ms without motion → silence.
     private func rideFeel() {
         let n = config.columnsPerPage
-        guard paper.backlit, crushAt == nil, !rules.isRight(char.c), !board[char].isFloor, let src = shade[char] else { stopRideFeel(); return }
+        guard paper.backlit, crushAt == nil, !rules.isRight(char.c), !board[char].isFloor, let src = shade[char], src >= 0 else { stopRideFeel(); return }   // a bent / gate source never slides (Codex P3)
         let now = CACurrentMediaTime()
         let recent = angleSamples.filter { now - $0.t < 0.06 }
         guard let first = recent.first, let last = recent.last, last.t - first.t > 0.004 else { return }

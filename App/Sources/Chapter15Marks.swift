@@ -46,9 +46,11 @@ struct MirrorTurn: Equatable {
     init(_ cell: Cell, spread: Spread) {
         let n = spread.columnsPerPage
         let here = spread.slot(cell)
-        let crease = spread.slot(Cell(cell.c < n ? cell.c + 1 : cell.c - 1, cell.r))
+        // one square away from the crease, on the same page (the crease-side neighbour of a mirror at the crease is on the
+        // other page, whose slots run the other way — Codex P2); the inward step is its opposite
+        let away = spread.slot(Cell(cell.c < n ? cell.c - 1 : cell.c + 1, cell.r))
         let below = spread.slot(Cell(cell.c, cell.r + 1))
-        inward = (crease.x - here.x, crease.y - here.y)
+        inward = (here.x - away.x, here.y - away.y)
         outward = (below.x - here.x, below.y - here.y)
     }
 
