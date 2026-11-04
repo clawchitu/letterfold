@@ -108,6 +108,8 @@ extension GameModel {
         let wasPosture = posture, figure = char
         let events = game.rest()
         iceRestStart = nil
+        // ch. 16 spring (main.js rest): laid flat with water on the board, nothing freezes — say so
+        if events.isEmpty, board.thaw, game.angle == 0, !won, board.grid.contains(where: { $0.contains(.water) }) { noteThawed(); return }
         guard !events.isEmpty else { return }
         sync()
         handleRest(events, from: wasPosture, at: figure)

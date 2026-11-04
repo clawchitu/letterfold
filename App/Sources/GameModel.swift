@@ -60,8 +60,8 @@ struct Chapter: Identifiable {
     /// Ch. 11: 「返」 (design-ch11.md names none: the page goes up and comes back, 来回; placeholder until an art review).
     /// Ch. 12: 「叠」 (design-ch12.md names none: the letter folded twice over, 三折; placeholder until an art review).
     /// Ch. 13: 「荫」 (design-vol4.md §3: the shadow as an umbrella).
-    /// Ch. 14: 「沉」 (design-vol4.md §3, design-ch14.md §2: what sinks is paper).
-    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "灯", "落", "载", "返", "叠", "荫", "沉"][min(13, id - 1)] }
+    /// Ch. 14: 「沉」 (design-vol4.md §3, design-ch14.md §2: what sinks is paper). Ch. 15: 「映」, ch. 16: 「春」 (design-vol4.md §3).
+    var sealGlyph: String { ["达", "通", "影", "成", "胶", "翻", "晕", "灯", "落", "载", "返", "叠", "荫", "沉", "映", "春"][min(15, id - 1)] }
     static func volumeChapters(_ v: Int) -> [Chapter] { all.filter { $0.volume == v } }
 
     static let all: [Chapter] = [
@@ -103,6 +103,12 @@ struct Chapter: Identifiable {
         // 卷四 chapter 2 「滑」 (fold-proto design-ch14.md): a loose stone on ice slides to the first square that is not ice;
         // opens once chapter 13 is delivered. Four levels (14-5 was cut, §3.2)
         Chapter(id: 14, levelIDs: ["slide", "aim", "brake", "pave"], unlocked: true, soon: false),
+        // 卷四 chapter 3 「镜」 (fold-proto design-ch15.md): a shadow that lands on a mirror is bent down its column; opens once
+        // chapter 14 is delivered. Five levels
+        Chapter(id: 15, levelIDs: ["mirror", "bend", "glued", "slide15", "take15"], unlocked: true, soon: false),
+        // 卷四 chapter 4 「融」, 卷四's finale (fold-proto design-ch16.md): spring — melted water never freezes back; opens
+        // once chapter 15 is delivered. Five levels; its letter (letter.16) closes the volume
+        Chapter(id: 16, levelIDs: ["spring", "hole16", "look", "take16", "river"], unlocked: true, soon: false),
     ]
 }
 
@@ -576,7 +582,7 @@ final class GameModel {
     }
     var paper: PaperState {
         guard chapter.id >= 4 else { return [PaperState.chapter1, .chapter2, .chapter3][min(2, max(0, chapter.id - 1))] }
-        if chapter.volume == 4 { return .vellum }
+        if chapter.volume == 4 { return chapter.id == 16 ? .spring : .vellum }   // ch. 16: the frost grain has faded
         if chapter.volume == 3 { return .card }
         if chapter.volume == 2 { return .letter }
         if isFinale { return .aged }

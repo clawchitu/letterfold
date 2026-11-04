@@ -59,12 +59,13 @@ struct MiniBook: View {
         case .tab: [.tab]
         case .glue: [.glue, .stone]
         case .roll, .slide: [.loose]
+        case .mirror: [.mirror]   // ch. 15: the mirror, and (below) the column its shadow bends down
         case .crane: [.crane]
         case .fro: [.loose, .glue]   // ch. 11: the stone that rolls and the glue it never meets
         case .trifold: [.goal]   // ch. 12: her on the folded third page
         default: []
         }
-        var cells = all.filter { want.contains(b[$0]) || ((film.id == .shadow || film.id == .ride) && st.shade[$0] != nil) }
+        var cells = all.filter { want.contains(b[$0]) || ((film.id == .shadow || film.id == .ride || film.id == .mirror) && st.shade[$0] != nil) }
         // an object on the top page of a closed book lies over its opposite square
         cells = cells.map { $0.c >= 4 && th > 90 ? Cell(7 - $0.c, $0.r) : $0 }
         // the object first; her square joins it only when both fit the window (else the middle is blank paper)

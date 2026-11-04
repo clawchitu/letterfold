@@ -38,7 +38,9 @@ final class ParTests: XCTestCase {
         // vol. 3 chapter 12 「三折」 (fold-proto design-ch12.md; 12-5 was cut)
         XCTAssertEqual(Array(ids[72..<77]), ["home", "hole", "return", "drop", "twofold"])
         XCTAssertEqual(Array(ids[77..<82]), ["ice", "thaw", "shade", "crack", "take"])   // vol. 4 ch. 13 「冰」
-        XCTAssertEqual(Array(ids[82...]), ["slide", "aim", "brake", "pave"])   // vol. 4 ch. 14 「滑」
+        XCTAssertEqual(Array(ids[82..<86]), ["slide", "aim", "brake", "pave"])   // vol. 4 ch. 14 「滑」
+        XCTAssertEqual(Array(ids[86..<91]), ["mirror", "bend", "glued", "slide15", "take15"])   // vol. 4 ch. 15 「镜」
+        XCTAssertEqual(Array(ids[91...]), ["spring", "hole16", "look", "take16", "river"])   // vol. 4 ch. 16 「融」
         XCTAssertEqual(Array(ids[25..<35]), ["glue", "lend", "bridgeGlue", "oldHome", "ferry", "twiceClosed", "twoLamps",
                                        "darkBack", "darkDoor", "darkInk"])
     }

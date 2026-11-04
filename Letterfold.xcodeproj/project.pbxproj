@@ -30,6 +30,7 @@
 		62D5404C1817B37DCB26D633 /* MusicUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB4F047FF96EB1C56C27E68 /* MusicUITests.swift */; };
 		632B7BC5D43A1FE091458D59 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 868BFF6E983C24F4E3EEFFA0 /* Localizable.xcstrings */; };
 		6C81D1E1280FC5622979E799 /* Chapter14Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA40A920470CDE1F161C81BD /* Chapter14Marks.swift */; };
+		99397D6A63261E649471BD1A /* Chapter15Marks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E613506F8FB793DEC153C39 /* Chapter15Marks.swift */; };
 		7C677CF2FF97368F1172CDA0 /* Chapter11UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CBFCF4DC6EB77948082A067 /* Chapter11UITests.swift */; };
 		83E16CC195AEC3EC5512860E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B5BC6A962BF940695C18366 /* Assets.xcassets */; };
 		8DC4BE00E5EA6DDE9727F073 /* DuoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA230EEF3170E4CA7BC8708 /* DuoUITests.swift */; };
@@ -116,6 +117,7 @@
 		A8EC280F556F518FD3E0CF1A /* Letterfold.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Letterfold.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9AA4B7A8AA01181783D9B58 /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		AA40A920470CDE1F161C81BD /* Chapter14Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter14Marks.swift; sourceTree = "<group>"; };
+		5E613506F8FB793DEC153C39 /* Chapter15Marks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter15Marks.swift; sourceTree = "<group>"; };
 		AB5597D142A9CB8FB0E573B6 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		AD058B4451F306D134BBAF38 /* Skins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Skins.swift; sourceTree = "<group>"; };
 		AD2ACD110F34C4648B09D796 /* PlaythroughPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaythroughPlan.swift; sourceTree = "<group>"; };
@@ -189,6 +191,7 @@
 				B9528175E86BD342A9AD5C46 /* Chapter12Marks.swift */,
 				E9F822755DBEBCE1CCD84DD5 /* Chapter13Marks.swift */,
 				AA40A920470CDE1F161C81BD /* Chapter14Marks.swift */,
+				5E613506F8FB793DEC153C39 /* Chapter15Marks.swift */,
 				31779719E8C773D36D2CFC1B /* Contents.swift */,
 				45EBF8A2E746E16AE1153A20 /* GameModel.swift */,
 				578B23505A90DB23ECB3C2A4 /* Haptics.swift */,
@@ -371,6 +374,7 @@
 				16991211E73EA1ECC8352380 /* Chapter12Marks.swift in Sources */,
 				EE86E03FC90CFA76C4AEF499 /* Chapter13Marks.swift in Sources */,
 				6C81D1E1280FC5622979E799 /* Chapter14Marks.swift in Sources */,
+				99397D6A63261E649471BD1A /* Chapter15Marks.swift in Sources */,
 				089C73E24BB02BF7002C67DC /* Chapter8Marks.swift in Sources */,
 				E19FF7E22BAF0B7F47038916 /* Chapter9Marks.swift in Sources */,
 				47335045E1361AE66BF22A79 /* Contents.swift in Sources */,

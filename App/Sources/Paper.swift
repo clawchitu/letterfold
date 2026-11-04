@@ -118,6 +118,8 @@ struct TileFace: View {
     var gateCreaseAtTop = false
     /// Ch. 13: which crack pattern this square's ice has (GameModel.iceSeed).
     var iceSeed = 0
+    /// Ch. 15: the mirror's face as drawn, ╱ (true) or ╲ (MirrorTurn, Chapter15Marks.swift).
+    var mirrorRising = true
     @Environment(\.highContrast) private var hc
     @Environment(\.goalIsFigure) private var goalIsFigure
     @Environment(\.skin) private var skin
@@ -202,6 +204,8 @@ struct TileFace: View {
                 IceGlaze(size: size, seed: iceSeed, bare: bare)
             }
         case .water: if !bare { WaterWash(size: size, seed: iceSeed) }
+        // ch. 15 「镜」 (Chapter15Marks.swift): a small silvered stone, its face ╱ / ╲
+        case .mirror: MirrorStone(size: size, rising: mirrorRising)
         }
     }
 }

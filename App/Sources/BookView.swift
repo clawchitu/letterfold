@@ -185,7 +185,7 @@ struct BookView: View {
             ForEach(rotorCells { $0 == .empty || $0 == .water }, id: \.self) { c in AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace) }
         }
         .accessibilityRotor(Text(L10n.t("rotor.object"))) {
-            ForEach(rotorCells { [.stone, .loose, .key, .door, .openDoor, .ink, .wetInk, .goal, .tab, .glue, .gate].contains($0) }, id: \.self) { c in
+            ForEach(rotorCells { [.stone, .loose, .key, .door, .openDoor, .ink, .wetInk, .goal, .tab, .glue, .gate, .mirror].contains($0) }, id: \.self) { c in
                 AccessibilityRotorEntry(Text(model.label(c.c, c.r)), id: c, in: rotorSpace)
             }
         }
@@ -707,15 +707,22 @@ private struct TileItem: View {
     var body: some View {
         let c = cell
         let t = model.shownTile(c)
-        let shaded = model.shade[c] != nil && !t.isFloor && t != .gate
+        let shaded = model.shade[c] != nil && !t.isFloor && t != .gate && t != .mirror
+        let turn = t == .mirror ? MirrorTurn(c, spread: geo.spread) : nil
         let face = TileFace(tile: t, size: geo.tile, paper: model.paper, inkPrint: model.isInkPrint(c), inkSpent: model.isInkSpent(c),
                             mirrorAxisVertical: geo.horizontal, printedAt: model.inkPrintedAt[c], figureShift: model.meetShift(c, geo.tile),
                             inkVariant: model.inkVariant(c), bledAt: model.bledAt(c), gateStanding: Rules.gateStands(model.shade, c),
-                            craneFX: model.craneFX[c], iceSeed: model.iceSeed(c))
+                            craneFX: model.craneFX[c], iceSeed: model.iceSeed(c), mirrorRising: turn?.rising ?? true)
         let r = RoundedRectangle(cornerRadius: 3, style: .continuous)
         ZStack {
+            // ch. 15: a shadow lands on the mirror — it turns there, under the stone (Chapter15Marks.swift)
+            if let turn, model.shade[c] != nil, model.mirrorBends(c) { MirrorTurnShade(size: geo.tile, turn: turn) }
             face
             if shaded { ShadeMark(size: geo.tile) }
+            // ch. 15: the bent column, every square at once
+            if model.shade[c] == Rules.mirrorSource { BentShadeBand(size: geo.tile, across: geo.horizontal, floor: t.isFloor) }
+            // ch. 16: spring — the water stays; a faint thaw shimmer on it
+            if t == .water && model.board.thaw { ThawShimmer(size: geo.tile, seed: model.iceSeed(c)) }
             // ch. 13: mist, the rest's cracks, melt / freeze / crush (Chapter13Marks.swift)
             if model.game.hasIce { IceOverlay(model: model, cell: c, size: geo.tile) }
             // ch. 14: where a slide went down — the water / ice until the stone gets there, then the splash (Chapter14Marks.swift)
@@ -756,7 +763,7 @@ private struct TileEdges: View {
     var body: some View {
         ForEach(cells, id: \.cell) { item in
             let c = item.cell, t = model.board[c]
-            let shaded = model.shade[c] != nil && !t.isFloor && t != .gate
+            let shaded = model.shade[c] != nil && !t.isFloor && t != .gate && t != .mirror
             ZStack {
                 // ch. 13: mist over ice that would melt here softens its edge (the glaze keeps a crisp one)
                 let misty = !hc && t == .ice && model.iceMist.contains(c)

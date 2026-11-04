@@ -23,6 +23,9 @@ public enum SlipID: String, CaseIterable, Sendable, Codable {
     /// Ch. 14 「滑」 (fold-proto design-ch14 §2, i18n slip.slide): a loose stone on ice slides to the first square that is not
     /// ice — paper stops it, a gap it fills, water it sinks in (paper for good) (first in 14-1). Slip eighteen.
     case slide
+    /// Ch. 15 「镜」 (fold-proto design-ch15 §2, tools/slips.js `mirror`, i18n slip.mirror): a mirror is a stone, but a shadow
+    /// that lands on it is bent down its column to the first block (first in 15-1). Slip nineteen.
+    case mirror
 }
 
 /// The slips' triggers and the save logic around them (design-onboarding §7.2–7.3), pure so they are tested here.
@@ -64,6 +67,7 @@ public enum Slips {
             case .ice: return s.contains("~")
             // the declared needs (levels.js): 13-4 crack has a loose stone and ice that never meet
             case .slide: return needs.contains("needsSlide")
+            case .mirror: return s.contains("m")
             }
         }
     }
@@ -293,6 +297,12 @@ public struct SlipDemo: Sendable {
         SlipDemo(id: .slide, level: "14-1", map: ["----u~~r", "----S--G"], beats: [
             .bump(0, -1, .gap), .pause(300), .angle(100, ms: 600, rolled: [Cell(7, 0), Cell(4, 0)]), .pause(300), .angle(0, ms: 400),
             .still, .pause(200), .walk(Cell(7, 1)), .win]),
+        // 镜 (tools/slips.js `mirror`): lean to physical 70° — the stone's shadow lies on the paper (3,0), one square; on to
+        // physical 50° — it lands on the mirror (1,0) and runs down the column: the gap (1,1) is floor; across it to her.
+        // The still: the bent shadow over the gap (i18n slip.mirror.pic)
+        SlipDemo(id: .mirror, level: "15-1", map: [".m..---x", "S-G-----"], beats: [
+            .angle(110, ms: 500, shadowAt: Cell(3, 0)), .pause(300), .angle(130, ms: 400, shadowAt: Cell(1, 1)), .still, .pause(300),
+            .walk(Cell(2, 1)), .win]),
     ]
 
     public static func demo(_ id: SlipID) -> SlipDemo { all.first { $0.id == id }! }

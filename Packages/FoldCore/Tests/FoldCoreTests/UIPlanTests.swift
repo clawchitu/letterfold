@@ -128,10 +128,19 @@ final class UIPlanTests: XCTestCase {
             // the tap that follows goes to the end of the next walk (shut: its first stack)
             let next: Cell? = k + 1 < sol.count && sol[k + 1].a == a && sol[k + 1].face == sol[k].face ? (a >= 180 ? sol[k + 1].cell : sol[nextEnd].cell) : nil
             let riding = !g.board[g.char].isFloor   // a shadow on either page (ch. 8), or a gate
+            // ch. 15–16: rest where the solver's angle leaves the same board and the same shadows. Spring keeps what a rest
+            // melts for good (16-2 hole16: standing at 90° melts nothing, the stack is no hole at the close that follows),
+            // and a bent shadow does not carry her where a stone's does (16-4 take16: (2,2) must be under the (5,2) shadow,
+            // not only the mirror's column, for the ride to 110 that follows)
+            // — unless the walk that follows is the last: then any rest that lets it reach her will do (16-2's last walk is
+            // on the lifted page, which the app only lets her tap flat)
+            let strict = (lv.thaw == true || lv.map.joined().contains("m")) && nextEnd < sol.count - 1
+            let ref = strict ? run(lv, acts + [.lean(phys: Int(180 - a), tol: 0)], detents: d) : nil
             func ok(_ phys: Int) -> Bool {
                 guard let h = run(lv, acts + [riding ? .creep(phys: phys, tol: 0) : .lean(phys: phys, tol: 0)], detents: d) else { return false }
                 if h.won { return true }
                 guard h.char == want else { return false }
+                if let ref, h.board.grid != ref.board.grid || h.shade != ref.shade { return false }
                 if let n = next { return tappable(n, h) && h.path(to: n) != nil }
                 return true
             }
