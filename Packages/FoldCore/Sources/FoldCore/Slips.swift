@@ -26,6 +26,9 @@ public enum SlipID: String, CaseIterable, Sendable, Codable {
     /// Ch. 15 「镜」 (fold-proto design-ch15 §2, tools/slips.js `mirror`, i18n slip.mirror): a mirror is a stone, but a shadow
     /// that lands on it is bent down its column to the first block (first in 15-1). Slip nineteen.
     case mirror
+    /// Ch. 16 「融」 (fold-proto design-ch16 §2, i18n slip.thaw): spring — what a rest melts stays water, flat or pressed; a
+    /// melted square is a gap, and a shut stack over water drops her to the facing page (first in 16-1). Slip twenty.
+    case thaw
 }
 
 /// The slips' triggers and the save logic around them (design-onboarding §7.2–7.3), pure so they are tested here.
@@ -68,6 +71,7 @@ public enum Slips {
             // the declared needs (levels.js): 13-4 crack has a loose stone and ice that never meet
             case .slide: return needs.contains("needsSlide")
             case .mirror: return s.contains("m")
+            case .thaw: return level.thaw == true
             }
         }
     }
@@ -207,9 +211,11 @@ public struct SlipDemo: Sendable {
     public let beats: [Beat]
     /// Ch. 12: the map is left | right | third on two creases (levels.js `trifold`).
     public var trifold = false
+    /// Ch. 16: spring (levels.js `thaw`) — nothing freezes back.
+    public var thaw = false
 
-    public init(id: SlipID, level: String, map: [String], lamp: String? = nil, beats: [Beat], trifold: Bool = false) {
-        self.id = id; self.level = level; self.map = map; self.lamp = lamp; self.beats = beats; self.trifold = trifold
+    public init(id: SlipID, level: String, map: [String], lamp: String? = nil, beats: [Beat], trifold: Bool = false, thaw: Bool = false) {
+        self.id = id; self.level = level; self.map = map; self.lamp = lamp; self.beats = beats; self.trifold = trifold; self.thaw = thaw
     }
 
     /// tools/slips.js, beat for beat (plus pauses, a still marker and the closing opens the storyboards ask for).
@@ -303,13 +309,20 @@ public struct SlipDemo: Sendable {
         SlipDemo(id: .mirror, level: "15-1", map: [".m..---x", "S-G-----"], beats: [
             .angle(110, ms: 500, shadowAt: Cell(3, 0)), .pause(300), .angle(130, ms: 400, shadowAt: Cell(1, 1)), .still, .pause(300),
             .walk(Cell(2, 1)), .win]),
+        // 融 (16-1 spring's board; design-ch16 §2, i18n slip.thaw.pic): out to (3,0) under the stone's shadow; lean and
+        // rest — the two ice squares outside the shadow melt; lay the book flat and the water stays water (the still);
+        // close, step onto the stack over the water — she is on the facing page; open a little and walk down to her
+        SlipDemo(id: .thaw, level: "16-1", map: ["S~~...x.", "---xG---"], beats: [
+            .walk(Cell(3, 0)), .pause(300), .angle(100, ms: 500, shadowAt: Cell(3, 0)), .rest(melts: [Cell(1, 0), Cell(2, 0)]),
+            .angle(0, ms: 400), .still, .pause(500), .angle(180, ms: 450), .pause(150), .walkStack(Cell(5, 0)), .walkStack(Cell(4, 0)),
+            .angle(110, ms: 400), .walk(Cell(4, 1)), .win], thaw: true),
     ]
 
     public static func demo(_ id: SlipID) -> SlipDemo { all.first { $0.id == id }! }
 
     /// Plays the script on the real engine; throws on the first move the rules refuse.
     public func film(config: FoldConfig = .standard) throws -> SlipFilm {
-        let game = try FoldGame(level: Level(id: "slip.\(id.rawValue)", map: map, lamp: lamp, trifold: trifold ? true : nil), config: config)
+        let game = try FoldGame(level: Level(id: "slip.\(id.rawValue)", map: map, lamp: lamp, trifold: trifold ? true : nil, thaw: thaw ? true : nil), config: config)
         var frames: [SlipFrame] = []
         var still: Int?
         func fail(_ m: String) -> Failure { .rule(id, m) }

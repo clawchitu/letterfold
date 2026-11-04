@@ -36,7 +36,7 @@ final class SlipsTests: XCTestCase {
             XCTAssertTrue(film.frames.indices.contains(film.still), "\(demo.id)")
             XCTAssertLessThanOrEqual(film.totalMs, 4400, "\(demo.id): a loop is 3.6–4.4 s with its end pause")
             // the demo board shows the slip's own rule
-            XCTAssertTrue(Slips.triggers(Level(id: "x", map: demo.map, lamp: demo.lamp, trifold: demo.trifold ? true : nil)).contains(demo.id) || [.shadow, .ride, .fro, .slide].contains(demo.id), "\(demo.id)")
+            XCTAssertTrue(Slips.triggers(Level(id: "x", map: demo.map, lamp: demo.lamp, trifold: demo.trifold ? true : nil, thaw: demo.thaw ? true : nil)).contains(demo.id) || [.shadow, .ride, .fro, .slide].contains(demo.id), "\(demo.id)")
         }
         // the beats that matter, frame by frame
         let glue = try SlipDemo.demo(.glue).film(config: pack.config)
@@ -92,7 +92,7 @@ final class SlipsTests: XCTestCase {
         XCTAssertEqual(tri.frames[tri.still].board.face, 3, "the still: the third page folded onto the right page")
         XCTAssertEqual(tri.frames[tri.still].board.w, 8)
         XCTAssertTrue(tri.frames.last!.won)
-        XCTAssertEqual(SlipID.allCases.count, 19, "已集 n / 19")
+        XCTAssertEqual(SlipID.allCases.count, 20, "已集 n / 20")
         let turn = try SlipDemo.demo(.turn).film(config: pack.config)
         XCTAssertEqual(turn.frames.last!.board.face, 1)
         XCTAssertTrue(turn.frames.last!.won)
@@ -112,7 +112,7 @@ final class SlipsTests: XCTestCase {
         let first = Slips.firstLevels(pack.levels, order: Self.mainLine)
         XCTAssertEqual(first, [.stone: "facing", .door: "key", .ink: "ink", .tab: "stand", .shadow: "shadow", .press: "press",
                                .ride: "ride", .glue: "glue", .turn: "turn", .wet: "wet", .lamp: "leftLamp", .gate: "gate", .roll: "roll", .crane: "crane",
-                               .fro: "fro", .trifold: "home", .ice: "ice", .slide: "slide", .mirror: "mirror"])
+                               .fro: "fro", .trifold: "home", .ice: "ice", .slide: "slide", .mirror: "mirror", .thaw: "spring"])
         let bridge = pack.levels.first { $0.id == "bridge" }!
         XCTAssertEqual(Slips.due(bridge, seen: []), [])
         let glue = pack.levels.first { $0.id == "glue" }!
@@ -150,6 +150,12 @@ final class SlipsTests: XCTestCase {
         XCTAssertEqual(mirror.frames[mirror.still].shade[Cell(1, 1)], Rules.mirrorSource, "the bent column")
         XCTAssertTrue(mirror.frames.last!.won)
         XCTAssertEqual(pack.levels.filter { Slips.triggers($0).contains(.mirror) }.map(\.id), ["mirror", "bend", "glued", "slide15", "take15", "take16", "river"])
+        // ch. 16: the thaw slip's still is the flat book with the melted water still water; she wins on the facing page
+        let thaw = try SlipDemo.demo(.thaw).film(config: pack.config)
+        XCTAssertEqual(thaw.frames[thaw.still].angle, 0)
+        XCTAssertEqual(thaw.frames[thaw.still].board.grid[0][1], .water, "spring: flat, the water stays")
+        XCTAssertTrue(thaw.frames.last!.won)
+        XCTAssertEqual(pack.levels.filter { Slips.triggers($0).contains(.thaw) }.map(\.id), ["spring", "hole16", "look", "take16", "river"])
     }
 
     func testSeedOldSaveAndNewPlayer() throws {

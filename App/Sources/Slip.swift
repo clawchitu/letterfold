@@ -518,6 +518,7 @@ struct SlipIcon: View {
             case .slide:   // ch. 14: the ball on a square of ice
                 ZStack { PathTile(size: size * 0.92); IceGlaze(size: size * 0.92, seed: 3); LooseBall(size: size * 0.92, hc: hc) }
             case .mirror: MirrorStone(size: size * 1.4)   // ch. 15: the silvered stone, its bright diagonal
+            case .thaw: ZStack { WaterWash(size: size * 0.92, seed: 3); ThawShimmer(size: size * 0.92, seed: 3) }   // ch. 16: water that stays
             }
         }
         .frame(width: size, height: size)
@@ -584,6 +585,11 @@ nonisolated struct SlipGlyph: Shape {
             p.move(to: pt(0.3, 0.7)); p.addLine(to: pt(0.7, 0.3))
             p.move(to: pt(0.95, 0.5)); p.addLine(to: pt(0.8, 0.5))
             p.move(to: pt(0.5, 0.8)); p.addLine(to: pt(0.5, 0.95))
+        case .thaw:   // ch. 16: a square, two ripples across it — the water that stays
+            p.addRect(r.insetBy(dx: r.width * 0.1, dy: r.height * 0.1))
+            for y in [0.42, 0.6] {
+                p.move(to: pt(0.24, y)); p.addCurve(to: pt(0.76, y), control1: pt(0.4, y - 0.08), control2: pt(0.6, y + 0.08))
+            }
         case .ice:   // ch. 13: a square with the ice's slanting crack
             p.addRect(r.insetBy(dx: r.width * 0.1, dy: r.height * 0.1))
             p.addPath(IceCracks(seed: 3).path(in: r.insetBy(dx: r.width * 0.16, dy: r.height * 0.16)))

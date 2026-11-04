@@ -59,6 +59,7 @@ struct MiniBook: View {
         case .tab: [.tab]
         case .glue: [.glue, .stone]
         case .roll, .slide: [.loose]
+        case .thaw: [.ice, .water]   // ch. 16: the river, ice and the water that stays
         case .mirror: [.mirror]   // ch. 15: the mirror, and (below) the column its shadow bends down
         case .crane: [.crane]
         case .fro: [.loose, .glue]   // ch. 11: the stone that rolls and the glue it never meets
