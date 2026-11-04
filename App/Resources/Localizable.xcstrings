@@ -1051,6 +1051,36 @@
         }
       }
     },
+    "ch.15": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "镜"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mirror"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "鏡"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "거울"
+          }
+        }
+      }
+    },
     "ch.15.line": {
       "comment": "UI. From fold-proto i18n.js.",
       "extractionState": "manual",
@@ -1077,6 +1107,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "그림자는 한 칸 너비뿐이다. 거울 하나를 놓으면, 그림자는 강을 따라 흘러내린다."
+          }
+        }
+      }
+    },
+    "ch.16": {
+      "comment": "UI. Native app only.",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "融"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thaw"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "融ける"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "해빙"
           }
         }
       }
