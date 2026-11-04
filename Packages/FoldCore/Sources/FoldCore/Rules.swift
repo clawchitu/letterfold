@@ -46,6 +46,8 @@ public struct Rules: Sendable {
     public func lit(_ a: Double) -> Bool { a >= config.shadeMin && a < config.foldMin }
     /// The `shadows` value of an open angle gate (logic.js maps it to 'A'): no stone casts it.
     public static let gateSource = -1
+    /// Vol. 4 ch. 15: the `shadows` value of a square under a mirror that a shadow hits (logic.js 'm'): the bent column.
+    public static let mirrorSource = -2
     /// Whether the angle gate at `c` stands open (walkable): any shadow entry does, a stone's shadow landing on it
     /// (two lamps) as much as `gateSource` — the entry, not its source, is what makes it floor (Codex review 20 #1).
     public static func gateStands(_ shadows: [Cell: Int], _ c: Cell) -> Bool { shadows[c] != nil }
@@ -57,21 +59,35 @@ public struct Rules: Sendable {
         var out: [Cell: Int] = [:]
         if !lit(a) { return out }
         let right = b.lamp.contains("R"), left = b.lamp.contains("L")
+        var hits: [Cell] = []   // vol. 4 ch. 15: shadows that land on a mirror (bent after every direct shadow and gate)
         for r in 0..<b.h {
             if right {
                 for c in n..<b.w where b[c, r].isOpaque {   // trifold face 0: the third page's stones shade too (logic.js vw)
                     let q = shadowColumn(c, a)
-                    if q >= 0 && out[Cell(q, r)] == nil { out[Cell(q, r)] = c }
+                    if q < 0 { continue }
+                    if out[Cell(q, r)] == nil { out[Cell(q, r)] = c }
+                    if b[q, r] == .mirror { hits.append(Cell(q, r)) }
                 }
             }
             if left {
                 for c in stride(from: n - 1, through: 0, by: -1) where b[c, r].isOpaque {
                     let q = shadowColumnL(c, a)
-                    if q >= 0 && out[Cell(q, r)] == nil { out[Cell(q, r)] = c }
+                    if q < 0 { continue }
+                    if out[Cell(q, r)] == nil { out[Cell(q, r)] = c }
+                    if b[q, r] == .mirror { hits.append(Cell(q, r)) }
                 }
             }
             for c in 0..<(2 * n) where b[c, r] == .gate && out[Cell(c, r)] == nil { out[Cell(c, r)] = Rules.gateSource }
         }
+        for m in hits { out.merge(bentColumn(b, m).map { ($0, Rules.mirrorSource) }) { old, _ in old } }   // a direct shadow wins
+        return out
+    }
+
+    /// Vol. 4 ch. 15 (logic.js `bend`): the squares below a hit mirror, down its column to the first block or the page edge.
+    public func bentColumn(_ b: Board, _ m: Cell) -> [Cell] {
+        var out: [Cell] = []
+        var r = m.r + 1
+        while r < b.h && !b[m.c, r].isBlock { out.append(Cell(m.c, r)); r += 1 }
         return out
     }
 
@@ -206,6 +222,9 @@ public struct Rules: Sendable {
         if b[from].isFloor { return from }
         if b[from] == .gate { return lit(a) ? from : nil }
         guard let src, src != Rules.gateSource else { return nil }
+        if src == Rules.mirrorSource {   // ch. 15: a bent shadow does not slide — it is there (the mirror is hit) or it is gone
+            return a < config.foldMin && shadows(b, a)[from] != nil && !b[from].isBlock ? from : nil
+        }
         let q = isRight(src) ? shadowColumn(src, a) : shadowColumnL(src, a)
         if q < 0 || a >= config.foldMin || b[q, from.r].isBlock { return nil }
         return Cell(q, from.r)
@@ -327,8 +346,8 @@ public struct Rules: Sendable {
                     } else if (A == .ink || A == .wetInk) && B == .empty {
                         b[c, r] = A
                         events.append(Stamp(kind: .ink, cells: [Cell(a, r), Cell(c, r)], wet: A == .wetInk))
-                    } else if A == .glue && B.isOpaque {   // a loose stone the glue takes is held: it arrives as a stone
-                        b[a, r] = .stone; b[c, r] = .paper
+                    } else if A == .glue && B.isOpaque {   // a loose stone the glue takes is held: it arrives as a stone; a mirror (ch. 15) stays a mirror
+                        b[a, r] = B == .mirror ? .mirror : .stone; b[c, r] = .paper
                         events.append(Stamp(kind: .glue, cells: [Cell(c, r), Cell(a, r)]))
                     }
                 }

@@ -170,7 +170,11 @@ public final class FoldGame {
         shade = rules.shadows(board, a)
         // on nothing but a shadow, or (closing) under a stone: on the bottom page, or on top-page glue facing one
         // ch. 12: or closing with the third page flat under her (offBook: it swings out past the left page)
-        if !board[char].isFloor || rules.crushed(board, char, a) || rules.offBook(board, char, a) {
+        // vol. 4 ch. 15–16: the press may crush the ice under her (15-2 bend, 16-5 river close from a square the facing
+        // stone crushes). The book stays shut while the hinge goes on closing: she stands on the stack, as the solver's
+        // sweep (check.js: the press comes after the sweep) never re-reads her square; an opening re-reads it.
+        let heldShut = posture == .closed && a >= rules.config.foldMin && a >= before && !rules.crushed(board, char, a) && !rules.offBook(board, char, a)
+        if !heldShut && (!board[char].isFloor || rules.crushed(board, char, a) || rules.offBook(board, char, a)) {
             if rideSrc == nil { rideSrc = previous[char] ?? shade[char] }
             if let to = rules.ride(board, char, rideSrc, a) {
                 if to.c != char.c {

@@ -409,7 +409,7 @@ public struct Solver: Sendable {
         let all = level.map.joined()
         func without(_ ch: Character) -> Solution? {
             // like JS row.split(ch).join('.'): every occurrence
-            solve(Level(id: level.id, map: level.map.map { String($0.map { $0 == ch ? "." : $0 }) }, lamp: level.lamp, trifold: level.trifold))
+            solve(Level(id: level.id, map: level.map.map { String($0.map { $0 == ch ? "." : $0 }) }, lamp: level.lamp, trifold: level.trifold, thaw: level.thaw))
         }
         var e = Expectation(solvable: full != nil, changes: full?.cost, needsFold: noFold == nil, needsPop: noPop == nil,
                             stepped15: solve(level, angles: Solver.steps15) != nil)
@@ -421,7 +421,7 @@ public struct Solver: Sendable {
         }
         if let lamp = level.lamp, lamp != "R" { var r = level; r.lamp = "R"; e.needsLamp = solve(r) == nil }   // the lamp back on the right bank
         if all.contains("r") {   // vol. 3 ch. 9: unsolvable with the loose stones glued down
-            e.needsRoll = solve(Level(id: level.id, map: level.map.map { String($0.map { $0 == "r" ? "x" : $0 }) }, lamp: level.lamp, trifold: level.trifold)) == nil
+            e.needsRoll = solve(Level(id: level.id, map: level.map.map { String($0.map { $0 == "r" ? "x" : $0 }) }, lamp: level.lamp, trifold: level.trifold, thaw: level.thaw)) == nil
         }
         if all.contains("r") {   // vol. 3 ch. 11: unsolvable, or dearer, without a lean that comes back / a re-close from a lean
             let nf = solve(level, options: Options(noFro: true)), nh = solve(level, options: Options(openPass: true))
@@ -446,6 +446,15 @@ public struct Solver: Sendable {
                 let nsl = solve(level, options: Options(noSlide: true))
                 e.needsSlide = nsl == nil || (full != nil && nsl!.cost > full!.cost) || !survives(level, nsl!.steps)
             }
+        }
+        if level.thaw == true {   // vol. 4 ch. 16 「融」: the ch. 13 reader — water freezes back when the book lies flat or closes
+            var l = level; l.thaw = nil
+            let nt = solve(l)
+            e.needsThaw = nt == nil || (full != nil && nt!.cost > full!.cost) || !survives(level, nt!.steps)
+        }
+        if all.contains("m") {   // vol. 4 ch. 15 「镜」: the mirror read as a plain stone (its shadow lands and stops)
+            let nm = solve(Level(id: level.id, map: level.map.map { String($0.map { $0 == "m" ? "x" : $0 }) }, lamp: level.lamp, trifold: level.trifold, thaw: level.thaw))
+            e.needsMirror = nm == nil || (full != nil && nm!.cost > full!.cost) || !survives(level, nm!.steps)
         }
         if level.isTrifold { e.needsTrifold = solve(level, options: Options(noFlap: true)) == nil }   // vol. 3 ch. 12: without the second crease
         else if (level.map.first?.count ?? 0) > 2 * rules.n { e.needsFlip = solve(level, angles: Solver.angles, from: nil, noFlip: true) == nil }

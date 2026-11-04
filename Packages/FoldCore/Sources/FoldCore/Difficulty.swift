@@ -33,6 +33,9 @@ public struct Difficulty: Sendable {
     public static let chapter11: Set<String> = ["fro", "still", "hover", "past", "park"]
     /// Ch. 14 「滑」's levels (check.js PAR_MAX_CH[14]).
     public static let chapter14: Set<String> = ["slide", "aim", "brake", "pave"]
+    /// Ch. 15 「镜」 (PAR_MAX_CH[15] mid 4) and ch. 16 「融」 (PAR_MAX_CH[16] mid 4 / hard 5 / final 6).
+    public static let chapter15: Set<String> = ["mirror", "bend", "glued", "slide15", "take15"]
+    public static let chapter16: Set<String> = ["spring", "hole16", "look", "take16", "river"]
     public static func parMax(for level: Level) -> Int {
         if level.isOptional { return parMax["dark"]! }
         if chapter11.contains(level.id), let t = level.tier, let m = ["hard": 5, "final": 6][t] { return m }
@@ -41,12 +44,13 @@ public struct Difficulty: Sendable {
         if level.isTrifold, let t = level.tier, let m = ["mid": 4, "hard": 5, "final": 6][t] { return m }
         // check.js PAR_MAX_CH[14] (design-ch14.md §3): rest first, pass second — a lean that comes back before the close
         // and the opening; mid 3 → 4 in this chapter only
-        if chapter14.contains(level.id), level.tier == "mid" { return 4 }
+        if chapter14.contains(level.id) || chapter15.contains(level.id), level.tier == "mid" { return 4 }
+        if chapter16.contains(level.id), let t = level.tier, let m = ["mid": 4, "hard": 5, "final": 6][t] { return m }
         return parMax[level.tier ?? ""] ?? 3
     }
     public static func range(of tier: String) -> ClosedRange<Int>? { tiers.first { $0.name == tier }?.range }
     /// The mechanics `combo` counts (check.js MECHANICS).
-    static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue", "needsFlip", "needsWet", "needsLamp", "needsGate", "needsRoll", "needsCrane", "needsFro", "needsHover", "needsTrifold", "needsIce", "needsShelter", "needsSlide"]
+    static let mechanics = ["needsFold", "needsPop", "needsShade", "needsRide", "needsKey", "needsInk", "needsGlue", "needsFlip", "needsWet", "needsLamp", "needsGate", "needsRoll", "needsCrane", "needsFro", "needsHover", "needsTrifold", "needsIce", "needsShelter", "needsSlide", "needsMirror", "needsThaw"]
 
     /// What levels.json ships under `expect.difficulty`.
     public struct Summary: Sendable, Codable, Equatable {
@@ -261,6 +265,7 @@ public struct Difficulty: Sendable {
             // an open angle gate (src = gateSource, -1): check.js reads base.grid[r][-1] → undefined → "not opaque" → made.
             // Kept for parity with the shipped metric (13-3 shade stands on its gate after a press); port upstream if fixed.
             if src == Rules.gateSource { return true }
+            if src == Rules.mirrorSource { return false }   // ch. 15: a bent shadow has no column (check.js src !== 'm')
             return !base.grid[s.r][board(s).colOf(src, s.r)].isOpaque   // a rolled loose stone's shadow is made too
         }
         let structure = best.cost + (forks == 1 ? 1 : 0) + (walk >= 8 ? 1 : 0) + (trap ? 1 : 0) + (window <= 2 ? 1 : 0) + (combo >= 3 ? 1 : 0)

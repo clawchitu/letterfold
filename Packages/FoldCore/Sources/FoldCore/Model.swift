@@ -35,13 +35,17 @@ public enum Tile: Character, Sendable, Codable, CaseIterable {
     /// Water (vol. 4 ch. 13, logic.js `u`, runtime only — never drawn in a level): melted ice. A gap in every rule (a shadow
     /// over it carries you); the one difference from `.empty` is that it freezes back.
     case water = "u"
+    /// Mirror (vol. 4 ch. 15 「镜」, fold-proto design-ch15.md §1, logic.js `m`): a stone with a bright diagonal face. It blocks,
+    /// shades and crushes like a stone; a shadow that lands ON it is bent down its column to the first block or the page
+    /// edge (`Rules.shadows`, source `Rules.mirrorSource`). A bent shadow does not slide with the angle. Glue takes it as a mirror.
+    case mirror = "m"
 
     /// Something you can stand on.
     public var isFloor: Bool { [.paper, .start, .goal, .key, .ink, .openDoor, .tab, .glue, .wetInk, .crane, .ice].contains(self) }
     /// Something that blocks the stacked cell when the book is closed.
-    public var isBlock: Bool { self == .stone || self == .loose || self == .door }
+    public var isBlock: Bool { self == .stone || self == .loose || self == .door || self == .mirror }
     /// Stones (fixed or loose) block the light; paper and ink let it through.
-    public var isOpaque: Bool { self == .stone || self == .loose }
+    public var isOpaque: Bool { self == .stone || self == .loose || self == .mirror }
 }
 
 /// The three postures of the book. The web prototype calls them open / pop / fold.
@@ -113,6 +117,10 @@ public struct Expectation: Sendable, Codable, Equatable {
     public var needsShelter: Bool?
     /// Vol. 4 ch. 14: unsolvable, dearer, or failing on the real board when a stone on ice rolls one square (check.js `noSlide`).
     public var needsSlide: Bool?
+    /// Vol. 4 ch. 15: unsolvable, dearer, or failing on the real board with the mirror read as a plain stone (check.js needsMirror).
+    public var needsMirror: Bool?
+    /// Vol. 4 ch. 16: unsolvable, dearer, or failing on the real board when water freezes back (the ch. 13 reader, check.js needsThaw).
+    public var needsThaw: Bool?
     public var stepped15: Bool
     /// tools/check.js `analyse()` (design-difficulty.md §2); the Swift `Difficulty` port must agree.
     public var difficulty: Difficulty.Summary?
@@ -140,6 +148,8 @@ public struct Expectation: Sendable, Codable, Equatable {
         case "needsIce": return needsIce
         case "needsShelter": return needsShelter
         case "needsSlide": return needsSlide
+        case "needsMirror": return needsMirror
+        case "needsThaw": return needsThaw
         default: return nil
         }
     }
